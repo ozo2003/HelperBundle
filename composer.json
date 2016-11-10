@@ -1,0 +1,27 @@
+{
+    "name": "sludio/helper-bundle",
+    "description": "Helper Bundle",
+    "type": "symfony-bundle",
+    "authors": [{
+        "name": "sludio",
+        "email": "davis.zalitis@slud.io"
+    }],
+    "license": [
+        "MIT"
+    ],
+    "require" : {
+        "php": ">=5.5.9",
+        "symfony/symfony": "^2.8",
+        "snc/redis-bundle": "dev-master",
+        "predis/predis": "^1.1"
+    },
+    "autoload" : {
+        "psr-0" : {
+            "Sludio\\HelperBundle" : ""
+        }
+    },
+    "target-dir": "Sludio/HelperBundle",
+    "branch-alias": {
+        "dev-master": "master"
+    }
+}
