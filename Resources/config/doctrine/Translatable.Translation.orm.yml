@@ -1,0 +1,46 @@
+Sludio\HelperBundle\Entity\Translatable\Translation:
+    type: entity
+    table: sludio_helper_translation
+    repositoryClass: Sludio\HelperBundle\Repository\Translatable\TranslationRepository
+    indexes:
+        translations_lookup_idx:
+            columns:
+                - locale
+                - object_class
+                - foreign_key
+    uniqueConstraints:
+        lookup_unique_idx:
+            columns:
+                - locale
+                - object_class
+                - foreign_key
+                - field
+    id:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+    fields:
+        locale:
+            type: string
+            column: locale
+            length: 8
+            nullable: false
+        objectClass:
+            type: string
+            column: object_class
+            nullable: false
+        field:
+            type: string
+            column: field
+            nullable: false
+        foreignKey:
+            type: integer
+            column: foreign_key
+            nullable: false
+        content:
+            type: text
+            column: content
+            nullable: true
+    lifecycleCallbacks: {  }

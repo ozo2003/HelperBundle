@@ -36,7 +36,7 @@ class TranslatableRepository
 
         if (!$result && !$checked) {
             $connection = self::$connection;
-            $sql = 'SELECT * FROM ext_translations WHERE object_class = :class AND foreign_key = :key';
+            $sql = 'SELECT * FROM sludio_helper_translation WHERE object_class = :class AND foreign_key = :key';
             $sth = $connection->prepare($sql);
             $options = array(
                 'class' => $class,
@@ -65,7 +65,7 @@ class TranslatableRepository
             'class' => $class,
             'locale' => $locale,
         );
-        $sql = "SELECT foreign_key FROM ext_translations WHERE object_class = :class AND field = '{$field}' AND locale = :locale";
+        $sql = "SELECT foreign_key FROM sludio_helper_translation WHERE object_class = :class AND field = '{$field}' AND locale = :locale";
         if ($id) {
             $sql .= ' AND foreign_key <> :id';
             $options['id'] = $id;
@@ -97,7 +97,7 @@ class TranslatableRepository
         if ($res) {
             $sql = "
                 UPDATE
-                    ext_translations
+                    sludio_helper_translation
                 SET
                     content = '{$content}'
                 WHERE
@@ -112,7 +112,7 @@ class TranslatableRepository
         } else {
             $sql = "
                 INSERT INTO
-                    ext_translations
+                    sludio_helper_translation
                         (content, object_class, locale, field, foreign_key)
                 VALUES
                     ('{$content}','{$class}', '{$locale}','{$field}',{$id})
