@@ -1,3 +1,0 @@
-sludio_helper_homepage:
-    path:     /
-    defaults: { _controller: SludioHelperBundle:Default:index }

@@ -1,0 +1,57 @@
+{% block translations_widget %}
+    {% spaceless %}
+
+        {% set currentFieldName = form.currentFieldName.vars.value %}
+        
+        {% if app.request.locale == 'lv' %}
+            {% set currentlocale = 'lv_LV' %}
+        {% endif %}
+        {% if app.request.locale == 'ru' %}
+            {% set currentlocale = 'ru_RU' %}
+        {% endif %}
+        {% if app.request.locale == 'en' %}
+            {% set currentlocale = 'en_US' %}
+        {% endif %}
+
+        <div class="nav-tabs-custom">
+            <ul class="nav nav-tabs">
+                {% for locale in locales %}
+                    {% set TabHref = '#tab_translate_' ~ locale ~ '_' ~ currentFieldName %}
+
+                    {# tab localecode same as selected ? #}
+                    {% if locale == currentlocale or (loop.index0 == 0 and currentlocale is null) %}
+                        {% set ActiveTab = 'active' %}
+                    {% else %}
+                        {% set ActiveTab = '' %}
+                    {% endif %}
+
+                    <li class="{{ ActiveTab }}">
+                        <a aria-expanded="true" href="{{ TabHref }}" data-toggle="tab" data-lang="{{ locale }}" class="tabber">
+                            {# TAB label #}
+                            {{ translatedtablocales[locale] }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <div class="tab-content">
+                {% for locale in locales %}
+                    {% set TabId = 'tab_translate_' ~ locale ~ '_' ~ currentFieldName %}
+
+                    {# tab localecode same as selected ? #}
+                    {% if locale == currentlocale %}
+                        {% set ActiveContent = 'active' %}
+                    {% else %}
+                        {% set ActiveContent = '' %}
+                    {% endif %}
+
+                    <div class="tab-pane {{ ActiveContent }}" id="{{ TabId }}">
+                        {# CONTENT #}
+                        {{ form_row(attribute(form, locale)) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    {% endspaceless %}
+{% endblock %}

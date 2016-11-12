@@ -1,4 +1,47 @@
 services:
-#    sludio_helper.example:
-#        class: Sludio\HelperBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
+    sludio.helper.form.type.translator:
+        class:     Sludio\HelperBundle\Form\Translatable\Type\TranslatorType
+        arguments:  
+            - '%sludio_helper.locales%'
+            - '@sludio.helper.manager'
+            - '@translator'
+        tags:
+            -  
+                name: form.type
+                alias: translations
+
+    sludio.helper.manager:
+        class: Sludio\HelperBundle\Helpers\Translatable\Manager
+        arguments: 
+            - "@doctrine"
+
+    sludio.helper.twig.translate_extension:
+        class: Sludio\HelperBundle\Twig\Translatable\TranslationExtension
+        public: false
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+            - '@request_stack'
+            - '%locale%'
+        tags:
+            - 
+                name: twig.extension
+                
+    sludio.missing.twig.missing_extension:
+        class: Sludio\HelperBundle\Twig\Missing\MissingExtension
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+        tags:
+            - 
+                name: twig.extension
+
+    sludio.beautify.twig.beautify_extension:
+        class: Sludio\HelperBundle\Twig\Beautify\BeautifyExtension
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+        tags:
+            - 
+                name: twig.extension

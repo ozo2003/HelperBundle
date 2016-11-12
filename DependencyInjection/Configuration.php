@@ -20,9 +20,21 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sludio_helper');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+        $rootNode
+            ->children()
+                ->arrayNode('locales')
+                    ->beforeNormalization()
+                        ->ifString()
+                            ->then(function ($v) {
+                                return preg_split('/\s*,\s*/', $v);
+                            })
+                    ->end()
+                    ->requiresAtLeastOneElement()
+                    ->prototype('scalar')->end()
+                ->end()
+                ->scalarNode('template')->defaultValue('SludioHelperBundle:Translatable/Form:translations.html.twig')->end()
+            ->end()
+        ;
 
         return $treeBuilder;
     }
