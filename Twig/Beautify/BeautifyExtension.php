@@ -2,19 +2,19 @@
 
 namespace Sludio\HelperBundle\Twig\Beautify;
 
-class BeautifyExtension extends \Twig_Extension {
-    
+class BeautifyExtension extends \Twig_Extension
+{
     public function __construct($request_stack, $em)
     {
         $this->request = $request_stack->getCurrentRequest();
         $this->em = $em;
     }
-    
+
     public function getName()
     {
         return 'beautify';
     }
-    
+
     public function getFilters()
     {
         return array(
@@ -26,12 +26,12 @@ class BeautifyExtension extends \Twig_Extension {
             new \Twig_SimpleFilter('strip_descr', array($this, 'strip_descr')),
         );
     }
-    
+
     public function url_decode($string)
     {
         return urldecode($string);
     }
-    
+
     public function parse($string)
     {
         $str = parse_url($string);
@@ -53,7 +53,7 @@ class BeautifyExtension extends \Twig_Extension {
     {
         return file_exists(getcwd().$file);
     }
-    
+
     public function beautify($string)
     {
         $explode = explode('/', strip_tags($string));
@@ -61,7 +61,7 @@ class BeautifyExtension extends \Twig_Extension {
 
         return $string;
     }
-    
+
     public function html_entity_decode($str)
     {
         $str = html_entity_decode($str);
@@ -78,5 +78,4 @@ class BeautifyExtension extends \Twig_Extension {
 
         return $body;
     }
-    
 }

@@ -24,7 +24,7 @@ class SludioHelperExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-        
+
         $container->setParameter('sludio_helper.locales', $config['locales']);
         $container->setParameter('sludio_helper.template', $config['template']);
     }

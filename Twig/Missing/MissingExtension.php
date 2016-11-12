@@ -27,17 +27,18 @@ class MissingExtension extends \Twig_Extension
     {
         $by = is_array($by) ? $by : array($by);
         $order = is_array($order) ? $order : array($order);
-        
-        if($one){
+
+        if ($one) {
             $objects = $this->em->getRepository($class)->findOneBy($by, $order);
         } else {
             $objects = $this->em->getRepository($class)->findBy($by, $order);
         }
-        
+
         return $objects;
     }
-    
-    public function getSvg($svg){
+
+    public function getSvg($svg)
+    {
         return file_get_contents(getcwd().$svg);
     }
 }
