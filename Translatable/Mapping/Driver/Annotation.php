@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Mapping\Driver;
+namespace Sludio\HelperBundle\Translatable\Mapping\Driver;
 
 use Gedmo\Exception\InvalidMappingException;
 use Gedmo\Translatable\Mapping\Driver\Annotation as Base;
