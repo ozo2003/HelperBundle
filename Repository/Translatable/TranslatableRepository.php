@@ -94,12 +94,13 @@ class TranslatableRepository
         self::init();
         $res = (int) self::findByLocale($class, $locale, $content, $field, null, $id);
         $class = str_replace('\\', '\\\\', $class);
+        $content = trim($content) != '' ? $content : null;
         if ($res) {
             $sql = "
                 UPDATE
                     sludio_helper_translation
                 SET
-                    content = '{$content}'
+                    content = :content
                 WHERE
                     object_class = '{$class}'
                 AND
@@ -115,11 +116,12 @@ class TranslatableRepository
                     sludio_helper_translation
                         (content, object_class, locale, field, foreign_key)
                 VALUES
-                    ('{$content}','{$class}', '{$locale}','{$field}',{$id})
+                    (:content,'{$class}', '{$locale}','{$field}',{$id})
             ";
         }
         $connection = self::$connection;
         $sth = $connection->prepare($sql);
+        $sth->bindValue('content', $content);
         $sth->execute();
 
         $redis = self::$redis;
