@@ -30,15 +30,19 @@ class BaseEntity
             return $this->getVariableByLocale($property, $this->localeArr[$locale]);
         }
 
-        return $this->getVariableByLocale($property);
+        return $this->{$property};
     }
 
     public function __set($property, $value)
     {
         $locale = strtolower(substr($property, -2));
-        $property = substr($property, 0, -2);
-
-        Sludio::updateTranslations(__CLASS__, $this->localeArr[$locale], $property, $value, $this->getId());
+        if (in_array($locale, array_keys($this->localeArr))) {
+            $property = substr($property, 0, -2);
+            Sludio::updateTranslations(__CLASS__, $this->localeArr[$locale], $property, $value, $this->getId());
+        }
+        $this->{$property} = $value;
+        
+        return $this;
     }
 
     protected function getTranslations()
