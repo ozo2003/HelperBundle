@@ -38,7 +38,7 @@ class BaseEntity
         $locale = strtolower(substr($property, -2));
         if (in_array($locale, array_keys($this->localeArr))) {
             $property = substr($property, 0, -2);
-            Sludio::updateTranslations(__CLASS__, $this->localeArr[$locale], $property, $value, $this->getId());
+            Sludio::updateTranslations(get_called_class(), $this->localeArr[$locale], $property, $value, $this->getId());
         }
         $this->{$property} = $value;
         
