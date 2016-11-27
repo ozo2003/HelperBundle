@@ -8,7 +8,7 @@ class TreeController extends Controller
 {
     public function downAction($category_id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ContentBundle:Category');
         $category = $repo->findOneById($category_id);
         if ($category->getParent()) {
@@ -20,7 +20,7 @@ class TreeController extends Controller
 
     public function upAction($category_id)
     {
-        $em = $this->getDoctrine()->getEntityManager();
+        $em = $this->getDoctrine()->getManager();
         $repo = $em->getRepository('ContentBundle:Category');
         $category = $repo->findOneById($category_id);
         if ($category->getParent()) {

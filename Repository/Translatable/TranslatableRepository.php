@@ -20,7 +20,7 @@ class TranslatableRepository
         }
 
         self::$redis = $kernel->getContainer()->get('snc_redis.translations');
-        self::$em = $kernel->getContainer()->get('doctrine')->getEntityManager();
+        self::$em = $kernel->getContainer()->get('doctrine')->getManager();
         self::$connection = self::$em->getConnection();
     }
 
