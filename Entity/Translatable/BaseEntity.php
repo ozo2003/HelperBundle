@@ -10,7 +10,7 @@ class BaseEntity
 
     public function __construct()
     {
-        if ($this->getId()) {
+        if (method_exists($this, 'getId') && $this->getId()) {
             $this->translates = $this->getTranslations();
         }
         $this->getClassName();
@@ -24,6 +24,11 @@ class BaseEntity
         }
 
         return $this->className;
+    }
+    
+    public function getLocaleVar($locale)
+    {
+        return $this->localeArr[$locale];
     }
 
     public $translates;
