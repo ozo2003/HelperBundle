@@ -87,11 +87,16 @@ class TranslatableRepository
         return null;
     }
 
-    public static function updateTranslations($class, $locale, $field, $content, $id)
+    public static function updateTranslations($class, $locale, $field, $content, $id = 0)
     {
         $className = explode('\\', $class);
         $className = end($className);
         self::init();
+        
+        if(!$id){
+            $id = self::findNextId($class);
+        }
+        
         $res = (int) self::findByLocale($class, $locale, $content, $field, null, $id);
         $class = str_replace('\\', '\\\\', $class);
         $content = trim($content) != '' ? $content : null;
@@ -127,5 +132,24 @@ class TranslatableRepository
         $redis = self::$redis;
         $redis->del(strtolower($className).':translations:'.$id);
         $redis->del(strtolower($className).':translations:'.$id.':ckecked');
+    }
+    
+    public static function findNextId($class){
+        $table = self::$em->getClassMetaData($class)->getTableName();
+        $sql = "
+            SELECT
+                MAX(id) + 1 as next
+            FROM
+                {$table}
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+        
+        if(isset($result['next'])){
+            return (int)$result['next'];
+        }
+        
+        return 1;
     }
 }

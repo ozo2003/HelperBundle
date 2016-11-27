@@ -6,11 +6,24 @@ use Sludio\HelperBundle\Repository\Translatable\TranslatableRepository as Sludio
 
 class BaseEntity
 {
+    public $className;
+
     public function __construct()
     {
         if ($this->getId()) {
             $this->translates = $this->getTranslations();
         }
+        $this->getClassName();
+    }
+
+    public function getClassName()
+    {
+        if (!$this->className) {
+            $className = explode('\\', get_called_class());
+            $this->className = strtolower(end($className));
+        }
+
+        return $this->className;
     }
 
     public $translates;
@@ -23,10 +36,14 @@ class BaseEntity
 
     public function __get($property)
     {
-        $locale = strtolower(substr($property, -2));
-        if (in_array($locale, array_keys($this->localeArr))) {
+        if (!method_exists($this, 'get'.ucfirst($property))) {
+            $locale = 'en';
+        } else {
+            $locale = strtolower(substr($property, -2));
             $property = substr($property, 0, -2);
+        }
 
+        if (in_array($locale, array_keys($this->localeArr))) {
             return $this->getVariableByLocale($property, $this->localeArr[$locale]);
         }
 
@@ -41,16 +58,16 @@ class BaseEntity
             Sludio::updateTranslations(get_called_class(), $this->localeArr[$locale], $property, $value, $this->getId());
         }
         $this->{$property} = $value;
-        
+
         return $this;
     }
 
     protected function getTranslations()
     {
-        return Sludio::getTranslations(__CLASS__, $this->getId());
+        return Sludio::getTranslations(get_called_class(), $this->getId());
     }
 
-    public function getVariableByLocale($variable, $locale = 'lv')
+    public function getVariableByLocale($variable, $locale = 'en')
     {
         if (!$this->translates && $this->getId()) {
             $this->translates = $this->getTranslations();

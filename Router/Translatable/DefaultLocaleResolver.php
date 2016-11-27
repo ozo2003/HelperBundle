@@ -64,23 +64,16 @@ class DefaultLocaleResolver implements LocaleResolverInterface
             }
         }
         
-        $localeArr = array(
-            'lv_LV' => 'lv',
-            'en_US' => 'en',
-            'ru_RU' => 'ru'
-        );
-        
         $languages = array();
         foreach($request->getLanguages() as $language){
             if(strlen($language) != 2){
-                $languages[] = $localeArr[$language];
+                $newLang = explode('_', $language, 2);
+                $languages[] = reset($newLang);
             } else {
                 $languages[] = $language;
             }
         }
         $languages = array_unique($languages);
-
-        // use accept header for locale matching if sent
         if (!empty($languages)) {
             foreach ($languages as $lang) {
                 if (in_array($lang, $availableLocales, true)) {

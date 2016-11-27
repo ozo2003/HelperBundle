@@ -33,6 +33,16 @@ class Configuration implements ConfigurationInterface
                     ->prototype('scalar')->end()
                 ->end()
                 ->scalarNode('template')->defaultValue('SludioHelperBundle:Translatable/Form:translations.html.twig')->end()
+                ->arrayNode('position_field')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->scalarNode('default')
+                        ->defaultValue('position')
+                    ->end()
+                    ->arrayNode('entities')
+                        ->prototype('scalar')->end()
+                    ->end()
+                ->end()
             ->end()
         ;
 

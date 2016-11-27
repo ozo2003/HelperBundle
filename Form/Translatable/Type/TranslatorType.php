@@ -59,13 +59,10 @@ class TranslatorType extends AbstractType
             $form->add('currentFieldName', 'hidden', array('data' => $fieldName));
         });
 
-        if (!$new) {
-            // submit
-            $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
-                $form = $event->getForm();
-                $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales, $userLocale);
-            });
-        }
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
+            $form = $event->getForm();
+            $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales, $userLocale);
+        });
     }
 
     public function buildView(FormView $view, FormInterface $form, array $options)
