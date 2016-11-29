@@ -7,6 +7,12 @@ use Sludio\HelperBundle\Repository\Translatable\TranslatableRepository as Sludio
 class BaseEntity
 {
     public $className;
+    public $translates;
+    public $localeArr = array(
+        'lv' => 'lv_LV',
+        'en' => 'en_US',
+        'ru' => 'ru_RU',
+    );
 
     public function __construct()
     {
@@ -30,14 +36,6 @@ class BaseEntity
     {
         return $this->localeArr[$locale];
     }
-
-    public $translates;
-
-    public $localeArr = array(
-        'lv' => 'lv_LV',
-        'en' => 'en_US',
-        'ru' => 'ru_RU',
-    );
 
     public function __get($property)
     {
