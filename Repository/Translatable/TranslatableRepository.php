@@ -92,11 +92,11 @@ class TranslatableRepository
         $className = explode('\\', $class);
         $className = end($className);
         self::init();
-
-        if (!$id) {
+        
+        if(!$id){
             $id = self::findNextId($class);
         }
-
+        
         $res = (int) self::findByLocale($class, $locale, $content, $field, null, $id);
         $class = str_replace('\\', '\\\\', $class);
         $content = trim($content) != '' ? $content : null;
@@ -133,38 +133,23 @@ class TranslatableRepository
         $redis->del(strtolower($className).':translations:'.$id);
         $redis->del(strtolower($className).':translations:'.$id.':ckecked');
     }
-
-    public static function findNextId($class)
-    {
-        self::init();
+    
+    public static function findNextId($class){
         $table = self::$em->getClassMetaData($class)->getTableName();
         $sql = "
-            SHOW 
-                TABLE STATUS 
-            LIKE 
-                '{$table}'
+            SELECT
+                MAX(id) + 1 as next
+            FROM
+                {$table}
         ";
         $sth = self::$connection->prepare($sql);
         $sth->execute();
         $result = $sth->fetch();
-
-        if (isset($result['Auto_increment'])) {
-            return (int) $result['Auto_increment'];
+        
+        if(isset($result['next'])){
+            return (int)$result['next'];
         }
-
+        
         return 1;
-    }
-
-    public static function removeTranslations($object, $em)
-    {
-        self::init();
-        $class = get_class($object);
-        $id = $object->getId();
-        $connection = self::$connection;
-
-        $sth = $connection->prepare('DELETE FROM `sludio_helper_translation` WHERE object_class = :class AND foreign_key = :key');
-        $sth->bindValue('class', $class);
-        $sth->bindValue('key', $id);
-        $sth->execute();
     }
 }

@@ -66,6 +66,17 @@ services:
             - 
                 name: twig.extension
                 
+    sludio.browser.twig.browser_extension:
+        class: Sludio\HelperBundle\Twig\Browser\BrowserExtension
+        public: false
+        arguments:
+            - "@mobile_detect.mobile_detector"
+            - "@mobile_detect.device_view"
+            - "%mobile_detect.redirect%"
+        tags:
+            - 
+                name: twig.extension
+                
     gedmo.listener.sortable:
         class: Gedmo\Sortable\SortableListener
         tags:
