@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Twig\Browser;
 
 use SunCat\MobileDetectBundle\DeviceDetector\MobileDetector;
 use SunCat\MobileDetectBundle\Helper\DeviceView;
+use Symfony\Component\HttpFoundation\Request;
 
 class BrowserExtension extends \Twig_Extension
 {   
@@ -30,8 +31,12 @@ class BrowserExtension extends \Twig_Extension
         return 'sludio.browser.twig.browser_extension';
     }
     
-    public function isIE()
-    {
-        return $this->mobileDetector->isIE();
+    public function isIE(){
+        $request = Request::createFromGlobals();
+        $ua = $request->server->get('HTTP_USER_AGENT');
+        if(strpos($ua, 'MSIE') || strpos($ua, 'Edge')){
+            return 1;
+        }
+        return 0;
     }
 }
