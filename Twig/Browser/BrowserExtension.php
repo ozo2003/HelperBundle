@@ -34,7 +34,7 @@ class BrowserExtension extends \Twig_Extension
     public function isIE(){
         $request = Request::createFromGlobals();
         $ua = $request->server->get('HTTP_USER_AGENT');
-        if(strpos($ua, 'MSIE') || strpos($ua, 'Edge')){
+        if(strpos($ua, 'MSIE') || strpos($ua, 'Edge') || strpos($ua, 'Trident/7')){
             return 1;
         }
         return 0;
