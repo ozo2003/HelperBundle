@@ -1,0 +1,10 @@
+services:
+    sludio.missing.twig.missing_extension:
+        class: Sludio\HelperBundle\Missing\Twig\MissingExtension
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+        tags:
+            - 
+                name: twig.extension

@@ -1,0 +1,10 @@
+services:
+    sludio.beautify.twig.beautify_extension:
+        class: Sludio\HelperBundle\Beautify\Twig\BeautifyExtension
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+        tags:
+            - 
+                name: twig.extension

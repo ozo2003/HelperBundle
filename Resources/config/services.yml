@@ -1,90 +1,24 @@
 parameters:
-    lexik_translation.translator.class: Sludio\HelperBundle\Component\Translatable\Translation\Translator
-    jms_i18n_routing.locale_resolver.class: Sludio\HelperBundle\Router\Translatable\DefaultLocaleResolver
+    lexik_translation.translator.class: Sludio\HelperBundle\Translatable\Component\Translation\Translator
+    jms_i18n_routing.locale_resolver.class: Sludio\HelperBundle\Translatable\Router\DefaultLocaleResolver
+
+imports:
+    -
+        resource: '../../Translatable/Resources/config/services.yml'
+    -
+        resource: '../../Missing/Resources/config/services.yml'
+    -
+        resource: '../../Beautify/Resources/config/services.yml'
+    -
+        resource: '../../Position/Resources/config/services.yml'
+    -
+        resource: '../../Browser/Resources/config/services.yml'
 
 services:
-    sludio.helper.form.type.translator:
-        class:     Sludio\HelperBundle\Form\Translatable\Type\TranslatorType
-        arguments:  
-            - '%sludio_helper.locales%'
-            - '@sludio.helper.manager'
-            - '@translator'
-        tags:
-            -  
-                name: form.type
-                alias: translations
-
-    sludio.helper.manager:
-        class: Sludio\HelperBundle\Helpers\Translatable\Manager
-        arguments: 
-            - "@doctrine"
-
-    sludio.helper.twig.translate_extension:
-        class: Sludio\HelperBundle\Twig\Translatable\TranslationExtension
-        public: false
-        arguments:
-            - '@doctrine.orm.default_entity_manager'
-            - '@request_stack'
-            - '%locale%'
-        tags:
-            - 
-                name: twig.extension
-                
-    sludio.missing.twig.missing_extension:
-        class: Sludio\HelperBundle\Twig\Missing\MissingExtension
-        public: false
-        arguments:
-            - '@request_stack'
-            - '@doctrine.orm.default_entity_manager'
-        tags:
-            - 
-                name: twig.extension
-
-    sludio.beautify.twig.beautify_extension:
-        class: Sludio\HelperBundle\Twig\Beautify\BeautifyExtension
-        public: false
-        arguments:
-            - '@request_stack'
-            - '@doctrine.orm.default_entity_manager'
-        tags:
-            - 
-                name: twig.extension
-                
-    sludio_helper.position.orm:
-        class: Sludio\HelperBundle\Services\Position\PositionHandler
-        public: false
-        arguments:
-            entityManager: "@doctrine.orm.entity_manager"
-        calls:
-            -
-                - setPositionField
-                -
-                    - "%sludio_helper.position.position.field%"
-    
-    sludio_helper.twig.extension:
-        class: Sludio\HelperBundle\Twig\Position\ObjectPositionExtension
-        arguments:
-            - "@sludio_helper.position"
-        public: false
-        tags:
-            - 
-                name: twig.extension
-                
-    sludio.browser.twig.browser_extension:
-        class: Sludio\HelperBundle\Twig\Browser\BrowserExtension
-        public: false
-        arguments:
-            - "@mobile_detect.mobile_detector"
-            - "@mobile_detect.device_view"
-            - "%mobile_detect.redirect%"
-        tags:
-            - 
-                name: twig.extension
-                
     gedmo.listener.sortable:
         class: Gedmo\Sortable\SortableListener
         tags:
-            - 
+            -
                 name: doctrine.event_subscriber
                 connection: default
         calls:

@@ -1,7 +1,7 @@
-Sludio\HelperBundle\Entity\Translatable\Translation:
+Sludio\HelperBundle\Translatable\Entity\Translation:
     type: entity
     table: sludio_helper_translation
-    repositoryClass: Sludio\HelperBundle\Repository\Translatable\TranslationRepository
+    repositoryClass: Sludio\HelperBundle\Translatable\Repository\TranslationRepository
     indexes:
         translations_lookup_idx:
             columns:
