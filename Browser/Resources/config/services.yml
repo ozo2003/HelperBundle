@@ -1,0 +1,7 @@
+services:
+    sludio.browser.twig.browser_extension:
+        class: Sludio\HelperBundle\Browser\Twig\BrowserExtension
+        public: false
+        tags:
+            - 
+                name: twig.extension

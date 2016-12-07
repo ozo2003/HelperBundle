@@ -14,8 +14,7 @@
         "symfony/symfony": "^2.8 | ^3.2",
         "snc/redis-bundle": "dev-master",
         "predis/predis": "^1.1",
-        "gedmo/doctrine-extensions": "^2",
-        "suncat/mobile-detect-bundle": "^1.0"
+        "gedmo/doctrine-extensions": "^2"
     },
     "autoload" : {
         "psr-0" : {
