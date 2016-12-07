@@ -19,7 +19,7 @@ class TranslatableRepository
             $kernel = $kernel->getKernel();
         }
 
-        self::$redis = $kernel->getContainer()->get('snc_redis.translations');
+        self::$redis = $kernel->getContainer()->hasDefinition('snc_redis.translations') ? $kernel->getContainer()->get('snc_redis.translations') : null;
         self::$em = $kernel->getContainer()->get('doctrine')->getManager();
         self::$connection = self::$em->getConnection();
     }
@@ -31,8 +31,8 @@ class TranslatableRepository
         $className = end($className);
         $redis = self::$redis;
 
-        $result = unserialize($redis->get(strtolower($className).':translations:'.$id));
-        $checked = unserialize($redis->get(strtolower($className).':translations:'.$id.':checked'));
+        $result = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id)) : nul;
+        $checked = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id.':checked')) : null;
 
         if (!$result && !$checked) {
             $connection = self::$connection;
@@ -48,7 +48,7 @@ class TranslatableRepository
                 $result[$row['locale']][$row['field']] = $row['content'];
             }
 
-            if ($result) {
+            if ($result && $redis) {
                 $redis->set(strtolower($className).':translations:'.$id, serialize($result));
                 $redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
             }
@@ -130,8 +130,10 @@ class TranslatableRepository
         $sth->execute();
 
         $redis = self::$redis;
-        $redis->del(strtolower($className).':translations:'.$id);
-        $redis->del(strtolower($className).':translations:'.$id.':ckecked');
+        if ($redis) {
+            $redis->del(strtolower($className).':translations:'.$id);
+            $redis->del(strtolower($className).':translations:'.$id.':ckecked');
+        }
     }
 
     public static function findNextId($class)
