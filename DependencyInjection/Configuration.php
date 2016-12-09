@@ -54,7 +54,7 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('translatable')->defaultValue(false)->end()
                     ->end()
                 ->end()
-                ->arrayNode('redis')
+                ->scalarNode('redis')
                     ->addDefaultsIfNotSet()
                     ->defaultValue(null)
                 ->end()
