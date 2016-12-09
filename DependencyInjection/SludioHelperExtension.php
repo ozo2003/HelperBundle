@@ -57,5 +57,9 @@ class SludioHelperExtension extends Extension
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Translatable/Resources/config'));
             $loader->load('services.yml');
         }
+        
+        if(!empty($config['redis'])){
+            
+        }
     }
 }
