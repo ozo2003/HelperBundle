@@ -18,9 +18,10 @@ class TranslatableRepository
         if ('AppCache' == get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
+        $container = $kernel->getContainer();
 
-        self::$redis = $kernel->getContainer()->get('snc_redis.translations', null);
-        self::$em = $kernel->getContainer()->get('doctrine')->getManager();
+        self::$redis = $container->get($container->getParameter('sludio_helper.translation_redis'));
+        self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
         self::$connection = self::$em->getConnection();
     }
 
@@ -164,9 +165,35 @@ class TranslatableRepository
         $id = $object->getId();
         $connection = self::$connection;
 
-        $sth = $connection->prepare('DELETE FROM `sludio_helper_translation` WHERE object_class = :class AND foreign_key = :key');
+        $sth = $connection->prepare('DELETE FROM sludio_helper_translation WHERE object_class = :class AND foreign_key = :key');
         $sth->bindValue('class', $class);
         $sth->bindValue('key', $id);
         $sth->execute();
+    }
+    
+    public static function getAllTranslations()
+    {
+        self::init();
+        $redis = self::$redis;
+
+        $connection = self::$connection;
+        $sql = 'SELECT * FROM sludio_helper_translation';
+        $sth = $connection->prepare($sql);
+        $sth->execute();
+        $result = array();
+        while ($row = $sth->fetch()) {
+            $result[$row['object_class']][$row['foreign_key']][$row['locale']][$row['field']] = $row['content'];
+        }
+
+        foreach ($result as $class => $objects) {
+            $className = explode('\\', $class);
+            $className = end($className);
+            foreach ($objects as $id => $transl) {
+                $redis->set(strtolower($className).':translations:'.$id, serialize($transl));
+                $redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
+            }
+        }
+
+        return $result;
     }
 }

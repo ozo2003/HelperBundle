@@ -3,23 +3,23 @@
 namespace Sludio\HelperBundle\SludioHelperBundle\Scripts\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 
 class ScriptController extends Controller
 {
-    public function redisAction()
+    public function redisAction(Request $request)
     {
         $data['success'] = 1;
-        $this->get('snc_redis.cache')->flushdb();
-        $this->get('snc_redis.translations')->flushdb();
-        $this->get('snc_redis.session')->flushdb();
-        $this->get('snc_redis.meta')->flushdb();
+        foreach ($this->container->getParameter('sludio_helper.redis') as $redis) {
+            $this->get('snc_redis.'.$redis)->flushdb();
+        }
 
         return new JsonResponse($data, 200, array(
             'Cache-Control' => 'no-cache',
         ));
     }
 
-    public function cacheAction()
+    public function cacheAction(Request $request)
     {
         global $kernel;
 

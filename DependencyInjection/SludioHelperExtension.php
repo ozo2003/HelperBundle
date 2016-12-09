@@ -25,6 +25,7 @@ class SludioHelperExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+        $loader->load('parameters.yml');
         
         $container->setParameter('sludio_helper.locales', $config['locales']);
         $container->setParameter('sludio_helper.template', $config['template']);
@@ -53,13 +54,25 @@ class SludioHelperExtension extends Extension
             $container->setAlias('sludio_helper.position', new Alias($positionHandler));
         }
         
+        if($config['extensions']['sortable']){
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Sortable/Resources/config'));
+            $loader->load('services.yml');
+        }
+        
+        if($config['extensions']['steam']){
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Steam/Resources/config'));
+            $loader->load('parameters.yml');
+            $container->setParameter('sludio_helper.steam.api_key', $config['steam_api_key']);
+        }
+        
         if($config['extensions']['translatable']){
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Translatable/Resources/config'));
             $loader->load('services.yml');
         }
         
-        if(!empty($config['redis'])){
-            
-        }
+        $container->setParameter('sludio_helper.redis', $config['redis']);
+        $container->setParameter('sludio_helper.translation_redis', 'snc_redis.'.$config['translation_redis']);
+        
+        $container->setParameter('sludio_helper.entity_manager', $config['em']);
     }
 }

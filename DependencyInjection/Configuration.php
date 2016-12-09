@@ -5,11 +5,6 @@ namespace Sludio\HelperBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-/**
- * This is the class that validates and merges configuration from your app/config files.
- *
- * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/configuration.html}
- */
 class Configuration implements ConfigurationInterface
 {
     /**
@@ -51,6 +46,8 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('browser')->defaultValue(false)->end()
                         ->booleanNode('missing')->defaultValue(false)->end()
                         ->booleanNode('position')->defaultValue(false)->end()
+                        ->booleanNode('sortable')->defaultValue(false)->end()
+                        ->booleanNode('steam')->defaultValue(false)->end()
                         ->booleanNode('translatable')->defaultValue(false)->end()
                     ->end()
                 ->end()
@@ -63,6 +60,9 @@ class Configuration implements ConfigurationInterface
                     ->end()
                     ->prototype('scalar')->end()
                 ->end()
+                ->scalarNode('translation_redis')->defaultValue('session')->end()
+                ->scalarNode('em')->defaultValue('default')->end()
+                ->scalarNode('steam_api_key')->defaultValue(null)->end()
             ->end()
         ;
 
