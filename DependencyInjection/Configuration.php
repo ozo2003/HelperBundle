@@ -54,8 +54,14 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('translatable')->defaultValue(false)->end()
                     ->end()
                 ->end()
-                ->scalarNode('redis')
-                    ->defaultValue(null)
+                ->arrayNode('redis')
+                    ->beforeNormalization()
+                        ->ifString()
+                            ->then(function ($v) {
+                                return preg_split('/\s*,\s*/', $v);
+                            })
+                    ->end()
+                    ->prototype('scalar')->end()
                 ->end()
             ->end()
         ;
