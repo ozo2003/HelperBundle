@@ -55,7 +55,6 @@ class Configuration implements ConfigurationInterface
                     ->end()
                 ->end()
                 ->scalarNode('redis')
-                    ->addDefaultsIfNotSet()
                     ->defaultValue(null)
                 ->end()
             ->end()
