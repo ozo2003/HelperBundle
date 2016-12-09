@@ -23,25 +23,20 @@ class ScriptController extends Controller
     {
         global $kernel;
 
-        $envs = array(
-            'dev',
-            'prod',
-        );
-
         if ('AppCache' == get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
 
-        foreach ($envs as $env) {
+        foreach (array('clear', 'warmup') as $com) {
             $application = new Application($kernel);
             $application->setAutoExit(false);
             $input = new ArrayInput(array(
-               'command' => 'cache:clear',
-               '--env' => $env,
+               'command' => 'cache:'.$com,
+               '--env' => $kernel->getEnvironment(),
             ));
             $application->run($input);
+            $data['success'] = 1;
         }
-        $data['success'] = 1;
 
         return new JsonResponse($data, 200, array(
             'Cache-Control' => 'no-cache',

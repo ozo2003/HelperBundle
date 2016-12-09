@@ -47,13 +47,17 @@ class Configuration implements ConfigurationInterface
                 ->arrayNode('extensions')
                     ->addDefaultsIfNotSet()
                     ->children()
-                        ->booleanNode('translatable')->defaultValue(false)->end()
-                        ->booleanNode('missing')->defaultValue(false)->end()
                         ->booleanNode('beautify')->defaultValue(false)->end()
-                        ->booleanNode('position')->defaultValue(false)->end()
                         ->booleanNode('browser')->defaultValue(false)->end()
+                        ->booleanNode('missing')->defaultValue(false)->end()
+                        ->booleanNode('position')->defaultValue(false)->end()
+                        ->booleanNode('translatable')->defaultValue(false)->end()
                     ->end()
                 ->end()
+                ->arrayNode('redis')
+                    ->addDefaultsIfNotSet()
+                    ->prototype('scalar')
+                    
             ->end()
         ;
 
