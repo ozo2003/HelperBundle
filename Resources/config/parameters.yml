@@ -1,0 +1,3 @@
+parameters:
+    lexik_translation.translator.class: Sludio\HelperBundle\Translatable\Component\Translation\Translator
+    jms_i18n_routing.locale_resolver.class: Sludio\HelperBundle\Translatable\Router\DefaultLocaleResolver

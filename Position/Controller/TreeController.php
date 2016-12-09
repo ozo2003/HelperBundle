@@ -6,25 +6,25 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class TreeController extends Controller
 {
-    public function downAction($category_id)
+    public function downAction($class, $id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ContentBundle:Category');
-        $category = $repo->findOneById($category_id);
-        if ($category->getParent()) {
-            $repo->moveDown($category);
+        $em = $this->getDoctrine()->getManager($this->container->getParameter('sludio_helper.entity_manager'));
+        $repo = $em->getRepository($class);
+        $object = $repo->findOneById($id);
+        if ($object->getParent()) {
+            $repo->moveDown($object);
         }
 
         return $this->redirect($this->getRequest()->headers->get('referer'));
     }
 
-    public function upAction($category_id)
+    public function upAction($class, $id)
     {
-        $em = $this->getDoctrine()->getManager();
-        $repo = $em->getRepository('ContentBundle:Category');
-        $category = $repo->findOneById($category_id);
-        if ($category->getParent()) {
-            $repo->moveUp($category);
+        $em = $this->getDoctrine()->getManager($this->container->getParameter('sludio_helper.entity_manager'));
+        $repo = $em->getRepository($class);
+        $object = $repo->findOneById($id);
+        if ($object->getParent()) {
+            $repo->moveUp($object);
         }
 
         return $this->redirect($this->getRequest()->headers->get('referer'));
