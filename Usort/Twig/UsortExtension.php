@@ -15,18 +15,28 @@ class UsortExtension extends \Twig_Extension
     public function cmpOrderBy($a, $b)
     {
         switch($this->order){
-            case 'asc': return $a->{'get'.ucfirst($this->param)}() < $b->{'get'.ucfirst($this->param)}(); break;
-            case 'desc': return $a->{'get'.ucfirst($this->param)}() > $b->{'get'.ucfirst($this->param)}(); break;
+            case 'asc': return $a->{'get'.ucfirst($this->param)}() > $b->{'get'.ucfirst($this->param)}(); break;
+            case 'desc': return $a->{'get'.ucfirst($this->param)}() < $b->{'get'.ucfirst($this->param)}(); break;
         }
     }
     
-    public function usortFunction($object, $parameter, $order = 'asc')
+    public function getFilters()
+    {
+        return array(
+            new \Twig_SimpleFilter('usort', array($this, 'usortFunction')),
+        );
+    }
+    
+    public function usortFunction($objects, $parameter, $order = 'asc')
     {
         $this->param = $parameter;
         $this->order = strtolower($order);
         
-        usort($object, array(__CLASS__, 'cmpOrderBy'));
+        if(is_object($objects)){
+            $array = $objects->toArray();
+        }
+        usort($array, array(__CLASS__, 'cmpOrderBy'));
 
-        return $object;
+        return $array;
     }
 }
