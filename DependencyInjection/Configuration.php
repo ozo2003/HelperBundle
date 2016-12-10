@@ -50,6 +50,7 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('sortable')->defaultValue(false)->end()
                         ->booleanNode('steam')->defaultValue(false)->end()
                         ->booleanNode('translatable')->defaultValue(false)->end()
+                        ->booleanNode('usort')->defaultValue(false)->end()
                     ->end()
                 ->end()
                 ->arrayNode('redis')

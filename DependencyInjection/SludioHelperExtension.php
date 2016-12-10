@@ -75,6 +75,11 @@ class SludioHelperExtension extends Extension
             $loader->load('services.yml');
         }
         
+        if($config['extensions']['usort']){
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Usort/Resources/config'));
+            $loader->load('services.yml');
+        }
+        
         $container->setParameter('sludio_helper.redis', $config['redis']);
         $container->setParameter('sludio_helper.translation_redis', 'snc_redis.'.$config['translation_redis']);
         
