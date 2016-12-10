@@ -40,6 +40,11 @@ class SludioHelperExtension extends Extension
             $loader->load('services.yml');
         }
         
+        if($config['extensions']['gulp']){
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Gulp/Resources/config'));
+            $loader->load('services.yml');
+        }
+        
         if($config['extensions']['missing']){
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Missing/Resources/config'));
             $loader->load('services.yml');

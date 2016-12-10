@@ -1,0 +1,10 @@
+services:
+    sludio.gulp.twig.gulp_extension:
+        class: Sludio\HelperBundle\Gulp\Twig\GulpExtension
+        public: false
+        arguments:
+            - "%kernel.root_dir%"
+            - "@kernel"
+        tags:
+            - 
+                name: twig.extension
