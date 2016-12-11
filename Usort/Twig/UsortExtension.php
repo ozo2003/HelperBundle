@@ -31,12 +31,12 @@ class UsortExtension extends \Twig_Extension
     {
         $this->param = $parameter;
         $this->order = strtolower($order);
-        
-        if(is_object($objects)){
-            $array = $objects->toArray();
-        }
-        usort($array, array(__CLASS__, 'cmpOrderBy'));
 
-        return $array;
+        if(is_object($objects)){
+            $objects = $objects->toArray();
+        }
+        usort($objects, array(__CLASS__, 'cmpOrderBy'));
+
+        return $objects;
     }
 }
