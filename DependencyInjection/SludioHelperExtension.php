@@ -27,9 +27,6 @@ class SludioHelperExtension extends Extension
         $loader->load('services.yml');
         $loader->load('parameters.yml');
         
-        $container->setParameter('sludio_helper.locales', $config['locales']);
-        $container->setParameter('sludio_helper.template', $config['template']);
-        
         if($config['extensions']['beautify']){
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Beautify/Resources/config'));
             $loader->load('services.yml');
@@ -72,7 +69,11 @@ class SludioHelperExtension extends Extension
         
         if($config['extensions']['translatable']){
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Translatable/Resources/config'));
+            $loader->load('parameters.yml');
             $loader->load('services.yml');
+            
+            $container->setParameter('sludio_helper.locales', $config['locales']);
+            $container->setParameter('sludio_helper.template', $config['template']);
         }
         
         if($config['extensions']['usort']){

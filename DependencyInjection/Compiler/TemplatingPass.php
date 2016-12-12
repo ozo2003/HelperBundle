@@ -12,12 +12,14 @@ class TemplatingPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (false !== ($template = $container->getParameter('sludio_helper.template'))) {
-            $resources = $container->getParameter('twig.form.resources');
+        if ($container->hasParameter('sludio_helper.template')) {
+            if (false !== ($template = $container->getParameter('sludio_helper.template'))) {
+                $resources = $container->getParameter('twig.form.resources');
 
-            if (!in_array($template, $resources)) {
-                $resources[] = $template;
-                $container->setParameter('twig.form.resources', $resources);
+                if (!in_array($template, $resources)) {
+                    $resources[] = $template;
+                    $container->setParameter('twig.form.resources', $resources);
+                }
             }
         }
     }

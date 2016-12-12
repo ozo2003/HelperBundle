@@ -24,7 +24,6 @@ class Configuration implements ConfigurationInterface
                                 return preg_split('/\s*,\s*/', $v);
                             })
                     ->end()
-                    ->requiresAtLeastOneElement()
                     ->prototype('scalar')->end()
                 ->end()
                 ->scalarNode('template')->defaultValue('SludioHelperBundle:Translatable:translations.html.twig')->end()
