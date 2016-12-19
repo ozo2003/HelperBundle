@@ -13,17 +13,8 @@ class TranslatableRepository extends UsortRepository
 
     public static function init()
     {
-        // global $kernel;
-        // 
-        // if ('AppCache' == get_class($kernel)) {
-        //     $kernel = $kernel->getKernel();
-        // }
-        // $container = $kernel->getContainer();
-        // 
         parent::init();
         self::$redis = parent::$container->get(parent::$container->getParameter('sludio_helper.translation_redis'));
-        // self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
-        // self::$connection = self::$em->getConnection();
     }
 
     public static function getTranslations($class, $id)
