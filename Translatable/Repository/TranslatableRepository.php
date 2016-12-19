@@ -14,7 +14,7 @@ class TranslatableRepository extends UsortRepository
     public static function init()
     {
         parent::init();
-        self::$redis = parent::$container->get(parent::$container->getParameter('sludio_helper.translation_redis'));
+        self::$redis = self::$container->get(self::$container->getParameter('sludio_helper.translation_redis'));
     }
 
     public static function getTranslations($class, $id)
