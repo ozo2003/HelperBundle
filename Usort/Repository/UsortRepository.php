@@ -7,7 +7,7 @@ class UsortRepository
     public static $em;
     public static $connection;
     
-    private static function init()
+    public static function init()
     {
         global $kernel;
 
