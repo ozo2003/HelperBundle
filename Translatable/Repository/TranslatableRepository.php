@@ -20,10 +20,10 @@ class TranslatableRepository extends UsortRepository
         // }
         // $container = $kernel->getContainer();
         // 
-        // self::$redis = $container->get($container->getParameter('sludio_helper.translation_redis'));
         parent::init();
-        self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
-        self::$connection = self::$em->getConnection();
+        self::$redis = self::$container->get($container->getParameter('sludio_helper.translation_redis'));
+        // self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
+        // self::$connection = self::$em->getConnection();
     }
 
     public static function getTranslations($class, $id)

@@ -6,6 +6,7 @@ class UsortRepository
 {
     public static $em;
     public static $connection;
+    public static $container;
     
     public static function init()
     {
@@ -14,9 +15,9 @@ class UsortRepository
         if ('AppCache' == get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
-        $container = $kernel->getContainer();
+        self::$container = $kernel->getContainer();
 
-        self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
+        self::$em = self::$container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
         self::$connection = self::$em->getConnection();
     }
     
