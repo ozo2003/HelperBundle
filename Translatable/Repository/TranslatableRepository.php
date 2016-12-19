@@ -2,25 +2,26 @@
 
 namespace Sludio\HelperBundle\Translatable\Repository;
 
+use Sludio\HelperBundle\Usort\Repository\UsortRepository;
+
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', 0);
 
-class TranslatableRepository
+class TranslatableRepository extends UsortRepository
 {
-    private static $redis;
-    private static $em;
-    private static $connection;
+    public static $redis;
 
     private static function init()
     {
-        global $kernel;
-
-        if ('AppCache' == get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-        $container = $kernel->getContainer();
-
-        self::$redis = $container->get($container->getParameter('sludio_helper.translation_redis'));
+        // global $kernel;
+        // 
+        // if ('AppCache' == get_class($kernel)) {
+        //     $kernel = $kernel->getKernel();
+        // }
+        // $container = $kernel->getContainer();
+        // 
+        // self::$redis = $container->get($container->getParameter('sludio_helper.translation_redis'));
+        parent::init();
         self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
         self::$connection = self::$em->getConnection();
     }
@@ -137,26 +138,26 @@ class TranslatableRepository
         }
     }
 
-    public static function findNextId($class)
-    {
-        self::init();
-        $table = self::$em->getClassMetaData($class)->getTableName();
-        $sql = "
-            SHOW 
-                TABLE STATUS 
-            LIKE 
-                '{$table}'
-        ";
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
-
-        if (isset($result['Auto_increment'])) {
-            return (int) $result['Auto_increment'];
-        }
-
-        return 1;
-    }
+    // public static function findNextId($class)
+    // {
+    //     self::init();
+    //     $table = self::$em->getClassMetaData($class)->getTableName();
+    //     $sql = "
+    //         SHOW 
+    //             TABLE STATUS 
+    //         LIKE 
+    //             '{$table}'
+    //     ";
+    //     $sth = self::$connection->prepare($sql);
+    //     $sth->execute();
+    //     $result = $sth->fetch();
+    // 
+    //     if (isset($result['Auto_increment'])) {
+    //         return (int) $result['Auto_increment'];
+    //     }
+    // 
+    //     return 1;
+    // }
 
     public static function removeTranslations($object, $em)
     {
