@@ -11,7 +11,7 @@ class TranslatableRepository extends UsortRepository
 {
     public static $redis;
 
-    private static function init()
+    public static function init()
     {
         // global $kernel;
         // 
