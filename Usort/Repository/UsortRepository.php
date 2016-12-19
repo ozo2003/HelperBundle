@@ -17,7 +17,7 @@ class UsortRepository
         }
         self::$container = $kernel->getContainer();
 
-        self::$em = self::$container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
+        self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity_manager'));
         self::$connection = self::$em->getConnection();
     }
     

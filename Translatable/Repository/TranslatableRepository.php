@@ -21,7 +21,7 @@ class TranslatableRepository extends UsortRepository
         // $container = $kernel->getContainer();
         // 
         parent::init();
-        self::$redis = parent::$container->get($container->getParameter('sludio_helper.translation_redis'));
+        self::$redis = parent::$container->get(parent::$container->getParameter('sludio_helper.translation_redis'));
         // self::$em = $container->get('doctrine')->getManager($container->getParameter('sludio_helper.entity_manager'));
         // self::$connection = self::$em->getConnection();
     }
