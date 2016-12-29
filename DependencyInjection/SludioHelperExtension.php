@@ -26,69 +26,39 @@ class SludioHelperExtension extends Extension
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
         $loader->load('parameters.yml');
-        
-        if($config['extensions']['beautify']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Beautify/Resources/config'));
-            $loader->load('services.yml');
+
+        foreach ($config['extensions'] as $key => $extension) {
+            if ($extension) {
+                $files = array(
+                    'services.yml', 'parameters.yml',
+                );
+                $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
+                foreach ($files as $file) {
+                    if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
+                        $loader->load($file);
+                    }
+                }
+            }
         }
-        
-        if($config['extensions']['browser']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Browser/Resources/config'));
-            $loader->load('services.yml');
-        }
-        
-        if($config['extensions']['gulp']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Gulp/Resources/config'));
-            $loader->load('services.yml');
-        }
-        
-        if($config['extensions']['missing']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Missing/Resources/config'));
-            $loader->load('services.yml');
-        }
-        
-        if($config['extensions']['pagination']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Pagination/Resources/config'));
-            $loader->load('services.yml');
-        }
-        
-        if($config['extensions']['position']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Position/Resources/config'));
-            $loader->load('services.yml');
-            
+
+        if ($config['extensions']['position']) {
             $container->setParameter('sludio_helper.position.position.field', $config['position_field']);
             $positionHandler = 'sludio_helper.position.orm';
             $container->setAlias('sludio_helper.position', new Alias($positionHandler));
         }
-        
-        if($config['extensions']['sortable']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Sortable/Resources/config'));
-            $loader->load('services.yml');
-        }
-        
-        if($config['extensions']['steam']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Steam/Resources/config'));
-            $loader->load('parameters.yml');
+
+        if ($config['extensions']['steam']) {
             $container->setParameter('sludio_helper.steam.api_key', $config['steam_api_key']);
         }
-        
-        if($config['extensions']['translatable']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Translatable/Resources/config'));
-            $loader->load('parameters.yml');
-            $loader->load('services.yml');
-            
+
+        if ($config['extensions']['translatable']) {
             $container->setParameter('sludio_helper.locales', $config['locales']);
             $container->setParameter('sludio_helper.template', $config['template']);
         }
-        
-        if($config['extensions']['usort']){
-            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Usort/Resources/config'));
-            $loader->load('services.yml');
-        }
-        
+
         $container->setParameter('sludio_helper.redis', $config['redis']);
         $container->setParameter('sludio_helper.translation_redis', 'snc_redis.'.$config['translation_redis']);
-        
+
         $container->setParameter('sludio_helper.entity_manager', $config['em']);
     }
 }
