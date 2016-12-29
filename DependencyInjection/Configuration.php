@@ -45,6 +45,7 @@ class Configuration implements ConfigurationInterface
                         ->booleanNode('browser')->defaultValue(false)->end()
                         ->booleanNode('gulp')->defaultValue(false)->end()
                         ->booleanNode('missing')->defaultValue(false)->end()
+                        ->booleanNode('pagination')->defaultValue(false)->end()
                         ->booleanNode('position')->defaultValue(false)->end()
                         ->booleanNode('sortable')->defaultValue(false)->end()
                         ->booleanNode('steam')->defaultValue(false)->end()

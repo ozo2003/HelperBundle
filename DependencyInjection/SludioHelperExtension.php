@@ -47,6 +47,11 @@ class SludioHelperExtension extends Extension
             $loader->load('services.yml');
         }
         
+        if($config['extensions']['pagination']){
+            $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Pagination/Resources/config'));
+            $loader->load('services.yml');
+        }
+        
         if($config['extensions']['position']){
             $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Position/Resources/config'));
             $loader->load('services.yml');

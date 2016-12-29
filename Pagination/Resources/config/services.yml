@@ -1,0 +1,7 @@
+services:
+    sludio_helper.twig.pagination_extension:
+        class: Sludio\HelperBundle\Pagination\Twig\PaginationExtension
+        public: false
+        tags:
+            - 
+                name: twig.extension
