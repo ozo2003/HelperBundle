@@ -1,5 +1,5 @@
 services:
-    sludio.usort.twig.usort_extension:
+    sludio_helper.twig.usort_extension:
         class: Sludio\HelperBundle\Usort\Twig\UsortExtension
         public: false
         tags:

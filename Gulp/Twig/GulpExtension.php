@@ -19,7 +19,7 @@ class GulpExtension extends \Twig_Extension
     }
     public function getName()
     {
-        return 'gulp_extension';
+        return 'sludio_browser.twig.gulp_extension';
     }
 
     public function getAssetVersion($filename)

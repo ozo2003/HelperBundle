@@ -1,5 +1,5 @@
 services:
-    sludio.gulp.twig.gulp_extension:
+    sludio_gulp.twig.gulp_extension:
         class: Sludio\HelperBundle\Gulp\Twig\GulpExtension
         public: false
         arguments:

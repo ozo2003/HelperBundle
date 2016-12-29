@@ -12,7 +12,7 @@ class MissingExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'missing_extension';
+        return 'sludio_browser.twig.missing_extension';
     }
 
     public function getFilters()

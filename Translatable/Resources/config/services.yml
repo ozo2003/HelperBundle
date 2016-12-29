@@ -1,21 +1,21 @@
 services:
-    sludio.helper.form.type.translator:
+    sludio_helper.form.type.translator:
         class:     Sludio\HelperBundle\Translatable\Form\Type\TranslatorType
         arguments:  
             - '%sludio_helper.translatable.locales%'
-            - '@sludio.helper.manager'
+            - '@sludio_helper.translatable.manager'
             - '@translator'
         tags:
             -  
                 name: form.type
                 alias: translations
 
-    sludio.helper.manager:
+    sludio_helper.translatable.manager:
         class: Sludio\HelperBundle\Translatable\Helper\Manager
         arguments: 
             - "@doctrine"
 
-    sludio.helper.twig.translate_extension:
+    sludio_helper.twig.translate_extension:
         class: Sludio\HelperBundle\Translatable\Twig\TranslationExtension
         public: false
         arguments:

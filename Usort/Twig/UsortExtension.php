@@ -9,7 +9,7 @@ class UsortExtension extends \Twig_Extension
     
     public function getName()
     {
-        return 'usort_extension';
+        return 'sludio_helper.twig.usort_extension';
     }
     
     public function cmpOrderBy($a, $b)

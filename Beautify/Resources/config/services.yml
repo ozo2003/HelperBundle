@@ -1,5 +1,5 @@
 services:
-    sludio.beautify.twig.beautify_extension:
+    sludio_beautify.twig.beautify_extension:
         class: Sludio\HelperBundle\Beautify\Twig\BeautifyExtension
         public: false
         arguments:

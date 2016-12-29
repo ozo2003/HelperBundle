@@ -15,7 +15,7 @@ class BrowserExtension extends \Twig_Extension
     
     public function getName()
     {
-        return 'sludio.browser.twig.browser_extension';
+        return 'sludio_browser.twig.browser_extension';
     }
     
     public function isIE(){

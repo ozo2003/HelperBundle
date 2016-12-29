@@ -12,7 +12,7 @@ class BeautifyExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'beautify';
+        return 'sludio_browser.twig.beautify_extension';
     }
 
     public function getFilters()
