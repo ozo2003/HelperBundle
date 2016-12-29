@@ -141,7 +141,7 @@ class TranslatableRepository extends UsortRepository
         $sth->bindValue('key', $id);
         $sth->execute();
     }
-    
+
     public static function getAllTranslations()
     {
         self::init();

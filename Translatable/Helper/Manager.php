@@ -48,13 +48,13 @@ class Manager
         return $translated;
     }
 
-    public function persistTranslations(Form $form, $class, $field, $id = 0, $locales, $userLocale)
+    public function persistTranslations(Form $form, $class, $field, $id, $locales, $userLocale)
     {
         $translations = $form->getData();
 
         $em = $this->em;
         $repository = $em->getRepository($class);
-        if(!$id){
+        if (!$id) {
             $entity = new $class();
         } else {
             $entity = $repository->find($id);
@@ -62,7 +62,6 @@ class Manager
 
         foreach ($locales as $locale) {
             if (array_key_exists($locale, $translations) && ($translations[$locale] !== null)) {
-            
                 $postedValue = $translations[$locale];
                 $storedValue = $this->getField($entity, $field, $locale);
                 if ($storedValue !== $postedValue) {

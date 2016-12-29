@@ -28,12 +28,11 @@ class PaginationExtension extends \Twig_Extension
     }
 
     /**
-     * @param string $functionName
-     *   Name to use for the twig function. Will be suffixed with "_pagination"
-     *   unless it's already suffixed.
-     *
+     * @param string                       $functionName
+     *                                                   Name to use for the twig function. Will be suffixed with "_pagination"
+     *                                                   unless it's already suffixed
      * @param PaginationBehaviourInterface $behaviour
-     *   Pagination behaviour to use in the twig function.
+     *                                                   Pagination behaviour to use in the twig function
      *
      * @return PaginationExtension
      */
@@ -54,8 +53,8 @@ class PaginationExtension extends \Twig_Extension
 
     /**
      * @param string $functionName
-     *   Name of the twig function to remove. Will be suffixed with
-     *   "_pagination" unless it's already suffixed.
+     *                             Name of the twig function to remove. Will be suffixed with
+     *                             "_pagination" unless it's already suffixed
      *
      * @return PaginationExtension
      */
@@ -65,18 +64,21 @@ class PaginationExtension extends \Twig_Extension
 
         $c = clone $this;
         unset($c->functions[$functionName]);
+
         return $c;
     }
 
     /**
      * @param string $functionName
+     *
      * @return string
      */
     private function suffixFunctionName($functionName)
     {
         // Make sure the function name is not suffixed twice.
         $functionName = preg_replace('/(_pagination)$/', '', (string) $functionName);
-        return $functionName . '_pagination';
+
+        return $functionName.'_pagination';
     }
 
     /**

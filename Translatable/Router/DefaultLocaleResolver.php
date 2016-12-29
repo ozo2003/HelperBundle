@@ -30,7 +30,7 @@ class DefaultLocaleResolver implements LocaleResolverInterface
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function resolveLocale(Request $request, array $availableLocales)
     {
@@ -63,10 +63,10 @@ class DefaultLocaleResolver implements LocaleResolverInterface
                 return $hostLanguage;
             }
         }
-        
+
         $languages = array();
-        foreach($request->getLanguages() as $language){
-            if(strlen($language) != 2){
+        foreach ($request->getLanguages() as $language) {
+            if (strlen($language) != 2) {
                 $newLang = explode('_', $language, 2);
                 $languages[] = reset($newLang);
             } else {

@@ -11,9 +11,9 @@ final class FixedLength extends AbstractPaginationBehaviour
 
     /**
      * @param int $maximumVisible
-     *   Maximum number of visible pages. Should never be lower than 7.
-     *   1 on each edge, 1 omitted chunk on each side, and 3 in the middle.
-     *   For example: [1][...][11][12][13][...][20]
+     *                            Maximum number of visible pages. Should never be lower than 7.
+     *                            1 on each edge, 1 omitted chunk on each side, and 3 in the middle.
+     *                            For example: [1][...][11][12][13][...][20]
      */
     public function __construct($maximumVisible)
     {
@@ -22,12 +22,14 @@ final class FixedLength extends AbstractPaginationBehaviour
 
     /**
      * @param int $maximumVisible
+     *
      * @return static
      */
     public function withMaximumVisible($maximumVisible)
     {
         $c = clone $this;
         $c->setMaximumVisible($maximumVisible);
+
         return $c;
     }
 
@@ -53,7 +55,7 @@ final class FixedLength extends AbstractPaginationBehaviour
      * @param $maximumVisible
      *
      * @throws \InvalidArgumentException
-     *   If the maximum number of visible pages is lower than 7.
+     *                                   If the maximum number of visible pages is lower than 7
      */
     private function guardMaximumVisibleMinimumValue($maximumVisible)
     {
@@ -71,7 +73,7 @@ final class FixedLength extends AbstractPaginationBehaviour
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function getPaginationData($totalPages, $currentPage, $omittedPagesIndicator = -1)
     {
@@ -96,6 +98,7 @@ final class FixedLength extends AbstractPaginationBehaviour
 
     /**
      * @param int $totalPages
+     *
      * @return array
      */
     private function getPaginationDataWithNoOmittedChunks($totalPages)
@@ -114,6 +117,7 @@ final class FixedLength extends AbstractPaginationBehaviour
     /**
      * @param int $totalPages
      * @param int $currentPage
+     *
      * @return bool
      */
     public function hasSingleOmittedChunk($totalPages, $currentPage)
@@ -124,6 +128,7 @@ final class FixedLength extends AbstractPaginationBehaviour
 
     /**
      * @param int $currentPage
+     *
      * @return bool
      */
     private function hasSingleOmittedChunkNearLastPage($currentPage)
@@ -134,6 +139,7 @@ final class FixedLength extends AbstractPaginationBehaviour
     /**
      * @param int $totalPages
      * @param int $currentPage
+     *
      * @return bool
      */
     private function hasSingleOmittedChunkNearStartPage($totalPages, $currentPage)
@@ -142,9 +148,10 @@ final class FixedLength extends AbstractPaginationBehaviour
     }
 
     /**
-     * @param int $totalPages
-     * @param int $currentPage
+     * @param int        $totalPages
+     * @param int        $currentPage
      * @param int|string $omittedPagesIndicator
+     *
      * @return array
      */
     private function getPaginationDataWithSingleOmittedChunk($totalPages, $currentPage, $omittedPagesIndicator)
@@ -174,9 +181,10 @@ final class FixedLength extends AbstractPaginationBehaviour
     }
 
     /**
-     * @param int $totalPages
-     * @param int $currentPage
+     * @param int        $totalPages
+     * @param int        $currentPage
      * @param int|string $omittedPagesIndicator
+     *
      * @return array
      */
     private function getPaginationDataWithTwoOmittedChunks($totalPages, $currentPage, $omittedPagesIndicator)

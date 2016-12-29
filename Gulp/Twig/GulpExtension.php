@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\Gulp\Twig;
 class GulpExtension extends \Twig_Extension
 {
     private $paths = [];
-    
+
     public function __construct($appDir, $kernel)
     {
         $this->appDir = $appDir;

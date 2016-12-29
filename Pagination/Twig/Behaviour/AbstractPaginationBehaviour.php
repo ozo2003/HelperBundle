@@ -5,12 +5,12 @@ namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterface
 {
     /**
-     * @param int $totalPages
-     * @param int $currentPage
+     * @param int        $totalPages
+     * @param int        $currentPage
      * @param int|string $omittedPagesIndicator
      *
      * @throws \InvalidArgumentException
-     *   When pagination data is invalid.
+     *                                   When pagination data is invalid
      */
     protected function guardPaginationData($totalPages, $currentPage, $omittedPagesIndicator = -1)
     {
@@ -25,7 +25,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
      * @param int $totalPages
      *
      * @throws \InvalidArgumentException
-     *   If total number of pages is lower than 1.
+     *                                   If total number of pages is lower than 1
      */
     private function guardTotalPagesMinimumValue($totalPages)
     {
@@ -43,7 +43,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
      * @param int $currentPage
      *
      * @throws \InvalidArgumentException
-     *   If current page is lower than 1.
+     *                                   If current page is lower than 1
      */
     private function guardCurrentPageMinimumValue($currentPage)
     {
@@ -62,7 +62,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
      * @param int $currentPage
      *
      * @throws \InvalidArgumentException
-     *   If current page is higher than total number of pages.
+     *                                   If current page is higher than total number of pages
      */
     private function guardCurrentPageExistsInTotalPages($totalPages, $currentPage)
     {
@@ -81,7 +81,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
      * @param int|string $indicator
      *
      * @throws \InvalidArgumentException
-     *   If omitted pages indicator is not an int or a string.
+     *                                   If omitted pages indicator is not an int or a string
      */
     private function guardOmittedPagesIndicatorType($indicator)
     {
@@ -93,12 +93,12 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
     }
 
     /**
-     * @param int $totalPages
+     * @param int        $totalPages
      * @param int|string $indicator
      *
      * @throws \InvalidArgumentException
-     *   If omitted pages indicator is an int in the range of 1 and the total
-     *   number of pages.
+     *                                   If omitted pages indicator is an int in the range of 1 and the total
+     *                                   number of pages
      */
     private function guardOmittedPagesIndicatorIntValue($totalPages, $indicator)
     {

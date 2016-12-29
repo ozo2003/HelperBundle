@@ -31,7 +31,7 @@ class BaseEntity
 
         return $this->className;
     }
-    
+
     public function getLocaleVar($locale)
     {
         return $this->localeArr[$locale];
@@ -83,15 +83,15 @@ class BaseEntity
         if (isset($this->translates[$locale][$variable])) {
             return $this->translates[$locale][$variable];
         }
-        
-        if ($return_original) { 
-            $vv = explode('_', $variable); 
-            foreach($vv as &$v){ 
-                $v = ucfirst($v); 
-            } 
+
+        if ($return_original) {
+            $vv = explode('_', $variable);
+            foreach ($vv as &$v) {
+                $v = ucfirst($v);
+            }
             $variable = implode('', $vv);
             $res = $this->{'get'.$variable}();
-            if(is_numeric($res)){
+            if (is_numeric($res)) {
                 return $res;
             }
         }

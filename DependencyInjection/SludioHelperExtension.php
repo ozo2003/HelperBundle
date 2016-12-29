@@ -43,9 +43,9 @@ class SludioHelperExtension extends Extension
                 }
             }
         }
-        
-        foreach($config['other'] as $key => $other){
-            foreach($other as $var => $value){
+
+        foreach ($config['other'] as $key => $other) {
+            foreach ($other as $var => $value) {
                 $container->setParameter('sludio_helper.'.$key.'.'.$var, $config['other'][$key][$var]);
             }
         }
