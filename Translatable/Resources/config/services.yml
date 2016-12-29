@@ -2,7 +2,7 @@ services:
     sludio.helper.form.type.translator:
         class:     Sludio\HelperBundle\Translatable\Form\Type\TranslatorType
         arguments:  
-            - '%sludio_helper.locales%'
+            - '%sludio_helper.translatable.locales%'
             - '@sludio.helper.manager'
             - '@translator'
         tags:

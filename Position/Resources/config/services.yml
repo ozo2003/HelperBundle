@@ -1,5 +1,5 @@
 services:
-    sludio_helper.position.orm:
+    sludio_helper.position:
         class: Sludio\HelperBundle\Position\Service\PositionHandler
         public: false
         arguments:
@@ -8,7 +8,7 @@ services:
             -
                 - setPositionField
                 -
-                    - "%sludio_helper.position.position.field%"
+                    - "%sludio_helper.position.field%"
     
     sludio_helper.twig.extension:
         class: Sludio\HelperBundle\Position\Twig\ObjectPositionExtension

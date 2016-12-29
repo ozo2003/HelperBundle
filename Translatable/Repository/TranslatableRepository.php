@@ -14,7 +14,7 @@ class TranslatableRepository extends UsortRepository
     public static function init()
     {
         parent::init();
-        self::$redis = self::$container->get(self::$container->getParameter('sludio_helper.translation_redis'));
+        self::$redis = self::$container->get(self::$container->getParameter('sludio_helper.redis.translation'));
     }
 
     public static function getTranslations($class, $id)
@@ -128,27 +128,6 @@ class TranslatableRepository extends UsortRepository
             $redis->del(strtolower($className).':translations:'.$id.':ckecked');
         }
     }
-
-    // public static function findNextId($class)
-    // {
-    //     self::init();
-    //     $table = self::$em->getClassMetaData($class)->getTableName();
-    //     $sql = "
-    //         SHOW 
-    //             TABLE STATUS 
-    //         LIKE 
-    //             '{$table}'
-    //     ";
-    //     $sth = self::$connection->prepare($sql);
-    //     $sth->execute();
-    //     $result = $sth->fetch();
-    // 
-    //     if (isset($result['Auto_increment'])) {
-    //         return (int) $result['Auto_increment'];
-    //     }
-    // 
-    //     return 1;
-    // }
 
     public static function removeTranslations($object, $em)
     {

@@ -10,7 +10,7 @@ class ScriptController extends Controller
     public function redisAction(Request $request)
     {
         $data['success'] = 1;
-        foreach ($this->container->getParameter('sludio_helper.redis') as $redis) {
+        foreach ($this->container->getParameter('sludio_helper.redis.managers') as $redis) {
             $this->get('snc_redis.'.$redis)->flushdb();
         }
 
