@@ -18,7 +18,7 @@
     },
     "autoload" : {
         "psr-0" : {
-            "Sludio\\HelperBundle" : ""
+            "Sludio\\HelperBundle\\" : ""
         }
     },
     "target-dir": "Sludio/HelperBundle",
