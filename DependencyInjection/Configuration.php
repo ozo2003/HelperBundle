@@ -116,7 +116,7 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('template')
                                     ->defaultValue('SludioHelperBundle:Translatable:translations.html.twig')
                                 ->end()
-                                ->scalarNode('translation_table')
+                                ->scalarNode('table')
                                     ->defaultValue('sludio_helper_translation')
                                 ->end()
                             ->end()

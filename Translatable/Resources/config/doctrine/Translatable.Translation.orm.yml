@@ -1,6 +1,6 @@
 Sludio\HelperBundle\Translatable\Entity\Translation:
     type: entity
-    table: sludio_helper_translation
+    table: %sludio_helper.translatable.table%
     repositoryClass: Sludio\HelperBundle\Translatable\Repository\TranslationRepository
     indexes:
         translations_lookup_idx:

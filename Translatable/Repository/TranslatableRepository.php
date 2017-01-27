@@ -15,6 +15,7 @@ class TranslatableRepository extends UsortRepository
     {
         parent::init();
         self::$redis = self::$container->get(self::$container->getParameter('sludio_helper.redis.translation'));
+        self::$table = self::$container->get(self::$container->getParameter('sludio_helper.translatable.table'));
     }
 
     public static function getTranslations($class, $id)
@@ -29,7 +30,7 @@ class TranslatableRepository extends UsortRepository
 
         if (!$result && !$checked) {
             $connection = self::$connection;
-            $sql = 'SELECT * FROM sludio_helper_translation WHERE object_class = :class AND foreign_key = :key';
+            $sql = 'SELECT * FROM '.self::$table.' WHERE object_class = :class AND foreign_key = :key';
             $sth = $connection->prepare($sql);
             $options = array(
                 'class' => $class,
@@ -58,7 +59,7 @@ class TranslatableRepository extends UsortRepository
             'class' => $class,
             'locale' => $locale,
         );
-        $sql = "SELECT foreign_key FROM sludio_helper_translation WHERE object_class = :class AND field = '{$field}' AND locale = :locale";
+        $sql = "SELECT foreign_key FROM ".self::$table." WHERE object_class = :class AND field = '{$field}' AND locale = :locale";
         if ($id) {
             $sql .= ' AND foreign_key <> :id';
             $options['id'] = $id;
@@ -96,7 +97,7 @@ class TranslatableRepository extends UsortRepository
         if ($res) {
             $sql = "
                 UPDATE
-                    sludio_helper_translation
+                    ".self::$table."
                 SET
                     content = :content
                 WHERE
@@ -136,7 +137,7 @@ class TranslatableRepository extends UsortRepository
         $id = $object->getId();
         $connection = self::$connection;
 
-        $sth = $connection->prepare('DELETE FROM sludio_helper_translation WHERE object_class = :class AND foreign_key = :key');
+        $sth = $connection->prepare('DELETE FROM '.self::$table.' WHERE object_class = :class AND foreign_key = :key');
         $sth->bindValue('class', $class);
         $sth->bindValue('key', $id);
         $sth->execute();
@@ -148,7 +149,7 @@ class TranslatableRepository extends UsortRepository
         $redis = self::$redis;
 
         $connection = self::$connection;
-        $sql = 'SELECT * FROM sludio_helper_translation';
+        $sql = 'SELECT * FROM '.self::$table;
         $sth = $connection->prepare($sql);
         $sth->execute();
         $result = array();
