@@ -34,7 +34,11 @@ class TranslationExtension extends \Twig_Extension
 
             $new_locale = $this->request ? $this->request->get('_locale') : $hl;
 
-            return $object->getVariableByLocale($type, $new_locale);
+            $trans = $object->getVariableByLocale($type, $new_locale, $original);
+            $class = get_class($object);
+            $class = str_replace('Proxies\__CG__\\', '', $class);
+            
+            return $trans;
         } else {
             return $type;
         }
