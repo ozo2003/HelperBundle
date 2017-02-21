@@ -1,39 +1,41 @@
 {% macro script(name, url_name, icon, domain) %}
     {% set icon = icon | default('gear') %}
     {% set domain = domain | default('sludio_helper_admin') %}
-    <script>
-        function {{ name }}() {
-            var url = "{{ url(url_name) }}";
-            jQuery.get(url, function(data) {
-                if (data['success'] === 1) {
-                    alert('{{ (name ~ "_success")|trans({}, domain) }}');
-                } else {
-                    alert('{{ (name ~ "_error")|trans({}, domain) }} | ' + data['error']);
-                }
-            });
-        }
-    </script>
-    <style>
-        .fleft {
-            float: left;
-        }
-        .fright {
-            float: right;
-        }
-    </style>
-    <div class="box">
-        <a class="" href="javascript:{{ name }}()">
-            <table class="table">
-                <tr>
-                    <td>
-                        <div class="btn-group" align="center" style="width: 100%">
-                            <i class="fa fa-{{ icon }} fleft"></i>
-                            {{ name|trans({}, domain) }}
-                            <i class="fa fa-{{ icon }} fright"></i>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </a>
-    </div>
+    {% if name and url_name %}
+        <script>
+            function {{ name }}() {
+                var url = "{{ url(url_name) }}";
+                jQuery.get(url, function(data) {
+                    if (data['success'] === 1) {
+                        alert('{{ (name ~ "_success")|trans({}, domain) }}');
+                    } else {
+                        alert('{{ (name ~ "_error")|trans({}, domain) }} | ' + data['error']);
+                    }
+                });
+            }
+        </script>
+        <style>
+            .fleft {
+                float: left;
+            }
+            .fright {
+                float: right;
+            }
+        </style>
+        <div class="box">
+            <a class="" href="javascript:{{ name }}()">
+                <table class="table">
+                    <tr>
+                        <td>
+                            <div class="btn-group" align="center" style="width: 100%">
+                                <i class="fa fa-{{ icon }} fleft"></i>
+                                {{ name|trans({}, domain) }}
+                                <i class="fa fa-{{ icon }} fright"></i>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </a>
+        </div>
+    {% endif %}
 {% endmacro %}
