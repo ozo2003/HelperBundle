@@ -5,6 +5,8 @@ namespace Sludio\HelperBundle\Scripts\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
 
 class ScriptController extends Controller
 {
@@ -28,17 +30,38 @@ class ScriptController extends Controller
             $kernel = $kernel->getKernel();
         }
 
-        foreach (array('clear', 'warmup') as $com) {
+        foreach (array('clear', 'warmup') as $command) {
             $application = new Application($kernel);
             $application->setAutoExit(false);
             $input = new ArrayInput(array(
-               'command' => 'cache:'.$com,
+               'command' => 'cache:'.$command,
                '--env' => $kernel->getEnvironment(),
             ));
             $application->run($input);
             $data['success'] = 1;
         }
 
+        return new JsonResponse($data, 200, array(
+            'Cache-Control' => 'no-cache',
+        ));
+    }
+    
+    public function ibrowsAction(Request $request){
+        global $kernel;
+
+        if ('AppCache' == get_class($kernel)) {
+            $kernel = $kernel->getKernel();
+        }
+        
+        $application = new Application($kernel);
+        $application->setAutoExit(false);
+        
+        $input = new ArrayInput(array(
+           'command' => 'ibrows:sonatatranslationbundle:clearcache'
+        ));
+        $application->run($input);
+        $data['success'] = 1;
+        
         return new JsonResponse($data, 200, array(
             'Cache-Control' => 'no-cache',
         ));

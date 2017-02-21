@@ -15,7 +15,7 @@ class PaginationExtension extends \Twig_Extension
     public function __construct()
     {
         $this->functions = [
-            $this->withFunction('small', 7),
+            $this->withFunction('sludio_small', 7),
         ];
     }
 
@@ -27,15 +27,6 @@ class PaginationExtension extends \Twig_Extension
         return 'sludio_browser.twig.pagination_extension';
     }
 
-    /**
-     * @param string                       $functionName
-     *                                                   Name to use for the twig function. Will be suffixed with "_pagination"
-     *                                                   unless it's already suffixed
-     * @param PaginationBehaviourInterface $behaviour
-     *                                                   Pagination behaviour to use in the twig function
-     *
-     * @return PaginationExtension
-     */
     public function withFunction($functionName, $behaviour)
     {
         $functionName = $this->suffixFunctionName($functionName);
@@ -51,13 +42,6 @@ class PaginationExtension extends \Twig_Extension
         return $c;
     }
 
-    /**
-     * @param string $functionName
-     *                             Name of the twig function to remove. Will be suffixed with
-     *                             "_pagination" unless it's already suffixed
-     *
-     * @return PaginationExtension
-     */
     public function withoutFunction($functionName)
     {
         $functionName = $this->suffixFunctionName($functionName);

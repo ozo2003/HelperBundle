@@ -12,7 +12,7 @@ class TranslationsGenerateCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('translations:generate')
+            ->setName('sludio:translations:generate')
             ->setDescription('Regenerate translations')
         ;
     }

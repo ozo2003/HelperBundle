@@ -18,12 +18,12 @@ class BeautifyExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('beautify', array($this, 'beautify')),
-            new \Twig_SimpleFilter('urldecode', array($this, 'url_decode')),
-            new \Twig_SimpleFilter('parse', array($this, 'parse')),
-            new \Twig_SimpleFilter('file_exists', array($this, 'file_exists')),
-            new \Twig_SimpleFilter('html_entity_decode', array($this, 'html_entity_decode')),
-            new \Twig_SimpleFilter('strip_descr', array($this, 'strip_descr')),
+            new \Twig_SimpleFilter('sludio_beautify', array($this, 'beautify')),
+            new \Twig_SimpleFilter('sludio_urldecode', array($this, 'url_decode')),
+            new \Twig_SimpleFilter('sludio_parse', array($this, 'parse')),
+            new \Twig_SimpleFilter('sludio_file_exists', array($this, 'file_exists')),
+            new \Twig_SimpleFilter('sludio_html_entity_decode', array($this, 'html_entity_decode')),
+            new \Twig_SimpleFilter('sludio_strip_descr', array($this, 'strip_descr')),
         );
     }
 

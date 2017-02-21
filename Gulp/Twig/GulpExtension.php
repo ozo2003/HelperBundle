@@ -14,7 +14,7 @@ class GulpExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('asset_version', array($this, 'getAssetVersion')),
+            new \Twig_SimpleFilter('sludio_asset_version', array($this, 'getAssetVersion')),
         );
     }
     public function getName()

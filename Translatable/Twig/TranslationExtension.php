@@ -23,7 +23,7 @@ class TranslationExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('var', array($this, 'getVar')),
+            new \Twig_SimpleFilter('sludio_var', array($this, 'getVar')),
         );
     }
 

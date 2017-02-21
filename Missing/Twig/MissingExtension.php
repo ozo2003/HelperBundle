@@ -18,8 +18,8 @@ class MissingExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('objects', array($this, 'getObjects')),
-            new \Twig_SimpleFilter('svg', array($this, 'getSvg')),
+            new \Twig_SimpleFilter('sludio_objects', array($this, 'getObjects')),
+            new \Twig_SimpleFilter('sludio_svg', array($this, 'getSvg')),
         );
     }
 

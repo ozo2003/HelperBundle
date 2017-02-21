@@ -23,7 +23,7 @@ class UsortExtension extends \Twig_Extension
     public function getFilters()
     {
         return array(
-            new \Twig_SimpleFilter('usort', array($this, 'usortFunction')),
+            new \Twig_SimpleFilter('sludio_usort', array($this, 'usortFunction')),
         );
     }
 

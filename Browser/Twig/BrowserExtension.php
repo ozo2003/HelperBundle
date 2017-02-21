@@ -9,7 +9,7 @@ class BrowserExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('is_ie', array($this, 'isIE')),
+            new \Twig_SimpleFunction('sludio_is_ie', array($this, 'isIE')),
         );
     }
 

@@ -11,7 +11,7 @@ class RedisFlushCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName('redis:flush')
+            ->setName('sludio:redis:flush')
             ->setDescription('FlushAll redis')
         ;
     }

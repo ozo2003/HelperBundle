@@ -22,5 +22,15 @@ class TemplatingPass implements CompilerPassInterface
                 }
             }
         }
+        if ($container->hasParameter('sludio_helper.translatable.template_new')) {
+            if (false !== ($template = $container->getParameter('sludio_helper.translatable.template_new'))) {
+                $resources = $container->getParameter('twig.form.resources');
+
+                if (!in_array($template, $resources)) {
+                    $resources[] = $template;
+                    $container->setParameter('twig.form.resources', $resources);
+                }
+            }
+        }
     }
 }
