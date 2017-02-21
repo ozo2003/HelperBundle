@@ -1,9 +1,10 @@
 <?php
 
-namespace Sludio\HelperBundle\SludioHelperBundle\Scripts\Controller;
+namespace Sludio\HelperBundle\Scripts\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ScriptController extends Controller
 {

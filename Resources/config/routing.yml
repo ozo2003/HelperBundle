@@ -1,14 +1,14 @@
 sludio_helper_redis:
     path: /redis
     defaults:
-        _controller: SludioHelperBundle:Scripts:Scripts/redis
+        _controller: Sludio\HelperBundle\Scripts\Controller\ScriptController::redisAction
     options:
         i18n: false
         
 sludio_helper_cache:
     path: /cache
     defaults:
-        _controller: SludioHelperBundle:Scripts:Scripts/cache
+        _controller: Sludio\HelperBundle\Scripts\Controller\ScriptController::cacheAction
     options:
         i18n: false
         
