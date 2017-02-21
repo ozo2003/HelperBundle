@@ -25,3 +25,9 @@ services:
         tags:
             - 
                 name: twig.extension
+
+    sludio_helper.command.generate_translations:
+        class: Sludio\HelperBundle\Translatable\Command\TranslationsGenerateCommand
+        tags:
+            -
+                name: console.command

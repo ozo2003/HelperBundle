@@ -10,12 +10,13 @@ ini_set('max_execution_time', 0);
 class TranslatableRepository extends UsortRepository
 {
     public static $redis;
+    public static $table;
 
     public static function init()
     {
         parent::init();
-        self::$redis = self::$container->get(self::$container->getParameter('sludio_helper.redis.translation'));
-        self::$table = self::$container->get(self::$container->getParameter('sludio_helper.translatable.table'));
+        self::$redis = self::$container->getParameter('sludio_helper.redis.translation');
+        self::$table = self::$container->getParameter('sludio_helper.translatable.table');
     }
 
     public static function getTranslations($class, $id)
