@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio;
 
-class TranlsatableController extends Controller
+class TranslatableController extends Controller
 {
     public function generateAction()
     {
