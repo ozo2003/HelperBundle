@@ -98,4 +98,12 @@ class BaseEntity
 
         return '';
     }
+    
+    public function cleanText($text){
+        $text = strip_tags($text);
+        $text = mb_convert_encoding($text, "UTF-8", "UTF-8");
+        $text = str_replace(' ?', '', $text);
+        
+        return $text;
+    }
 }
