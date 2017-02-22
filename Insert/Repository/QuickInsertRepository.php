@@ -9,14 +9,14 @@ class QuickInsertRepository extends UsortRepository
     private static $mock = array();
     private static $tableName;
     
-    private static function init()
+    public static function init()
     {
         parent::init();
         $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
         $sth->execute();
     }
     
-    private static function close()
+    public static function close()
     {
         $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
         $sth->execute();
