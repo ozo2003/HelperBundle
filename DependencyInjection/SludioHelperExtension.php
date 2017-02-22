@@ -28,7 +28,7 @@ class SludioHelperExtension extends Extension
             foreach ($extension as $var => $value) {
                 if ($var == 'enabled' && $value) {
                     $files = array(
-                        'services.yml', 'parameters.yml',
+                        'services.yml', 'parameters.yml', 'routing.yml',
                     );
                     $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
                     foreach ($files as $file) {

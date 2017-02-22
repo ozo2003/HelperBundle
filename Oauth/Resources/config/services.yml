@@ -1,0 +1,6 @@
+services:
+    sludio_helper.command.client_create:
+        class: Sludio\HelperBundle\Oauth\Command\CreateClientCommand
+        tags:
+            -
+                name: console.command
