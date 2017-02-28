@@ -70,8 +70,15 @@ class BeautifyExtension extends \Twig_Extension
         return $str;
     }
 
-    public function strip_descr($body, $length = 300)
+    public function strip_descr($body, $fallback = null, $type = null, $lengthIn = 300)
     {
+        if($type && $fallback){
+            $length = isset($fallback[$type]) ? $fallback[$type] : null;
+        }
+        if(!isset($length)){
+            $length = $lengthIn;
+        }
+        
         if (strlen($body) > $length) {
             $body = substr($body, 0, strpos($body, ' ', $length)).'...';
         }
