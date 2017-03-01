@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class OAuth2Client
 {
-    const OAUTH2_SESSION_STATE_KEY = 'sludio_helper.oauth2_client_state';
+    const OAUTH2_SESSION_STATE_KEY = 'sludio_helper.oauth_client_state';
 
     private $provider;
 
@@ -61,7 +61,7 @@ class OAuth2Client
             $kernel = $kernel->getKernel();
         }
         
-        $service = $kernel->getContainer()->get('sludio_helper.oauth2.base_service');
+        $service = $kernel->getContainer()->get('sludio_helper.oauth.base_service');
         $options = array(
             'grant_type' => 'password',
             'username' => 'dzalitis',

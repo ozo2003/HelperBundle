@@ -56,10 +56,6 @@ class SludioHelperExtension extends Extension
         $optionsNode
             ->scalarNode('client_id')->isRequired()->end()
             ->scalarNode('client_secret')->isRequired()->end()
-            ->scalarNode('redirect_route')->isRequired()->end()
-            ->arrayNode('redirect_params')
-                ->prototype('scalar')->end()
-            ->end()
             ->booleanNode('use_state')->defaultValue(true)->end()
         ;
 
@@ -73,7 +69,7 @@ class SludioHelperExtension extends Extension
         return 'sludio_helper';
     }
     
-    private function configureProviderAndClient(ContainerBuilder $container, $providerType, $providerKey, $providerClass, $clientClass, $packageName, array $options, $redirectRoute, array $redirectParams, $useState)
+    private function configureProviderAndClient(ContainerBuilder $container, $providerType, $providerKey, $providerClass, $clientClass, $packageName, array $options, $useState)
     {
         if ($this->checkExternalClassExistence && !class_exists($providerClass)) {
             throw new \LogicException(sprintf(
@@ -83,7 +79,7 @@ class SludioHelperExtension extends Extension
             ));
         }
 
-        $providerServiceKey = sprintf('knpu.oauth2.provider.%s', $providerKey);
+        $providerServiceKey = sprintf('sludio_helper.oauth.provider.%s', $providerKey);
 
         $providerDefinition = $container->register(
             $providerServiceKey,
@@ -92,18 +88,16 @@ class SludioHelperExtension extends Extension
         $providerDefinition->setPublic(false);
 
         $providerDefinition->setFactory([
-            new Reference('sludio_helper.oauth2.provider_factory'),
+            new Reference('sludio_helper.oauth.provider_factory'),
             'createProvider',
         ]);
 
         $providerDefinition->setArguments([
             $providerClass,
             $options,
-            $redirectRoute,
-            $redirectParams,
         ]);
 
-        $clientServiceKey = sprintf('sludio_helper.oauth2.client.%s', $providerKey);
+        $clientServiceKey = sprintf('sludio_helper.oauth.client.%s', $providerKey);
         $clientDefinition = $container->register(
             $clientServiceKey,
             $clientClass
@@ -163,7 +157,7 @@ class SludioHelperExtension extends Extension
             foreach ($clientConfigurations as $key => $clientConfig) {
                 if (!isset($clientConfig['type'])) {
                     throw new InvalidConfigurationException(sprintf(
-                       'Your "sludio_helper_oauth2_client.clients." config entry is missing the "type" key.',
+                       'Your "sludio_helper_oauth_client.clients." config entry is missing the "type" key.',
                        $key
                    ));
                 }
@@ -171,13 +165,13 @@ class SludioHelperExtension extends Extension
                 unset($clientConfig['type']);
                 if (!isset(self::$supportedProviderTypes[$type])) {
                     throw new InvalidConfigurationException(sprintf(
-                        'The "sludio_helper_oauth2_client.clients" config "type" key "%s" is not supported. We support (%s)',
+                        'The "sludio_helper_oauth_client.clients" config "type" key "%s" is not supported. We support (%s)',
                         $type,
                         implode(', ', self::$supportedProviderTypes)
                     ));
                 }
                 $tree = new TreeBuilder();
-                $node = $tree->root('sludio_helper_oauth2_client/clients/' . $key);
+                $node = $tree->root('sludio_helper_oauth_client/clients/' . $key);
                 $this->buildConfigurationForType($node, $type);
                 $processor = new Processor();
                 $config = $processor->process($tree->buildTree(), [$clientConfig]);
@@ -191,15 +185,13 @@ class SludioHelperExtension extends Extension
                     $configurator->getClientClass($config),
                     $configurator->getPackagistName(),
                     $configurator->getProviderOptions($config),
-                    $config['redirect_route'],
-                    $config['redirect_params'],
                     $config['use_state']
                 );
                 
                 $clientServiceKeys[$key] = $clientServiceKey;
             }
             
-            $container->getDefinition('sludio_helper.oauth2.registry')->replaceArgument(1, $clientServiceKeys);
+            $container->getDefinition('sludio_helper.oauth.registry')->replaceArgument(1, $clientServiceKeys);
         }
     }
 }

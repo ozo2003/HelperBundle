@@ -5,27 +5,31 @@ services:
             -
                 name: console.command
 
-    sludio_helper.oauth2.provider_factory:
+    sludio_helper.oauth.provider_factory:
         class: Sludio\HelperBundle\DependencyInjection\ProviderFactory
         public: false
         arguments:
             - "@router"
 
-    sludio_helper.oauth2.registry:
+    sludio_helper.oauth.registry:
         class: Sludio\HelperBundle\Oauth\Client\ClientRegistry
         arguments:
             - "@service_container"
             - ~
             
-    oauth2.registry:
-        alias: sludio_helper.oauth2.registry
+    oauth.registry:
+        alias: sludio_helper.oauth.registry
 
-    sludio_helper.oauth2.base_service:
-        class: Sludio\HelperBundle\Oauth\Service\BaseService
+    sludio_helper.oauth.call_service:
+        class: Sludio\HelperBundle\Oauth\Service\CallService
         arguments:
             - "%sludio_helper.oauth.clients%"
-            
+            - "@session"
+            # - "@doctrine.orm.unicorn_entity_manager"
         tags:
             - 
                 name: monolog.logger
-                channel: oauth2_service
+                channel: oauth_service
+
+    # sludio_helper.oauth.oracle_service:
+        
