@@ -9,17 +9,21 @@ class QuickInsertRepository extends UsortRepository
     private static $mock = array();
     private static $tableName;
     
-    public static function init()
+    public static function init($dont = false)
     {
         parent::init();
-        $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
-        $sth->execute();
+        if(!$dont){
+            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
+            $sth->execute();
+        }
     }
     
-    public static function close()
+    public static function close($dont = false)
     {
-        $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
-        $sth->execute();
+        if(!$dont){
+            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
+            $sth->execute();
+        }
     }
     
     private static function extract($object)
@@ -38,19 +42,25 @@ class QuickInsertRepository extends UsortRepository
                 }
             }
         }
-        
+
         self::$mock = $result;
         self::$tableName = $table;
     }
     
-    public static function persist($object, $full = false)
+    public static function persist($object, $full = false, $extra = array(), $dont = false)
     {
-        self::init();
+        self::init($dont);
         self::extract($object);
         $id = self::findNextId($object);
         $keys = array();
         $values = array();
-        foreach (self::$mock[self::$tableName] as $value => $key) {
+        
+        $columns = self::$mock[self::$tableName];
+        if(!empty($extra) && isset($extra[self::$tableName])){
+            $columns = array_merge(self::$mock[self::$tableName], $extra[self::$tableName]);
+        }
+        
+        foreach ($columns as $value => $key) {
             $vvv = null;
             if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
                 $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
@@ -92,11 +102,9 @@ class QuickInsertRepository extends UsortRepository
         if ($sql && $id) {
             $sth = self::$connection->prepare($sql);
             $sth->execute();
-            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
-            $sth->execute();
         }
 
-        self::close();
+        self::close($dont);
         return $id;
     }
     
@@ -109,11 +117,19 @@ class QuickInsertRepository extends UsortRepository
                 $f = $value;
                 break;
             }
-            $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".$f."'";
+            if(isset(self::$mock[$tableName][$fk])){
+                $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".$f."'";
+            } else {
+                $whereSql .= ' WHERE '.$fk." = '".$f."'";
+            }
             unset($where[$fk]);
             if ($where) {
                 foreach ($where as $key => $value) {
-                    $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".$value."'";
+                    if(isset(self::$mock[$tableName][$key])){
+                        $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".$value."'";
+                    } else {
+                        $whereSql .= ' AND '.$key." = '".$value."'";
+                    }
                 }
             }
         }
@@ -121,9 +137,9 @@ class QuickInsertRepository extends UsortRepository
         return $whereSql;
     }
 
-    public static function get($object, $one = false, $where = array())
+    public static function get($object, $one = false, $where = array(), $dont = false)
     {
-        self::init();
+        self::init($dont);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         $sql = 'SELECT id FROM '.self::$tableName.' '.$whereSql;
@@ -131,16 +147,19 @@ class QuickInsertRepository extends UsortRepository
         $sth->execute();
         $result = $sth->fetchAll();
         if ($one && $result) {
-            $result = intval($result[0]['id']);
+            return intval($result[0]['id']);
         }
 
-        self::close();
+        self::close($dont);
+        if($one){
+            return null;
+        }
         return $result;
     }
 
-    public static function link($object, $data)
+    public static function link($object, $data, $dont = false)
     {
-        self::init();
+        self::init($dont);
         self::extract($object);
         if ($object && $data) {
             $keys = $values = array();
@@ -159,12 +178,35 @@ class QuickInsertRepository extends UsortRepository
             $sth->execute();
         }
         
-        self::close();
+        self::close($dont);
     }
     
-    public static function update($id, $object)
+    public static function linkTable($tableName, $data, $dont = false)
     {
-        self::init();
+        self::init($dont);
+        if ($data) {
+            $keys = $values = array();
+            foreach ($data as $key => $value) {
+                $keys[] = $key;
+                $values[] = $value;
+            }
+            $sql = "
+                INSERT IGNORE INTO 
+                    ".$tableName."
+                        (".implode(',', $keys).")
+                VALUES
+                    (".implode(',', $values).")
+            ";
+            $sth = self::$connection->prepare($sql);
+            $sth->execute();
+        }
+        
+        self::close($dont);
+    }
+    
+    public static function update($id, $object, $extra = array(), $dont = false)
+    {
+        self::init($dont);
         self::extract($object);
         $sqls = "
             SELECT
@@ -182,7 +224,13 @@ class QuickInsertRepository extends UsortRepository
         }
         unset($result['id']);
         $data = array();
-        $flip = array_flip(self::$mock[self::$tableName]);
+        
+        $columns = self::$mock[self::$tableName];
+        if(!empty($extra) && isset($extra[self::$tableName])){
+            $columns = array_merge(self::$mock[self::$tableName], $extra[self::$tableName]);
+        }
+        
+        $flip = array_flip($columns);
         foreach ($result as $key => $value) {
             if (trim($value) == '' && trim($object->{'get'.ucfirst($flip[$key])}()) != '') {
                 $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
@@ -204,19 +252,19 @@ class QuickInsertRepository extends UsortRepository
             $sthu->execute();
         }
         
-        self::close();
+        self::close($dont);
     }
     
-    public static function delete($object, $where = array())
+    public static function delete($object, $where = array(), $dont = false)
     {
-        self::init();
+        self::init($dont);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         $sql = 'DELETE FROM '.self::$tableName.' '.$whereSql;
         $sth = self::$connection->prepare($sql);
         $sth->execute();
         
-        self::close();
+        self::close($dont);
     }
     
     public static function isEmpty($variable)
@@ -232,5 +280,69 @@ class QuickInsertRepository extends UsortRepository
         }
 
         return $result;
+    }
+    
+    public static function findNextId2($object)
+    {
+        self::extract($object);
+        $sql = "
+            SHOW 
+                TABLE STATUS 
+            LIKE 
+                '".self::$tableName."'
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['Auto_increment'])) {
+            return (int) $result['Auto_increment'];
+        }
+
+        return 1;
+    }
+    
+    public static function findNextId3($object)
+    {
+        self::extract($object);
+        $sql = "
+            SHOW 
+                TABLE STATUS 
+            WHERE 
+                name = '".self::$tableName."'
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['Auto_increment'])) {
+            return (int) $result['Auto_increment'];
+        }
+
+        return 1;
+    }
+    
+    public static function findNextId($object)
+    {
+        self::extract($object);
+        $sql = "
+            SELECT 
+                AUTO_INCREMENT
+            FROM
+                information_schema.tables
+            WHERE
+                table_name = '".self::$tableName."'
+            AND
+                table_schema = DATABASE()
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['AUTO_INCREMENT'])) {
+            return (int) $result['AUTO_INCREMENT'];
+        }
+
+        return 1;
     }
 }

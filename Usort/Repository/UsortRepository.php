@@ -19,12 +19,10 @@ class UsortRepository
 
         self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity.manager'));
         self::$connection = self::$em->getConnection();
-        self::$database = self::$container->getParameter('sludio_helper.entity.database');
     }
 
     public static function findNextId2($object)
     {
-        self::init();
         self::extract($object);
         $sql = "
             SHOW 
@@ -40,13 +38,31 @@ class UsortRepository
             return (int) $result['Auto_increment'];
         }
 
-        self::close();
+        return 1;
+    }
+    
+    public static function findNextId3($object)
+    {
+        self::extract($object);
+        $sql = "
+            SHOW 
+                TABLE STATUS 
+            WHERE 
+                name = '".self::$tableName."'
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['Auto_increment'])) {
+            return (int) $result['Auto_increment'];
+        }
+
         return 1;
     }
     
     public static function findNextId($object)
     {
-        self::init();
         self::extract($object);
         $sql = "
             SELECT 
@@ -56,7 +72,7 @@ class UsortRepository
             WHERE
                 table_name = '".self::$tableName."'
             AND
-                table_schema = '".self::$database."'
+                table_schema = DATABASE()
         ";
         $sth = self::$connection->prepare($sql);
         $sth->execute();
@@ -66,7 +82,6 @@ class UsortRepository
             return (int) $result['AUTO_INCREMENT'];
         }
 
-        self::close();
         return 1;
     }
 }

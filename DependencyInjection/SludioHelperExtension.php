@@ -151,7 +151,7 @@ class SludioHelperExtension extends Extension
             }
         }
         
-        if ($container->getParameter('sludio_helper.oauth.enabled')) {
+        if ($container->hasParameter('sludio_helper.oauth.enabled')) {
             $clientConfigurations = $container->getParameter('sludio_helper.oauth.clients');
             $clientServiceKeys = [];
             foreach ($clientConfigurations as $key => $clientConfig) {
