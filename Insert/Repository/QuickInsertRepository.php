@@ -218,28 +218,6 @@ class QuickInsertRepository extends UsortRepository
         
         self::close();
     }
-
-    public static function findNextId($object)
-    {
-        self::init();
-        self::extract($object);
-        $sql = "
-            SHOW 
-                TABLE STATUS 
-            LIKE 
-                '".self::$tableName."'
-        ";
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
-
-        if (isset($result['Auto_increment'])) {
-            return (int) $result['Auto_increment'];
-        }
-
-        slef::close();
-        return 1;
-    }
     
     public static function isEmpty($variable)
     {
