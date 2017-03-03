@@ -9,6 +9,12 @@
     "license": [
         "MIT"
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/ozo2003/oci8.git"
+        }
+    ],
     "require" : {
         "php": ">=5.5.9",
         "symfony/symfony": "^2.8|^3.0",
@@ -16,7 +22,8 @@
         "predis/predis": "^1.1",
         "gedmo/doctrine-extensions": "^2",
         "twig/twig": "^1",
-        "league/oauth2-client": "^1.0|^2.0"
+        "league/oauth2-client": "^1.0|^2.0",
+        "sludio/oci8": "dev-master"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"
