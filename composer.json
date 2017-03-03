@@ -22,8 +22,7 @@
         "predis/predis": "^1.1",
         "gedmo/doctrine-extensions": "^2",
         "twig/twig": "^1",
-        "league/oauth2-client": "^1.0|^2.0",
-        "sludio/oci8": "dev-master"
+        "league/oauth2-client": "^1.0|^2.0"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"
