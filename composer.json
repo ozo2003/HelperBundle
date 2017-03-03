@@ -9,12 +9,6 @@
     "license": [
         "MIT"
     ],
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ozo2003/oci8.git"
-        }
-    ],
     "require" : {
         "php": ">=5.5.9",
         "symfony/symfony": "^2.8|^3.0",
