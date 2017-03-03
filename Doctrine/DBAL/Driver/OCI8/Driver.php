@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Doctrine\DBAL\Driver\OCI8;
 
 use Doctrine\DBAL\DBALException;
+use Sludio\HelperBundle\Doctrine\DBAL\OCI8\OCI8Connection;
 
 class Driver extends \Doctrine\DBAL\Driver\OCI8\Driver
 {

@@ -2,25 +2,58 @@
 
 namespace Sludio\HelperBundle\Insert\Repository;
 
-use Sludio\HelperBundle\Usort\Repository\UsortRepository;
-
-class QuickInsertRepository extends UsortRepository
+class QuickInsertRepository
 {
     private static $mock = array();
     private static $tableName;
     
-    public static function init($dont = false)
+    public static $em;
+    public static $connection;
+    public static $container;
+    public static $manager;
+    
+    public static function init($manager = 'mysql', $dont = false)
     {
-        parent::init();
+        switch($manager){
+            case 'mysql': self::initMysql($dont); break;
+            case 'oracle': self::initOracle(); break;
+        }
+    }
+    
+    public static function initMysql($dont = false)
+    {
+        global $kernel;
+
+        if ('AppCache' == get_class($kernel)) {
+            $kernel = $kernel->getKernel();
+        }
+        self::$container = $kernel->getContainer();
+
+        self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity.manager'));
+        self::$connection = self::$em->getConnection();
+        
         if(!$dont){
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
             $sth->execute();
         }
     }
     
-    public static function close($dont = false)
+    public static function initOracle()
     {
-        if(!$dont){
+        global $kernel;
+
+        if ('AppCache' == get_class($kernel)) {
+            $kernel = $kernel->getKernel();
+        }
+        self::$container = $kernel->getContainer();
+
+        self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity.oracle_manager'));
+        self::$connection = self::$em->getConnection();
+    }
+    
+    public static function close($manager = 'mysql', $dont = false)
+    {
+        if(!$dont && self::$manager == 'mysql'){
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
             $sth->execute();
         }
@@ -47,9 +80,17 @@ class QuickInsertRepository extends UsortRepository
         self::$tableName = $table;
     }
     
-    public static function persist($object, $full = false, $extra = array(), $dont = false)
+    public static function persistMysql($object, $full = false, $extra = array(), $dont = false){
+        return self::persist('mysql', $object, $full, $extra, $dont);
+    }
+    
+    public static function persistOracle($object, $full = false, $extra = array(), $dont = false){
+        return self::persist('oracle', $object, $full, $extra, $dont);
+    }
+    
+    public static function persist($manager = 'mysql', $object, $full = false, $extra = array(), $dont = false)
     {
-        self::init($dont);
+        self::init($manager, $dont);
         self::extract($object);
         $id = self::findNextId($object);
         $keys = array();
@@ -104,7 +145,7 @@ class QuickInsertRepository extends UsortRepository
             $sth->execute();
         }
 
-        self::close($dont);
+        self::close($manager, $dont);
         return $id;
     }
     
@@ -136,10 +177,25 @@ class QuickInsertRepository extends UsortRepository
         
         return $whereSql;
     }
+    
+    private function buildWhereExtended($tableName, $where){
+        $whereSql = '';
+        if ($where) {
+            
+        }
+    }
+    
+    public static function getMysql($object, $one = false, $where = array(), $dont = false){
+        return self::get('mysql', $object, $one, $where, $dont);
+    }
+    
+    public static function getOracle($object, $one = false, $where = array(), $dont = false){
+        return self::get('oracle', $object, $one, $where, $dont);
+    }
 
-    public static function get($object, $one = false, $where = array(), $dont = false)
+    public static function get($manager = 'mysql', $object, $one = false, $where = array(), $dont = false)
     {
-        self::init($dont);
+        self::init($manager, $dont);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         $sql = 'SELECT id FROM '.self::$tableName.' '.$whereSql;
@@ -150,16 +206,24 @@ class QuickInsertRepository extends UsortRepository
             return intval($result[0]['id']);
         }
 
-        self::close($dont);
+        self::close($manager, $dont);
         if($one){
             return null;
         }
         return $result;
     }
+    
+    public static function linkMysql($object, $data, $dont = false){
+        return self::link('mysql', $object, $data, $dont);
+    }
+    
+    public static function linkOracle($object, $data, $dont = false){
+        return self::link('oracle', $object, $data, $dont);
+    }
 
-    public static function link($object, $data, $dont = false)
+    public static function link($manager = 'mysql', $object, $data, $dont = false)
     {
-        self::init($dont);
+        self::init($manager, $dont);
         self::extract($object);
         if ($object && $data) {
             $keys = $values = array();
@@ -178,12 +242,20 @@ class QuickInsertRepository extends UsortRepository
             $sth->execute();
         }
         
-        self::close($dont);
+        self::close($manager, $dont);
     }
     
-    public static function linkTable($tableName, $data, $dont = false)
+    public static function linkTableMysql($tableName, $data, $dont = false){
+        return self::link('mysql', $tableName, $data, $dont);
+    }
+    
+    public static function linkTableOracle($tableName, $data, $dont = false){
+        return self::link('oracle', $tableName, $data, $dont);
+    }
+    
+    public static function linkTable($manager = 'mysql', $tableName, $data, $dont = false)
     {
-        self::init($dont);
+        self::init($manager, $dont);
         if ($data) {
             $keys = $values = array();
             foreach ($data as $key => $value) {
@@ -201,12 +273,20 @@ class QuickInsertRepository extends UsortRepository
             $sth->execute();
         }
         
-        self::close($dont);
+        self::close($manager, $dont);
     }
     
-    public static function update($id, $object, $extra = array(), $dont = false)
+    public static function updateMysql($id, $object, $extra = array(), $dont = false){
+        return self::update('mysql', $id, $object, $extra, $dont);
+    }
+    
+    public static function updateOracle($id, $object, $extra = array(), $dont = false){
+        return self::update('oracle', $id, $object, $extra, $dont);
+    }
+    
+    public static function update($manager = 'mysql', $id, $object, $extra = array(), $dont = false)
     {
-        self::init($dont);
+        self::init($manager, $dont);
         self::extract($object);
         $sqls = "
             SELECT
@@ -252,19 +332,27 @@ class QuickInsertRepository extends UsortRepository
             $sthu->execute();
         }
         
-        self::close($dont);
+        self::close($manager, $dont);
     }
     
-    public static function delete($object, $where = array(), $dont = false)
+    public static function deleteMysql($object, $where = array(), $dont = false){
+        return self::delete('mysql', $object, $where, $dont);
+    }
+    
+    public static function deleteOracle($object, $where = array(), $dont = false){
+        return self::delete('oracle', $object, $where, $dont);
+    }
+    
+    public static function delete($manager = 'mysql', $object, $where = array(), $dont = false)
     {
-        self::init($dont);
+        self::init($manager, $dont);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         $sql = 'DELETE FROM '.self::$tableName.' '.$whereSql;
         $sth = self::$connection->prepare($sql);
         $sth->execute();
         
-        self::close($dont);
+        self::close($manager, $dont);
     }
     
     public static function isEmpty($variable)
