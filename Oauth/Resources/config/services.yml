@@ -25,11 +25,7 @@ services:
         arguments:
             - "%sludio_helper.oauth.clients%"
             - "@session"
-            # - "@doctrine.orm.unicorn_entity_manager"
         tags:
             - 
                 name: monolog.logger
                 channel: oauth_service
-
-    # sludio_helper.oauth.oracle_service:
-        
