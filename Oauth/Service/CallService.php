@@ -72,12 +72,14 @@ class CallService
         $response = $this->sendRequest($options);
         $response = json_decode($response['RESPONSE'], 1);
         
-        $this->session->set('access_token', $response['access_token']);
-        $this->session->set('refresh_token', $response['refresh_token']);
-        
-        $response1 = new Response();
-        $response1->headers->setCookie(new Cookie('access_token_active', 1, time() + $response['expires_in'], '/'));
-        $response1->sendHeaders();
+        if(isset($response['access_token'])){
+            $this->session->set('access_token', $response['access_token']);
+            $this->session->set('refresh_token', $response['refresh_token']);
+            
+            $response1 = new Response();
+            $response1->headers->setCookie(new Cookie('access_token_active', 1, time() + $response['expires_in'], '/'));
+            $response1->sendHeaders();
+        }
         
         return $response;
     }

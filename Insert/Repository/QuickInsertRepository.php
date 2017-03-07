@@ -125,7 +125,7 @@ class QuickInsertRepository
         if ($where) {
             foreach ($where as $key => $value) {
                 $fk = $key;
-                $f = $value;
+                $f = trim($value);
                 break;
             }
             if(isset(self::$mock[$tableName][$fk])){
@@ -137,9 +137,9 @@ class QuickInsertRepository
             if ($where) {
                 foreach ($where as $key => $value) {
                     if(isset(self::$mock[$tableName][$key])){
-                        $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".$value."'";
+                        $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".trim($value)."'";
                     } else {
-                        $whereSql .= ' AND '.$key." = '".$value."'";
+                        $whereSql .= ' AND '.$key." = '".trim($value)."'";
                     }
                 }
             }
