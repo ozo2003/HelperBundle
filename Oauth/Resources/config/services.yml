@@ -4,6 +4,12 @@ services:
         tags:
             -
                 name: console.command
+            
+    sludio_helper.command.token_clear:
+        class: Sludio\HelperBundle\Oauth\Command\ClearOldTokensCommand
+        tags:
+            -
+                name: console.command
 
     sludio_helper.oauth.provider_factory:
         class: Sludio\HelperBundle\DependencyInjection\ProviderFactory

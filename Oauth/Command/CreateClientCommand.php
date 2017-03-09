@@ -41,8 +41,10 @@ EOT
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $clientManager = $this->getContainer()->get('fos_oauth_server.client_manager.default');
+        $clientManager = $this->getContainer()->get($this->getContainer()->getParameter('sludio_helper.oauth.server_manager'));
         $client = $clientManager->createClient();
+        $client->getRandomId();
+        $client->getSecret();
         $client->setRedirectUris($input->getOption('redirect-uri'));
         $client->setAllowedGrantTypes($input->getOption('grant-type'));
         $clientManager->updateClient($client);
