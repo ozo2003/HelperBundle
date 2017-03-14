@@ -21,14 +21,14 @@ class CallService
         
         $url .= '?'.http_build_query($options);
         $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headr);
-        curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER,     $headr);
+        curl_setopt($ch, CURLINFO_HEADER_OUT,    true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_BINARYTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0); 
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+        curl_setopt($ch, CURLOPT_TIMEOUT,        60);
         $information = curl_getinfo($ch);
         
         $result = curl_exec($ch);
@@ -37,7 +37,10 @@ class CallService
         $curl_error_code = curl_errno($ch);
         curl_close($ch);
         
-        return array('CURL_CODE' => $curl_error_code, 'RESPONSE' => $result);
+        return array(
+            'CURL_CODE' => $curl_error_code, 
+            'RESPONSE' => $result
+        );
     }
     
     public function __construct($clients, $session)
@@ -75,14 +78,14 @@ class CallService
         $response = $this->sendRequest($options);
         $response = json_decode($response['RESPONSE'], 1);
         
-        if(isset($response['access_token'])) {
-            $this->session->set('access_token', $response['access_token']);
-            $this->session->set('refresh_token', $response['refresh_token']);
-            
-            $response1 = new Response();
-            $response1->headers->setCookie(new Cookie('access_token_active', 1, time() + $response['expires_in'], '/'));
-            $response1->sendHeaders();
-        }
+        // if(isset($response['access_token'])) {
+        //     $this->session->set('access_token', $response['access_token']);
+        //     $this->session->set('refresh_token', $response['refresh_token']);
+        //     
+        //     $response1 = new Response();
+        //     $response1->headers->setCookie(new Cookie('access_token_active', 1, time() + $response['expires_in'], '/'));
+        //     $response1->sendHeaders();
+        // }
         
         return $response;
     }
@@ -142,7 +145,7 @@ class CallService
             }
         }
         $client = $this->clients[$client];
-        if($accessToken && $clientId && $clientSecret) {
+        if($accessToken && $clientId && $clientSecret && isset($client['provider_options']['check'])) {
             $options['client_id'] = $clientId;
             $options['client_secret'] = $clientSecret;
             $options['access_token'] = $accessToken;
