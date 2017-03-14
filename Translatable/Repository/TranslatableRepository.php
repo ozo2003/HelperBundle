@@ -11,11 +11,17 @@ class TranslatableRepository extends UsortRepository
 {
     public static $redis;
     public static $table;
+    
+    public static $localeArr = array(
+        'lv' => 'lv_LV',
+        'en' => 'en_US',
+        'ru' => 'ru_RU',
+    );
 
     public static function init()
     {
         parent::init();
-        self::$redis = self::$container->getParameter('sludio_helper.redis.translation');
+        self::$redis = self::$container->get('snc_redis.'.self::$container->getParameter('sludio_helper.redis.translation'));
         self::$table = self::$container->getParameter('sludio_helper.translatable.table');
     }
 
@@ -55,6 +61,11 @@ class TranslatableRepository extends UsortRepository
     public static function findByLocale($class, $locale, $content, $field = 'slug', $id = null, $id2 = null)
     {
         self::init();
+        
+        if (strlen($locale) == 2) {
+            $locale = self::$localeArr[$locale];
+        }
+        
         $connection = self::$connection;
         $options = array(
             'class' => $class,
@@ -91,6 +102,10 @@ class TranslatableRepository extends UsortRepository
         if (!$id) {
             $id = self::findNextId($class);
         }
+        
+        if (strlen($locale) == 2) {
+            $locale = self::$localeArr[$locale];
+        }
 
         $res = (int) self::findByLocale($class, $locale, $content, $field, null, $id);
         $class = str_replace('\\', '\\\\', $class);
@@ -113,7 +128,7 @@ class TranslatableRepository extends UsortRepository
         } else {
             $sql = "
                 INSERT INTO
-                    sludio_helper_translation
+                    ".self::$table."
                         (content, object_class, locale, field, foreign_key)
                 VALUES
                     (:content,'{$class}', '{$locale}','{$field}',{$id})
