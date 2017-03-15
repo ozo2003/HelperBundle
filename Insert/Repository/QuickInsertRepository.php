@@ -250,9 +250,7 @@ class QuickInsertRepository
         
         $flip = array_flip($columns);
         foreach ($result as $key => $value) {
-            if (trim($value) == '' && trim($object->{'get'.ucfirst($flip[$key])}()) != '') {
-                $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
-            }
+            $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
         }
         if ($data) {
             $sqlu = "
