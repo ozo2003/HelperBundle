@@ -31,3 +31,10 @@ services:
         tags:
             -
                 name: console.command
+
+    sludio_helper.translatable.mapping.listener:
+        class: Sludio\HelperBundle\Translatable\Event\TranslationMappingListener
+        tags:
+            -
+                name: doctrine.event_listener
+                event: loadClassMetadata
