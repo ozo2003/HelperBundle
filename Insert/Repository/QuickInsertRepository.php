@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Insert\Repository;
 class QuickInsertRepository
 {
     private static $mock = array();
+    private static $metadata = array();
     private static $tableName;
     
     public static $em;
@@ -56,6 +57,7 @@ class QuickInsertRepository
 
         self::$mock = $result;
         self::$tableName = $table;
+        self::$metadata[$table] = $metadata;
     }
     
     public static function persist($object, $full = false, $extra = array(), $dont = false)
@@ -255,6 +257,7 @@ class QuickInsertRepository
         foreach ($result as $key => $value) {
             $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
         }
+
         if ($data) {
             $sqlu = "
                 UPDATE
@@ -263,9 +266,12 @@ class QuickInsertRepository
                     
             ";
             foreach ($data as $key => $value) {
-                if(!is_array($key) && !is_array($value)) {
-                    $sqlu .= " ".$key." = '".$value."',";
+                $meta = self::$metadata[self::$tableName]->getFieldMapping($flip[$key]);
+                $meta = $meta['type'];
+                if(in_array($meta, ['boolean','integer','longint'])){
+                    $value = intval($value);
                 }
+                $sqlu .= " ".$key." = '".$value."',";
             }
             $sqlu = substr($sqlu, 0, -1);
             $sqlu .= " WHERE id = ".$id;
