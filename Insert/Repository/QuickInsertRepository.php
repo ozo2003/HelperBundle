@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Insert\Repository;
 class QuickInsertRepository
 {
     private static $mock = array();
+    private static $metadata = array();
     private static $tableName;
     
     public static $em;
@@ -23,7 +24,7 @@ class QuickInsertRepository
         self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity.manager'));
         self::$connection = self::$em->getConnection();
         
-        if(!$dont){
+        if(!$dont) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
             $sth->execute();
         }
@@ -31,7 +32,7 @@ class QuickInsertRepository
     
     public static function close($dont = false)
     {
-        if(!$dont){
+        if(!$dont) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
             $sth->execute();
         }
@@ -56,6 +57,7 @@ class QuickInsertRepository
 
         self::$mock = $result;
         self::$tableName = $table;
+        self::$metadata[$table] = $metadata;
     }
     
     public static function persist($object, $full = false, $extra = array(), $dont = false)
@@ -67,25 +69,27 @@ class QuickInsertRepository
         $values = array();
         
         $columns = self::$mock[self::$tableName];
-        if(!empty($extra) && isset($extra[self::$tableName])){
+        if(!empty($extra) && isset($extra[self::$tableName])) {
             $columns = array_merge(self::$mock[self::$tableName], $extra[self::$tableName]);
         }
         
         foreach ($columns as $value => $key) {
             $vvv = null;
-            if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
-                $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
-            } else {
-                $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
-            }
-            if (trim($vvv) == '' || trim($vvv) == "''" || (is_numeric($vvv) && $vvv === 0)) {
-                $vvv = null;
-            }
-            if ($vvv) {
-                $values[] = $vvv;
-                $keys[] = $key;
-                if ($key == 'id') {
-                    $idd = $object->{'get'.ucfirst($value)}();
+            if(!is_array($key) && !is_array($value)) {
+                if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
+                    $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
+                } else {
+                    $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
+                }
+                if (trim($vvv) == '' || trim($vvv) == "''" || (is_numeric($vvv) && $vvv === 0)) {
+                    $vvv = null;
+                }
+                if ($vvv) {
+                    $values[] = $vvv;
+                    $keys[] = $key;
+                    if ($key == 'id') {
+                        $idd = $object->{'get'.ucfirst($value)}();
+                    }
                 }
             }
         }
@@ -128,7 +132,7 @@ class QuickInsertRepository
                 $f = trim($value);
                 break;
             }
-            if(isset(self::$mock[$tableName][$fk])){
+            if(isset(self::$mock[$tableName][$fk])) {
                 $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".$f."'";
             } else {
                 $whereSql .= ' WHERE '.$fk." = '".$f."'";
@@ -136,7 +140,7 @@ class QuickInsertRepository
             unset($where[$fk]);
             if ($where) {
                 foreach ($where as $key => $value) {
-                    if(isset(self::$mock[$tableName][$key])){
+                    if(isset(self::$mock[$tableName][$key])) {
                         $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".trim($value)."'";
                     } else {
                         $whereSql .= ' AND '.$key." = '".trim($value)."'";
@@ -148,7 +152,8 @@ class QuickInsertRepository
         return $whereSql;
     }
     
-    private function buildWhereExtended($tableName, $where){
+    private function buildWhereExtended($tableName, $where)
+    {
         $whereSql = '';
         if ($where) {
             
@@ -169,7 +174,7 @@ class QuickInsertRepository
         }
 
         self::close($dont);
-        if($one){
+        if($one) {
             return null;
         }
         return $result;
@@ -244,16 +249,15 @@ class QuickInsertRepository
         $data = array();
         
         $columns = self::$mock[self::$tableName];
-        if(!empty($extra) && isset($extra[self::$tableName])){
+        if(!empty($extra) && isset($extra[self::$tableName])) {
             $columns = array_merge(self::$mock[self::$tableName], $extra[self::$tableName]);
         }
         
         $flip = array_flip($columns);
         foreach ($result as $key => $value) {
-            if (trim($value) == '' && trim($object->{'get'.ucfirst($flip[$key])}()) != '') {
-                $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
-            }
+            $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
         }
+
         if ($data) {
             $sqlu = "
                 UPDATE
@@ -262,6 +266,11 @@ class QuickInsertRepository
                     
             ";
             foreach ($data as $key => $value) {
+                $meta = self::$metadata[self::$tableName]->getFieldMapping($flip[$key]);
+                $meta = $meta['type'];
+                if(in_array($meta, ['boolean','integer','longint'])){
+                    $value = intval($value);
+                }
                 $sqlu .= " ".$key." = '".$value."',";
             }
             $sqlu = substr($sqlu, 0, -1);
