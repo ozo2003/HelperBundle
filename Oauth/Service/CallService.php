@@ -71,26 +71,17 @@ class CallService
             $options['grant_type'] = 'refresh_token';
             $options['refresh_token'] = $refresh_token;
         }
-        $options['url'] = $client['provider_options']['domain'].$client['provider_options']['token'];
+        $options['url'] = $client['provider_options']['domain'].$client['provider_options']['token']['url'];
         $options['client_id'] = $client['client_id'];
         $options['client_secret'] = $client['client_secret'];
         
         $response = $this->sendRequest($options);
         $response = json_decode($response['RESPONSE'], 1);
         
-        // if(isset($response['access_token'])) {
-        //     $this->session->set('access_token', $response['access_token']);
-        //     $this->session->set('refresh_token', $response['refresh_token']);
-        //     
-        //     $response1 = new Response();
-        //     $response1->headers->setCookie(new Cookie('access_token_active', 1, time() + $response['expires_in'], '/'));
-        //     $response1->sendHeaders();
-        // }
-        
         return $response;
     }
     
-    public function callFunction($function, $accessToken = null, $client = null)
+    public function callFunction($function, $accessToken = null, $client = null, $asParam = false)
     {
         if (!$client) {
             foreach ($this->clients as $client => $value) {
@@ -105,7 +96,7 @@ class CallService
                 $options['url'] = $client['provider_options']['domain'].$client['provider_options']['functions'][$function];
                 $options['access_token'] = $accessToken;
                 
-                $response = $this->sendRequest($options);
+                $response = $this->sendRequest($options, $asParam);
                 return json_decode($response['RESPONSE'], 1);
             }
         }
@@ -134,25 +125,6 @@ class CallService
                 $response = $this->sendRequest($options);
                 return json_decode($response['RESPONSE'], 1);
             }
-        }
-    }
-    
-    public function checkAccess($clientId = null, $clientSecret = null, $accessToken = null, $client = null)
-    {
-        if (!$client) {
-            foreach ($this->clients as $client => $value) {
-                break;
-            }
-        }
-        $client = $this->clients[$client];
-        if($accessToken && $clientId && $clientSecret && isset($client['provider_options']['check'])) {
-            $options['client_id'] = $clientId;
-            $options['client_secret'] = $clientSecret;
-            $options['access_token'] = $accessToken;
-            $options['url'] = $client['provider_options']['domain'].$client['provider_options']['check'];
-            $response = $this->sendRequest($options, true);
-            return json_decode($response['RESPONSE'], 1);
-            return $response;
         }
     }
 }
