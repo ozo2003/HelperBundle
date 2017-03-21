@@ -14,7 +14,7 @@ class BaseAdmin extends Admin
             $kernel = $kernel->getKernel();
         }
 
-        return $kernel->getContainer()->get($kernel->getContainer()->getParameter('sludio_helper.redis.translation'));
+        return $kernel->getContainer()->get('snc_redis.'.$kernel->getContainer()->getParameter('sludio_helper.redis.translation'));
     }
 
     public function postUpdate($object)
