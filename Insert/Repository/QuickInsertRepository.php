@@ -60,6 +60,32 @@ class QuickInsertRepository
         self::$metadata[$table] = $metadata;
     }
     
+    public static function extractExt($object, $em)
+    {
+        $metadata = $em->getClassMetadata(get_class($object));
+        
+        $fields = $metadata->getFieldNames();
+        $columns = $metadata->getColumnNames();
+        $table = $metadata->getTableName();
+        
+        $result = array();
+        foreach ($fields as $key => $field) {
+            foreach ($columns as $key2 => $column) {
+                if ($key === $key2) {
+                    $result[$table][$field] = $column;
+                }
+            }
+        }
+
+        $data = array(
+            'mock' => $result,
+            'table' => $table,
+            'meta' => $metadata
+        );
+
+        return $data;
+    }
+    
     public static function persist($object, $full = false, $extra = array(), $dont = false)
     {
         self::init($dont);
