@@ -296,8 +296,10 @@ class QuickInsertRepository
                 $meta = $meta['type'];
                 if(in_array($meta, ['boolean','integer','longint'])){
                     $value = intval($value);
+                } else {
+                    $value = "'$value'";
                 }
-                $sqlu .= " ".$key." = '".$value."',";
+                $sqlu .= " ".$key." = ".$value.",";
             }
             $sqlu = substr($sqlu, 0, -1);
             $sqlu .= " WHERE id = ".$id;
