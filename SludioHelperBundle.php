@@ -18,7 +18,7 @@ class SludioHelperBundle extends Bundle
     public function getContainerExtension()
     {
         if ($this->extension === null) {
-            return new SludiohelperExtension();
+            return new SludioHelperExtension();
         }
         
         return $this->extension;
