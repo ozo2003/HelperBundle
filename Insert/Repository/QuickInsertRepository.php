@@ -7,11 +7,11 @@ class QuickInsertRepository
     private static $mock = array();
     private static $metadata = array();
     private static $tableName;
-    
+
     public static $em;
     public static $connection;
     public static $container;
-    
+
     public static function init($dont = false)
     {
         global $kernel;
@@ -23,13 +23,13 @@ class QuickInsertRepository
 
         self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity.manager'));
         self::$connection = self::$em->getConnection();
-        
+
         if(!$dont) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
             $sth->execute();
         }
     }
-    
+
     public static function close($dont = false)
     {
         if(!$dont) {
@@ -37,15 +37,15 @@ class QuickInsertRepository
             $sth->execute();
         }
     }
-    
+
     private static function extract($object)
     {
         $metadata = self::$em->getClassMetadata(get_class($object));
-        
+
         $fields = $metadata->getFieldNames();
         $columns = $metadata->getColumnNames();
         $table = $metadata->getTableName();
-        
+
         $result = array();
         foreach ($fields as $key => $field) {
             foreach ($columns as $key2 => $column) {
@@ -59,15 +59,15 @@ class QuickInsertRepository
         self::$tableName = $table;
         self::$metadata[$table] = $metadata;
     }
-    
+
     public static function extractExt($object, $em)
     {
         $metadata = $em->getClassMetadata(get_class($object));
-        
+
         $fields = $metadata->getFieldNames();
         $columns = $metadata->getColumnNames();
         $table = $metadata->getTableName();
-        
+
         $result = array();
         foreach ($fields as $key => $field) {
             foreach ($columns as $key2 => $column) {
@@ -85,7 +85,7 @@ class QuickInsertRepository
 
         return $data;
     }
-    
+
     public static function persist($object, $full = false, $extra = array(), $dont = false)
     {
         self::init($dont);
@@ -93,12 +93,12 @@ class QuickInsertRepository
         $id = self::findNextId($object);
         $keys = array();
         $values = array();
-        
+
         $columns = self::$mock[self::$tableName];
         if(!empty($extra) && isset($extra[self::$tableName])) {
             $columns = array_merge(self::$mock[self::$tableName], $extra[self::$tableName]);
         }
-        
+
         foreach ($columns as $value => $key) {
             $vvv = null;
             if(!is_array($key) && !is_array($value)) {
@@ -148,7 +148,7 @@ class QuickInsertRepository
         self::close($dont);
         return $id;
     }
-    
+
     private static function buildWhere($tableName, $where)
     {
         $whereSql = '';
@@ -159,33 +159,49 @@ class QuickInsertRepository
                 break;
             }
             if(isset(self::$mock[$tableName][$fk])) {
-                $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".$f."'";
+                if(is_numeric($f)){
+                    $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = $f";
+                } else {
+                    $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".addslashes(trim($f))."'";
+                }
             } else {
-                $whereSql .= ' WHERE '.$fk." = '".$f."'";
+                if(is_numeric($f)){
+                    $whereSql .= ' WHERE '.$fk." = $f";
+                } else {
+                    $whereSql .= ' WHERE '.$fk." = '".addslashes(trim($f))."'";
+                }
             }
             unset($where[$fk]);
             if ($where) {
                 foreach ($where as $key => $value) {
                     if(isset(self::$mock[$tableName][$key])) {
-                        $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".trim($value)."'";
+                        if(is_numeric($value)){
+                            $whereSql .= ' AND '.self::$mock[$tableName][$key]." = $value";
+                        } else {
+                            $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".addslashes(trim($value))."'";
+                        }
                     } else {
-                        $whereSql .= ' AND '.$key." = '".trim($value)."'";
+                        if(is_numeric($value)){
+                            $whereSql .= ' AND '.$key." = $value";
+                        } else {
+                            $whereSql .= ' AND '.$key." = '".addslashes(trim($value))."'";
+                        }
                     }
                 }
             }
         }
-        
+
         return $whereSql;
     }
-    
+
     private function buildWhereExtended($tableName, $where)
     {
         $whereSql = '';
         if ($where) {
-            
+
         }
     }
-    
+
     public static function get($object, $one = false, $where = array(), $dont = false)
     {
         self::init($dont);
@@ -205,7 +221,7 @@ class QuickInsertRepository
         }
         return $result;
     }
-    
+
     public static function link($object, $data, $dont = false)
     {
         self::init($dont);
@@ -217,7 +233,7 @@ class QuickInsertRepository
                 $values[] = $value;
             }
             $sql = "
-                INSERT IGNORE INTO 
+                INSERT IGNORE INTO
                     ".self::$tableName."
                         (".implode(',', $keys).")
                 VALUES
@@ -226,10 +242,10 @@ class QuickInsertRepository
             $sth = self::$connection->prepare($sql);
             $sth->execute();
         }
-        
+
         self::close($dont);
     }
-    
+
     public static function linkTable($tableName, $data, $dont = false)
     {
         self::init($dont);
@@ -240,7 +256,7 @@ class QuickInsertRepository
                 $values[] = $value;
             }
             $sql = "
-                INSERT IGNORE INTO 
+                INSERT IGNORE INTO
                     ".$tableName."
                         (".implode(',', $keys).")
                 VALUES
@@ -249,10 +265,10 @@ class QuickInsertRepository
             $sth = self::$connection->prepare($sql);
             $sth->execute();
         }
-        
+
         self::close($dont);
     }
-    
+
     public static function update($id, $object, $extra = array(), $dont = false)
     {
         self::init($dont);
@@ -273,12 +289,12 @@ class QuickInsertRepository
         }
         unset($result['id']);
         $data = array();
-        
+
         $columns = self::$mock[self::$tableName];
         if(!empty($extra) && isset($extra[self::$tableName])) {
             $columns = array_merge(self::$mock[self::$tableName], $extra[self::$tableName]);
         }
-        
+
         $flip = array_flip($columns);
         foreach ($result as $key => $value) {
             $data[self::$mock[self::$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
@@ -297,7 +313,7 @@ class QuickInsertRepository
                 if(in_array($meta, ['boolean','integer','longint'])){
                     $value = intval($value);
                 } else {
-                    $value = "'$value'";
+                    $value = "'".addslashes(trim($value))."'";
                 }
                 $sqlu .= " ".$key." = ".$value.",";
             }
@@ -306,10 +322,10 @@ class QuickInsertRepository
             $sthu = self::$connection->prepare($sqlu);
             $sthu->execute();
         }
-        
+
         self::close($dont);
     }
-    
+
     public static function delete($object, $where = array(), $dont = false)
     {
         self::init($dont);
@@ -318,10 +334,10 @@ class QuickInsertRepository
         $sql = 'DELETE FROM '.self::$tableName.' '.$whereSql;
         $sth = self::$connection->prepare($sql);
         $sth->execute();
-        
+
         self::close($dont);
     }
-    
+
     public static function isEmpty($variable)
     {
         $result = true;
@@ -336,12 +352,12 @@ class QuickInsertRepository
 
         return $result;
     }
-    
+
     public static function findNextId($object)
     {
         self::extract($object);
         $sql = "
-            SELECT 
+            SELECT
                 AUTO_INCREMENT
             FROM
                 information_schema.tables
