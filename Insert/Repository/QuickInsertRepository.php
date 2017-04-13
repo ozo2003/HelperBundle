@@ -202,17 +202,29 @@ class QuickInsertRepository
         }
     }
 
-    public static function get($object, $one = false, $where = array(), $dont = false)
+    public static function get($object, $one = false, $where = array(), $dont = false, $fields = array())
     {
         self::init($dont);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
-        $sql = 'SELECT id FROM '.self::$tableName.' '.$whereSql;
+        if(!$fields){
+            $sql = 'SELECT id FROM '.self::$tableName.' '.$whereSql;
+        } else {
+            $sql = 'SELECT '.(implode(', ', $fields)).' FROM '.self::$tableName.' '.$whereSql;
+        }
         $sth = self::$connection->prepare($sql);
         $sth->execute();
         $result = $sth->fetchAll();
         if ($one && $result) {
-            return intval($result[0]['id']);
+            if(!$fields){
+                return intval($result[0]['id']);
+            } else {
+                if(count($fields) === 1){
+                    return $result[0][$fields[0]];
+                } else {
+                    return $result[0];
+                }
+            }
         }
 
         self::close($dont);
@@ -305,7 +317,7 @@ class QuickInsertRepository
                 UPDATE
                     ".self::$tableName."
                 SET
-                    
+
             ";
             foreach ($data as $key => $value) {
                 $meta = self::$metadata[self::$tableName]->getFieldMapping($flip[$key]);
