@@ -1,6 +1,7 @@
-{% macro script(name, url_name, icon, domain) %}
+{% macro script(name, url_name, icon, domain, spin) %}
     {% set icon = icon | default('gear') %}
     {% set domain = domain | default('sludio_helper_admin') %}
+    {% set spin = spin | default(false) %}
     {% if name and url_name %}
         <script>
             function {{ name }}() {
@@ -28,9 +29,9 @@
                     <tr>
                         <td>
                             <div class="btn-group" align="center" style="width: 100%">
-                                <i class="fa fa-{{ icon }} fleft"></i>
+                                <i class="fa fa-{{ icon }} fleft {% if spin %}fa-spin{% endif %}"></i>
                                 {{ name|trans({}, domain) }}
-                                <i class="fa fa-{{ icon }} fright"></i>
+                                <i class="fa fa-{{ icon }} fright {% if spin %}fa-spin{% endif %}"></i>
                             </div>
                         </td>
                     </tr>
