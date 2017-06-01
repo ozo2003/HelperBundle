@@ -11,8 +11,10 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Reference;
 
 use Sludio\HelperBundle\DependencyInjection\Providers\CustomProviderConfigurator;
+use Sludio\HelperBundle\DependencyInjection\Providers\FacebookProviderConfigurator;
+use Sludio\HelperBundle\DependencyInjection\Providers\GoogleProviderConfigurator;
 
-class BaseExtension extends Extension
+abstract class BaseExtension extends Extension
 {
     protected $checkExternalClassExistence;
 
@@ -20,6 +22,8 @@ class BaseExtension extends Extension
 
     protected static $supportedProviderTypes = [
         'custom' => CustomProviderConfigurator::class,
+        'facebook' => FacebookProviderConfigurator::class,
+        'google' => GoogleProviderConfigurator::class,
     ];
 
     public function __construct($checkExternalClassExistence = true)
@@ -83,6 +87,7 @@ class BaseExtension extends Extension
         $providerDefinition->setArguments([
             $providerClass,
             $options,
+            $options['redirect_route']
         ]);
 
         $clientServiceKey = sprintf('sludio_helper.oauth.client.%s', $providerKey);

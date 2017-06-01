@@ -13,7 +13,7 @@ class ProviderFactory
         $this->generator = $generator;
     }
 
-    public function createProvider($class, array $options, $redirectUri, array $redirectParams = [])
+    public function createProvider($class, array $options, $redirectUri = null, array $redirectParams = [])
     {
         $redirectUri = $this->generator
             ->generate($redirectUri, $redirectParams, UrlGeneratorInterface::ABSOLUTE_URL);
