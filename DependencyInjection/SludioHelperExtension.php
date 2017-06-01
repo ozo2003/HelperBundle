@@ -12,7 +12,7 @@ use Sludio\HelperBundle\DependencyInjection\Extension\BaseExtension;
  *
  * @link http://symfony.com/doc/current/cookbook/bundles/extension.html
  */
-class SludioHelperExtension extends Extension
+class SludioHelperExtension extends BaseExtension
 {
     public function getAlias()
     {
