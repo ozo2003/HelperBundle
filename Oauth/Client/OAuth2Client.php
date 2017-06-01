@@ -30,7 +30,7 @@ class OAuth2Client
     {
         $this->isStateless = true;
     }
-    
+
     public function redirect(array $scopes = [], array $options = [])
     {
         if (!empty($scopes)) {
@@ -47,31 +47,6 @@ class OAuth2Client
         }
 
         return new RedirectResponse($url);
-    }
-    
-    public function token(array $options = []){
-        $url = $this->provider->getBaseAccessTokenUrl();
-        
-        $url .= '&grant_type=password&username=dzalitis&password=aaaaaaaa';
-        
-        // return new RedirectResponse($url);
-        global $kernel;
-        
-        if ('AppCache' == get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-        
-        $service = $kernel->getContainer()->get('sludio_helper.oauth.base_service');
-        $options = array(
-            'grant_type' => 'password',
-            'username' => 'dzalitis',
-            'password' => 'aaaaaaaa',
-            'url' => $url
-        );
-        $options = array_merge($this->provider->getTokenData(), $options);
-        
-        return $service->sendRequest($options);
-        // return 
     }
 
     public function getAccessToken()
