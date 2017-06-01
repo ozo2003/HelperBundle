@@ -107,7 +107,8 @@ abstract class BaseExtension extends Extension
         return $clientServiceKey;
     }
 
-    public function configureOAuth(ContainerBuilder &$container){
+    public function configureOAuth(ContainerBuilder &$container)
+    {
         $clientConfigurations = $container->getParameter('sludio_helper.oauth.clients');
         $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
