@@ -102,7 +102,8 @@ class BaseExtension extends Extension
         return $clientServiceKey;
     }
 
-    public function configureOAuth(ContainerBuilder &$container){
+    public function configureOAuth(ContainerBuilder &$container)
+    {
         $clientConfigurations = $container->getParameter('sludio_helper.oauth.clients');
         $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
@@ -143,5 +144,9 @@ class BaseExtension extends Extension
         }
 
         $container->getDefinition('sludio_helper.oauth.registry')->replaceArgument(1, $clientServiceKeys);
+    }
+
+    public function load(array $configs, ContainerBuilder $container)
+    {
     }
 }
