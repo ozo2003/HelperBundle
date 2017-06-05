@@ -11,12 +11,13 @@
     ],
     "require" : {
         "php": ">=5.5.9",
-        "symfony/symfony": "^2.8|^3.0",
+        "symfony/symfony": "^2.8|^3.2",
         "snc/redis-bundle": "dev-master",
         "predis/predis": "^1.1",
         "gedmo/doctrine-extensions": "^2",
         "twig/twig": "^1",
-        "league/oauth2-client": "^1.0|^2.0"
+        "league/oauth2-client": "^1.0|^2.0",
+        "league/oauth1-client": "dev-master"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"

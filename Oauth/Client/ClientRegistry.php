@@ -18,7 +18,7 @@ class ClientRegistry
 
     public function getClient($key)
     {
-        if (!isset($this->serviceMap[$key])) {
+        if (!$this->hasClient($key)) {
             throw new \InvalidArgumentException(sprintf(
                 'There is no OAuth2 client called "%s". Available are: %s',
                 $key,
@@ -27,5 +27,9 @@ class ClientRegistry
         }
 
         return $this->container->get($this->serviceMap[$key]);
+    }
+
+    public function hasClient($key){
+        return isset($this->serviceMap[$key]);
     }
 }

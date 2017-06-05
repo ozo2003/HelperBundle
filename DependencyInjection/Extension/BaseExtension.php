@@ -13,6 +13,8 @@ use Symfony\Component\DependencyInjection\Reference;
 use Sludio\HelperBundle\DependencyInjection\Providers\CustomProviderConfigurator;
 use Sludio\HelperBundle\DependencyInjection\Providers\FacebookProviderConfigurator;
 use Sludio\HelperBundle\DependencyInjection\Providers\GoogleProviderConfigurator;
+use Sludio\HelperBundle\DependencyInjection\Providers\TwitterProviderConfigurator;
+use Sludio\HelperBundle\DependencyInjection\Providers\DraugiemProviderConfigurator;
 
 abstract class BaseExtension extends Extension
 {
@@ -24,6 +26,8 @@ abstract class BaseExtension extends Extension
         'custom' => CustomProviderConfigurator::class,
         'facebook' => FacebookProviderConfigurator::class,
         'google' => GoogleProviderConfigurator::class,
+        'twitter' => TwitterProviderConfigurator::class,
+        'draugiem' => DraugiemProviderConfigurator::class,
     ];
 
     public function __construct($checkExternalClassExistence = true)
@@ -84,11 +88,21 @@ abstract class BaseExtension extends Extension
             'createProvider',
         ]);
 
-        $providerDefinition->setArguments([
+        $mandatory = [
             $providerClass,
-            $options,
-            $options['redirect_route']
-        ]);
+            $options
+        ];
+        $optional = [];
+
+        if(isset($options['redirect_route'])){
+            $optional[] = $options['redirect_route'];
+        }
+
+        if(isset($options['params'])){
+            $optional[] = $options['params'];
+        }
+
+        $providerDefinition->setArguments(array_merge($mandatory, $optional));
 
         $clientServiceKey = sprintf('sludio_helper.oauth.client.%s', $providerKey);
         $clientDefinition = $container->register(

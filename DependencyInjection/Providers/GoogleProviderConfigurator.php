@@ -34,7 +34,7 @@ class GoogleProviderConfigurator implements ProviderConfiguratorInterface
 
     public function getProviderClass(array $config)
     {
-        return 'League\OAuth2\Client\Provider\Google';
+        return 'Sludio\HelperBundle\Oauth\Client\Provider\Google\Google';
     }
 
     public function getProviderOptions(array $config)
@@ -66,12 +66,12 @@ class GoogleProviderConfigurator implements ProviderConfiguratorInterface
 
     public function getPackagistName()
     {
-        return 'league/oauth2-google';
+        return '';
     }
 
     public function getLibraryHomepage()
     {
-        return 'https://github.com/thephpleague/oauth2-google';
+        return '';
     }
 
     public function getProviderDisplayName()

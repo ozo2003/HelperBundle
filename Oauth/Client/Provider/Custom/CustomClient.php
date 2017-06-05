@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Oauth\Client\Provider;
+namespace Sludio\HelperBundle\Oauth\Client\Provider\Custom;
 
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
 use League\OAuth2\Client\Token\AccessToken;
@@ -11,7 +11,7 @@ class CustomClient extends OAuth2Client
     {
         return parent::fetchUserFromToken($accessToken);
     }
-    
+
     public function fetchUser()
     {
         return parent::fetchUser();

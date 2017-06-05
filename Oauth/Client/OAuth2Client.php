@@ -14,11 +14,11 @@ class OAuth2Client
 {
     const OAUTH2_SESSION_STATE_KEY = 'sludio_helper.oauth_client_state';
 
-    private $provider;
+    protected $provider;
 
-    private $requestStack;
+    protected $requestStack;
 
-    private $isStateless = false;
+    protected $isStateless = true;
 
     public function __construct(AbstractProvider $provider, RequestStack $requestStack)
     {
@@ -55,14 +55,14 @@ class OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
-                throw new InvalidStateException('Invalid state: '.var_export(var_export($actualState,1).var_export($expectedState,1),1));
+                throw new InvalidStateException('Invalid state: '.var_export(var_export($actualState,1).var_export($expectedState,1),1), 401);
             }
         }
 
         $code = $this->getCurrentRequest()->get('code');
 
         if (!$code) {
-            throw new MissingAuthorizationCodeException('No "code" parameter was found (usually this is a query parameter)!');
+            throw new MissingAuthorizationCodeException('No "code" parameter was found!', 401);
         }
 
         return $this->provider->getAccessToken('authorization_code', [
@@ -87,23 +87,23 @@ class OAuth2Client
         return $this->provider;
     }
 
-    private function getCurrentRequest()
+    protected function getCurrentRequest()
     {
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request) {
-            throw new \LogicException('There is no "current request", and it is needed to perform this action');
+            throw new \LogicException('There is no "current request", and it is needed to perform this action', 400);
         }
 
         return $request;
     }
 
-    private function getSession()
+    protected function getSession()
     {
         $session = $this->getCurrentRequest()->getSession();
 
         if (!$session) {
-            throw new \LogicException('In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid state');
+            throw new \LogicException('In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid state', 400);
         }
 
         return $session;

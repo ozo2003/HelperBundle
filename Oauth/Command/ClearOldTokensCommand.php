@@ -14,7 +14,7 @@ class ClearOldTokensCommand extends ContainerAwareCommand
     {
         $this
             ->setName('sludio:oauth:tokens:clear')
-            ->setDescription('Creates a new client')
+            ->setDescription('Clears old tokens')
             ->addOption(
                 'type',
                 null,
@@ -28,7 +28,7 @@ class ClearOldTokensCommand extends ContainerAwareCommand
 EOT
             );
     }
-    
+
     protected function execute(InputInterface $input, OutputInterface $output){
         $type = $input->getOption('type');
         if($type){
@@ -44,7 +44,7 @@ EOT
                     $table = $this->getContainer()->getParameter('sludio_helper.oauth.tables')[$type];
                     $sql = "
                         DELETE FROM
-                            oauth_access_token 
+                            oauth_access_token
                         WHERE
                             expires_at < UNIX_TIMESTAMP(NOW())
                     ";
