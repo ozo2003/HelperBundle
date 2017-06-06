@@ -39,7 +39,7 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
      */
     public function getId()
     {
-        return $this->getField('id');
+        return intval($this->getField('id'));
     }
 
     /**

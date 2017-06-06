@@ -22,7 +22,7 @@ class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
 
     public function getId()
     {
-        return $this->response['id'];
+        return intval($this->response['id']);
     }
 
     /**

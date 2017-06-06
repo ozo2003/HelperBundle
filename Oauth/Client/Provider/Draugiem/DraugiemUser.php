@@ -45,7 +45,7 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
     }
 
     public function getId(){
-        return $this->data['uid'];
+        return intval($this->data['uid']);
     }
 
     public function getEmail(){

@@ -36,26 +36,6 @@ class DraugiemOAuth2Client extends OAuth2Client
         return new RedirectResponse($url);
     }
 
-    public function getAccessToken($code = null)
-    {
-        if (!$this->isStateless) {
-            $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
-            $actualState = $this->getCurrentRequest()->query->get('state');
-            if (!$actualState || ($actualState !== $expectedState)) {
-                throw new InvalidStateException('Invalid state: '.var_export(var_export($actualState, 1).var_export($expectedState, 1), 1), 401);
-            }
-        }
-
-        if (!$code) {
-            throw new MissingAuthorizationCodeException('No "dr_auth_code" parameter was found!', 401);
-        }
-
-        return $this->provider->getAccessToken('authorization_code', [
-            'apikey' => $code,
-            'code' => $code,
-        ]);
-    }
-
     public function fetchUser()
     {
         $user = $this->returnRedirect();
