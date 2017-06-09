@@ -94,11 +94,11 @@ abstract class BaseExtension extends Extension
         ];
         $optional = [];
 
-        if(isset($options['redirect_route'])){
+        if (isset($options['redirect_route'])) {
             $optional[] = $options['redirect_route'];
         }
 
-        if(isset($options['params'])){
+        if (isset($options['params'])) {
             $optional[] = $options['params'];
         }
 
@@ -163,5 +163,65 @@ abstract class BaseExtension extends Extension
         }
 
         $container->getDefinition('sludio_helper.oauth.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition('sludio_helper.registry')->replaceArgument(1, $clientServiceKeys);
+    }
+
+    public function configureOpenID(ContainerBuilder &$container)
+    {
+        $clientConfigurations = $container->getParameter('sludio_helper.openid.clients');
+        foreach ($clientConfigurations as $key => $clientConfig) {
+            $tree = new TreeBuilder();
+            $node = $tree->root('sludio_helper_openid_client/clients/' . $key);
+            $this->buildConfigurationForOpenID($node);
+            $processor = new Processor();
+            $config = $processor->process($tree->buildTree(), [$clientConfig]);
+            $clientServiceKeys[$key] = $this->configureClient($container, $key);
+            foreach($config as $ckey => $cvalue){
+                if($ckey === 'provider_options'){
+                    if(is_array($cvalue)){
+                        foreach($cvalue as $pkey => $pvalue){
+                            $container->setParameter($clientServiceKeys[$key].'.option.'.$pkey, $pvalue);
+                        }
+                    }
+                } else {
+                    $container->setParameter($clientServiceKeys[$key].'.'.$ckey, $cvalue);
+                }
+            }
+        }
+        $container->getDefinition('sludio_helper.openid.registry')->replaceArgument(1, $clientServiceKeys);
+        if($container->getParameter('sludio_helper.oauth.enabled', false)){
+            $container->getDefinition('sludio_helper.registry')->replaceArgument(2, $clientServiceKeys);
+        }
+    }
+
+    private function buildConfigurationForOpenID(NodeDefinition &$node)
+    {
+        $optionsNode = $node->children();
+        $optionsNode
+            ->scalarNode('api_key')->isRequired()->end()
+            ->scalarNode('openid_url')->isRequired()->end()
+            ->scalarNode('preg_check')->isRequired()->end()
+            ->scalarNode('ns_mode')->defaultValue('sreg')->end()
+            ->scalarNode('user_class')->isRequired()->end()
+            ->arrayNode('provider_options')->prototype('variable')->end()->end()
+        ;
+        $optionsNode->end();
+    }
+
+    private function configureClient(ContainerBuilder $container, $key, array $options = [])
+    {
+        $clientServiceKey = 'sludio_helper.openid.client.'.$key;
+        $clientDefinition = $container->register(
+            $clientServiceKey,
+            'Sludio\HelperBundle\Openid\Login\Login'
+        );
+        $clientDefinition->setArguments([
+            $clientServiceKey,
+            new Reference('request_stack'),
+            new Reference('service_container'),
+            new Reference('router'),
+        ]);
+
+        return $clientServiceKey;
     }
 }

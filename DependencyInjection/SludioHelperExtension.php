@@ -59,5 +59,9 @@ class SludioHelperExtension extends BaseExtension
         if ($container->hasParameter('sludio_helper.oauth.enabled')) {
             $this->configureOAuth($container);
         }
+
+        if ($container->hasParameter('sludio_helper.openid.enabled')) {
+            $this->configureOpenID($container);
+        }
     }
 }

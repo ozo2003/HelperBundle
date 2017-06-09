@@ -1,0 +1,9 @@
+services:
+    sludio_helper.openid.registry:
+        class: Sludio\HelperBundle\Openid\Utils\ClientRegistry
+        arguments:
+            - "@service_container"
+            - ~
+
+    openid.registry:
+        alias: sludio_helper.openid.registry
