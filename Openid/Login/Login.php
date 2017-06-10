@@ -189,7 +189,7 @@ class Login implements LoginInterface
         }
 
         if ($user === null) {
-            throw new \Exception('The Steam login request timed out or was invalid', 400);
+            throw new \Exception('The login request timed out or was invalid', 400);
         }
 
         return $user;
