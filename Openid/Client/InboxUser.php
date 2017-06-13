@@ -10,13 +10,15 @@ class InboxUser implements SocialUserInterface
      * @var array
      */
     protected $data;
+    protected $id;
 
     /**
      * @param  array $response
      */
-    public function __construct(array $response)
+    public function __construct(array $response, $id = null)
     {
         $this->data = $response;
+        $this->id = $id;
     }
 
     /**
@@ -29,6 +31,11 @@ class InboxUser implements SocialUserInterface
     private function getField($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : null;
+    }
+
+    public function getOriginalId()
+    {
+        return $this->id;
     }
 
     public function getId()

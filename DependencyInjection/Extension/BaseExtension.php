@@ -159,7 +159,16 @@ abstract class BaseExtension extends Extension
                 $config['use_state']
             );
 
-            $clientServiceKeys[$key] = $clientServiceKey;
+            $service = [
+                'key' => $clientServiceKey
+            ];
+            if(isset($config['provider_options']) && isset($config['provider_options']['name'])){
+                $service['name'] = $config['provider_options']['name'];
+            } else {
+                $service['name'] = ucfirst($key);
+            }
+
+            $clientServiceKeys[$key] = $service;
         }
 
         $container->getDefinition('sludio_helper.oauth.registry')->replaceArgument(1, $clientServiceKeys);
@@ -175,16 +184,26 @@ abstract class BaseExtension extends Extension
             $this->buildConfigurationForOpenID($node);
             $processor = new Processor();
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
-            $clientServiceKeys[$key] = $this->configureClient($container, $key);
+            $clientServiceKey = $this->configureClient($container, $key);
+            $service = [
+                'key' => $clientServiceKey
+            ];
+            if(isset($config['provider_options']) && isset($config['provider_options']['name'])){
+                $service['name'] = $config['provider_options']['name'];
+            } else {
+                $service['name'] = ucfirst($key);
+            }
+
+            $clientServiceKeys[$key] = $service;
             foreach($config as $ckey => $cvalue){
                 if($ckey === 'provider_options'){
                     if(is_array($cvalue)){
                         foreach($cvalue as $pkey => $pvalue){
-                            $container->setParameter($clientServiceKeys[$key].'.option.'.$pkey, $pvalue);
+                            $container->setParameter($clientServiceKey.'.option.'.$pkey, $pvalue);
                         }
                     }
                 } else {
-                    $container->setParameter($clientServiceKeys[$key].'.'.$ckey, $cvalue);
+                    $container->setParameter($clientServiceKey.'.'.$ckey, $cvalue);
                 }
             }
         }

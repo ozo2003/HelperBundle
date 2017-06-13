@@ -26,10 +26,24 @@ class ClientRegistry
             ));
         }
 
-        return $this->container->get($this->serviceMap[$key]);
+        return $this->container->get($this->serviceMap[$key]['key']);
     }
 
     public function hasClient($key){
         return isset($this->serviceMap[$key]);
+    }
+
+    public function getNameByClient($key = null)
+    {
+        if ($key && isset($this->serviceMap[$key])) {
+            return $this->serviceMap[$key]['name'];
+        }
+
+        return '';
+    }
+
+    public function getClients()
+    {
+        return $this->serviceMap;
     }
 }
