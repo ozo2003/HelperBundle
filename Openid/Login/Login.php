@@ -171,7 +171,7 @@ class Login implements LoginInterface
             $data = file_get_contents($this->profile_url.$openID);
             $json = json_decode($data, true);
 
-            return new $this->user_class($json['response']);
+            return new $this->user_class($json['response'], $openID);
         }
 
         return null;
@@ -182,7 +182,7 @@ class Login implements LoginInterface
         $user = $this->validate();
         if ($user !== null) {
             if ($this->profile_url === false) {
-                $user = new $this->user_class($this->request->query->all());
+                $user = new $this->user_class($this->request->query->all(), $user);
             } else {
                 $user = $this->getData($user);
             }

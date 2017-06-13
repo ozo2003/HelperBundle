@@ -4,7 +4,8 @@ namespace Sludio\HelperBundle\Oauth\Client;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class ClientOpenIDRegistry {
+class ClientOpenIDRegistry
+{
     private $container;
 
     private $serviceMap;
@@ -25,10 +26,25 @@ class ClientOpenIDRegistry {
             ));
         }
 
-        return $this->container->get($this->serviceMap[$key]);
+        return $this->container->get($this->serviceMap[$key]['key']);
     }
 
-    public function hasClient($key){
+    public function hasClient($key)
+    {
         return isset($this->serviceMap[$key]);
+    }
+
+    public function getNameByClient($key = null)
+    {
+        if ($key && isset($this->serviceMap[$key])) {
+            return $this->serviceMap[$key]['name'];
+        }
+
+        return '';
+    }
+
+    public function getClients()
+    {
+        return $this->serviceMap;
     }
 }
