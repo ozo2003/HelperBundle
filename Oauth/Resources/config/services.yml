@@ -16,6 +16,7 @@ services:
         public: false
         arguments:
             - "@router"
+            - "@request_stack"
 
     sludio_helper.oauth.registry:
         class: Sludio\HelperBundle\Oauth\Client\ClientRegistry

@@ -6,9 +6,9 @@ use League\OAuth2\Client\Token\AccessToken;
 use Sludio\HelperBundle\Oauth\Exception\FacebookProviderException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Psr\Http\Message\ResponseInterface;
-use League\OAuth2\Client\Provider\AbstractProvider;
+use Sludio\HelperBundle\Oauth\Client\Provider\BaseProvider;
 
-class Facebook extends AbstractProvider
+class Facebook extends BaseProvider
 {
     /**
      * Production Graph API URL.
@@ -44,9 +44,9 @@ class Facebook extends AbstractProvider
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($options = [], array $collaborators = [])
+    public function __construct($options = [], array $collaborators = [], $generator = null)
     {
-        parent::__construct($options, $collaborators);
+        parent::__construct($options, $collaborators, $generator);
 
         if (empty($options['graphApiVersion'])) {
             $message = 'The "graphApiVersion" option not set. Please set a default Graph API version.';
@@ -92,13 +92,13 @@ class Facebook extends AbstractProvider
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/me?fields='.implode(',', $fields).'&access_token='.$token.'&appsecret_proof='.$appSecretProof;
     }
 
-    public function getAccessToken($grant = 'authorization_code', array $params = [])
+    public function getAccessToken($grant = 'authorization_code', array $params = [], array $attributes = [])
     {
         if (isset($params['refresh_token'])) {
             throw new FacebookProviderException('Facebook does not support token refreshing.');
         }
 
-        return parent::getAccessToken($grant, $params);
+        return parent::getAccessToken($grant, $params, $attributes);
     }
 
     public function getLongLivedAccessToken($accessToken)

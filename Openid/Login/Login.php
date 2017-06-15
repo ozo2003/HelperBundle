@@ -13,6 +13,9 @@ class Login implements LoginInterface
 {
     protected $client_name;
     protected $request;
+
+    public $requestStack;
+
     protected $generator;
     protected $redirect_route = 'homepage';
     protected $redirect_route_params = [];
@@ -25,10 +28,11 @@ class Login implements LoginInterface
     protected $sreg_fields = 'email';
     protected $user_class;
 
-    public function __construct($client_name, RequestStack $request_stack, ContainerInterface $container, UrlGeneratorInterface $generator)
+    public function __construct($client_name, RequestStack $requestStack, ContainerInterface $container, UrlGeneratorInterface $generator)
     {
         $this->client_name = $client_name;
-        $this->request = $request_stack->getCurrentRequest();
+        $this->request = $requestStack->getCurrentRequest();
+        $this->requestStack = $requestStack;
         $this->generator = $generator;
 
         $this->api_key = $container->getParameter($client_name.'.api_key');
@@ -197,7 +201,7 @@ class Login implements LoginInterface
 
     public function redirect()
     {
-        $providerFactory = new ProviderFactory($this->generator);
+        $providerFactory = new ProviderFactory($this->generator, $this->requestStack);
         $redirectUri = $providerFactory->generateUrl($this->redirect_route, $this->redirect_route_params);
 
         return new RedirectResponse($this->url($redirectUri));

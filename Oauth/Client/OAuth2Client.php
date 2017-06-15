@@ -49,7 +49,7 @@ class OAuth2Client
         return new RedirectResponse($url);
     }
 
-    public function getAccessToken()
+    public function getAccessToken(array $attributes = [])
     {
         if (!$this->isStateless) {
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
@@ -67,7 +67,9 @@ class OAuth2Client
 
         return $this->provider->getAccessToken('authorization_code', [
             'code' => $code,
-        ]);
+        ],
+        $attributes
+        );
     }
 
     public function fetchUserFromToken(AccessToken $accessToken)
@@ -75,9 +77,9 @@ class OAuth2Client
         return $this->provider->getResourceOwner($accessToken);
     }
 
-    public function fetchUser()
+    public function fetchUser(array $attributes = [])
     {
-        $token = $this->getAccessToken();
+        $token = $this->getAccessToken($attributes);
 
         return $this->fetchUserFromToken($token);
     }

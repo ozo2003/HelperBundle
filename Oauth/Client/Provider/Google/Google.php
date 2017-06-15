@@ -110,4 +110,9 @@ class Google extends AbstractProvider
     {
         return new GoogleUser($response);
     }
+
+    public function setState($state = null)
+    {
+        $this->state = $state;
+    }
 }
