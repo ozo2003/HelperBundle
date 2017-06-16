@@ -24,8 +24,15 @@ class RedisFlushCommand extends ContainerAwareCommand
             $kernel = $kernel->getKernel();
         }
 
-        foreach ($this->getContainer()->getParameter('sludio_helper.redis.managers') as $redis) {
-            $kernel->getContainer()->get('snc_redis.'.$redis)->flushdb();
+        $clients = [];
+        foreach($kernel->getContainer()->getServiceIds() as $id){
+            if(substr($id, 0, 9) === 'snc_redis' && $kernel->getContainer()->get($id) instanceof \Predis\Client){
+                $clients[] = $id;
+            }
+        }
+
+        foreach($clients as $snc){
+            $kernel->getContainer()->get($snc)->flushdb();
         }
 
         $output->writeln('redis database flushed');
