@@ -41,10 +41,14 @@ class TwitterOAuthClient extends OAuth2Client
         return $request_token['oauth_token'];
     }
 
-    public function redirect(array $scopes = [], array $options = [])
+    public function redirect(array $scopes = [], array $options = [], $token = null)
     {
         if (!empty($scopes)) {
             $options['scope'] = $scopes;
+        }
+
+        if($token){
+            $options['token'] = $token;
         }
 
         $url = $this->provider->twitter->url(static::URL_AUTHORIZE, ['oauth_token' => $this->getRequestToken()]);

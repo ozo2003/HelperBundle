@@ -64,16 +64,6 @@ class GoogleProviderConfigurator implements ProviderConfiguratorInterface
         ;
     }
 
-    public function getPackagistName()
-    {
-        return '';
-    }
-
-    public function getLibraryHomepage()
-    {
-        return '';
-    }
-
     public function getProviderDisplayName()
     {
         return 'Google';

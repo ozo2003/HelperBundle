@@ -10,12 +10,18 @@ use Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\DraugiemUser;
 
 class DraugiemOAuth2Client extends OAuth2Client
 {
+    const METHOD = 'POST';
+
     protected $isStateless = true;
 
-    public function redirect(array $scopes = [], array $options = [])
+    public function redirect(array $scopes = [], array $options = [], $token = null)
     {
         if (!empty($scopes)) {
             $options['scope'] = $scopes;
+        }
+
+        if($token){
+            $options['token'] = $token;
         }
 
         $data = [
@@ -58,7 +64,7 @@ class DraugiemOAuth2Client extends OAuth2Client
         $url = $this->provider->getBaseAccessTokenUrl().'?'.http_build_query($data);
 
         $factory = $this->provider->getRequestFactory();
-        $request = $factory->getRequestWithOptions('POST', $url, $data);
+        $request = $factory->getRequestWithOptions(static::METHOD, $url, $data);
 
         return $this->provider->getParsedResponse($request);
     }

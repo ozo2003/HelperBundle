@@ -14,9 +14,5 @@ interface ProviderConfiguratorInterface
 
     public function getProviderOptions(array $configuration);
 
-    public function getPackagistName();
-
-    public function getLibraryHomepage();
-
     public function getProviderDisplayName();
 }

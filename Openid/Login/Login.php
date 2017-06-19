@@ -77,7 +77,7 @@ class Login implements LoginInterface
     }
 
     /**
-     * Build the Steam login URL.
+     * Build the OpenID login URL.
      *
      * @param string $return A custom return to URL
      *
@@ -116,7 +116,7 @@ class Login implements LoginInterface
     }
 
     /**
-     * Validates a Steam login request and returns the users Steam Community ID.
+     * Validates a OpenID login request and returns the users OpenID.
      *
      * @return string
      */

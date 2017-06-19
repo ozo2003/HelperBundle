@@ -41,16 +41,6 @@ class CustomProviderConfigurator implements ProviderConfiguratorInterface
         );
     }
 
-    public function getPackagistName()
-    {
-        return false;
-    }
-
-    public function getLibraryHomepage()
-    {
-        return false;
-    }
-
     public function getProviderDisplayName()
     {
         return 'Custom';

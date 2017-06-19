@@ -65,12 +65,11 @@ abstract class BaseExtension extends Extension
         $optionsNode->end();
     }
 
-    private function configureProviderAndClient(ContainerBuilder $container, $providerType, $providerKey, $providerClass, $clientClass, $packageName, array $options, $useState)
+    private function configureProviderAndClient(ContainerBuilder $container, $providerType, $providerKey, $providerClass, $clientClass, array $options, $useState)
     {
         if ($this->checkExternalClassExistence && !class_exists($providerClass)) {
             throw new \LogicException(sprintf(
-                'Run `composer require %s` in order to use the "%s" OAuth provider.',
-                $packageName,
+                'Class "%s" does not exist.',
                 $providerType
             ));
         }
@@ -154,7 +153,6 @@ abstract class BaseExtension extends Extension
                 $key,
                 $configurator->getProviderClass($config),
                 $configurator->getClientClass($config),
-                $configurator->getPackagistName(),
                 $configurator->getProviderOptions($config),
                 $config['use_state']
             );

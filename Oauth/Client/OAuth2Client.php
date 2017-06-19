@@ -31,10 +31,14 @@ class OAuth2Client
         $this->isStateless = true;
     }
 
-    public function redirect(array $scopes = [], array $options = [])
+    public function redirect(array $scopes = [], array $options = [], $token = null)
     {
         if (!empty($scopes)) {
             $options['scope'] = $scopes;
+        }
+
+        if($token){
+            $options['token'] = $token;
         }
 
         $url = $this->provider->getAuthorizationUrl($options);
