@@ -22,6 +22,6 @@ class FinishRegistrationException extends AuthenticationException
 
     public function getMessageKey()
     {
-        return 'You need to finish registration to login.';
+        return 'error_client_not_registered';
     }
 }

@@ -59,14 +59,14 @@ class OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
-                throw new InvalidStateException('Invalid state: '.var_export(var_export($actualState,1).var_export($expectedState,1),1), 401);
+                throw new InvalidStateException('error_oauth_invalid_state');
             }
         }
 
         $code = $this->getCurrentRequest()->get('code');
 
         if (!$code) {
-            throw new MissingAuthorizationCodeException('No "code" parameter was found!', 401);
+            throw new MissingAuthorizationCodeException('error_oauth_code_parameter_not_found');
         }
 
         return $this->provider->getAccessToken('authorization_code', [
@@ -98,7 +98,7 @@ class OAuth2Client
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request) {
-            throw new \LogicException('There is no "current request", and it is needed to perform this action', 400);
+            throw new \LogicException('error_oauth_current_request_not_found');
         }
 
         return $request;
@@ -109,7 +109,7 @@ class OAuth2Client
         $session = $this->getCurrentRequest()->getSession();
 
         if (!$session) {
-            throw new \LogicException('In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid state', 400);
+            throw new \LogicException('error_oauth_session_not_found');
         }
 
         return $session;

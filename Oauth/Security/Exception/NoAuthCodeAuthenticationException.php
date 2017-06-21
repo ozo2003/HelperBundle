@@ -8,6 +8,6 @@ class NoAuthCodeAuthenticationException extends AuthenticationException
 {
     public function getMessageKey()
     {
-        return 'Authentication failed! Did you authorize our app?';
+        return 'error_oauth_client_authorization_failed';
     }
 }

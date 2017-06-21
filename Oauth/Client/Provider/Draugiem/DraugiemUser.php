@@ -44,19 +44,23 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
         return isset($this->userData[$key]) ? $this->userData[$key] : null;
     }
 
-    public function getId(){
+    public function getId()
+    {
         return intval($this->data['uid']);
     }
 
-    public function getEmail(){
-        return '';
+    public function getEmail()
+    {
+        return null;
     }
 
-    public function getFirstName(){
+    public function getFirstName()
+    {
         return $this->getField('name');
     }
 
-    public function getLastName(){
+    public function getLastName()
+    {
         return $this->getField('surname');
     }
 }

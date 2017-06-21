@@ -60,7 +60,7 @@ class Draugiem extends AbstractProvider
     {
         if (!empty($data['error'])) {
             $message = $data['error']['description'];
-            throw new IdentityProviderException($message, $data['error']['code'], $data);
+            throw new IdentityProviderException('error_draugiem_bad_response');
         }
     }
 

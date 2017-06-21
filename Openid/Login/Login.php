@@ -88,7 +88,7 @@ class Login implements LoginInterface
         $useHttps = !empty($_SERVER['HTTPS']) || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
         if (!is_null($return)) {
             if (!$this->validateUrl($return)) {
-                throw new Exception('The return URL must be a valid URL with a URI Scheme or http or https.');
+                throw new Exception('error_oauth_invalid_return_url');
             }
         } else {
             if ($altRealm == null) {
@@ -193,7 +193,7 @@ class Login implements LoginInterface
         }
 
         if ($user === null) {
-            throw new \Exception('The login request timed out or was invalid', 400);
+            throw new \Exception('error_oauth_login_invalid_or_timed_out');
         }
 
         return $user;

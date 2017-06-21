@@ -102,7 +102,7 @@ class Google extends AbstractProvider
                 $error = $error['message'];
             }
 
-            throw new IdentityProviderException($error, $code, $data);
+            throw new IdentityProviderException('error_google_bad_response');
         }
     }
 

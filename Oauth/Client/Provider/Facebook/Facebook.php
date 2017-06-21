@@ -49,11 +49,9 @@ class Facebook extends BaseProvider
         parent::__construct($options, $collaborators, $generator);
 
         if (empty($options['graphApiVersion'])) {
-            $message = 'The "graphApiVersion" option not set. Please set a default Graph API version.';
-            throw new \InvalidArgumentException($message);
+            throw new \InvalidArgumentException('error_facebook_graph_api_version_not_set');
         } elseif (!preg_match(self::GRAPH_API_VERSION_REGEX, $options['graphApiVersion'])) {
-            $message = 'The "graphApiVersion" must start with letter "v" followed by version number, ie: "v2.4".';
-            throw new \InvalidArgumentException($message);
+            throw new \InvalidArgumentException('error_facebook_wrong_graph_api_version');
         }
 
         $this->graphApiVersion = $options['graphApiVersion'];
@@ -95,7 +93,7 @@ class Facebook extends BaseProvider
     public function getAccessToken($grant = 'authorization_code', array $params = [], array $attributes = [])
     {
         if (isset($params['refresh_token'])) {
-            throw new FacebookProviderException('Facebook does not support token refreshing.');
+            throw new FacebookProviderException('error_facebook_token_refresh_not_supported');
         }
 
         return parent::getAccessToken($grant, $params, $attributes);
@@ -119,7 +117,7 @@ class Facebook extends BaseProvider
     {
         if (!empty($data['error'])) {
             $message = $data['error']['message'];
-            throw new IdentityProviderException($message, $data['error']['code'], $data);
+            throw new IdentityProviderException('error_facebook_bad_response');
         }
     }
 

@@ -19,11 +19,7 @@ class ClientOpenIDRegistry
     public function getClient($key)
     {
         if (!$this->hasClient($key)) {
-            throw new \InvalidArgumentException(sprintf(
-                'There is no OAuth2 and no OpenID client called "%s". Available are: %s',
-                $key,
-                implode(', ', array_keys($this->serviceMap))
-            ));
+            throw new \InvalidArgumentException('error_oauth_client_not_found');
         }
 
         return $this->container->get($this->serviceMap[$key]['key']);

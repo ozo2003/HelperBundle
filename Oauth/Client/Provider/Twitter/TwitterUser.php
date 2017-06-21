@@ -20,20 +20,24 @@ class TwitterUser implements ResourceOwnerInterface, SocialUserInterface
         $this->data = $response;
     }
 
-    public function getId(){
+    public function getId()
+    {
         return intval($this->data['user_id']);
     }
 
-    public function getEmail(){
-        return '';
+    public function getEmail()
+    {
+        return null;
     }
 
-    public function getFirstName(){
-        return '';
+    public function getFirstName()
+    {
+        return null;
     }
 
-    public function getLastName(){
-        return '';
+    public function getLastName()
+    {
+        return null;
     }
 
     /**
