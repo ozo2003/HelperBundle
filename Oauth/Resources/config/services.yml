@@ -27,16 +27,6 @@ services:
     oauth.registry:
         alias: sludio_helper.oauth.registry
 
-    sludio_helper.oauth.call_service:
-        class: Sludio\HelperBundle\Oauth\Service\CallService
-        arguments:
-            - "%sludio_helper.oauth.clients%"
-            - "@session"
-        tags:
-            -
-                name: monolog.logger
-                channel: oauth_service
-
     sludio_helper.registry:
         class: Sludio\HelperBundle\Oauth\Client\ClientOpenIDRegistry
         arguments:

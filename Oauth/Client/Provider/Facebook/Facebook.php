@@ -117,7 +117,7 @@ class Facebook extends BaseProvider
     {
         if (!empty($data['error'])) {
             $message = $data['error']['message'];
-            throw new IdentityProviderException('error_facebook_bad_response');
+            throw new IdentityProviderException('error_facebook_bad_response', 400, $response);
         }
     }
 

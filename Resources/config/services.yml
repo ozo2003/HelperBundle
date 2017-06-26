@@ -1,0 +1,9 @@
+services:
+    sludio_helper.logger:
+        class: %sludio_helper.logger.class%
+        arguments:
+            - "@logger"
+        tags:
+            -
+                name: monolog.logger
+                channel: sludio_helper

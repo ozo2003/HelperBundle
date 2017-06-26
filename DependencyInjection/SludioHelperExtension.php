@@ -28,6 +28,14 @@ class SludioHelperExtension extends BaseExtension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $files = array(
+            'services.yml', 'parameters.yml',
+        );
+        foreach ($files as $file) {
+            if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
+                $loader->load($file);
+            }
+        }
 
         foreach ($config['extensions'] as $key => $extension) {
             $enabled = false;
