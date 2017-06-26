@@ -9,12 +9,24 @@ services:
                 - setPositionField
                 -
                     - "%sludio_helper.position.field%"
-    
+
     sludio_helper.twig.extension:
         class: Sludio\HelperBundle\Position\Twig\ObjectPositionExtension
         arguments:
             - "@sludio_helper.position.handler"
         public: false
         tags:
-            - 
+            -
                 name: twig.extension
+
+    gedmo.listener.sortable:
+        class: Gedmo\Sortable\SortableListener
+        tags:
+            -
+                name: doctrine.event_subscriber
+                connection: default
+        calls:
+            -
+                - setAnnotationReader
+                -
+                    - "@annotation_reader"

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Browser\Twig;
+namespace Sludio\HelperBundle\Scripts\Twig;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -15,7 +15,7 @@ class BrowserExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'sludio_browser.twig.browser_extension';
+        return 'sludio_helper.twig.browser_extension';
     }
 
     public function isIE()

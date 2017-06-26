@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Beautify\Twig;
+namespace Sludio\HelperBundle\Scripts\Twig;
 
 class BeautifyExtension extends \Twig_Extension
 {
@@ -12,7 +12,7 @@ class BeautifyExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'sludio_browser.twig.beautify_extension';
+        return 'sludio_helper.twig.beautify_extension';
     }
 
     public function getFilters()
@@ -78,7 +78,7 @@ class BeautifyExtension extends \Twig_Extension
         if(!isset($length)){
             $length = $lengthIn;
         }
-        
+
         if (strlen($body) > $length) {
             $body = substr($body, 0, strpos($body, ' ', $length)).'...';
         }

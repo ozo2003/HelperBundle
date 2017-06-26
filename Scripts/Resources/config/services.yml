@@ -4,3 +4,40 @@ services:
         tags:
             -
                 name: console.command
+
+    sludio_helper.twig.beautify_extension:
+        class: Sludio\HelperBundle\Scripts\Twig\BeautifyExtension
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+        tags:
+            -
+                name: twig.extension
+
+    sludio_helper.twig.browser_extension:
+        class: Sludio\HelperBundle\Scripts\Twig\BrowserExtension
+        public: false
+        tags:
+            -
+                name: twig.extension
+
+    sludio_helper.twig.gulp_extension:
+        class: Sludio\HelperBundle\Scripts\Twig\GulpExtension
+        public: false
+        arguments:
+            - "%kernel.root_dir%"
+            - "@kernel"
+        tags:
+            -
+                name: twig.extension
+
+    sludio_helper.twig.missing_extension:
+        class: Sludio\HelperBundle\Scripts\Twig\MissingExtension
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@doctrine.orm.default_entity_manager'
+        tags:
+            -
+                name: twig.extension

@@ -24,7 +24,7 @@ class PaginationExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'sludio_browser.twig.pagination_extension';
+        return 'sludio_helper.twig.pagination_extension';
     }
 
     public function withFunction($functionName, $behaviour)

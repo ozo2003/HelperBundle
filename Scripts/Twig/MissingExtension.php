@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Missing\Twig;
+namespace Sludio\HelperBundle\Scripts\Twig;
 
 class MissingExtension extends \Twig_Extension
 {
@@ -12,7 +12,7 @@ class MissingExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'sludio_browser.twig.missing_extension';
+        return 'sludio_helper.twig.missing_extension';
     }
 
     public function getFilters()

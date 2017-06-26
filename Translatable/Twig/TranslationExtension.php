@@ -17,7 +17,7 @@ class TranslationExtension extends \Twig_Extension
 
     public function getName()
     {
-        return 'translate';
+        return 'sludio_helper.twig.translate_extension';
     }
 
     public function getFilters()
@@ -40,7 +40,7 @@ class TranslationExtension extends \Twig_Extension
             $trans = $object->getVariableByLocale($type, $new_locale, $original);
             $class = get_class($object);
             $class = str_replace('Proxies\__CG__\\', '', $class);
-            
+
             return $trans;
         } else {
             return $type;

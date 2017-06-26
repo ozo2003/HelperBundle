@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Gulp\Twig;
+namespace Sludio\HelperBundle\Scripts\Twig;
 
 class GulpExtension extends \Twig_Extension
 {
@@ -19,7 +19,7 @@ class GulpExtension extends \Twig_Extension
     }
     public function getName()
     {
-        return 'sludio_browser.twig.gulp_extension';
+        return 'sludio_helper.twig.gulp_extension';
     }
 
     public function getAssetVersion($filename)
