@@ -111,6 +111,7 @@ abstract class BaseExtension extends Extension
         $clientDefinition->setArguments([
             new Reference($providerServiceKey),
             new Reference('request_stack'),
+            new Reference('sludio_helper.logger')
         ]);
 
         if (!$useState) {

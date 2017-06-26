@@ -14,15 +14,17 @@ class TwitterOAuthClient extends OAuth2Client
 {
     protected $isStateless = true;
     protected $session;
+    protected $logger;
 
     const URL_REQUEST_TOKEN = 'oauth/request_token';
     const URL_AUTHORIZE = 'oauth/authorize';
     const URL_ACCESS_TOKEN = 'oauth/access_token';
 
-    public function __construct($provider, RequestStack $requestStack)
+    public function __construct($provider, RequestStack $requestStack, \Sludio\HelperBundle\Logger\SludioLogger $logger)
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
+        $this->logger - $logger;
 
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
     }
@@ -32,6 +34,7 @@ class TwitterOAuthClient extends OAuth2Client
         $request_token = $this->provider->twitter->oauth(static::URL_REQUEST_TOKEN, ['oauth_callback' => $this->provider->getRedirectUri()]);
 
         if ($this->provider->twitter->getLastHttpCode() != 200) {
+            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There was a problem performing this request', $this->provider->twitter->getLastHttpCode());
             throw new \Exception('error_twitter_bad_response');
         }
 
@@ -69,6 +72,7 @@ class TwitterOAuthClient extends OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
+                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'Invalid state: '.var_export(var_export($actualState, 1).var_export($expectedState, 1), 1), 401);
                 throw new InvalidStateException('error_oauth_invalid_state');
             }
         }
@@ -77,6 +81,7 @@ class TwitterOAuthClient extends OAuth2Client
         $token = $this->getCurrentRequest()->get('oauth_token');
 
         if (!$code) {
+            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'No "oauth_verifier" parameter was found!', 401);
             throw new MissingAuthorizationCodeException('error_twitter_oauth_verifier_parameter_not_found');
         }
 
@@ -97,6 +102,7 @@ class TwitterOAuthClient extends OAuth2Client
             $user_token = $this->provider->twitter->oauth(static::URL_ACCESS_TOKEN, ['oauth_verifier' => $code]);
         } catch (\Exception $e) {
             if ($this->provider->twitter->getLastHttpCode() !== 200) {
+                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.$e->getMessage(), $this->provider->twitter->getLastHttpCode());
                 throw new \Exception('error_twitter_bad_response');
             }
         }

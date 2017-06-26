@@ -27,8 +27,8 @@ class SludioLogger
      * Logs a command
      *
      * @param string      $command    Sludio command
-     * @param bool|string $error      Error message or false if command was successful
-     * @param string    $type         Info type
+     * @param bool|string $error      Error message or null
+     * @param string    $type         Log type
      */
     public function log($command, $error = false, $type = 'info')
     {

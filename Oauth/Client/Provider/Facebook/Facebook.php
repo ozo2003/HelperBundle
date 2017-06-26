@@ -80,7 +80,7 @@ class Facebook extends BaseProvider
             'cover{source}', 'gender', 'locale', 'link', 'timezone', 'age_range'
         ];
 
-        // backwards compatibility less than 2.8
+        // backwards compatibility with less than v2.8
         if ((float) substr($this->graphApiVersion, 1) < 2.8) {
             $fields[] = 'bio';
         }
