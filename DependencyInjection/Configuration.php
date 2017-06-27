@@ -16,6 +16,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('sludio_helper');
 
         $rootNode
+            ->fixXmlConfig('extension')
             ->children()
                 ->arrayNode('extensions')
                     ->addDefaultsIfNotSet()

@@ -16,9 +16,9 @@ class ProviderFactory
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    public function createProvider($class, array $options, $redirectUri = null, array $redirectParams = [])
+    public function createProvider($class, array $options, array $redirectParams = [])
     {
-        $redirectUri = $this->generateUrl($redirectUri, $redirectParams);
+        $redirectUri = $this->generateUrl($options['redirect_route'], $redirectParams);
 
         $options['redirectUri'] = $redirectUri;
         $collaborators = [];
@@ -29,6 +29,7 @@ class ProviderFactory
     public function generateUrl($redirectUri = null, array $redirectParams = [])
     {
         $this->getUrlToken($redirectParams);
+
         $redirectUri = $this->generator
             ->generate($redirectUri, $redirectParams, UrlGeneratorInterface::ABSOLUTE_URL);
 

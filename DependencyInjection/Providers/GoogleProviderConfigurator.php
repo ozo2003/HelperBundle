@@ -25,6 +25,10 @@ class GoogleProviderConfigurator implements ProviderConfiguratorInterface
                 ->info('If you have a sub-class of OAuth2Client you want to use, add it here')
                 ->defaultValue('Sludio\HelperBundle\Oauth\Client\Client\GoogleOAuth2Client')
             ->end()
+            ->scalarNode('redirect_route')
+                ->isRequired()
+                ->cannotBeEmpty()
+            ->end()
             ->arrayNode('provider_options')
                 ->info('Other options to pass to your provider\'s constructor')
                 ->prototype('variable')->end()
@@ -42,6 +46,7 @@ class GoogleProviderConfigurator implements ProviderConfiguratorInterface
         $options = [
             'clientId' => $config['client_id'],
             'clientSecret' => $config['client_secret'],
+            'redirect_route' => $config['redirect_route']
         ];
 
         if ($config['access_type']) {

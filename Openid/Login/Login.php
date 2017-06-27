@@ -17,7 +17,7 @@ class Login implements LoginInterface
     public $requestStack;
 
     protected $generator;
-    protected $redirect_route = 'homepage';
+    protected $redirect_route;
     protected $redirect_route_params = [];
 
     protected $api_key;
@@ -51,8 +51,8 @@ class Login implements LoginInterface
             }
         }
 
-        if ($container->hasParameter($client_name.'.option.redirect_route')) {
-            $this->redirect_route = $container->getParameter($client_name.'.option.redirect_route');
+        if ($container->hasParameter($client_name.'.redirect_route')) {
+            $this->redirect_route = $container->getParameter($client_name.'.redirect_route');
         }
 
         if ($container->hasParameter($client_name.'.option.params')) {
@@ -152,14 +152,14 @@ class Login implements LoginInterface
                     'Content-Length: '.strlen($data)."\r\n",
                     'content' => $data,
                     'timeout' => $timeout,
-                    ),
+                ),
             ));
 
             $result = file_get_contents($this->openid_url.'/'.$this->api_key, false, $context);
 
             preg_match($this->preg_check, urldecode($get['openid_claimed_id']), $matches);
 
-            $openID = $matches[1];
+            $openID = (is_array($matches) && isset($matches[1])) ? $matches[1] : null;
 
             $response = preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? $openID : null;
         } catch (Exception $e) {

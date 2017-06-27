@@ -55,8 +55,8 @@ abstract class BaseExtension extends Extension
     {
         $optionsNode = $node->children();
         $optionsNode
-            ->scalarNode('client_id')->isRequired()->end()
-            ->scalarNode('client_secret')->isRequired()->end()
+            ->scalarNode('client_id')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('client_secret')->isRequired()->cannotBeEmpty()->end()
             ->booleanNode('use_state')->defaultValue(true)->end()
         ;
 
@@ -91,11 +91,8 @@ abstract class BaseExtension extends Extension
             $providerClass,
             $options
         ];
-        $optional = [];
 
-        if (isset($options['redirect_route'])) {
-            $optional[] = $options['redirect_route'];
-        }
+        $optional = [];
 
         if (isset($options['params'])) {
             $optional[] = $options['params'];
@@ -128,17 +125,19 @@ abstract class BaseExtension extends Extension
         foreach ($clientConfigurations as $key => $clientConfig) {
             if (!isset($clientConfig['type'])) {
                 throw new InvalidConfigurationException(sprintf(
-                   'Your "sludio_helper_oauth_client.clients." config entry is missing the "type" key.',
+                   'Your "sludio_helper_oauth_client.clients.%s" config entry is missing the "type" key.',
                    $key
                ));
             }
             $type = $clientConfig['type'];
             unset($clientConfig['type']);
             if (!isset(self::$supportedProviderTypes[$type])) {
+                $supportedKeys = array_keys(self::$supportedProviderTypes);
+                sort($supportedKeys);
                 throw new InvalidConfigurationException(sprintf(
-                    'The "sludio_helper_oauth_client.clients" config "type" key "%s" is not supported. We support (%s)',
+                    'The "sludio_helper_oauth_client.clients" config "type" key "%s" is not supported. We support: %s',
                     $type,
-                    implode(', ', self::$supportedProviderTypes)
+                    implode(', ', $supportedKeys)
                 ));
             }
             $tree = new TreeBuilder();
@@ -216,11 +215,12 @@ abstract class BaseExtension extends Extension
     {
         $optionsNode = $node->children();
         $optionsNode
-            ->scalarNode('api_key')->isRequired()->end()
-            ->scalarNode('openid_url')->isRequired()->end()
-            ->scalarNode('preg_check')->isRequired()->end()
+            ->scalarNode('api_key')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('openid_url')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('preg_check')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('ns_mode')->defaultValue('sreg')->end()
             ->scalarNode('user_class')->isRequired()->end()
+            ->scalarNode('redirect_route')->isRequired()->cannotBeEmpty()->end()
             ->arrayNode('provider_options')->prototype('variable')->end()->end()
         ;
         $optionsNode->end();
