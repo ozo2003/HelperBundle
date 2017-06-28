@@ -13,7 +13,7 @@ class ClientOpenIDRegistry
     public function __construct(ContainerInterface $container, array $oAuthServiceMap, array $openIDServiceMap)
     {
         $this->container = $container;
-        $this->serviceMap = array_merge($oAuthServiceMap, $openIDServiceMap);
+        $this->serviceMap = $oAuthServiceMap + $openIDServiceMap;
     }
 
     public function getClient($key)
