@@ -18,7 +18,7 @@
         "twig/twig": "^1|^2",
         "league/oauth2-client": "^1.0|^2.0",
         "league/oauth1-client": "^1",
-        "abraham/twitteroauth": "^0.7|^0.6",
+        "abraham/twitteroauth": "^0.6|^0.7",
         "raulfraile/ladybug": "~1.0.0",
         "raulfraile/ladybug-plugin-symfony2": "~1.0.0"
     },
