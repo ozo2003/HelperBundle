@@ -24,7 +24,7 @@ class TwitterOAuthClient extends OAuth2Client
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
-        $this->logger - $logger;
+        $this->logger = $logger;
 
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
     }

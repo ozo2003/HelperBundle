@@ -32,6 +32,11 @@ class SludioLogger
      */
     public function log($command, $error = false, $type = 'info')
     {
-        $this->logger->{$type}($command.': '.upper($type).($error ? ': '.$error : ''));
+        $this->logger->{$type}($command.': '.strtoupper($type).($error ? ': '.$error : ''));
+    }
+
+    public function error($command, $error)
+    {
+        $this->log($command, $error, 'error');
     }
 }
