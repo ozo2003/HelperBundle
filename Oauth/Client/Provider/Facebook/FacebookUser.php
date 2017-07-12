@@ -10,36 +10,63 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
     /**
      * @var array
      */
-    protected $data;
+    protected $response;
+
+    /**
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * @var string
+     */
+    protected $email;
+
+    /**
+     * @var string
+     */
+    protected $firstName;
+
+    /**
+     * @var string
+     */
+    protected $lastName;
+
+    /**
+     * @var string
+     */
+    protected $username;
 
     /**
      * @param  array $response
      */
     public function __construct(array $response)
     {
-        $this->data = $response;
+        $this->response = $response;
 
         if (!empty($response['picture']['data']['url'])) {
-            $this->data['picture_url'] = $response['picture']['data']['url'];
+            $this->response['picture_url'] = $response['picture']['data']['url'];
         }
 
         if (isset($response['picture']['data']['is_silhouette'])) {
-            $this->data['is_silhouette'] = $response['picture']['data']['is_silhouette'];
+            $this->response['is_silhouette'] = $response['picture']['data']['is_silhouette'];
         }
 
         if (!empty($response['cover']['source'])) {
-            $this->data['cover_photo_url'] = $response['cover']['source'];
+            $this->response['cover_photo_url'] = $response['cover']['source'];
         }
-    }
 
-    /**
-     * Returns the ID for the user as a string if present.
-     *
-     * @return string|null
-     */
-    public function getId()
-    {
-        return intval($this->getField('id'));
+        $this->id = intval($this->getField('id'));
+
+        $this->email = $this->getField('email');
+
+        $this->firstName = $this->getField('first_name');
+
+        $this->lastName = $this->getField('last_name');
+
+        $username = explode('@', $this->email);
+        $username = preg_replace('/[^a-z\d]/i', '', $username[0]);
+        $this->username = $username;
     }
 
     /**
@@ -50,36 +77,6 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
     public function getName()
     {
         return $this->getField('name');
-    }
-
-    /**
-     * Returns the first name for the user as a string if present.
-     *
-     * @return string|null
-     */
-    public function getFirstName()
-    {
-        return $this->getField('first_name');
-    }
-
-    /**
-     * Returns the last name for the user as a string if present.
-     *
-     * @return string|null
-     */
-    public function getLastName()
-    {
-        return $this->getField('last_name');
-    }
-
-    /**
-     * Returns the email for the user as a string if present.
-     *
-     * @return string|null
-     */
-    public function getEmail()
-    {
-        return $this->getField('email');
     }
 
     /**
@@ -181,8 +178,8 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
      */
     public function getMinAge()
     {
-        if (isset($this->data['age_range']['min'])) {
-            return $this->data['age_range']['min'];
+        if (isset($this->response['age_range']['min'])) {
+            return $this->response['age_range']['min'];
         }
         return null;
     }
@@ -194,8 +191,8 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
      */
     public function getMaxAge()
     {
-        if (isset($this->data['age_range']['max'])) {
-            return $this->data['age_range']['max'];
+        if (isset($this->response['age_range']['max'])) {
+            return $this->response['age_range']['max'];
         }
         return null;
     }
@@ -207,7 +204,7 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
      */
     public function toArray()
     {
-        return $this->data;
+        return $this->response;
     }
 
     /**
@@ -219,6 +216,57 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
      */
     private function getField($key)
     {
-        return isset($this->data[$key]) ? $this->data[$key] : null;
+        return isset($this->response[$key]) ? $this->response[$key] : null;
     }
+
+    /**
+     * Get the value of Id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get the value of Email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get the value of First Name
+     *
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * Get the value of Last Name
+     *
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * Get the value of Username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
 }

@@ -10,16 +10,50 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
     /**
      * @var array
      */
-    protected $data;
+    protected $response;
+
     protected $userData;
+
+    /**
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * @var string
+     */
+    protected $email;
+
+    /**
+     * @var string
+     */
+    protected $firstName;
+
+    /**
+     * @var string
+     */
+    protected $lastName;
+
+    /**
+     * @var string
+     */
+    protected $username;
 
     /**
      * @param  array $response
      */
     public function __construct(array $response)
     {
-        $this->data = $response;
-        $this->userData = reset($this->data['users']);
+        $this->response = $response;
+        $this->userData = reset($this->response['users']);
+
+        $this->id = intval($this->response['uid']);
+
+        $this->firstName = $this->getField('name');
+
+        $this->lastName = $this->getField('surname');
+
+        $this->username = preg_replace('/[^a-z\d]/i', '', $this->getField('url'));
     }
 
     /**
@@ -29,7 +63,7 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
      */
     public function toArray()
     {
-        return $this->data;
+        return $this->response;
     }
 
     /**
@@ -44,23 +78,54 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
         return isset($this->userData[$key]) ? $this->userData[$key] : null;
     }
 
+    /**
+     * Get the value of Id
+     *
+     * @return integer
+     */
     public function getId()
     {
-        return intval($this->data['uid']);
+        return $this->id;
     }
 
+    /**
+     * Get the value of Email
+     *
+     * @return string
+     */
     public function getEmail()
     {
-        return null;
+        return $this->email;
     }
 
+    /**
+     * Get the value of First Name
+     *
+     * @return string
+     */
     public function getFirstName()
     {
-        return $this->getField('name');
+        return $this->firstName;
     }
 
+    /**
+     * Get the value of Last Name
+     *
+     * @return string
+     */
     public function getLastName()
     {
-        return $this->getField('surname');
+        return $this->lastName;
     }
+
+    /**
+     * Get the value of Username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
 }

@@ -11,4 +11,6 @@ interface SocialUserInterface
     public function getFirstName();
 
     public function getLastName();
+
+    public function getUsername();
 }

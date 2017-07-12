@@ -10,34 +10,47 @@ class TwitterUser implements ResourceOwnerInterface, SocialUserInterface
     /**
      * @var array
      */
-    protected $data;
+    protected $response;
+
+    /**
+     * @var integer
+     */
+    protected $id;
+
+    /**
+     * @var string
+     */
+    protected $email;
+
+    /**
+     * @var string
+     */
+    protected $firstName;
+
+    /**
+     * @var string
+     */
+    protected $lastName;
+
+    /**
+     * @var string
+     */
+    protected $username;
 
     /**
      * @param  array $response
      */
     public function __construct(array $response)
     {
-        $this->data = $response;
-    }
+        $this->response = $response;
 
-    public function getId()
-    {
-        return intval($this->data['user_id']);
-    }
+        $this->id = intval($this->response['user_id']);
 
-    public function getEmail()
-    {
-        return null;
-    }
+        if (isset($this->response['email'])) {
+            $this->email = $this->response['email'];
+        }
 
-    public function getFirstName()
-    {
-        return null;
-    }
-
-    public function getLastName()
-    {
-        return null;
+        $this->username = preg_replace('/[^a-z\d]/i', '', $this->response['screen_name']);
     }
 
     /**
@@ -49,4 +62,55 @@ class TwitterUser implements ResourceOwnerInterface, SocialUserInterface
     {
         return $this->data;
     }
+
+    /**
+     * Get the value of Id
+     *
+     * @return integer
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Get the value of Email
+     *
+     * @return string
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get the value of First Name
+     *
+     * @return string
+     */
+    public function getFirstName()
+    {
+        return $this->firstName;
+    }
+
+    /**
+     * Get the value of Last Name
+     *
+     * @return string
+     */
+    public function getLastName()
+    {
+        return $this->lastName;
+    }
+
+    /**
+     * Get the value of Username
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
 }
