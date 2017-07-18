@@ -23,7 +23,7 @@ class OAuth2Client
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
-        $this->logger - $logger;
+        $this->logger = $logger;
     }
 
     public function setAsStateless()
