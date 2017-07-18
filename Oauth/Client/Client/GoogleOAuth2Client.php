@@ -25,6 +25,7 @@ class GoogleOAuth2Client extends OAuth2Client
             }
         }
 
+        $options['state'] = $state;
         $url = $this->provider->getAuthorizationUrl($options);
 
         return new RedirectResponse($url);
