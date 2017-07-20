@@ -41,3 +41,10 @@ services:
         tags:
             -
                 name: twig.extension
+
+    sludio_helper.twig.usort_extension:
+        class: Sludio\HelperBundle\Scripts\Twig\UsortExtension
+        public: false
+        tags:
+            -
+                name: twig.extension

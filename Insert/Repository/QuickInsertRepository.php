@@ -12,7 +12,7 @@ class QuickInsertRepository
     public static $connection;
     public static $container;
 
-    public static function init($dont = false)
+    public static function init($dont = false, $manager = null)
     {
         global $kernel;
 
@@ -21,7 +21,8 @@ class QuickInsertRepository
         }
         self::$container = $kernel->getContainer();
 
-        self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.entity.manager'));
+        $manager = $manager ?: self::$container->getParameter('sludio_helper.entity.manager');
+        self::$em = self::$container->get('doctrine')->getManager($manager);
         self::$connection = self::$em->getConnection();
 
         if(!$dont) {
@@ -86,9 +87,9 @@ class QuickInsertRepository
         return $data;
     }
 
-    public static function persist($object, $full = false, $extra = array(), $dont = false)
+    public static function persist($object, $full = false, $extra = array(), $dont = false, $manager = null)
     {
-        self::init($dont);
+        self::init($dont, $manager);
         self::extract($object);
         $id = self::findNextId($object);
         $keys = array();
@@ -100,20 +101,20 @@ class QuickInsertRepository
         }
 
         foreach ($columns as $value => $key) {
-            $vvv = null;
+            $variable = null;
             if(!is_array($key) && !is_array($value)) {
                 if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
-                    $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
+                    $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
                 } else {
-                    $vvv = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
+                    $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
                 }
-                if (trim($vvv) == '' || trim($vvv) == "''" || (is_numeric($vvv) && $vvv === 0)) {
-                    $vvv = null;
+                if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
+                    $variable = null;
                 }
-                if ($vvv) {
-                    $values[] = $vvv;
+                if ($variable) {
+                    $values[] = $variable;
                     $keys[] = $key;
-                    if ($key == 'id') {
+                    if ($key === 'id') {
                         $idd = $object->{'get'.ucfirst($value)}();
                     }
                 }
@@ -202,9 +203,9 @@ class QuickInsertRepository
         }
     }
 
-    public static function get($object, $one = false, $where = array(), $dont = false, $fields = array())
+    public static function get($object, $one = false, $where = array(), $dont = false, $fields = array(), $manager = null)
     {
-        self::init($dont);
+        self::init($dont, $manager);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         if(!$fields){
@@ -234,9 +235,9 @@ class QuickInsertRepository
         return $result;
     }
 
-    public static function link($object, $data, $dont = false)
+    public static function link($object, $data, $dont = false, $manager = null)
     {
-        self::init($dont);
+        self::init($dont, $manager);
         self::extract($object);
         if ($object && $data) {
             $keys = $values = array();
@@ -258,9 +259,9 @@ class QuickInsertRepository
         self::close($dont);
     }
 
-    public static function linkTable($tableName, $data, $dont = false)
+    public static function linkTable($tableName, $data, $dont = false, $manager = null)
     {
-        self::init($dont);
+        self::init($dont, $manager);
         if ($data) {
             $keys = $values = array();
             foreach ($data as $key => $value) {
@@ -281,9 +282,9 @@ class QuickInsertRepository
         self::close($dont);
     }
 
-    public static function update($id, $object, $extra = array(), $dont = false)
+    public static function update($id, $object, $extra = array(), $dont = false, $manager = null)
     {
-        self::init($dont);
+        self::init($dont, $manager);
         self::extract($object);
         $sqls = "
             SELECT
@@ -338,9 +339,9 @@ class QuickInsertRepository
         self::close($dont);
     }
 
-    public static function delete($object, $where = array(), $dont = false)
+    public static function delete($object, $where = array(), $dont = false, $manager = null)
     {
-        self::init($dont);
+        self::init($dont, $manager);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         $sql = 'DELETE FROM '.self::$tableName.' '.$whereSql;

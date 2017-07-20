@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Usort\Twig;
+namespace Sludio\HelperBundle\Scripts\Twig;
 
 class UsortExtension extends \Twig_Extension
 {

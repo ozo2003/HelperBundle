@@ -1,7 +1,0 @@
-services:
-    sludio_helper.twig.usort_extension:
-        class: Sludio\HelperBundle\Usort\Twig\UsortExtension
-        public: false
-        tags:
-            - 
-                name: twig.extension

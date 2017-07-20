@@ -2,16 +2,18 @@
 
 namespace Sludio\HelperBundle\Translatable\Repository;
 
-use Sludio\HelperBundle\Usort\Repository\UsortRepository;
-
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', 0);
 
-class TranslatableRepository extends UsortRepository
+class TranslatableRepository
 {
+    public static $em;
+    public static $connection;
+    public static $container;
+
     public static $redis;
     public static $table;
-    
+
     public static $localeArr = array(
         'lv' => 'lv_LV',
         'en' => 'en_US',
@@ -20,7 +22,16 @@ class TranslatableRepository extends UsortRepository
 
     public static function init()
     {
-        parent::init();
+        global $kernel;
+
+        if ('AppCache' === get_class($kernel)) {
+            $kernel = $kernel->getKernel();
+        }
+        self::$container = $kernel->getContainer();
+
+        self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.translatable.manager'));
+        self::$connection = self::$em->getConnection();
+
         self::$redis = self::$container->get('snc_redis.'.self::$container->getParameter('sludio_helper.redis.translation'));
         self::$table = self::$container->getParameter('sludio_helper.translatable.table');
     }
@@ -32,7 +43,7 @@ class TranslatableRepository extends UsortRepository
         $className = end($className);
         $redis = self::$redis;
 
-        $result = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id)) : nul;
+        $result = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id)) : null;
         $checked = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id.':checked')) : null;
 
         if (!$result && !$checked) {
@@ -61,11 +72,11 @@ class TranslatableRepository extends UsortRepository
     public static function findByLocale($class, $locale, $content, $field = 'slug', $id = null, $id2 = null)
     {
         self::init();
-        
+
         if (strlen($locale) == 2) {
             $locale = self::$localeArr[$locale];
         }
-        
+
         $connection = self::$connection;
         $options = array(
             'class' => $class,
@@ -102,7 +113,7 @@ class TranslatableRepository extends UsortRepository
         if (!$id) {
             $id = self::findNextId($class);
         }
-        
+
         if (strlen($locale) == 2) {
             $locale = self::$localeArr[$locale];
         }
@@ -183,5 +194,69 @@ class TranslatableRepository extends UsortRepository
         }
 
         return $result;
+    }
+
+    public static function findNextId2($object)
+    {
+        self::extract($object);
+        $sql = "
+            SHOW
+                TABLE STATUS
+            LIKE
+                '".self::$tableName."'
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['Auto_increment'])) {
+            return (int) $result['Auto_increment'];
+        }
+
+        return 1;
+    }
+
+    public static function findNextId3($object)
+    {
+        self::extract($object);
+        $sql = "
+            SHOW
+                TABLE STATUS
+            WHERE
+                name = '".self::$tableName."'
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['Auto_increment'])) {
+            return (int) $result['Auto_increment'];
+        }
+
+        return 1;
+    }
+
+    public static function findNextId($object)
+    {
+        self::extract($object);
+        $sql = "
+            SELECT
+                AUTO_INCREMENT
+            FROM
+                information_schema.tables
+            WHERE
+                table_name = '".self::$tableName."'
+            AND
+                table_schema = DATABASE()
+        ";
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['AUTO_INCREMENT'])) {
+            return (int) $result['AUTO_INCREMENT'];
+        }
+
+        return 1;
     }
 }

@@ -13,8 +13,16 @@ class ScriptController extends Controller
     public function redisAction(Request $request)
     {
         $data['success'] = 1;
-        foreach ($this->container->getParameter('sludio_helper.redis.managers') as $redis) {
-            $this->get('snc_redis.'.$redis)->flushdb();
+
+        $clients = [];
+        foreach($this->container->getServiceIds() as $id){
+            if(substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof \Predis\Client){
+                $clients[] = $id;
+            }
+        }
+
+        foreach($clients as $snc){
+            $this->container->get($snc)->flushdb();
         }
 
         return new JsonResponse($data, 200, array(
@@ -26,7 +34,7 @@ class ScriptController extends Controller
     {
         global $kernel;
 
-        if ('AppCache' == get_class($kernel)) {
+        if ('AppCache' === get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
 
@@ -45,23 +53,23 @@ class ScriptController extends Controller
             'Cache-Control' => 'no-cache',
         ));
     }
-    
+
     public function ibrowsAction(Request $request){
         global $kernel;
 
-        if ('AppCache' == get_class($kernel)) {
+        if ('AppCache' === get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
-        
+
         $application = new Application($kernel);
         $application->setAutoExit(false);
-        
+
         $input = new ArrayInput(array(
            'command' => 'ibrows:sonatatranslationbundle:clearcache'
         ));
         $application->run($input);
         $data['success'] = 1;
-        
+
         return new JsonResponse($data, 200, array(
             'Cache-Control' => 'no-cache',
         ));
