@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Oauth\Client;
+namespace Sludio\HelperBundle\Oauth\Utils;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

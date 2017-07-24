@@ -5,6 +5,8 @@ namespace Sludio\HelperBundle\Translatable\Repository;
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', 0);
 
+use Sludio\HelperBundle\Insert\Repository\QuickInsertRepository as Quick;
+
 class TranslatableRepository
 {
     public static $em;
@@ -19,6 +21,12 @@ class TranslatableRepository
         'en' => 'en_US',
         'ru' => 'ru_RU',
     );
+
+    public static function getDefaultLocale()
+    {
+        self::init();
+        return self::$container->getParameter('sludio_helper.translatable.default_locale');
+    }
 
     public static function init()
     {
@@ -111,7 +119,7 @@ class TranslatableRepository
         self::init();
 
         if (!$id) {
-            $id = self::findNextId($class);
+            $id = self::findNextId(new $class());
         }
 
         if (strlen($locale) == 2) {
@@ -196,56 +204,16 @@ class TranslatableRepository
         return $result;
     }
 
-    public static function findNextId2($object)
-    {
-        self::extract($object);
-        $sql = "
-            SHOW
-                TABLE STATUS
-            LIKE
-                '".self::$tableName."'
-        ";
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
-
-        if (isset($result['Auto_increment'])) {
-            return (int) $result['Auto_increment'];
-        }
-
-        return 1;
-    }
-
-    public static function findNextId3($object)
-    {
-        self::extract($object);
-        $sql = "
-            SHOW
-                TABLE STATUS
-            WHERE
-                name = '".self::$tableName."'
-        ";
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
-
-        if (isset($result['Auto_increment'])) {
-            return (int) $result['Auto_increment'];
-        }
-
-        return 1;
-    }
-
     public static function findNextId($object)
     {
-        self::extract($object);
+        $data = Quick::extractExt($object, self::$em);
         $sql = "
             SELECT
                 AUTO_INCREMENT
             FROM
                 information_schema.tables
             WHERE
-                table_name = '".self::$tableName."'
+                table_name = '".$data['table']."'
             AND
                 table_schema = DATABASE()
         ";

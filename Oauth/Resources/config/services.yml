@@ -19,7 +19,7 @@ services:
             - "@request_stack"
 
     sludio_helper.oauth.registry:
-        class: Sludio\HelperBundle\Oauth\Client\ClientRegistry
+        class: Sludio\HelperBundle\Oauth\Utils\ClientRegistry
         arguments:
             - "@service_container"
             - ~
@@ -28,7 +28,7 @@ services:
         alias: sludio_helper.oauth.registry
 
     sludio_helper.registry:
-        class: Sludio\HelperBundle\Oauth\Client\ClientOpenIDRegistry
+        class: Sludio\HelperBundle\Oauth\Utils\ClientOpenIDRegistry
         arguments:
             - "@service_container"
             - ~

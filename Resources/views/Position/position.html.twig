@@ -1,8 +1,8 @@
 {% if admin.isGranted('EDIT', object) and admin.hasRoute('edit') %}
-    {% set sludio_helper_position = positionObject(object) %}
+    {% set sludio_helper_position = sludio_position_object(object) %}
 
     {% if sludio_helper_position < admin.last_position %}
-        <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('move', object, {'position': 'bottom'}) }}">
+        <a class="btn btn-sm btn-default btn-warning" href="{{ admin.generateObjectUrl('move', object, {'position': 'bottom'}) }}">
             ⇊
         </a>
     {% else %}
@@ -12,7 +12,7 @@
     {% endif %}
 
     {% if sludio_helper_position < admin.last_position %}
-        <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('move', object, {'position': 'down'}) }}">
+        <a class="btn btn-sm btn-default btn-warning" href="{{ admin.generateObjectUrl('move', object, {'position': 'down'}) }}">
             ↓
         </a>
     {% else %}
@@ -22,7 +22,7 @@
     {% endif %}
 
     {% if sludio_helper_position > 0 %}
-        <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('move', object, {'position': 'up'}) }}">
+        <a class="btn btn-sm btn-default btn-warning" href="{{ admin.generateObjectUrl('move', object, {'position': 'up'}) }}">
             ↑
         </a>
     {% else %}
@@ -32,7 +32,7 @@
     {% endif %}
 
     {% if sludio_helper_position > 0 %}
-        <a class="btn btn-sm btn-default" href="{{ admin.generateObjectUrl('move', object, {'position': 'top'}) }}">
+        <a class="btn btn-sm btn-default btn-warning" href="{{ admin.generateObjectUrl('move', object, {'position': 'top'}) }}">
             ⇈
         </a>
     {% else %}

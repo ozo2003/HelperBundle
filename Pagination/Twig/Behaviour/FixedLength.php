@@ -11,8 +11,8 @@ final class FixedLength extends AbstractPaginationBehaviour
 
     /**
      * @param int $maximumVisible
-     *                            Maximum number of visible pages. Should never be lower than 7.
-     *                            1 on each edge, 1 omitted chunk on each side, and 3 in the middle.
+     *                            Maximum number of visible pages. Should never be lower than 3.
+     *                            1 on each edge, 1 omitted chunk on each side, and 1 in the middle.
      *                            For example: [1][...][11][12][13][...][20]
      */
     public function __construct($maximumVisible)
@@ -55,17 +55,17 @@ final class FixedLength extends AbstractPaginationBehaviour
      * @param $maximumVisible
      *
      * @throws \InvalidArgumentException
-     *                                   If the maximum number of visible pages is lower than 7
+     *                                   If the maximum number of visible pages is lower than 3
      */
     private function guardMaximumVisibleMinimumValue($maximumVisible)
     {
-        // Maximum number of allowed visible pages should never be lower than 7.
+        // Maximum number of allowed visible pages should never be lower than 3.
         // 1 on each edge, 1 omitted chunk on each side, and 3 in the middle.
         // For example: [1][...][11][12][13][...][20]
         if ($maximumVisible < 3) {
             throw new \InvalidArgumentException(
                 sprintf(
-                    'Maximum of number of visible pages (%d) should be at least 7.',
+                    'Maximum of number of visible pages (%d) should be at least 3.',
                     $maximumVisible
                 )
             );

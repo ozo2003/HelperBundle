@@ -11,6 +11,7 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine.orm.default_entity_manager'
+            - '@service_container'
         tags:
             -
                 name: twig.extension
@@ -18,6 +19,8 @@ services:
     sludio_helper.twig.browser_extension:
         class: Sludio\HelperBundle\Scripts\Twig\BrowserExtension
         public: false
+        arguments:
+            - '@service_container'
         tags:
             -
                 name: twig.extension
@@ -28,6 +31,7 @@ services:
         arguments:
             - "%kernel.root_dir%"
             - "@kernel"
+            - '@service_container'
         tags:
             -
                 name: twig.extension
@@ -38,6 +42,7 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine.orm.default_entity_manager'
+            - '@service_container'
         tags:
             -
                 name: twig.extension
@@ -45,6 +50,8 @@ services:
     sludio_helper.twig.usort_extension:
         class: Sludio\HelperBundle\Scripts\Twig\UsortExtension
         public: false
+        arguments:
+            - '@service_container'
         tags:
             -
                 name: twig.extension

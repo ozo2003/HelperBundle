@@ -40,7 +40,7 @@ class Translator extends BaseTranslator
     public function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {
         $request = $this->container->get('request');
-        if ($request->get('print_debug') === 'echo_text') {
+        if ($request->get('sludio_debug') === 'text') {
             return $domain.'.'.$id;
         }
 

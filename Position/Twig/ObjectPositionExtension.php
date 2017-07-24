@@ -6,7 +6,7 @@ use Sludio\HelperBundle\Position\Service\PositionHandler;
 
 class ObjectPositionExtension extends \Twig_Extension
 {
-    const NAME = 'positionObject';
+    const NAME = 'sludio_position_object';
 
     /**
      * PositionHandler.

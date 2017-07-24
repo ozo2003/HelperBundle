@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Openid\Utils;
+namespace Sludio\HelperBundle\Oauth\Utils;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -19,7 +19,7 @@ class ClientRegistry
     public function getClient($key)
     {
         if (!$this->hasClient($key)) {
-            throw new \InvalidArgumentException('error_openid_client_not_found');
+            throw new \InvalidArgumentException('error_oauth_client_not_found');
         }
 
         return $this->container->get($this->serviceMap[$key]['key']);

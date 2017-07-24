@@ -12,11 +12,17 @@ class PaginationExtension extends \Twig_Extension
      */
     private $functions;
 
-    public function __construct()
+    public function __construct($container)
     {
-        $this->functions = [
-            $this->withFunction('sludio_small', 7),
-        ];
+        $short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
+
+        $this->functions = [];
+        if ($container->hasParameter('sludio_helper.pagination.behaviour') && !empty($container->getParameter('sludio_helper.pagination.behaviour', []))) {
+            $functions = $container->getParameter('sludio_helper.pagination.behaviour');
+            foreach ($functions as $function) {
+                array_push($this->functions, $this->withFunction(array_keys($function)[0], array_values($function)[0]));
+            }
+        }
     }
 
     /**
@@ -34,12 +40,12 @@ class PaginationExtension extends \Twig_Extension
 
         $c = clone $this;
 
-        $c/*->functions[$functionName]*/ = new \Twig_SimpleFunction(
+        $c->functions[$functionName] = new \Twig_SimpleFunction(
             $functionName,
             array($behaviour, 'getPaginationData')
         );
 
-        return $c;
+        return $c->functions[$functionName];
     }
 
     public function withoutFunction($functionName)

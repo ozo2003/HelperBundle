@@ -160,7 +160,7 @@ abstract class BaseExtension extends Extension
             $service = [
                 'key' => $clientServiceKey
             ];
-            if(isset($config['provider_options']) && isset($config['provider_options']['name'])){
+            if (isset($config['provider_options']) && isset($config['provider_options']['name'])) {
                 $service['name'] = $config['provider_options']['name'];
             } else {
                 $service['name'] = ucfirst($key);
@@ -186,17 +186,17 @@ abstract class BaseExtension extends Extension
             $service = [
                 'key' => $clientServiceKey
             ];
-            if(isset($config['provider_options']) && isset($config['provider_options']['name'])){
+            if (isset($config['provider_options']) && isset($config['provider_options']['name'])) {
                 $service['name'] = $config['provider_options']['name'];
             } else {
                 $service['name'] = ucfirst($key);
             }
 
             $clientServiceKeys[$key] = $service;
-            foreach($config as $ckey => $cvalue){
-                if($ckey === 'provider_options'){
-                    if(is_array($cvalue)){
-                        foreach($cvalue as $pkey => $pvalue){
+            foreach ($config as $ckey => $cvalue) {
+                if ($ckey === 'provider_options') {
+                    if (is_array($cvalue)) {
+                        foreach ($cvalue as $pkey => $pvalue) {
                             $container->setParameter($clientServiceKey.'.option.'.$pkey, $pvalue);
                         }
                     }
@@ -206,7 +206,7 @@ abstract class BaseExtension extends Extension
             }
         }
         $container->getDefinition('sludio_helper.openid.registry')->replaceArgument(1, $clientServiceKeys);
-        if($container->getParameter('sludio_helper.oauth.enabled', false)){
+        if ($container->getParameter('sludio_helper.oauth.enabled', false)) {
             $container->getDefinition('sludio_helper.registry')->replaceArgument(2, $clientServiceKeys);
         }
     }
@@ -222,6 +222,26 @@ abstract class BaseExtension extends Extension
             ->scalarNode('user_class')->isRequired()->end()
             ->scalarNode('redirect_route')->isRequired()->cannotBeEmpty()->end()
             ->arrayNode('provider_options')->prototype('variable')->end()->end()
+        ;
+        $optionsNode->end();
+    }
+
+    public function configureOpenIDConnect(ContainerBuilder &$container)
+    {
+    }
+
+    private function buildConfigurationForOpenIDConnect(NodeDefinition &$node)
+    {
+        $optionsNode = $node->children();
+        $optionsNode
+            ->scalarNode('client_key')->isRequired()->defaultNull()->end()
+            ->scalarNode('client_secret')->isRequired()->defaultNull()->end()
+            ->scalarNode('id_token_issuer')->isRequired()->defaultNull()->end()
+            ->scalarNode('redirect_uri')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('authorize_uri')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('access_token_uri')->defaultNull()->end()
+            ->scalarNode('resource_owner_details_uri')->defaultNull()->end()
+            ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
         ;
         $optionsNode->end();
     }

@@ -4,10 +4,16 @@ namespace Sludio\HelperBundle\Scripts\Twig;
 
 class BeautifyExtension extends \Twig_Extension
 {
-    public function __construct($request_stack, $em)
+    protected $request;
+    protected $em;
+    protected $short_functions;
+
+    public function __construct($request_stack, $em, $container)
     {
         $this->request = $request_stack->getCurrentRequest();
         $this->em = $em;
+
+        $this->short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
     }
 
     public function getName()
@@ -17,7 +23,7 @@ class BeautifyExtension extends \Twig_Extension
 
     public function getFilters()
     {
-        return array(
+        $array = array(
             new \Twig_SimpleFilter('sludio_beautify', array($this, 'beautify')),
             new \Twig_SimpleFilter('sludio_urldecode', array($this, 'url_decode')),
             new \Twig_SimpleFilter('sludio_parse', array($this, 'parse')),
@@ -25,6 +31,21 @@ class BeautifyExtension extends \Twig_Extension
             new \Twig_SimpleFilter('sludio_html_entity_decode', array($this, 'html_entity_decode')),
             new \Twig_SimpleFilter('sludio_strip_descr', array($this, 'strip_descr')),
         );
+
+        $short_array = array(
+            new \Twig_SimpleFilter('beautify', array($this, 'beautify')),
+            new \Twig_SimpleFilter('urldecode', array($this, 'url_decode')),
+            new \Twig_SimpleFilter('parse', array($this, 'parse')),
+            new \Twig_SimpleFilter('file_exists', array($this, 'file_exists')),
+            new \Twig_SimpleFilter('html_entity_decode', array($this, 'html_entity_decode')),
+            new \Twig_SimpleFilter('strip_descr', array($this, 'strip_descr')),
+        );
+
+        if ($this->short_functions) {
+            return array_merge($array, $short_array);
+        } else {
+            return $array;
+        }
     }
 
     public function url_decode($string)

@@ -4,10 +4,16 @@ namespace Sludio\HelperBundle\Scripts\Twig;
 
 class MissingExtension extends \Twig_Extension
 {
-    public function __construct($request_stack, $em)
+    protected $request;
+    protected $em;
+    protected $short_functions;
+
+    public function __construct($request_stack, $em, $container)
     {
         $this->request = $request_stack->getCurrentRequest();
         $this->em = $em;
+
+        $this->short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
     }
 
     public function getName()
@@ -17,10 +23,21 @@ class MissingExtension extends \Twig_Extension
 
     public function getFilters()
     {
-        return array(
+        $array = array(
             new \Twig_SimpleFilter('sludio_objects', array($this, 'getObjects')),
             new \Twig_SimpleFilter('sludio_svg', array($this, 'getSvg')),
         );
+
+        $short_array = array(
+            new \Twig_SimpleFilter('objects', array($this, 'getObjects')),
+            new \Twig_SimpleFilter('svg', array($this, 'getSvg')),
+        );
+
+        if ($this->short_functions) {
+            return array_merge($array, $short_array);
+        } else {
+            return $array;
+        }
     }
 
     public function getObjects($class, $by, $order = null, $one = false)

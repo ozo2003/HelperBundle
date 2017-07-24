@@ -6,11 +6,28 @@ use Symfony\Component\HttpFoundation\Request;
 
 class BrowserExtension extends \Twig_Extension
 {
+    protected $short_functions;
+
+    public function __construct($container)
+    {
+        $this->short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
+    }
+
     public function getFunctions()
     {
-        return array(
+        $array = array(
             new \Twig_SimpleFunction('sludio_is_ie', array($this, 'isIE')),
         );
+
+        $short_array = array(
+            new \Twig_SimpleFunction('is_ie', array($this, 'isIE')),
+        );
+
+        if ($this->short_functions) {
+            return array_merge($array, $short_array);
+        } else {
+            return $array;
+        }
     }
 
     public function getName()

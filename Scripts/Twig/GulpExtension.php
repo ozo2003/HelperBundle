@@ -6,16 +6,32 @@ class GulpExtension extends \Twig_Extension
 {
     private $paths = [];
 
-    public function __construct($appDir, $kernel)
+    protected $appDir;
+    protected $kernel;
+    protected $short_functions;
+
+    public function __construct($appDir, $kernel, $container)
     {
         $this->appDir = $appDir;
         $this->kernel = $kernel;
+
+        $this->short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
     }
     public function getFilters()
     {
-        return array(
+        $array = array(
             new \Twig_SimpleFilter('sludio_asset_version', array($this, 'getAssetVersion')),
         );
+
+        $short_array = array(
+            new \Twig_SimpleFilter('asset_version', array($this, 'getAssetVersion')),
+        );
+
+        if ($this->short_functions) {
+            return array_merge($array, $short_array);
+        } else {
+            return $array;
+        }
     }
     public function getName()
     {

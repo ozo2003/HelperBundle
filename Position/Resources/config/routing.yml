@@ -1,0 +1,9 @@
+movedown:
+    pattern: /admin/movedown/{class}/{id}
+    defaults:
+        _controller: Sludio\HelperBundle\Position\Controller\TreeController::downAction
+
+moveup:
+    pattern: /admin/moveup/{class}/{id}
+    defaults:
+        _controller: Sludio\HelperBundle\Position\Controller\TreeController::upAction

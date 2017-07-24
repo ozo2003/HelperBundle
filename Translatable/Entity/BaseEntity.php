@@ -8,6 +8,7 @@ class BaseEntity
 {
     public $className;
     public $translates;
+    
     public $localeArr = array(
         'lv' => 'lv_LV',
         'en' => 'en_US',
@@ -40,7 +41,7 @@ class BaseEntity
     public function __get($property)
     {
         if (!method_exists($this, 'get'.ucfirst($property))) {
-            $locale = 'en';
+            $locale = Sludio::getDefaultLocale();
         } else {
             $locale = strtolower(substr($property, -2));
             $property = substr($property, 0, -2);
@@ -70,8 +71,10 @@ class BaseEntity
         return Sludio::getTranslations(get_called_class(), $this->getId());
     }
 
-    public function getVariableByLocale($variable, $locale = 'en', $return_original = false)
+    public function getVariableByLocale($variable, $locale = null, $return_original = false)
     {
+        $locale = $locale ?: Sludio::getDefaultLocale();
+
         if (!$this->translates && $this->getId()) {
             $this->translates = $this->getTranslations();
         }
@@ -98,12 +101,12 @@ class BaseEntity
 
         return '';
     }
-    
+
     public function cleanText($text){
         $text = strip_tags($text);
         $text = mb_convert_encoding($text, "UTF-8", "UTF-8");
         $text = str_replace(' ?', '', $text);
-        
+
         return $text;
     }
 }
