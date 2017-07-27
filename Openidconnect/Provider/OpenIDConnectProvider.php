@@ -1,24 +1,25 @@
 <?php
-/**
- * @author Steve Rhoades <sedonami@gmail.com>
- * @license http://opensource.org/licenses/MIT MIT
- */
+
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Client\Provider\GenericProvider;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use InvalidArgumentException;
-use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
-use Sludio\HelperBundle\Openidconnect\Validator\EqualsTo;
-use Sludio\HelperBundle\Openidconnect\Validator\GreaterOrEqualsTo;
-use Sludio\HelperBundle\Openidconnect\Validator\LesserOrEqualsTo;
-use Sludio\HelperBundle\Openidconnect\Validator\NotEmpty;
-use Sludio\HelperBundle\Openidconnect\Validator\ValidatorChain;
 use League\OAuth2\Client\Grant\AbstractGrant;
+use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
+use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class OpenIDConnectProvider extends GenericProvider
+use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
+use Sludio\HelperBundle\Openidconnect\Validator;
+use Sludio\HelperBundle\Openidconnect\Provider\Uri;
+
+class OpenIDConnectProvider extends AbstractProvider
 {
     /**
      * @var string
@@ -40,42 +41,67 @@ class OpenIDConnectProvider extends GenericProvider
      */
     protected $idTokenIssuer;
 
+    private $router;
+
+    protected $uris = [];
+
     /**
      * @param array $options
      * @param array $collaborators
      */
-    public function __construct(array $options = [], array $collaborators = [])
+    public function __construct(string $key, array $options = [], array $collaborators = [], $router)
     {
-        if (empty($collaborators['signer']) || false === $collaborators['signer'] instanceof Signer) {
-            throw new InvalidArgumentException('Must pass a valid signer to OpenIdConnectProvider');
-        }
+        $this->signer = new \Lcobucci\JWT\Signer\Rsa\Sha256();
 
-        $this->signer = $collaborators['signer'];
-
-        $this->validatorChain = new ValidatorChain();
+        $this->validatorChain = new Validator\ValidatorChain();
         $this->validatorChain->setValidators([
-            new NotEmpty('iat', true),
-            new GreaterOrEqualsTo('exp', true),
-            new EqualsTo('iss', true),
-            new EqualsTo('aud', true),
-            new NotEmpty('sub', true),
-            new LesserOrEqualsTo('nbf'),
-            new EqualsTo('jti'),
-            new EqualsTo('azp'),
-            new EqualsTo('nonce'),
+            new Validator\NotEmpty('iat', true),
+            new Validator\GreaterOrEqualsTo('exp', true),
+            new Validator\EqualsTo('iss', true),
+            new Validator\EqualsTo('aud', true),
+            new Validator\NotEmpty('sub', true),
+            new Validator\LesserOrEqualsTo('nbf'),
+            new Validator\EqualsTo('jti'),
+            new Validator\EqualsTo('azp'),
+            new Validator\EqualsTo('nonce'),
         ]);
 
-        if (empty($options['scopes'])) {
-            $options['scopes'] = [];
-        } else if (!is_array($options['scopes'])) {
-            $options['scopes'] = [$options['scopes']];
-        }
-
-        if(!in_array('openid', $options['scopes'])) {
-            array_push($options['scopes'], 'openid');
-        }
+        $this->router = $router;
 
         parent::__construct($options, $collaborators);
+        $this->buildParams($options);
+    }
+
+    private function buildParams(array $options = [])
+    {
+        if (!empty($options)) {
+            $this->clientId = $options['client_key'];
+            $this->idTokenIssuer = $options['id_token_issuer'];
+            $this->publicKey = 'file://'.$options['public_key'];
+            $this->state = $this->getRandomState();
+            $this->baseUri = $options['base_uri'];
+            switch ($options['redirect']['type']) {
+                case 'uri':
+                    $url = $options['redirect']['uri'];
+                break;
+                case 'route':
+                    $params = !empty($options['redirect']['params']) ? $options['redirect']['params'] : [];
+                    $url = $this->router->generate($options['redirect']['route'], $params, UrlGeneratorInterface::ABSOLUTE_URL);
+                break;
+            }
+            $this->redirectUri = $url;
+
+            foreach ($options['uris'] as $name => $uri) {
+                $opt = [
+                    'client_id' => $this->clientId,
+                    'client_secret' => $this->clientSecret,
+                    'redirect_uri' => $this->redirectUri,
+                    'state' => $this->state,
+                    'base_uri' => $this->baseUri
+                ];
+                $this->uris[$name] = new Uri($uri, $opt);
+            }
+        }
     }
 
     /**
@@ -85,11 +111,7 @@ class OpenIDConnectProvider extends GenericProvider
      */
     protected function getRequiredOptions()
     {
-        $options = parent::getRequiredOptions();
-        $options[] = 'publicKey';
-        $options[] = 'idTokenIssuer';
-
-        return $options;
+        return [];
     }
 
     public function getPublicKey()
@@ -197,7 +219,6 @@ class OpenIDConnectProvider extends GenericProvider
         return $this->idTokenIssuer;
     }
 
-
     /**
      * Creates an access token from a response.
      *
@@ -212,4 +233,37 @@ class OpenIDConnectProvider extends GenericProvider
     {
         return new AccessToken($response);
     }
+
+    public function getBaseAuthorizationUrl()
+    {
+        return '';
+    }
+
+    public function getBaseAccessTokenUrl(array $params = [])
+    {
+        return '';
+    }
+
+    public function getDefaultScopes()
+    {
+        return [];
+    }
+
+    protected function createResourceOwner(array $response, AccessToken $token = null)
+    {
+        return [];
+    }
+
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
+    }
+
+    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    {
+    }
+
+    public function getUri($name){
+        return $this->uris[$name];
+    }
+
 }

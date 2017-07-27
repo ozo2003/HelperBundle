@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader;
-use Sludio\HelperBundle\DependencyInjection\Extension\BaseExtension;
+use Sludio\HelperBundle\DependencyInjection\BaseExtension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -52,7 +52,7 @@ class SludioHelperExtension extends BaseExtension
                     }
                     $enabled = true;
                 }
-                if($enabled){
+                if ($enabled) {
                     $container->setParameter('sludio_helper.'.$key.'.'.$var, $config['extensions'][$key][$var]);
                 }
             }
@@ -70,6 +70,10 @@ class SludioHelperExtension extends BaseExtension
 
         if ($container->hasParameter('sludio_helper.openid.enabled')) {
             $this->configureOpenID($container);
+        }
+
+        if ($container->hasParameter('sludio_helper.openidconnect.enabled')) {
+            $this->configureOpenIDConnect($container);
         }
     }
 }

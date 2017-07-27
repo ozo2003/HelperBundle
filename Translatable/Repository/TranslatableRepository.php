@@ -49,10 +49,9 @@ class TranslatableRepository
         self::init();
         $className = explode('\\', $class);
         $className = end($className);
-        $redis = self::$redis;
 
-        $result = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id)) : null;
-        $checked = $redis ? unserialize($redis->get(strtolower($className).':translations:'.$id.':checked')) : null;
+        $result = self::$redis ? unserialize(self::$redis->get(strtolower($className).':translations:'.$id)) : null;
+        $checked = self::$redis ? unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked')) : null;
 
         if (!$result && !$checked) {
             $connection = self::$connection;
@@ -68,9 +67,9 @@ class TranslatableRepository
                 $result[$row['locale']][$row['field']] = $row['content'];
             }
 
-            if ($result && $redis) {
-                $redis->set(strtolower($className).':translations:'.$id, serialize($result));
-                $redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
+            if ($result && self::$redis) {
+                self::$redis->set(strtolower($className).':translations:'.$id, serialize($result));
+                self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
             }
         }
 
@@ -158,10 +157,9 @@ class TranslatableRepository
         $sth->bindValue('content', $content);
         $sth->execute();
 
-        $redis = self::$redis;
-        if ($redis) {
-            $redis->del(strtolower($className).':translations:'.$id);
-            $redis->del(strtolower($className).':translations:'.$id.':ckecked');
+        if (self::$redis) {
+            self::$redis->del(strtolower($className).':translations:'.$id);
+            self::$redis->del(strtolower($className).':translations:'.$id.':ckecked');
         }
     }
 
@@ -181,7 +179,6 @@ class TranslatableRepository
     public static function getAllTranslations()
     {
         self::init();
-        $redis = self::$redis;
 
         $connection = self::$connection;
         $sql = 'SELECT * FROM '.self::$table;
@@ -196,8 +193,8 @@ class TranslatableRepository
             $className = explode('\\', $class);
             $className = end($className);
             foreach ($objects as $id => $transl) {
-                $redis->set(strtolower($className).':translations:'.$id, serialize($transl));
-                $redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
+                self::$redis->set(strtolower($className).':translations:'.$id, serialize($transl));
+                self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
             }
         }
 

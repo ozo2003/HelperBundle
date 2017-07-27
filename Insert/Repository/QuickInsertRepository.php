@@ -195,14 +195,6 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    private function buildWhereExtended($tableName, $where)
-    {
-        $whereSql = '';
-        if ($where) {
-
-        }
-    }
-
     public static function get($object, $one = false, $where = array(), $dont = false, $fields = array(), $manager = null)
     {
         self::init($dont, $manager);

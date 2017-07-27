@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\Extension;
+namespace Sludio\HelperBundle\DependencyInjection;
 
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -10,11 +10,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Reference;
 
-use Sludio\HelperBundle\DependencyInjection\Providers\CustomProviderConfigurator;
-use Sludio\HelperBundle\DependencyInjection\Providers\FacebookProviderConfigurator;
-use Sludio\HelperBundle\DependencyInjection\Providers\GoogleProviderConfigurator;
-use Sludio\HelperBundle\DependencyInjection\Providers\TwitterProviderConfigurator;
-use Sludio\HelperBundle\DependencyInjection\Providers\DraugiemProviderConfigurator;
+use Sludio\HelperBundle\DependencyInjection\Configurator;
 
 abstract class BaseExtension extends Extension
 {
@@ -23,11 +19,11 @@ abstract class BaseExtension extends Extension
     protected $configurators = [];
 
     protected static $supportedProviderTypes = [
-        'custom' => CustomProviderConfigurator::class,
-        'facebook' => FacebookProviderConfigurator::class,
-        'google' => GoogleProviderConfigurator::class,
-        'twitter' => TwitterProviderConfigurator::class,
-        'draugiem' => DraugiemProviderConfigurator::class,
+        'custom' => Configurator\CustomProviderConfigurator::class,
+        'facebook' => Configurator\FacebookProviderConfigurator::class,
+        'google' => Configurator\GoogleProviderConfigurator::class,
+        'twitter' => Configurator\TwitterProviderConfigurator::class,
+        'draugiem' => Configurator\DraugiemProviderConfigurator::class,
     ];
 
     public function __construct($checkExternalClassExistence = true)
@@ -60,8 +56,7 @@ abstract class BaseExtension extends Extension
             ->booleanNode('use_state')->defaultValue(true)->end()
         ;
 
-        $this->getConfigurator($type)
-            ->buildConfiguration($optionsNode);
+        $this->getConfigurator($type)->buildConfiguration($optionsNode);
         $optionsNode->end();
     }
 
@@ -228,6 +223,63 @@ abstract class BaseExtension extends Extension
 
     public function configureOpenIDConnect(ContainerBuilder &$container)
     {
+        $clientConfigurations = $container->getParameter('sludio_helper.openidconnect.clients');
+        foreach ($clientConfigurations as $key => $clientConfig) {
+            $tree = new TreeBuilder();
+            $node = $tree->root('sludio_helper_openidconnect_client/clients/' . $key);
+            $this->buildConfigurationForOpenIDConnect($node);
+            $processor = new Processor();
+            $config = $processor->process($tree->buildTree(), [$clientConfig]);
+            $clientServiceKey = 'sludio_helper.openidconnect.client.'.$key;
+            $container->setParameter($clientServiceKey, $clientConfig);
+            $service = [
+                'key' => $clientServiceKey
+            ];
+            if (isset($config['options']) && isset($config['options']['name'])) {
+                $service['name'] = $config['options']['name'];
+            } else {
+                $service['name'] = ucfirst($key);
+            }
+
+            $clientServiceKeys[$key] = $service;
+            foreach ($config as $ckey => $cvalue) {
+                if ($ckey === 'options') {
+                    if (is_array($cvalue)) {
+                        foreach ($cvalue as $pkey => $pvalue) {
+                            $container->setParameter($clientServiceKey.'.option.'.$pkey, $pvalue);
+                        }
+                    }
+                } else {
+                    $container->setParameter($clientServiceKey.'.'.$ckey, $cvalue);
+                }
+            }
+            $uriConfigurations = $container->getParameter('sludio_helper.openidconnect.client.'.$key.'.uris');
+            foreach($uriConfigurations as $key2 => $uriConfig){
+                $tree = new TreeBuilder();
+                $node = $tree->root('sludio_helper_openidconnect_client/clients/' . $key . '/uris/' . $key2);
+                $this->buildUri($node);
+                $processor = new Processor();
+                $config = $processor->process($tree->buildTree(), [$uriConfig]);
+                $params = [];
+                foreach ($config as $ckey2 => $cvalue2) {
+                    if ($ckey2 === 'params') {
+                        if (is_array($cvalue2)) {
+                            foreach ($cvalue2 as $pkey2 => $pvalue2) {
+                                $params[$pkey2] = $pvalue2;
+                            }
+                        }
+                    } else {
+                        $container->setParameter($clientServiceKey.'.'.$key2.'.'.$ckey2, $cvalue2);
+                    }
+                }
+                if(!empty($params)){
+                    $params['client_id'] = $container->getParameter('sludio_helper.openidconnect.client.'.$key.'.client_key');
+                    $container->setParameter($clientServiceKey.'.'.$key2.'.'.$ckey2, $params);
+                }
+            }
+            $this->configureConnect($container, $clientServiceKey);
+        }
+        $container->getDefinition('sludio_helper.openidconnect.registry')->replaceArgument(1, $clientServiceKeys);
     }
 
     private function buildConfigurationForOpenIDConnect(NodeDefinition &$node)
@@ -235,13 +287,36 @@ abstract class BaseExtension extends Extension
         $optionsNode = $node->children();
         $optionsNode
             ->scalarNode('client_key')->isRequired()->defaultNull()->end()
-            ->scalarNode('client_secret')->isRequired()->defaultNull()->end()
+            ->scalarNode('client_secret')->defaultNull()->end()
             ->scalarNode('id_token_issuer')->isRequired()->defaultNull()->end()
-            ->scalarNode('redirect_uri')->isRequired()->cannotBeEmpty()->end()
-            ->scalarNode('authorize_uri')->isRequired()->cannotBeEmpty()->end()
-            ->scalarNode('access_token_uri')->defaultNull()->end()
-            ->scalarNode('resource_owner_details_uri')->defaultNull()->end()
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
+            ->scalarNode('base_uri')->isRequired()->end()
+            ->arrayNode('redirect')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->enumNode('type')
+                        ->values(array('route', 'uri'))
+                        ->defaultValue('route')
+                    ->end()
+                    ->scalarNode('route')->defaultNull()->end()
+                    ->scalarNode('uri')->defaultNull()->end()
+                    ->arrayNode('params')->prototype('variable')->end()->end()
+                ->end()
+            ->end()
+            ->arrayNode('uris')
+                ->prototype('array')
+                    ->prototype('variable')->end()
+                ->end()
+            ->end()
+        ;
+        $optionsNode->end();
+    }
+
+    private function buildUri(NodeDefinition &$node){
+        $optionsNode = $node->children();
+        $optionsNode
+            ->arrayNode('params')->prototype('variable')->end()->end()
+            ->arrayNode('url_params')->prototype('variable')->end()->end()
         ;
         $optionsNode->end();
     }
@@ -261,5 +336,19 @@ abstract class BaseExtension extends Extension
         ]);
 
         return $clientServiceKey;
+    }
+
+    private function configureConnect(ContainerBuilder $container, $clientServiceKey, array $options = [])
+    {
+        $clientDefinition = $container->register(
+            $clientServiceKey,
+            'Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider'
+        );
+        $clientDefinition->setArguments([
+            $clientServiceKey,
+            $container->getParameter($clientServiceKey),
+            [],
+            new Reference('router')
+        ]);
     }
 }

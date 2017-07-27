@@ -1,8 +1,5 @@
 <?php
-/**
- * @author Steve Rhoades <sedonami@gmail.com>
- * @license http://opensource.org/licenses/MIT MIT
- */
+
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Lcobucci\JWT\Parser;
