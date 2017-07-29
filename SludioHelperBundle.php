@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the SludioHelperBundle package.
+ *
+ * @author Dāvis Zālītis <davis@source.lv>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Sludio\HelperBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -9,18 +18,24 @@ use Sludio\HelperBundle\DependencyInjection\SludioHelperExtension;
 
 class SludioHelperBundle extends Bundle
 {
+    /**
+     * {@inheritdoc}
+     */
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
         $container->addCompilerPass(new TemplatingPass());
     }
-    
+
+    /**
+     * {@inheritdoc}
+     */
     public function getContainerExtension()
     {
         if ($this->extension === null) {
             return new SludioHelperExtension();
         }
-        
+
         return $this->extension;
     }
 }

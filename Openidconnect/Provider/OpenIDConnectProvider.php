@@ -10,16 +10,18 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use InvalidArgumentException;
 use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Token\AccessToken;
+use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Validator;
 use Sludio\HelperBundle\Openidconnect\Provider\Uri;
+use Sludio\HelperBundle\Openidconnect\Component\ProviderInterface;
 
-class OpenIDConnectProvider extends AbstractProvider
+class OpenIDConnectProvider extends AbstractProvider implements ProviderInterface
 {
     /**
      * @var string
@@ -41,15 +43,43 @@ class OpenIDConnectProvider extends AbstractProvider
      */
     protected $idTokenIssuer;
 
+    /**
+     * @var Router
+     */
     private $router;
 
+    /**
+     * @var Uri[]
+     */
     protected $uris = [];
 
     /**
+     * @var string
+     */
+    protected $clientId;
+
+    /**
+     * @var string
+     */
+    protected $clientSecret;
+
+    /**
+     * @var string
+     */
+    protected $state;
+
+    /**
+     * @var string
+     */
+    protected $baseUri;
+
+    /**
+     * @param string $key
      * @param array $options
      * @param array $collaborators
+     * @param Router $router
      */
-    public function __construct(string $key, array $options = [], array $collaborators = [], $router)
+    public function __construct(string $key, array $options = [], array $collaborators = [], Router $router)
     {
         $this->signer = new \Lcobucci\JWT\Signer\Rsa\Sha256();
 
@@ -76,6 +106,7 @@ class OpenIDConnectProvider extends AbstractProvider
     {
         if (!empty($options)) {
             $this->clientId = $options['client_key'];
+            $this->clientSecret = $options['client_secret'];
             $this->idTokenIssuer = $options['id_token_issuer'];
             $this->publicKey = 'file://'.$options['public_key'];
             $this->state = $this->getRandomState();
@@ -130,7 +161,12 @@ class OpenIDConnectProvider extends AbstractProvider
     {
         /** @var Token $token */
         $accessToken = parent::getAccessToken($grant, $options);
-        $token       = $accessToken->getIdToken();
+
+        if (null === $accessToken) {
+            throw new InvalidTokenException('Invalid access token.');
+        }
+
+        $token = $accessToken->getIdToken();
 
         // id_token is empty.
         if (null === $token) {
@@ -185,6 +221,7 @@ class OpenIDConnectProvider extends AbstractProvider
         }
 
         if (false === $this->validatorChain->validate($data, $token)) {
+            ld($this->validatorChain->getMessages());
             throw new InvalidTokenException('The id_token did not pass validation.');
         }
 
@@ -219,6 +256,10 @@ class OpenIDConnectProvider extends AbstractProvider
         return $this->idTokenIssuer;
     }
 
+    public function check(array $response = []){
+        return true;
+    }
+
     /**
      * Creates an access token from a response.
      *
@@ -231,7 +272,10 @@ class OpenIDConnectProvider extends AbstractProvider
      */
     protected function createAccessToken(array $response, AbstractGrant $grant)
     {
-        return new AccessToken($response);
+        if($this->check($response)){
+            return new AccessToken($response);
+        }
+        return null;
     }
 
     public function getBaseAuthorizationUrl()
@@ -249,7 +293,7 @@ class OpenIDConnectProvider extends AbstractProvider
         return [];
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token = null)
+    protected function createResourceOwner(array $response, BaseAccessToken $token = null)
     {
         return [];
     }
@@ -258,12 +302,12 @@ class OpenIDConnectProvider extends AbstractProvider
     {
     }
 
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl(BaseAccessToken $token)
     {
     }
 
-    public function getUri($name){
+    public function getUri($name)
+    {
         return $this->uris[$name];
     }
-
 }

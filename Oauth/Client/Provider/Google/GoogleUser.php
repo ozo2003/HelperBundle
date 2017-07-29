@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Google;
 
-use Sludio\HelperBundle\Oauth\Implement\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
 class GoogleUser implements ResourceOwnerInterface, SocialUserInterface

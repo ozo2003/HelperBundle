@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Openid\Client;
 
-use Sludio\HelperBundle\Oauth\Implement\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
 class SteamUser implements SocialUserInterface {
-    
+
 }

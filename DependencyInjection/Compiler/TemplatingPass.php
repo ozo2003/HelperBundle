@@ -1,5 +1,14 @@
 <?php
 
+/**
+ * This file is part of the SludioHelperBundle package.
+ *
+ * @author Dāvis Zālītis <davis@source.lv>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Sludio\HelperBundle\DependencyInjection\Compiler;
 
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;

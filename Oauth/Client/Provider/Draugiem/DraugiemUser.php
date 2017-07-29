@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Draugiem;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Sludio\HelperBundle\Oauth\Implement\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
 class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
 {

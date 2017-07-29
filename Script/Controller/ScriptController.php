@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Scripts\Controller;
+namespace Sludio\HelperBundle\Script\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;

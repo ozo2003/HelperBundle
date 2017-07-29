@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Oauth\Implement;
+namespace Sludio\HelperBundle\Oauth\Component;
 
 interface SocialUserInterface
 {

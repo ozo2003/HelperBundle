@@ -5,7 +5,9 @@ namespace Sludio\HelperBundle\DependencyInjection;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader;
-use Sludio\HelperBundle\DependencyInjection\BaseExtension;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension as BaseExtension;
+
+use Sludio\HelperBundle\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -29,7 +31,7 @@ class SludioHelperExtension extends BaseExtension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $files = array(
-            'services.yml', 'parameters.yml',
+            'services.yml', 'parameters.yml', 'components.yml',
         );
         foreach ($files as $file) {
             if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
@@ -38,9 +40,11 @@ class SludioHelperExtension extends BaseExtension
         }
 
         foreach ($config['extensions'] as $key => $extension) {
-            $enabled = false;
-            foreach ($extension as $var => $value) {
-                if ($var == 'enabled' && $value) {
+            $enabled = $iterator = 0;
+            $length = count($extension);
+            foreach ($extension as $variable => $value) {
+                $iterator++;
+                if ($variable == 'enabled' && $value) {
                     $files = array(
                         'services.yml', 'parameters.yml'
                     );
@@ -50,30 +54,24 @@ class SludioHelperExtension extends BaseExtension
                             $loader->load($file);
                         }
                     }
-                    $enabled = true;
+                    $enabled = 1;
                 }
-                if ($enabled) {
-                    $container->setParameter('sludio_helper.'.$key.'.'.$var, $config['extensions'][$key][$var]);
+                if ($enabled === 1) {
+                    $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
+                }
+                if ($iterator === $length && $enabled === 1) {
+                    $ext = new Extension($key);
+                    if ($ext->getExtension()) {
+                        $ext->configure($container);
+                    }
                 }
             }
         }
 
         foreach ($config['other'] as $key => $other) {
-            foreach ($other as $var => $value) {
-                $container->setParameter('sludio_helper.'.$key.'.'.$var, $config['other'][$key][$var]);
+            foreach ($other as $variable => $value) {
+                $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['other'][$key][$variable]);
             }
-        }
-
-        if ($container->hasParameter('sludio_helper.oauth.enabled')) {
-            $this->configureOAuth($container);
-        }
-
-        if ($container->hasParameter('sludio_helper.openid.enabled')) {
-            $this->configureOpenID($container);
-        }
-
-        if ($container->hasParameter('sludio_helper.openidconnect.enabled')) {
-            $this->configureOpenIDConnect($container);
         }
     }
 }

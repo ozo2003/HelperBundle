@@ -14,7 +14,7 @@ class TranslationExtension extends \Twig_Extension
         $this->em = $em;
         $this->request = $request_stack->getCurrentRequest();
         $this->defaultLocale = $default;
-        $this->short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
+        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
     }
 
     public function getName()

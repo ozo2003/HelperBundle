@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Openidconnect\Implement;
+namespace Sludio\HelperBundle\Openidconnect\Component;
 
 interface UriInterface
 {

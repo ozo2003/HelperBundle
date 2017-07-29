@@ -1,12 +1,12 @@
 services:
     sludio_helper.command.redis_flush:
-        class: Sludio\HelperBundle\Scripts\Command\RedisFlushCommand
+        class: Sludio\HelperBundle\Script\Command\RedisFlushCommand
         tags:
             -
                 name: console.command
 
     sludio_helper.twig.beautify_extension:
-        class: Sludio\HelperBundle\Scripts\Twig\BeautifyExtension
+        class: Sludio\HelperBundle\Script\Twig\BeautifyExtension
         public: false
         arguments:
             - '@request_stack'
@@ -17,7 +17,7 @@ services:
                 name: twig.extension
 
     sludio_helper.twig.browser_extension:
-        class: Sludio\HelperBundle\Scripts\Twig\BrowserExtension
+        class: Sludio\HelperBundle\Script\Twig\BrowserExtension
         public: false
         arguments:
             - '@service_container'
@@ -26,7 +26,7 @@ services:
                 name: twig.extension
 
     sludio_helper.twig.gulp_extension:
-        class: Sludio\HelperBundle\Scripts\Twig\GulpExtension
+        class: Sludio\HelperBundle\Script\Twig\GulpExtension
         public: false
         arguments:
             - "%kernel.root_dir%"
@@ -37,7 +37,7 @@ services:
                 name: twig.extension
 
     sludio_helper.twig.missing_extension:
-        class: Sludio\HelperBundle\Scripts\Twig\MissingExtension
+        class: Sludio\HelperBundle\Script\Twig\MissingExtension
         public: false
         arguments:
             - '@request_stack'
@@ -48,7 +48,7 @@ services:
                 name: twig.extension
 
     sludio_helper.twig.usort_extension:
-        class: Sludio\HelperBundle\Scripts\Twig\UsortExtension
+        class: Sludio\HelperBundle\Script\Twig\UsortExtension
         public: false
         arguments:
             - '@service_container'

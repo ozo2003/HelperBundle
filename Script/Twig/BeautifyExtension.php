@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Scripts\Twig;
+namespace Sludio\HelperBundle\Script\Twig;
 
 class BeautifyExtension extends \Twig_Extension
 {
@@ -13,7 +13,7 @@ class BeautifyExtension extends \Twig_Extension
         $this->request = $request_stack->getCurrentRequest();
         $this->em = $em;
 
-        $this->short_functions = $container->hasParameter('sludio_helper.scripts.short_functions') && $container->getParameter('sludio_helper.scripts.short_functions', false);
+        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
     }
 
     public function getName()

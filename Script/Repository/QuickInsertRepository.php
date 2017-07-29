@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Insert\Repository;
+namespace Sludio\HelperBundle\Script\Repository;
 
 class QuickInsertRepository
 {
