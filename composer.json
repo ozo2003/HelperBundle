@@ -3,7 +3,7 @@
     "description": "Helper Bundle",
     "type": "symfony-bundle",
     "authors": [{
-        "name": "sludio",
+        "name": "Dāvis Zālītis",
         "email": "davis@source.lv"
     }],
     "license": [

@@ -31,7 +31,7 @@ class SludioHelperExtension extends BaseExtension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $files = array(
-            'services.yml', 'parameters.yml', 'components.yml',
+            'components.yml', 'parameters.yml', 'services.yml',
         );
         foreach ($files as $file) {
             if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
@@ -46,7 +46,7 @@ class SludioHelperExtension extends BaseExtension
                 $iterator++;
                 if ($variable == 'enabled' && $value) {
                     $files = array(
-                        'services.yml', 'parameters.yml'
+                        'components.yml', 'parameters.yml', 'services.yml',
                     );
                     $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
                     foreach ($files as $file) {
