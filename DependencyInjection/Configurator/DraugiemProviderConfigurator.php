@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\Provider;
+namespace Sludio\HelperBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
