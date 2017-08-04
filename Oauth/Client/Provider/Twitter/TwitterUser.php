@@ -3,9 +3,9 @@
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Twitter;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUser;
 
-class TwitterUser implements ResourceOwnerInterface, SocialUserInterface
+class TwitterUser implements ResourceOwnerInterface, SocialUser
 {
     /**
      * @var array

@@ -2,14 +2,15 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
-use Sludio\HelperBundle\Openid\Utils\LoginInterface;
+use Sludio\HelperBundle\Openid\Utils\Loginable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Exception;
 
-class Login implements LoginInterface
+class Login implements Loginable
 {
     protected $client_name;
     protected $request;
@@ -193,7 +194,7 @@ class Login implements LoginInterface
         }
 
         if ($user === null) {
-            throw new \Exception('error_oauth_login_invalid_or_timed_out');
+            throw new Exception('error_oauth_login_invalid_or_timed_out');
         }
 
         return $user;

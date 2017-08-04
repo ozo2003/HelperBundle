@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-class FacebookProviderConfigurator implements ProviderConfiguratorInterface
+class FacebookProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {

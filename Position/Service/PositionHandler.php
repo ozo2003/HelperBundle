@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Position\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Common\Util\ClassUtils;
 
 class PositionHandler
 {
@@ -50,7 +51,7 @@ class PositionHandler
     public function getPositionFieldByEntity($entity)
     {
         if (is_object($entity)) {
-            $entity = \Doctrine\Common\Util\ClassUtils::getClass($entity);
+            $entity = ClassUtils::getClass($entity);
         }
         if (isset($this->positionField['entities'][$entity])) {
             return $this->positionField['entities'][$entity];

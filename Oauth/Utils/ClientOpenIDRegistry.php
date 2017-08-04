@@ -3,6 +3,8 @@
 namespace Sludio\HelperBundle\Oauth\Utils;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Exception;
+use InvalidArgumentException;
 
 class ClientOpenIDRegistry
 {
@@ -19,7 +21,7 @@ class ClientOpenIDRegistry
 
         $checkExists = array_intersect($keysOauth, $keysOpenid);
         if(!empty($checkExists)){
-            throw new \Exception(sprintf('Multiple clients with same key is not allowed! Key'.(count($checkExists) > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
+            throw new Exception(sprintf('Multiple clients with same key is not allowed! Key'.(count($checkExists) > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
         }
 
         $this->serviceMap = $openIDServiceMap + $oAuthServiceMap;
@@ -28,7 +30,7 @@ class ClientOpenIDRegistry
     public function getClient($key)
     {
         if (!$this->hasClient($key)) {
-            throw new \InvalidArgumentException('error_oauth_client_not_found');
+            throw new InvalidArgumentException('error_oauth_client_not_found');
         }
 
         return $this->container->get($this->serviceMap[$key]['key']);

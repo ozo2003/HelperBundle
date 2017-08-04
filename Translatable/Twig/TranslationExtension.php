@@ -2,7 +2,10 @@
 
 namespace Sludio\HelperBundle\Translatable\Twig;
 
-class TranslationExtension extends \Twig_Extension
+use Twig_Extension;
+use Twig_SimpleFilter;
+
+class TranslationExtension extends Twig_Extension
 {
     protected $em;
     protected $request;
@@ -25,11 +28,11 @@ class TranslationExtension extends \Twig_Extension
     public function getFilters()
     {
         $array = array(
-            new \Twig_SimpleFilter('sludio_var', array($this, 'getVar')),
+            new Twig_SimpleFilter('sludio_var', array($this, 'getVar')),
         );
 
         $short_array = array(
-            new \Twig_SimpleFilter('var', array($this, 'getVar')),
+            new Twig_SimpleFilter('var', array($this, 'getVar')),
         );
 
         if ($this->short_functions) {

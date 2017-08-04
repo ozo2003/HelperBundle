@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-class GoogleProviderConfigurator implements ProviderConfiguratorInterface
+class GoogleProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {

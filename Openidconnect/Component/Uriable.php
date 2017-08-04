@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Component;
 
-interface UriInterface
+interface Uriable
 {
     public function getUrl();
 

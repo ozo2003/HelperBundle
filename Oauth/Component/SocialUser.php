@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Oauth\Component;
 
-interface SocialUserInterface
+interface SocialUser
 {
     public function getId();
 

@@ -3,9 +3,9 @@
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Draugiem;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUser;
 
-class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
+class DraugiemUser implements ResourceOwnerInterface, SocialUser
 {
     /**
      * @var array
@@ -127,5 +127,4 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
     {
         return $this->username;
     }
-
 }

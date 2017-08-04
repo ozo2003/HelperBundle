@@ -4,7 +4,6 @@ namespace Sludio\HelperBundle\Openidconnect\Validator;
 
 trait ValidatorTrait
 {
-
     protected $name;
 
     protected $message;

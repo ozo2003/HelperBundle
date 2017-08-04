@@ -8,6 +8,8 @@ use Doctrine\ORM\ORMInvalidArgumentException;
 use Gedmo\Tool\Wrapper\AbstractWrapper;
 use Gedmo\Translatable\Mapping\Event\TranslatableAdapter;
 use Gedmo\Translatable\TranslatableListener as BaseListener;
+use Gedmo\Exception\RuntimeException;
+use Gedmo\Exception\InvalidArgumentException;
 
 /**
  * The translation listener handles the generation and
@@ -308,7 +310,7 @@ class TranslatableListener extends BaseListener
             $reflectionProperty = $class->getProperty(self::$configurations[$this->name][$meta->name]['locale']);
             if (!$reflectionProperty) {
                 $column = self::$configurations[$this->name][$meta->name]['locale'];
-                throw new \Gedmo\Exception\RuntimeException("There is no locale or language property ({$column}) found on object: {$meta->name}");
+                throw new RuntimeException("There is no locale or language property ({$column}) found on object: {$meta->name}");
             }
             $reflectionProperty->setAccessible(true);
             $value = $reflectionProperty->getValue($object);
@@ -514,7 +516,7 @@ class TranslatableListener extends BaseListener
     protected function validateLocale($locale)
     {
         if (!$this->isValidLocale($locale)) {
-            throw new \Gedmo\Exception\InvalidArgumentException('Locale or language cannot be empty and must be set through Listener or Entity');
+            throw new InvalidArgumentException('Locale or language cannot be empty and must be set through Listener or Entity');
         }
     }
 

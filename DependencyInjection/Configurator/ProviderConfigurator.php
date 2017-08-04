@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-interface ProviderConfiguratorInterface
+interface ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node);
 

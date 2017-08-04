@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Translatable\Mapping\Driver;
 
 use Gedmo\Exception\InvalidMappingException;
 use Gedmo\Translatable\Mapping\Driver\Annotation as Base;
+use ReflectionClass;
 
 /**
  * This is an annotation mapping driver for Translatable
@@ -91,7 +92,7 @@ class Annotation extends Base
         // Embedded entity
         if (property_exists($meta, 'embeddedClasses') && $meta->embeddedClasses) {
             foreach ($meta->embeddedClasses as $propertyName => $embeddedClassInfo) {
-                $embeddedClass = new \ReflectionClass($embeddedClassInfo['class']);
+                $embeddedClass = new ReflectionClass($embeddedClassInfo['class']);
                 foreach ($embeddedClass->getProperties() as $embeddedProperty) {
                     if ($translatable = $this->reader->getPropertyAnnotation($embeddedProperty, self::TRANSLATABLE)) {
                         $field = $propertyName.'.'.$embeddedProperty->getName();

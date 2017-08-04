@@ -9,6 +9,8 @@ use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
+use Sludio\HelperBundle\Logger\SludioLogger;
+use Exception;
 
 class TwitterOAuthClient extends OAuth2Client
 {
@@ -20,7 +22,7 @@ class TwitterOAuthClient extends OAuth2Client
     const URL_AUTHORIZE = 'oauth/authorize';
     const URL_ACCESS_TOKEN = 'oauth/access_token';
 
-    public function __construct($provider, RequestStack $requestStack, \Sludio\HelperBundle\Logger\SludioLogger $logger)
+    public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
@@ -35,7 +37,7 @@ class TwitterOAuthClient extends OAuth2Client
 
         if ($this->provider->twitter->getLastHttpCode() != 200) {
             $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There was a problem performing this request', $this->provider->twitter->getLastHttpCode());
-            throw new \Exception('error_twitter_bad_response');
+            throw new Exception('error_twitter_bad_response');
         }
 
         $this->session->set('oauth_token', $request_token['oauth_token']);
@@ -100,10 +102,10 @@ class TwitterOAuthClient extends OAuth2Client
 
         try {
             $user_token = $this->provider->twitter->oauth(static::URL_ACCESS_TOKEN, ['oauth_verifier' => $code]);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             if ($this->provider->twitter->getLastHttpCode() !== 200) {
                 $this->logger->error(__CLASS__.' ('.__LINE__.'): '.$e->getMessage(), $this->provider->twitter->getLastHttpCode());
-                throw new \Exception('error_twitter_bad_response');
+                throw new Exception('error_twitter_bad_response');
             }
         }
 

@@ -3,8 +3,10 @@
 namespace Sludio\HelperBundle\Position\Twig;
 
 use Sludio\HelperBundle\Position\Service\PositionHandler;
+use Twig_Extension;
+use Twig_SimpleFunction;
 
-class ObjectPositionExtension extends \Twig_Extension
+class ObjectPositionExtension extends Twig_Extension
 {
     const NAME = 'sludio_position_object';
 
@@ -31,7 +33,7 @@ class ObjectPositionExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction(self::NAME,
+            new Twig_SimpleFunction(self::NAME,
                 function ($entity) {
                     $getter = sprintf('get%s', ucfirst($this->positionService->getPositionFieldByEntity($entity)));
 

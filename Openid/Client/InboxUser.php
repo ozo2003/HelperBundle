@@ -2,9 +2,9 @@
 
 namespace Sludio\HelperBundle\Openid\Client;
 
-use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUser;
 
-class InboxUser implements SocialUserInterface
+class InboxUser implements SocialUser
 {
     /**
      * @var array
