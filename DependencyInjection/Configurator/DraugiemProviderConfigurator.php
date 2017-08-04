@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\DependencyInjection\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-class DraugiemProviderConfigurator implements ProviderConfiguratorInterface
+class DraugiemProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {

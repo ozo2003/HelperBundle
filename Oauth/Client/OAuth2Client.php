@@ -9,6 +9,8 @@ use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use LogicException;
+use Sludio\HelperBundle\Logger\SludioLogger;
 
 class OAuth2Client
 {
@@ -19,7 +21,7 @@ class OAuth2Client
     protected $isStateless = true;
     protected $logger;
 
-    public function __construct(AbstractProvider $provider, RequestStack $requestStack, \Sludio\HelperBundle\Logger\SludioLogger $logger)
+    public function __construct(AbstractProvider $provider, RequestStack $requestStack, SludioLogger $logger)
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
@@ -101,7 +103,7 @@ class OAuth2Client
 
         if (!$request) {
             $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There is no "current request", and it is needed to perform this action', 400);
-            throw new \LogicException('error_oauth_current_request_not_found');
+            throw new LogicException('error_oauth_current_request_not_found');
         }
 
         return $request;
@@ -113,7 +115,7 @@ class OAuth2Client
 
         if (!$session) {
             $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid stat$e', 400);
-            throw new \LogicException('error_oauth_session_not_found');
+            throw new LogicException('error_oauth_session_not_found');
         }
 
         return $session;

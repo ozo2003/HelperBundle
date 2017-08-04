@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 
-interface PaginationBehaviourInterface
+interface PaginationBehaviour
 {
     /**
      * @param int        $totalPages

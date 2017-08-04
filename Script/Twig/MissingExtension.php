@@ -2,7 +2,10 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
-class MissingExtension extends \Twig_Extension
+use Twig_Extension;
+use Twig_SimpleFilter;
+
+class MissingExtension extends Twig_Extension
 {
     protected $request;
     protected $em;
@@ -24,13 +27,13 @@ class MissingExtension extends \Twig_Extension
     public function getFilters()
     {
         $array = array(
-            new \Twig_SimpleFilter('sludio_objects', array($this, 'getObjects')),
-            new \Twig_SimpleFilter('sludio_svg', array($this, 'getSvg')),
+            new Twig_SimpleFilter('sludio_objects', array($this, 'getObjects')),
+            new Twig_SimpleFilter('sludio_svg', array($this, 'getSvg')),
         );
 
         $short_array = array(
-            new \Twig_SimpleFilter('objects', array($this, 'getObjects')),
-            new \Twig_SimpleFilter('svg', array($this, 'getSvg')),
+            new Twig_SimpleFilter('objects', array($this, 'getObjects')),
+            new Twig_SimpleFilter('svg', array($this, 'getSvg')),
         );
 
         if ($this->short_functions) {

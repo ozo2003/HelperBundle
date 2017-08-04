@@ -15,13 +15,14 @@ use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Lcobucci\JWT\Signer\Rsa\Sha256;
 
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Validator;
 use Sludio\HelperBundle\Openidconnect\Provider\Uri;
-use Sludio\HelperBundle\Openidconnect\Component\ProviderInterface;
+use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 
-class OpenIDConnectProvider extends AbstractProvider implements ProviderInterface
+class OpenIDConnectProvider extends AbstractProvider implements Providerable
 {
     /**
      * @var string
@@ -81,7 +82,7 @@ class OpenIDConnectProvider extends AbstractProvider implements ProviderInterfac
      */
     public function __construct(string $key, array $options = [], array $collaborators = [], Router $router)
     {
-        $this->signer = new \Lcobucci\JWT\Signer\Rsa\Sha256();
+        $this->signer = new Sha256();
 
         $this->validatorChain = new Validator\ValidatorChain();
         $this->validatorChain->setValidators([

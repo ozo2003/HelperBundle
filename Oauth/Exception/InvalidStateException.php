@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Oauth\Exception;
 
-class InvalidStateException extends \RuntimeException implements OAuth2ClientException
+use RuntimeException;
+
+class InvalidStateException extends RuntimeException implements OAuth2ClientException
 {
 }

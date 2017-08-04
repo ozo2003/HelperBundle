@@ -11,6 +11,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Sludio\HelperBundle\Translatable\Helper\Manager;
+use Exception;
 
 class TranslatorType extends AbstractType
 {
@@ -100,7 +101,7 @@ class TranslatorType extends AbstractType
         $condition_locales_invalidarray = (!is_array($options['locales']) || empty($options['locales']));
 
         if ($condition_dataclass_empty || $condition_id_null || $condition_locales_invalidarray) {
-            throw new \Exception('An Error Ocurred');
+            throw new Exception('An Error Ocurred');
         }
     }
 

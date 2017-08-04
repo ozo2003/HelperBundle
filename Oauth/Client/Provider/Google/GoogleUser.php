@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Google;
 
-use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUser;
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 
-class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
+class GoogleUser implements ResourceOwnerInterface, SocialUser
 {
     /**
      * @var array

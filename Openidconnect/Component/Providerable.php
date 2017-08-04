@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Component;
 
-interface ProviderInterface
+interface Providerable
 {
-
 }

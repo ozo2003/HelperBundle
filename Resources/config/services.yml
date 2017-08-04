@@ -1,6 +1,6 @@
 services:
     sludio_helper.logger:
-        class: %sludio_helper.logger.class%
+        class: "%sludio_helper.logger.class%"
         arguments:
             - "@logger"
         tags:

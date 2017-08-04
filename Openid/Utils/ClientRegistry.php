@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Openid\Utils;
 
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use InvalidArgumentException;
 
 class ClientRegistry
 {
@@ -19,7 +20,7 @@ class ClientRegistry
     public function getClient($key)
     {
         if (!$this->hasClient($key)) {
-            throw new \InvalidArgumentException('error_openid_client_not_found');
+            throw new InvalidArgumentException('error_openid_client_not_found');
         }
 
         return $this->container->get($this->serviceMap[$key]['key']);

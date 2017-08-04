@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Repository;
 
+use DateTime;
+
 class QuickInsertRepository
 {
     private static $mock = array();
@@ -12,7 +14,7 @@ class QuickInsertRepository
     public static $connection;
     public static $container;
 
-    public static function init($dont = false, $manager = null)
+    public static function init($no_fk_check = false, $manager = null)
     {
         global $kernel;
 
@@ -25,15 +27,15 @@ class QuickInsertRepository
         self::$em = self::$container->get('doctrine')->getManager($manager);
         self::$connection = self::$em->getConnection();
 
-        if(!$dont) {
+        if(!$no_fk_check) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
             $sth->execute();
         }
     }
 
-    public static function close($dont = false)
+    public static function close($no_fk_check = false)
     {
-        if(!$dont) {
+        if(!$no_fk_check) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
             $sth->execute();
         }
@@ -87,9 +89,9 @@ class QuickInsertRepository
         return $data;
     }
 
-    public static function persist($object, $full = false, $extra = array(), $dont = false, $manager = null)
+    public static function persist($object, $full = false, $extra = array(), $no_fk_check = false, $manager = null)
     {
-        self::init($dont, $manager);
+        self::init($no_fk_check, $manager);
         self::extract($object);
         $id = self::findNextId($object);
         $keys = array();
@@ -103,7 +105,7 @@ class QuickInsertRepository
         foreach ($columns as $value => $key) {
             $variable = null;
             if(!is_array($key) && !is_array($value)) {
-                if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
+                if ($object->{'get'.ucfirst($value)}() instanceof DateTime) {
                     $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
                 } else {
                     $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
@@ -146,7 +148,7 @@ class QuickInsertRepository
             $sth->execute();
         }
 
-        self::close($dont);
+        self::close($no_fk_check);
         return $id;
     }
 
@@ -195,9 +197,9 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    public static function get($object, $one = false, $where = array(), $dont = false, $fields = array(), $manager = null)
+    public static function get($object, $one = false, $where = array(), $no_fk_check = false, $fields = array(), $manager = null)
     {
-        self::init($dont, $manager);
+        self::init($no_fk_check, $manager);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         if(!$fields){
@@ -220,16 +222,16 @@ class QuickInsertRepository
             }
         }
 
-        self::close($dont);
+        self::close($no_fk_check);
         if($one) {
             return null;
         }
         return $result;
     }
 
-    public static function link($object, $data, $dont = false, $manager = null)
+    public static function link($object, $data, $no_fk_check = false, $manager = null)
     {
-        self::init($dont, $manager);
+        self::init($no_fk_check, $manager);
         self::extract($object);
         if ($object && $data) {
             $keys = $values = array();
@@ -248,12 +250,12 @@ class QuickInsertRepository
             $sth->execute();
         }
 
-        self::close($dont);
+        self::close($no_fk_check);
     }
 
-    public static function linkTable($tableName, $data, $dont = false, $manager = null)
+    public static function linkTable($tableName, $data, $no_fk_check = false, $manager = null)
     {
-        self::init($dont, $manager);
+        self::init($no_fk_check, $manager);
         if ($data) {
             $keys = $values = array();
             foreach ($data as $key => $value) {
@@ -271,12 +273,12 @@ class QuickInsertRepository
             $sth->execute();
         }
 
-        self::close($dont);
+        self::close($no_fk_check);
     }
 
-    public static function update($id, $object, $extra = array(), $dont = false, $manager = null)
+    public static function update($id, $object, $extra = array(), $no_fk_check = false, $manager = null)
     {
-        self::init($dont, $manager);
+        self::init($no_fk_check, $manager);
         self::extract($object);
         $sqls = "
             SELECT
@@ -328,19 +330,19 @@ class QuickInsertRepository
             $sthu->execute();
         }
 
-        self::close($dont);
+        self::close($no_fk_check);
     }
 
-    public static function delete($object, $where = array(), $dont = false, $manager = null)
+    public static function delete($object, $where = array(), $no_fk_check = false, $manager = null)
     {
-        self::init($dont, $manager);
+        self::init($no_fk_check, $manager);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
         $sql = 'DELETE FROM '.self::$tableName.' '.$whereSql;
         $sth = self::$connection->prepare($sql);
         $sth->execute();
 
-        self::close($dont);
+        self::close($no_fk_check);
     }
 
     public static function isEmpty($variable)

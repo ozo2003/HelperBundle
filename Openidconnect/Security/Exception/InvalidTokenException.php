@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Security\Exception;
 
-class InvalidTokenException extends \Exception
+use Exception;
+
+class InvalidTokenException extends Exception
 {
 }

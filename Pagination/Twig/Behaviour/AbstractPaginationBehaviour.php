@@ -2,14 +2,16 @@
 
 namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 
-abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterface
+use InvalidArgumentException;
+
+abstract class AbstractPaginationBehaviour implements PaginationBehaviour
 {
     /**
      * @param int        $totalPages
      * @param int        $currentPage
      * @param int|string $omittedPagesIndicator
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   When pagination data is invalid
      */
     protected function guardPaginationData($totalPages, $currentPage, $omittedPagesIndicator = -1)
@@ -24,13 +26,13 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
     /**
      * @param int $totalPages
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   If total number of pages is lower than 1
      */
     private function guardTotalPagesMinimumValue($totalPages)
     {
         if ($totalPages < 1) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Total number of pages (%d) should not be lower than 1.',
                     $totalPages
@@ -42,13 +44,13 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
     /**
      * @param int $currentPage
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   If current page is lower than 1
      */
     private function guardCurrentPageMinimumValue($currentPage)
     {
         if ($currentPage < 1) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Current page (%d) should not be lower than 1.',
                     $currentPage
@@ -61,13 +63,13 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
      * @param int $totalPages
      * @param int $currentPage
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   If current page is higher than total number of pages
      */
     private function guardCurrentPageExistsInTotalPages($totalPages, $currentPage)
     {
         if ($currentPage > $totalPages) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Current page (%d) should not be higher than total number of pages (%d).',
                     $currentPage,
@@ -80,13 +82,13 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
     /**
      * @param int|string $indicator
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   If omitted pages indicator is not an int or a string
      */
     private function guardOmittedPagesIndicatorType($indicator)
     {
         if (!is_int($indicator) && !is_string($indicator)) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Omitted pages indicator should either be a string or an int.'
             );
         }
@@ -96,14 +98,14 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviourInterfa
      * @param int        $totalPages
      * @param int|string $indicator
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   If omitted pages indicator is an int in the range of 1 and the total
      *                                   number of pages
      */
     private function guardOmittedPagesIndicatorIntValue($totalPages, $indicator)
     {
         if (is_int($indicator) && $indicator >= 1 && $indicator <= $totalPages) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Omitted pages indicator (%d) should not be between 1 and total number of pages (%d).',
                     $indicator,

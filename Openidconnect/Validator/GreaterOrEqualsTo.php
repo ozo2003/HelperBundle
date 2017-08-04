@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Validator;
 
-class GreaterOrEqualsTo implements ValidatorInterface
+class GreaterOrEqualsTo implements Valid
 {
     use ValidatorTrait;
 

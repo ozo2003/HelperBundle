@@ -7,6 +7,7 @@ use Sludio\HelperBundle\Oauth\Exception\FacebookProviderException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Oauth\Client\Provider\BaseProvider;
+use InvalidArgumentException;
 
 class Facebook extends BaseProvider
 {
@@ -49,9 +50,9 @@ class Facebook extends BaseProvider
         parent::__construct($options, $collaborators, $generator);
 
         if (empty($options['graphApiVersion'])) {
-            throw new \InvalidArgumentException('error_facebook_graph_api_version_not_set');
+            throw new InvalidArgumentException('error_facebook_graph_api_version_not_set');
         } elseif (!preg_match(self::GRAPH_API_VERSION_REGEX, $options['graphApiVersion'])) {
-            throw new \InvalidArgumentException('error_facebook_wrong_graph_api_version');
+            throw new InvalidArgumentException('error_facebook_wrong_graph_api_version');
         }
 
         $this->graphApiVersion = $options['graphApiVersion'];

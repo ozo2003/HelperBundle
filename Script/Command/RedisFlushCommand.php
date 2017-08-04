@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Script\Command;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Predis\Client;
 
 class RedisFlushCommand extends ContainerAwareCommand
 {
@@ -26,7 +27,7 @@ class RedisFlushCommand extends ContainerAwareCommand
 
         $clients = [];
         foreach($kernel->getContainer()->getServiceIds() as $id){
-            if(substr($id, 0, 9) === 'snc_redis' && $kernel->getContainer()->get($id) instanceof \Predis\Client){
+            if(substr($id, 0, 9) === 'snc_redis' && $kernel->getContainer()->get($id) instanceof Client){
                 $clients[] = $id;
             }
         }

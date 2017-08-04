@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Reference;
 
-class OpenIDConnect implements ExtensionInterface
+class OpenIDConnect implements Extensionable
 {
     public function buildClientConfiguration(NodeDefinition &$node)
     {

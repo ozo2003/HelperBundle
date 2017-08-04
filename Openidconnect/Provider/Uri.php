@@ -4,9 +4,9 @@ namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-use Sludio\HelperBundle\Openidconnect\Component\UriInterface;
+use Sludio\HelperBundle\Openidconnect\Component\Uriable;
 
-class Uri implements UriInterface
+class Uri implements Uriable
 {
     private $url;
     private $base;

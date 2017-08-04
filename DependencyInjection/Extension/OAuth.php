@@ -8,10 +8,11 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use LogicException;
 
 use Sludio\HelperBundle\DependencyInjection\Configurator;
 
-class OAuth implements ExtensionInterface
+class OAuth implements Extensionable
 {
     protected $checkExternalClassExistence;
 
@@ -69,7 +70,7 @@ class OAuth implements ExtensionInterface
     {
         $providerClass = $options['provider_class'];
         if ($this->checkExternalClassExistence && !class_exists($providerClass)) {
-            throw new \LogicException(sprintf(
+            throw new LogicException(sprintf(
                 'Class "%s" does not exist.',
                 $providerClass
             ));

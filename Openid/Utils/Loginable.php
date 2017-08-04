@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openid\Utils;
 
-interface LoginInterface
+interface Loginable
 {
     public function url($return);
 

@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
+use Predis\Client;
 
 class ScriptController extends Controller
 {
@@ -16,7 +17,7 @@ class ScriptController extends Controller
 
         $clients = [];
         foreach($this->container->getServiceIds() as $id){
-            if(substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof \Predis\Client){
+            if(substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof Client){
                 $clients[] = $id;
             }
         }

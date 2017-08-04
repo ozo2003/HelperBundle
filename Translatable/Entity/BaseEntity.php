@@ -8,7 +8,7 @@ class BaseEntity
 {
     public $className;
     public $translates;
-    
+
     public $localeArr = array(
         'lv' => 'lv_LV',
         'en' => 'en_US',
@@ -88,11 +88,11 @@ class BaseEntity
         }
 
         if ($return_original) {
-            $vv = explode('_', $variable);
-            foreach ($vv as &$v) {
+            $variables = explode('_', $variable);
+            foreach ($variables as &$v) {
                 $v = ucfirst($v);
             }
-            $variable = implode('', $vv);
+            $variable = implode('', $variables);
             $res = $this->{'get'.$variable}();
             if (is_numeric($res)) {
                 return $res;
@@ -102,7 +102,8 @@ class BaseEntity
         return '';
     }
 
-    public function cleanText($text){
+    public function cleanText($text)
+    {
         $text = strip_tags($text);
         $text = mb_convert_encoding($text, "UTF-8", "UTF-8");
         $text = str_replace(' ?', '', $text);

@@ -2,14 +2,14 @@
 
 namespace Sludio\HelperBundle\Translatable\Helper;
 
-use Symfony\Bridge\Doctrine\RegistryInterface as RegistryInterface;
+use Symfony\Bridge\Doctrine\RegistryInterface as Registry;
 use Symfony\Component\Form\Form as Form;
 
 class Manager
 {
     protected $em;
 
-    public function __construct(RegistryInterface $reg)
+    public function __construct(Registry $reg)
     {
         $this->em = $reg->getManager();
     }

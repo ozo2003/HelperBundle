@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 
+use InvalidArgumentException;
+
 final class FixedLength extends AbstractPaginationBehaviour
 {
     /**
@@ -54,7 +56,7 @@ final class FixedLength extends AbstractPaginationBehaviour
     /**
      * @param $maximumVisible
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      *                                   If the maximum number of visible pages is lower than 3
      */
     private function guardMaximumVisibleMinimumValue($maximumVisible)
@@ -63,7 +65,7 @@ final class FixedLength extends AbstractPaginationBehaviour
         // 1 on each edge, 1 omitted chunk on each side, and 3 in the middle.
         // For example: [1][...][11][12][13][...][20]
         if ($maximumVisible < 3) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 sprintf(
                     'Maximum of number of visible pages (%d) should be at least 3.',
                     $maximumVisible
