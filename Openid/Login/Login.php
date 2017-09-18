@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
-use Sludio\HelperBundle\Openid\Utils\Loginable;
+use Sludio\HelperBundle\Openid\Component\Loginable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;

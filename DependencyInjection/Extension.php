@@ -12,7 +12,7 @@ class Extension
 {
     protected $ext;
 
-    public function __construct(string $type)
+    public function __construct($type)
     {
         switch ($type) {
             case 'oauth':

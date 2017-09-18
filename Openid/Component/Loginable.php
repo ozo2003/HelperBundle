@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Openid\Utils;
+namespace Sludio\HelperBundle\Openid\Component;
 
 interface Loginable
 {
