@@ -151,6 +151,44 @@ class QuickInsertRepository
         self::close($no_fk_check);
         return $id;
     }
+    
+    private static function buildExtra($tableName, $extra)
+    {
+        $methods = array(
+            'GROUP BY',
+            'HAVING',
+            'ORDER BY',
+        );
+        $sql = '';
+        
+        foreach($methods as $method){
+            if(isset($extra[$method])){
+                $sql .= $method.' ';
+                if(is_array($extra[$method])){
+                    foreach($extra[$method] as $group){
+                        $sql .= $group.' ';
+                    }
+                } else {
+                    $sql .= $extra[$method].' ';
+                }
+            }
+        }
+        
+        if(isset($extra['LIMIT'])){
+            if(is_array($extra['LIMIT'])){
+                if(isset($extra['LIMIT'][1])){
+                    $offset = $extra['LIMIT'][0];
+                    $limit = $extra['LIMIT'][1];
+                } else {
+                    $offset = 0;
+                    $limit = $extra['LIMIT'][0];
+                }
+                $sql .= 'LIMIT '.$offset.', '.$limit;
+            }
+        }
+        
+        return $sql;
+    }
 
     private static function buildWhere($tableName, $where)
     {
@@ -197,15 +235,20 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    public static function get($object, $one = false, $where = array(), $no_fk_check = false, $fields = array(), $manager = null)
+    public static function get($object, $one = false, $where = array(), $no_fk_check = false, $fields = array(), $manager = null, $extra = array())
     {
         self::init($no_fk_check, $manager);
         self::extract($object);
         $whereSql = self::buildWhere(self::$tableName, $where);
+        $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
         if(!$fields){
-            $sql = 'SELECT id FROM '.self::$tableName.' '.$whereSql;
+            $sql = $select.'id FROM '.self::$tableName.' '.$whereSql;
         } else {
-            $sql = 'SELECT '.(implode(', ', $fields)).' FROM '.self::$tableName.' '.$whereSql;
+            $sql = $select.(implode(', ', $fields)).' FROM '.self::$tableName.' '.$whereSql;
+        }
+        if(!empty($extra)){
+            $extraSql = self::buildExtra(self::$tableName, $extra);
+            $sql .= $extraSql;
         }
         $sth = self::$connection->prepare($sql);
         $sth->execute();
