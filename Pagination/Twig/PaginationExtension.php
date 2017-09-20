@@ -22,7 +22,10 @@ class PaginationExtension extends Twig_Extension
         if ($container->hasParameter('sludio_helper.pagination.behaviour') && !empty($container->getParameter('sludio_helper.pagination.behaviour', []))) {
             $functions = $container->getParameter('sludio_helper.pagination.behaviour');
             foreach ($functions as $function) {
-                array_push($this->functions, $this->withFunction(array_keys($function)[0], array_values($function)[0]));
+                if($short_functions){
+                    array_push($this->functions, $this->withFunction(array_keys($function)[0], array_values($function)[0]));
+                }
+                array_push($this->functions, $this->withFunction('sludio_'.array_keys($function)[0], array_values($function)[0]));
             }
         }
     }
@@ -40,24 +43,24 @@ class PaginationExtension extends Twig_Extension
         $functionName = $this->suffixFunctionName($functionName);
         $behaviour = new FixedLength($behaviour);
 
-        $c = clone $this;
+        $clone = clone $this;
 
-        $c->functions[$functionName] = new Twig_SimpleFunction(
+        $clone->functions[$functionName] = new Twig_SimpleFunction(
             $functionName,
             array($behaviour, 'getPaginationData')
         );
 
-        return $c->functions[$functionName];
+        return $clone->functions[$functionName];
     }
 
     public function withoutFunction($functionName)
     {
         $functionName = $this->suffixFunctionName($functionName);
 
-        $c = clone $this;
-        unset($c->functions[$functionName]);
+        $clone = clone $this;
+        unset($clone->functions[$functionName]);
 
-        return $c;
+        return $clone;
     }
 
     /**
