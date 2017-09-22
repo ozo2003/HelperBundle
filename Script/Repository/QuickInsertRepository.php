@@ -234,6 +234,12 @@ class QuickInsertRepository
 
         return $whereSql;
     }
+    
+    public static function buildWhereExtended($tableName, $where)
+    {
+        $wheresql = '';
+        
+    }
 
     public static function get($object, $one = false, $where = array(), $no_fk_check = false, $fields = array(), $manager = null, $extra = array())
     {
@@ -270,6 +276,30 @@ class QuickInsertRepository
             return null;
         }
         return $result;
+    }
+    
+    public static function getLinkByTable($tableName, $where, $no_fk_check = false, $fields = array(), $manager = null, $extra = array())
+    {
+        self::init($no_fk_check, $manager);
+        $whereSql = self::buildWhere($tableName, $where);
+        $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
+        if(!$fields){
+            $sql = $select.'id FROM '.$tableName.' '.$whereSql;
+        } else {
+            $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.' '.$whereSql;
+        }
+        if(!empty($extra)){
+            $extraSql = self::buildExtra(self::$tableName, $extra);
+            $sql .= $extraSql;
+        }
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetchAll();
+        if($result){
+            return $result;
+        }
+        self::close($no_fk_check);
+        return null;
     }
 
     public static function link($object, $data, $no_fk_check = false, $manager = null)
