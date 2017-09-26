@@ -38,8 +38,8 @@ class Translator extends BaseTranslator
     }
 
     public function trans($id, array $parameters = array(), $domain = null, $locale = null)
-    {
-        $request = $this->container->get('request');
+    {        
+        $request = Request::createFromGlobals();
         if ($request->get('sludio_debug') === 'text') {
             return $domain.'.'.$id;
         }

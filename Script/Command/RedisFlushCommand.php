@@ -31,7 +31,7 @@ class RedisFlushCommand extends ContainerAwareCommand
                 $clients[] = $id;
             }
         }
-
+        
         foreach($clients as $snc){
             $kernel->getContainer()->get($snc)->flushdb();
         }
