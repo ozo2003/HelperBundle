@@ -4,8 +4,8 @@ namespace Sludio\HelperBundle\Script\Repository;
 
 class QuickInsertRepository
 {
-    private static $mock = array();
-    private static $metadata = array();
+    private static $mock = [];
+    private static $metadata = [];
     private static $tableName;
 
     public static $em;
@@ -42,7 +42,7 @@ class QuickInsertRepository
     private static function extract($object)
     {
         $data = self::extractExt($object, self::$em);
-        
+
         self::$mock = $data['mock'];
         self::$tableName = $data['table'];
         self::$metadata[$data['table']] = $data['meta'];
@@ -56,7 +56,7 @@ class QuickInsertRepository
         $columns = $metadata->getColumnNames();
         $table = $metadata->getTableName();
 
-        $result = array();
+        $result = [];
         foreach ($fields as $key => $field) {
             foreach ($columns as $key2 => $column) {
                 if ($key === $key2) {
@@ -65,16 +65,16 @@ class QuickInsertRepository
             }
         }
 
-        $data = array(
+        $data = [
             'mock' => $result,
             'table' => $table,
             'meta' => $metadata
-        );
+        ];
 
         return $data;
     }
 
-    public static function persist($object, $full = false, $extraFields = array(), $no_fk_check = false, $manager = null)
+    public static function persist($object, $full = false, $extraFields = [], $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
         if(is_object($object)){
@@ -84,8 +84,8 @@ class QuickInsertRepository
             $tableName = $object;
         }
         $id = self::findNextId($tableName);
-        $keys = array();
-        $values = array();
+        $keys = [];
+        $values = [];
 
         $columns = self::$mock[$tableName];
         if(!empty($extraFields) && isset($extraFields[$tableName])) {
@@ -134,6 +134,9 @@ class QuickInsertRepository
             $id = null;
         }
         if ($sql && $id) {
+            if($out){
+                $out = $sql;
+            }
             $sth = self::$connection->prepare($sql);
             $sth->execute();
         }
@@ -141,19 +144,19 @@ class QuickInsertRepository
         self::close($no_fk_check);
         return $id;
     }
-    
+
     private static function buildExtra($tableName, $extra)
     {
-        $methods = array(
+        $methods = [
             'GROUP BY',
             'HAVING',
             'ORDER BY',
-        );
+        ];
         $sql = '';
-        
+
         foreach($methods as $method){
             if(isset($extra[$method])){
-                $sql .= $method.' ';
+                $sql .= ' '.$method.' ';
                 if(is_array($extra[$method])){
                     foreach($extra[$method] as $group){
                         $sql .= $group.' ';
@@ -163,7 +166,7 @@ class QuickInsertRepository
                 }
             }
         }
-        
+
         if(isset($extra['LIMIT'])){
             if(is_array($extra['LIMIT'])){
                 if(isset($extra['LIMIT'][1])){
@@ -173,10 +176,12 @@ class QuickInsertRepository
                     $offset = 0;
                     $limit = $extra['LIMIT'][0];
                 }
-                $sql .= 'LIMIT '.$offset.', '.$limit;
+                $sql .=  'LIMIT '.$offset.', '.$limit;
             }
         }
-        
+
+        $sql = str_replace('  ', ' ', $sql);
+
         return $sql;
     }
 
@@ -236,7 +241,7 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    public static function get($object, $one = false, $where = array(), $no_fk_check = false, $fields = array(), $manager = null, $extra = array())
+    public static function get($object, $one = false, $where = [], $no_fk_check = false, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init($no_fk_check, $manager);
         if(is_object($object)){
@@ -255,6 +260,9 @@ class QuickInsertRepository
         if(!empty($extra)){
             $extraSql = self::buildExtra($tableName, $extra);
             $sql .= $extraSql;
+        }
+        if($out){
+            $out = $sql;
         }
         $sth = self::$connection->prepare($sql);
         $sth->execute();
@@ -275,24 +283,24 @@ class QuickInsertRepository
         if($one || !$result) {
             return null;
         }
-        
+
         $field = null;
         if(!$fields){
             $field = 'id';
         } elseif(count($fields) === 1 && $fields[0] !== '*'){
             $field = $fields[0];
         }
-        
+
         if($field){
             foreach($result as &$res){
                 $res = $res[$field];
             }
         }
-        
+
         return $result;
     }
 
-    public static function link($object, $data, $no_fk_check = false, $manager = null)
+    public static function link($object, $data, $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
         if(is_object($object)){
@@ -302,7 +310,7 @@ class QuickInsertRepository
             $tableName = $object;
         }
         if ($object && $data) {
-            $keys = $values = array();
+            $keys = $values = [];
             foreach ($data as $key => $value) {
                 $keys[] = $key;
                 $values[] = $value;
@@ -314,6 +322,9 @@ class QuickInsertRepository
                 VALUES
                     (".implode(',', $values).")
             ";
+            if($out){
+                $out = $sql;
+            }
             $sth = self::$connection->prepare($sql);
             $sth->execute();
         }
@@ -321,7 +332,7 @@ class QuickInsertRepository
         self::close($no_fk_check);
     }
 
-    public static function update($id, $object, $extra = array(), $no_fk_check = false, $manager = null)
+    public static function update($id, $object, $extra = [], $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
         if(is_object($object)){
@@ -345,7 +356,7 @@ class QuickInsertRepository
             $result = $result[0];
         }
         unset($result['id']);
-        $data = array();
+        $data = [];
 
         $columns = self::$mock[$tableName];
         if(!empty($extra) && isset($extra[$tableName])) {
@@ -376,6 +387,9 @@ class QuickInsertRepository
             }
             $sqlu = substr($sqlu, 0, -1);
             $sqlu .= " WHERE id = ".$id;
+            if($out){
+                $out = $sql;
+            }
             $sthu = self::$connection->prepare($sqlu);
             $sthu->execute();
         }
@@ -383,7 +397,7 @@ class QuickInsertRepository
         self::close($no_fk_check);
     }
 
-    public static function delete($object, $where = array(), $no_fk_check = false, $manager = null)
+    public static function delete($object, $where = [], $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
         if(is_object($object)){
@@ -394,6 +408,9 @@ class QuickInsertRepository
         }
         $whereSql = self::buildWhere($tableName, $where);
         $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
+        if($out){
+            $out = $sql;
+        }
         $sth = self::$connection->prepare($sql);
         $sth->execute();
 
@@ -405,8 +422,8 @@ class QuickInsertRepository
         $result = true;
 
         if (is_array($variable) && count($variable) > 0) {
-            foreach ($variable as $Value) {
-                $result = $result && self::isEmpty($Value);
+            foreach ($variable as $value) {
+                $result = $result && self::isEmpty($value);
             }
         } else {
             $result = empty($variable);
@@ -415,7 +432,7 @@ class QuickInsertRepository
         return $result;
     }
 
-    public static function findNextId($tableName)
+    public static function findNextId($tableName, &$out = null)
     {
         $sql = "
             SELECT
@@ -427,6 +444,9 @@ class QuickInsertRepository
             AND
                 table_schema = DATABASE()
         ";
+        if($out){
+            $out = $sql;
+        }
         $sth = self::$connection->prepare($sql);
         $sth->execute();
         $result = $sth->fetch();
