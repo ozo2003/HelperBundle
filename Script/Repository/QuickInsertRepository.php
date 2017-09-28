@@ -241,7 +241,7 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    public static function get($object, $one = false, $where = [], $no_fk_check = false, $fields = [], $manager = null, $extra = [], &$out = null)
+    public static function get($object, $one = false, $where = [], $no_fk_check = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init($no_fk_check, $manager);
         if(is_object($object)){
