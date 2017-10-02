@@ -1,0 +1,4 @@
+parameters:
+    sludio_helper_recaptcha.form.type.class: Sludio\HelperBundle\Form\RecaptchaType
+    sludio_helper_recaptcha.locale.resolver.class: Sludio\HelperBundle\Router\LocaleResolver
+    sludio_helper_recaptcha.validator.true.class: Sludio\HelperBundle\Validator\Constraint\IsTrueValidator

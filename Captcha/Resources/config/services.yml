@@ -1,0 +1,42 @@
+services:
+    sludio_helper.captcha.registry:
+        class: Sludio\HelperBundle\Script\Utils\ClientRegistry
+        arguments:
+            - "@service_container"
+            - ~
+
+    captcha.registry:
+        alias: sludio_helper.captcha.registry
+
+#    sludio_helper_recaptcha.locale.resolver:
+#        class: "%sludio_helper_recaptcha.locale.resolver.class%"
+#        public: false
+#        arguments:
+#            - "%sludio_helper_recaptcha.locale_key%"
+#            - "%sludio_helper_recaptcha.locale_from_request%"
+#            - "@request_stack"
+#
+#    sludio_helper_recaptcha.form.type:
+#        class: "%sludio_helper_recaptcha.form.type.class%"
+#        arguments:
+#            - "%sludio_helper_recaptcha.site_key%"
+#            - "%sludio_helper_recaptcha.enabled%"
+#            - "%sludio_helper_recaptcha.ajax%"
+#            - "@sludio_helper_recaptcha.locale.resolver"
+#        tags:
+#            -
+#                name: form.type
+#                alias: sludio_helper_recaptcha
+#
+#    sludio_helper_recaptcha.validator.true:
+#        class: "%sludio_helper_recaptcha.validator.true.class%"
+#        arguments:
+#            - "%sludio_helper_recaptcha.enabled%"
+#            - "%sludio_helper_recaptcha.secret_key%"
+#            - "@request_stack"
+#            - "%sludio_helper_recaptcha.http_proxy%"
+#            - "%sludio_helper_recaptcha.verify_host%"
+#        tags:
+#            -
+#                name: validator.constraint_validator
+#                alias: sludio_helper_recaptcha.true

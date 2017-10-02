@@ -2,9 +2,7 @@
 
 namespace Sludio\HelperBundle\DependencyInjection;
 
-use Sludio\HelperBundle\DependencyInjection\Extension\OAuth;
-use Sludio\HelperBundle\DependencyInjection\Extension\OpenID;
-use Sludio\HelperBundle\DependencyInjection\Extension\OpenIDConnect;
+use Sludio\HelperBundle\DependencyInjection\Extension;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -16,13 +14,16 @@ class Extension
     {
         switch ($type) {
             case 'oauth':
-                $this->ext = new OAuth();
+                $this->ext = new Extension\OAuth();
                 break;
             case 'openid':
-                $this->ext = new OpenID();
+                $this->ext = new Extension\OpenID();
                 break;
             case 'openidconnect':
-                $this->ext = new OpenIDConnect();
+                $this->ext = new Extension\OpenIDConnect();
+                break;
+            case 'captcha':
+                $this->ext = new Extension\Captcha();
                 break;
         }
     }

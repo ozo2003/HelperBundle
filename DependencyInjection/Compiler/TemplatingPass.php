@@ -21,25 +21,24 @@ class TemplatingPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if ($container->hasParameter('sludio_helper.translatable.template')) {
-            if (false !== ($template = $container->getParameter('sludio_helper.translatable.template'))) {
-                $resources = $container->getParameter('twig.form.resources');
-
-                if (!in_array($template, $resources)) {
-                    $resources[] = $template;
-                    $container->setParameter('twig.form.resources', $resources);
+        $resources = $container->getParameter('twig.form.resources');
+        
+        $forms = [
+            'sludio_helper.translatable.template',
+            'sludio_helper.translatable.template_new',
+            'sludio_helper.captcha.recaptcha.template'
+        ];
+        
+        foreach($forms as $form){
+            if ($container->hasParameter($form)) {
+                if (false !== ($template = $container->getParameter($form))) {
+                    if (!in_array($template, $resources)) {
+                        $resources[] = $template;
+                    }
                 }
             }
         }
-        if ($container->hasParameter('sludio_helper.translatable.template_new')) {
-            if (false !== ($template = $container->getParameter('sludio_helper.translatable.template_new'))) {
-                $resources = $container->getParameter('twig.form.resources');
-
-                if (!in_array($template, $resources)) {
-                    $resources[] = $template;
-                    $container->setParameter('twig.form.resources', $resources);
-                }
-            }
-        }
+        
+        $container->setParameter('twig.form.resources', $resources);
     }
 }

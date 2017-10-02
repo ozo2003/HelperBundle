@@ -7,7 +7,7 @@ services:
             - "@request_stack"
 
     sludio_helper.oauth.registry:
-        class: Sludio\HelperBundle\Oauth\Utils\ClientRegistry
+        class: Sludio\HelperBundle\Script\Utils\ClientRegistry
         arguments:
             - "@service_container"
             - ~
