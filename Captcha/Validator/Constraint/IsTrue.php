@@ -29,6 +29,6 @@ class IsTrue extends Constraint
      */
     public function validatedBy()
     {
-        return "sludio_helper_captcha.recaptcha.true";
+        return "sludio_helper_captcha.recaptcha.validator.true";
     }
 }

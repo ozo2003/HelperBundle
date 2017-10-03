@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Captcha\Form;
 
-use Sludio\HelperBundle\Router\LocaleResolver;
+use Sludio\HelperBundle\Captcha\Router\LocaleResolver;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\AbstractType;
@@ -33,17 +33,16 @@ class RecaptchaType extends AbstractType
     /**
      * Language
      *
-     * @var String
+     * @var LocaleResolver
      */
     protected $localeResolver;
-
 
     /**
      * Construct.
      *
      * @param String    $publicKey            Recaptcha site key
      * @param Boolean   $ajax               Ajax status
-     * @param String    $$localeResolver    Language or locale code
+     * @param String    $localeResolver    Language or locale code
      */
     public function __construct($publicKey, $ajax, LocaleResolver $localeResolver)
     {
@@ -58,12 +57,8 @@ class RecaptchaType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars = array_replace($view->vars, array(
-            "sludio_helper_recaptcha_ajax"    => $this->ajax
+            "recaptcha_ajax"    => $this->ajax
         ));
-
-        if (!$this->enabled) {
-            return;
-        }
 
         if (!isset($options["language"])) {
             $options["language"] = $this->localeResolver->resolve();
@@ -114,7 +109,7 @@ class RecaptchaType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return "sludio_helper_recaptcha";
+        return "sludio_helper_captcha_recaptcha";
     }
 
     /**

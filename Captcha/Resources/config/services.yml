@@ -8,8 +8,8 @@ services:
     captcha.registry:
         alias: sludio_helper.captcha.registry
 
-#    sludio_helper_recaptcha.locale.resolver:
-#        class: "%sludio_helper_recaptcha.locale.resolver.class%"
+#    sludio_helper.captcha.locale.resolver:
+#        class: "%sludio_helper.captcha.locale.resolver.class%"
 #        public: false
 #        arguments:
 #            - "%sludio_helper_recaptcha.locale_key%"

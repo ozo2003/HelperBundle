@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\Extension;
+namespace Sludio\HelperBundle\DependencyInjection\BaseExtension;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;

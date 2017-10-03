@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\Extension;
+namespace Sludio\HelperBundle\DependencyInjection\BaseExtension;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
-use Sludio\HelperBundle\DependencyInjection\Configurator\Captcha as CaptchaConfigurator;
+use Sludio\HelperBundle\Captcha\Configurator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class Captcha implements Extensionable
@@ -20,7 +20,8 @@ class Captcha implements Extensionable
      * @var array
      */
     protected static $supportedTypes = [
-        'recaptcha' => CaptchaConfigurator\ReCaptchaConfigurator::class
+        'recaptcha' => Configurator\ReCaptchaConfigurator::class,
+        'custom' => Configurator\CustomCaptchaConfigurator::class,
     ];
     
     public function getConfigurator($type)
@@ -72,6 +73,7 @@ class Captcha implements Extensionable
             foreach ($config as $ckey => $cvalue) {
                 $container->setParameter($clientServiceKey.'.'.$ckey, $cvalue);
             }
+            $this->configureClient($container, $clientServiceKey);
         }
         $container->getDefinition('sludio_helper.captcha.registry')->replaceArgument(1, $clientServiceKeys);
     }
@@ -85,7 +87,7 @@ class Captcha implements Extensionable
     
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
-        
+        $this->getConfigurator($this->getType())->configureClient($container, $clientServiceKey, $options);
     }
     
     /**

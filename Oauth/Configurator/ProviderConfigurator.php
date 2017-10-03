@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\Configurator;
+namespace Sludio\HelperBundle\Oauth\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 

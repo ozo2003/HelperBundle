@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\DependencyInjection;
 
-use Sludio\HelperBundle\DependencyInjection\Extension;
+use Sludio\HelperBundle\DependencyInjection\BaseExtension;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
@@ -12,20 +12,8 @@ class Extension
 
     public function __construct($type)
     {
-        switch ($type) {
-            case 'oauth':
-                $this->ext = new Extension\OAuth();
-                break;
-            case 'openid':
-                $this->ext = new Extension\OpenID();
-                break;
-            case 'openidconnect':
-                $this->ext = new Extension\OpenIDConnect();
-                break;
-            case 'captcha':
-                $this->ext = new Extension\Captcha();
-                break;
-        }
+        $className = 'Sludio\\HelperBundle\\DependencyInjection\\BaseExtension\\'.ucfirst($type);
+        $this->ext = class_exists($className) ? new $className() : null;
     }
 
     public function configure(ContainerBuilder &$container)

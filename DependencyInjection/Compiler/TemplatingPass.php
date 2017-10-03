@@ -26,7 +26,7 @@ class TemplatingPass implements CompilerPassInterface
         $forms = [
             'sludio_helper.translatable.template',
             'sludio_helper.translatable.template_new',
-            'sludio_helper.captcha.recaptcha.template'
+            'sludio_helper.captcha.client.recaptcha.template'
         ];
         
         foreach($forms as $form){
@@ -38,7 +38,7 @@ class TemplatingPass implements CompilerPassInterface
                 }
             }
         }
-        
+
         $container->setParameter('twig.form.resources', $resources);
     }
 }

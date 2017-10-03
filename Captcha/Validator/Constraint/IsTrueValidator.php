@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Captcha\Validator\Constraint;
 
-use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -15,13 +15,6 @@ class IsTrueValidator extends ConstraintValidator
     const RECAPTCHA_VERIFY_SERVER = "https://www.google.com";
 
     /**
-     * Enable reCaptcha
-     *
-     * @var Boolean
-     */
-    protected $enabled;
-
-    /**
      * Recaptcha Private Key
      *
      * @var Boolean
@@ -31,9 +24,9 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * Request Stack
      *
-     * @var RequestStack
+     * @var Request
      */
-    protected $requestStack;
+    protected $request;
 
     /**
      * HTTP Proxy informations
@@ -52,14 +45,13 @@ class IsTrueValidator extends ConstraintValidator
      * Construct.
      *
      * @param String       $secretKey
-     * @param RequestStack $requestStack
      * @param Array        $httpProxy
      * @param Boolean      $verifyHost
      */
-    public function __construct($enabled, $secretKey, RequestStack $requestStack, array $httpProxy, $verifyHost)
+    public function __construct($secretKey, array $httpProxy, $verifyHost)
     {
         $this->secretKey    = $secretKey;
-        $this->requestStack = $requestStack;
+        $this->request = Request::createFromGlobals();
         $this->httpProxy    = $httpProxy;
         $this->verifyHost   = $verifyHost;
     }
@@ -105,7 +97,6 @@ class IsTrueValidator extends ConstraintValidator
         if ($response == null || strlen($response) == 0) {
             return false;
         }
-
 
         $response = $this->httpGet(self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify", array(
             "secret" => $secretKey,

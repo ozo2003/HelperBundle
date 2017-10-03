@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\Extension;
+namespace Sludio\HelperBundle\DependencyInjection\BaseExtension;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -10,9 +10,9 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use LogicException;
 
-use Sludio\HelperBundle\DependencyInjection\Configurator;
+use Sludio\HelperBundle\Oauth\Configurator;
 
-class OAuth implements Extensionable
+class Oauth implements Extensionable
 {
     protected $checkExternalClassExistence;
 
