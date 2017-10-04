@@ -6,7 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension as BaseExtension;
-
 use Sludio\HelperBundle\DependencyInjection\Extension;
 
 /**
@@ -16,6 +15,7 @@ use Sludio\HelperBundle\DependencyInjection\Extension;
  */
 class SludioHelperExtension extends BaseExtension
 {
+
     public function getAlias()
     {
         return 'sludio_helper';
@@ -27,10 +27,10 @@ class SludioHelperExtension extends BaseExtension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+        $config        = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $files = array(
+        $files  = array(
             'components.yml', 'parameters.yml', 'services.yml',
         );
         foreach ($files as $file) {
@@ -40,12 +40,12 @@ class SludioHelperExtension extends BaseExtension
         }
 
         foreach ($config['extensions'] as $key => $extension) {
-            $enabled = $iterator = 0;
-            $length = count($extension);
+            $enabled  = $iterator = 0;
+            $length   = count($extension);
             foreach ($extension as $variable => $value) {
                 $iterator++;
                 if ($variable == 'enabled' && $value) {
-                    $files = array(
+                    $files  = array(
                         'components.yml', 'parameters.yml', 'services.yml',
                     );
                     $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));

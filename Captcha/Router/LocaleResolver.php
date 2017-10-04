@@ -21,7 +21,6 @@ final class LocaleResolver
      */
     private $request;
 
-
     /**
      * @param String       $defaultLocale
      * @param Boolean      $useLocaleFromRequest
@@ -31,7 +30,7 @@ final class LocaleResolver
     {
         $this->defaultLocale        = $defaultLocale;
         $this->useLocaleFromRequest = $useLocaleFromRequest;
-        $this->request = Request::createFromGlobals();
+        $this->request              = Request::createFromGlobals();
     }
 
     /**
@@ -39,9 +38,6 @@ final class LocaleResolver
      */
     public function resolve()
     {
-        return $this->useLocaleFromRequest
-            ? $this->request->getLocale()
-            : $this->defaultLocale
-        ;
+        return $this->useLocaleFromRequest ? $this->request->getLocale() : $this->defaultLocale;
     }
 }

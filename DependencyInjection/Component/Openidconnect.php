@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\BaseExtension;
+namespace Sludio\HelperBundle\DependencyInjection\Component;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
@@ -54,8 +54,7 @@ class Openidconnect implements Extensionable
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
         $clientDefinition = $container->register(
-            $clientServiceKey,
-            $container->getParameter($clientServiceKey.'.user_provider')
+            $clientServiceKey, $container->getParameter($clientServiceKey.'.user_provider')
         );
         $clientDefinition->setArguments([
             $clientServiceKey,

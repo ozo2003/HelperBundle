@@ -15,7 +15,6 @@ class IsTrue extends Constraint
      */
     public $message = "sludio_helper_captcha.recaptcha.validator.message";
 
-
     /**
      * {@inheritdoc}
      */
@@ -29,6 +28,6 @@ class IsTrue extends Constraint
      */
     public function validatedBy()
     {
-        return "sludio_helper_captcha.recaptcha.validator.true";
+        return get_class($this).'Validator';
     }
 }

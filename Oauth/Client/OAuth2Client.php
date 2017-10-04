@@ -5,7 +5,6 @@ namespace Sludio\HelperBundle\Oauth\Client;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
 use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
 use League\OAuth2\Client\Provider\AbstractProvider;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;

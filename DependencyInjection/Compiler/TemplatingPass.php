@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of the SludioHelperBundle package.
  *
@@ -16,20 +15,21 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class TemplatingPass implements CompilerPassInterface
 {
+
     /**
      * {@inheritdoc}
      */
     public function process(ContainerBuilder $container)
     {
         $resources = $container->getParameter('twig.form.resources');
-        
+
         $forms = [
             'sludio_helper.translatable.template',
             'sludio_helper.translatable.template_new',
             'sludio_helper.captcha.client.recaptcha.template'
         ];
-        
-        foreach($forms as $form){
+
+        foreach ($forms as $form) {
             if ($container->hasParameter($form)) {
                 if (false !== ($template = $container->getParameter($form))) {
                     if (!in_array($template, $resources)) {

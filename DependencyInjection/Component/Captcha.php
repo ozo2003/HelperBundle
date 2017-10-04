@@ -1,13 +1,11 @@
 <?php
 
-namespace Sludio\HelperBundle\DependencyInjection\BaseExtension;
+namespace Sludio\HelperBundle\DependencyInjection\Component;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Sludio\HelperBundle\Captcha\Configurator;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
@@ -20,9 +18,11 @@ class Captcha implements Extensionable
      * @var array
      */
     protected static $supportedTypes = [
-        'recaptcha' => Configurator\ReCaptchaConfigurator::class,
+        'recaptcha_v2' => Configurator\ReCaptchaConfigurator::class,
         'custom' => Configurator\CustomCaptchaConfigurator::class,
     ];
+    
+    protected $usedTypes = [];
     
     public function getConfigurator($type)
     {
@@ -61,21 +61,24 @@ class Captcha implements Extensionable
                 ));
             }
             
+            if(!in_array($this->type, $this->usedTypes)){
+                $this->usedTypes[] = $this->type;
+            } else {
+                throw new InvalidConfigurationException(sprintf(
+                    'sludio_helper_captcha_client.clients config "type" key "%s" is already in use. Only one occurence by type is allowed',
+                    $this->type
+                ));
+            }
+            
             $node = $tree->root('sludio_helper_captcha_client/clients/' . $key);
             $this->buildClientConfiguration($node);
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
             $clientServiceKey = 'sludio_helper.captcha.client.'.$key;
-            $service = [
-                'key' => $clientServiceKey,
-                'name' => ucfirst($key)
-            ];
-            $clientServiceKeys[$key] = $service;
             foreach ($config as $ckey => $cvalue) {
                 $container->setParameter($clientServiceKey.'.'.$ckey, $cvalue);
             }
             $this->configureClient($container, $clientServiceKey);
         }
-        $container->getDefinition('sludio_helper.captcha.registry')->replaceArgument(1, $clientServiceKeys);
     }
     
     public function buildClientConfiguration(NodeDefinition &$node)

@@ -50,10 +50,10 @@ class IsTrueValidator extends ConstraintValidator
      */
     public function __construct($secretKey, array $httpProxy, $verifyHost)
     {
-        $this->secretKey    = $secretKey;
-        $this->request = Request::createFromGlobals();
-        $this->httpProxy    = $httpProxy;
-        $this->verifyHost   = $verifyHost;
+        $this->secretKey  = $secretKey;
+        $this->request    = Request::createFromGlobals();
+        $this->httpProxy  = $httpProxy;
+        $this->verifyHost = $verifyHost;
     }
 
     /**
@@ -62,16 +62,15 @@ class IsTrueValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         // define variable for recaptcha check answer.
-        $masterRequest = $this->requestStack->getMasterRequest();
-        $remoteip      = $masterRequest->getClientIp();
-        $response      = $masterRequest->get("g-recaptcha-response");
+        $remoteip = $this->request->getClientIp();
+        $response = $this->request->get("g-recaptcha-response");
 
         $isValid = $this->checkAnswer($this->secretKey, $remoteip, $response);
 
         if ($isValid["success"] !== true) {
             $this->context->addViolation($constraint->message);
             // Perform server side hostname check
-        } elseif ($this->verifyHost && $isValid["hostname"] !== $masterRequest->getHost()) {
+        } elseif ($this->verifyHost && $isValid["hostname"] !== $this->request->getHost()) {
             $this->context->addViolation($constraint->invalidHostMessage);
         }
     }
@@ -98,11 +97,14 @@ class IsTrueValidator extends ConstraintValidator
             return false;
         }
 
-        $response = $this->httpGet(self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify", array(
-            "secret" => $secretKey,
-            "remoteip" => $remoteip,
-            "response" => $response
-        ));
+        $response = $this->httpGet(
+            self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify",
+            array(
+                "secret" => $secretKey,
+                "remoteip" => $remoteip,
+                "response" => $response
+            )
+        );
 
         return json_decode($response, true);
     }

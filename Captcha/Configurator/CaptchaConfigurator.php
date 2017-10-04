@@ -7,7 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 interface CaptchaConfigurator
 {
+
     public function buildConfiguration(NodeBuilder $node);
-    
+
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = []);
 }

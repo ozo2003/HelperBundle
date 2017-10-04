@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Captcha\Form;
+namespace Sludio\HelperBundle\Captcha\Form\Type;
 
 use Sludio\HelperBundle\Captcha\Router\LocaleResolver;
 use Symfony\Component\Form\FormInterface;
@@ -46,7 +46,7 @@ class RecaptchaType extends AbstractType
      */
     public function __construct($publicKey, $ajax, LocaleResolver $localeResolver)
     {
-        $this->publicKey        = $publicKey;
+        $this->publicKey      = $publicKey;
         $this->ajax           = $ajax;
         $this->localeResolver = $localeResolver;
     }
@@ -56,24 +56,33 @@ class RecaptchaType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars = array_replace($view->vars, array(
-            "recaptcha_ajax"    => $this->ajax
-        ));
+        $view->vars = array_replace(
+            $view->vars, 
+            array(
+                "recaptcha_ajax" => $this->ajax
+            )
+        );
 
         if (!isset($options["language"])) {
             $options["language"] = $this->localeResolver->resolve();
         }
 
         if (!$this->ajax) {
-            $view->vars = array_replace($view->vars, array(
-                "url_challenge" => sprintf("%s.js?hl=%s", self::RECAPTCHA_API_SERVER, $options["language"]),
-                "public_key"      => $this->publicKey
-            ));
+            $view->vars = array_replace(
+                $view->vars,
+                array(
+                    "url_challenge" => sprintf("%s.js?hl=%s", self::RECAPTCHA_API_SERVER, $options["language"]),
+                    "public_key" => $this->publicKey
+                )
+            );
         } else {
-            $view->vars = array_replace($view->vars, array(
-                "url_api"  => self::RECAPTCHA_API_JS_SERVER,
-                "public_key" => $this->publicKey
-            ));
+            $view->vars = array_replace(
+                $view->vars, 
+                array(
+                    "url_api" => self::RECAPTCHA_API_JS_SERVER,
+                    "public_key" => $this->publicKey
+                )
+            );
         }
     }
 
@@ -84,20 +93,20 @@ class RecaptchaType extends AbstractType
     {
         $resolver->setDefaults(
             array(
-                "compound"      => false,
-                "language"      => $this->localeResolver->resolve(),
-                "public_key"      => null,
+                "compound" => false,
+                "language" => $this->localeResolver->resolve(),
+                "public_key" => null,
                 "url_challenge" => null,
-                "url_noscript"  => null,
-                "attr"          => array(
+                "url_noscript" => null,
+                "attr" => array(
                     "options" => array(
-                        "theme"           => "light",
-                        "type"            => "image",
-                        "size"            => "normal",
-                        "callback"        => null,
+                        "theme" => "light",
+                        "type" => "image",
+                        "size" => "normal",
+                        "callback" => null,
                         "expiredCallback" => null,
-                        "defer"           => false,
-                        "async"           => false
+                        "defer" => false,
+                        "async" => false
                     )
                 )
             )

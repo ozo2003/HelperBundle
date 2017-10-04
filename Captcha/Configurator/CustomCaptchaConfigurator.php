@@ -12,7 +12,7 @@ class CustomCaptchaConfigurator implements CaptchaConfigurator
     {
         
     }
-    
+
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
         
