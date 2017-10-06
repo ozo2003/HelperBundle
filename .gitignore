@@ -3,4 +3,4 @@ composer.phar
 vendor
 phpunit.xml
 .idea/*
-/nbproject/private/
+/nbproject/*
