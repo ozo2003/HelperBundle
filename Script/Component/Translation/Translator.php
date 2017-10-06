@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Translatable\Component\Translation;
+namespace Sludio\HelperBundle\Script\Component\Translation;
 
 use Lexik\Bundle\TranslationBundle\Translation\Translator as BaseTranslator;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +40,7 @@ class Translator extends BaseTranslator
     public function trans($id, array $parameters = array(), $domain = null, $locale = null)
     {        
         $request = Request::createFromGlobals();
-        if ($request->get('sludio_debug') === 'text') {
+        if (1||$request->get('sludio_debug') === 'text') {
             return $domain.'.'.$id;
         }
 

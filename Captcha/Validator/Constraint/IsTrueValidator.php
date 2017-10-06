@@ -89,7 +89,7 @@ class IsTrueValidator extends ConstraintValidator
     private function checkAnswer($secretKey, $remoteip, $response)
     {
         if ($remoteip == null || $remoteip == "") {
-            throw new ValidatorException("sludio_helper_captcha.recaptcha.validator.remote_ip");
+            throw new ValidatorException("sludio_helper.captcha.recaptcha.validator.remote_ip");
         }
 
         // discard spam submissions
