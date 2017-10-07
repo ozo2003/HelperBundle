@@ -44,9 +44,9 @@ class Captcha implements Extensionable
             
             if (!isset($clientConfig['type'])) {
                 throw new InvalidConfigurationException(sprintf(
-                   'sludio_helper_captcha_client.clients.%s config entry is missing the "type" key.',
-                   $key
-               ));
+                    'sludio_helper_captcha_client.clients.%s config entry is missing the "type" key.',
+                    $key
+                ));
             }
 
             $this->type = $clientConfig['type'];
@@ -61,7 +61,7 @@ class Captcha implements Extensionable
                 ));
             }
             
-            if(!in_array($this->type, $this->usedTypes)){
+            if (!in_array($this->type, $this->usedTypes)) {
                 $this->usedTypes[] = $this->type;
             } else {
                 throw new InvalidConfigurationException(sprintf(
@@ -70,7 +70,7 @@ class Captcha implements Extensionable
                 ));
             }
             
-            $node = $tree->root('sludio_helper_captcha_client/clients/' . $key);
+            $node = $tree->root('sludio_helper_captcha_client/clients/'.$key);
             $this->buildClientConfiguration($node);
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
             $clientServiceKey = 'sludio_helper.captcha.client.'.$key;

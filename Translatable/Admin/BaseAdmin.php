@@ -23,7 +23,7 @@ class BaseAdmin extends Admin
         $this->getRedis()->del($object->getClassName().':translations:'.$object->getId().':checked');
     }
     
-    public function getTranslationFilter($queryBuilder, $alias, $field, $value){
+    public function getTranslationFilter($queryBuilder, $alias, $field, $value) {
         if (!isset($value['value'])) {
             return;
         }

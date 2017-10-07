@@ -37,17 +37,17 @@ class Custom extends AbstractProvider
 
     public function getBaseAuthorizationUrl()
     {
-        return $this->domain . $this->authorize;
+        return $this->domain.$this->authorize;
     }
 
     public function getBaseAccessTokenUrl(array $params = [])
     {
-        return $this->domain . $this->token . '?client_id='.$this->options['client_id'] . '&client_secret='.$this->options['client_secret'];
+        return $this->domain.$this->token.'?client_id='.$this->options['client_id'].'&client_secret='.$this->options['client_secret'];
     }
 
-    public function getTokenData(){
+    public function getTokenData() {
         $data = array(
-            'url' => $this->domain . $this->token,
+            'url' => $this->domain.$this->token,
             'client_id' => $this->options['client_id'],
             'client_secret' => $this->options['client_secret']
         );
@@ -57,7 +57,7 @@ class Custom extends AbstractProvider
 
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return $this->domain . $this->api;
+        return $this->domain.$this->api;
     }
 
     protected function getDefaultScopes()

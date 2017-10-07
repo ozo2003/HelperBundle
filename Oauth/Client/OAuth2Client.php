@@ -38,7 +38,7 @@ class OAuth2Client
             $options['scope'] = $scopes;
         }
 
-        if($token){
+        if ($token) {
             $options['token'] = $token;
         }
 

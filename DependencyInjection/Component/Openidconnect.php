@@ -100,7 +100,7 @@ class Openidconnect implements Extensionable
             foreach ($uriConfigurations as $subKey => $uriConfig) {
                 $tree = new TreeBuilder();
                 $processor = new Processor();
-                $node = $tree->root('sludio_helper_openidconnect_client/clients/' . $key . '/uris/' . $subKey);
+                $node = $tree->root('sludio_helper_openidconnect_client/clients/'.$key.'/uris/'.$subKey);
                 $this->buildUri($node);
                 $config = $processor->process($tree->buildTree(), [$uriConfig]);
                 $params = [];

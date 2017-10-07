@@ -130,7 +130,7 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('locales')
                                     ->beforeNormalization()
                                         ->ifString()
-                                            ->then(function ($v) {
+                                            ->then(function($v) {
                                                 return preg_split('/\s*,\s*/', $v);
                                             })
                                         ->end()
