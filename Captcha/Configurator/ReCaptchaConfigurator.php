@@ -38,7 +38,7 @@ class ReCaptchaConfigurator implements CaptchaConfigurator
         $resolver      = $clientServiceKey.'.resolver';
         $resolverClass = $container->getParameter($clientServiceKey.'.resolver_class');
 
-        $resolverDefinition  = $container->register($resolver, $resolverClass);
+        $resolverDefinition = $container->register($resolver, $resolverClass);
         $resolverDefinition->setPublic(false);
         $resolverDefinition->setArguments([
             $container->getParameter($clientServiceKey.'.locale_key'),

@@ -49,7 +49,7 @@ class TranslatorType extends AbstractType
         }
 
         // 'populate' fields by *hook on form generation
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales, $translations, $fieldType, $class, $required, $className, $id) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $locales, $translations, $fieldType, $class, $required, $className, $id) {
             $form = $event->getForm();
             foreach ($locales as $locale) {
                 $data = (array_key_exists($locale, $translations) && array_key_exists($fieldName, $translations[$locale])) ? $translations[$locale][$fieldName] : null;
@@ -60,7 +60,7 @@ class TranslatorType extends AbstractType
             $form->add('currentFieldName', 'hidden', array('data' => $fieldName));
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
             $form = $event->getForm();
             $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales, $userLocale);
         });

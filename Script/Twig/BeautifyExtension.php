@@ -95,10 +95,10 @@ class BeautifyExtension extends Twig_Extension
 
     public function strip_descr($body, $fallback = null, $type = null, $lengthIn = 300)
     {
-        if($type && $fallback){
+        if ($type && $fallback) {
             $length = isset($fallback[$type]) ? $fallback[$type] : null;
         }
-        if(!isset($length)){
+        if (!isset($length)) {
             $length = $lengthIn;
         }
 

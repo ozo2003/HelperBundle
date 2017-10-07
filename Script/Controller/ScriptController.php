@@ -16,13 +16,13 @@ class ScriptController extends Controller
         $data['success'] = 1;
 
         $clients = [];
-        foreach($this->container->getServiceIds() as $id){
-            if(substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof Client){
+        foreach ($this->container->getServiceIds() as $id) {
+            if (substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof Client) {
                 $clients[] = $id;
             }
         }
 
-        foreach($clients as $snc){
+        foreach ($clients as $snc) {
             $this->container->get($snc)->flushdb();
         }
 
@@ -43,8 +43,8 @@ class ScriptController extends Controller
             $application = new Application($kernel);
             $application->setAutoExit(false);
             $input = new ArrayInput(array(
-               'command' => 'cache:'.$command,
-               '--env' => $kernel->getEnvironment(),
+                'command' => 'cache:'.$command,
+                '--env' => $kernel->getEnvironment(),
             ));
             $application->run($input);
             $data['success'] = 1;
@@ -55,7 +55,7 @@ class ScriptController extends Controller
         ));
     }
 
-    public function ibrowsAction(Request $request){
+    public function ibrowsAction(Request $request) {
         global $kernel;
 
         if ('AppCache' === get_class($kernel)) {
@@ -66,7 +66,7 @@ class ScriptController extends Controller
         $application->setAutoExit(false);
 
         $input = new ArrayInput(array(
-           'command' => 'ibrows:sonatatranslationbundle:clearcache'
+            'command' => 'ibrows:sonatatranslationbundle:clearcache'
         ));
         $application->run($input);
         $data['success'] = 1;

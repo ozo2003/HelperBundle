@@ -26,13 +26,13 @@ class RedisFlushCommand extends ContainerAwareCommand
         }
 
         $clients = [];
-        foreach($kernel->getContainer()->getServiceIds() as $id){
-            if(substr($id, 0, 9) === 'snc_redis' && $kernel->getContainer()->get($id) instanceof Client){
+        foreach ($kernel->getContainer()->getServiceIds() as $id) {
+            if (substr($id, 0, 9) === 'snc_redis' && $kernel->getContainer()->get($id) instanceof Client) {
                 $clients[] = $id;
             }
         }
         
-        foreach($clients as $snc){
+        foreach ($clients as $snc) {
             $kernel->getContainer()->get($snc)->flushdb();
         }
 

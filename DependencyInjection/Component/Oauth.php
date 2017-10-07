@@ -131,9 +131,9 @@ class Oauth implements Extensionable
 
             if (!isset($clientConfig['type'])) {
                 throw new InvalidConfigurationException(sprintf(
-                   'Your "sludio_helper_oauth_client.clients.%s" config entry is missing the "type" key.',
-                   $key
-               ));
+                    'Your "sludio_helper_oauth_client.clients.%s" config entry is missing the "type" key.',
+                    $key
+                ));
             }
 
             $this->type = $clientConfig['type'];
@@ -148,7 +148,7 @@ class Oauth implements Extensionable
                 ));
             }
 
-            $node = $tree->root('sludio_helper_oauth_client/clients/' . $key);
+            $node = $tree->root('sludio_helper_oauth_client/clients/'.$key);
             $this->buildClientConfiguration($node);
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
 

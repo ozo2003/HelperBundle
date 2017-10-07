@@ -257,7 +257,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return $this->idTokenIssuer;
     }
 
-    public function check(array $response = []){
+    public function check(array $response = []) {
         return true;
     }
 
@@ -273,7 +273,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      */
     protected function createAccessToken(array $response, AbstractGrant $grant)
     {
-        if($this->check($response)){
+        if ($this->check($response)) {
             return new AccessToken($response);
         }
         return null;

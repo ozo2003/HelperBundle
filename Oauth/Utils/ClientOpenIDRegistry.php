@@ -20,7 +20,7 @@ class ClientOpenIDRegistry
         $keysOpenid = array_keys($openIDServiceMap);
 
         $checkExists = array_intersect($keysOauth, $keysOpenid);
-        if(!empty($checkExists)){
+        if (!empty($checkExists)) {
             throw new Exception(sprintf('Multiple clients with same key is not allowed! Key'.(count($checkExists) > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
         }
 

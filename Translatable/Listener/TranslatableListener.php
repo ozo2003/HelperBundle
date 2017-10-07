@@ -204,8 +204,7 @@ class TranslatableListener extends BaseListener
     public function getTranslationClass(TranslatableAdapter $ea, $class)
     {
         return isset(self::$configurations[$this->name][$class]['translationClass']) ?
-            self::$configurations[$this->name][$class]['translationClass'] :
-            $ea->getDefaultTranslationClass()
+            self::$configurations[$this->name][$class]['translationClass'] : $ea->getDefaultTranslationClass()
         ;
     }
 

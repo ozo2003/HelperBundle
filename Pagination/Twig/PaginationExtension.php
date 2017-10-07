@@ -22,7 +22,7 @@ class PaginationExtension extends Twig_Extension
         if ($container->hasParameter('sludio_helper.pagination.behaviour') && !empty($container->getParameter('sludio_helper.pagination.behaviour', []))) {
             $functions = $container->getParameter('sludio_helper.pagination.behaviour');
             foreach ($functions as $function) {
-                if($short_functions){
+                if ($short_functions) {
                     array_push($this->functions, $this->withFunction(array_keys($function)[0], array_values($function)[0]));
                 }
                 array_push($this->functions, $this->withFunction('sludio_'.array_keys($function)[0], array_values($function)[0]));

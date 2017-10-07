@@ -25,7 +25,7 @@ class QuickInsertRepository
         self::$em = self::$container->get('doctrine')->getManager($manager);
         self::$connection = self::$em->getConnection();
 
-        if(!$no_fk_check) {
+        if (!$no_fk_check) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
             $sth->execute();
         }
@@ -33,7 +33,7 @@ class QuickInsertRepository
 
     public static function close($no_fk_check = false)
     {
-        if(!$no_fk_check) {
+        if (!$no_fk_check) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
             $sth->execute();
         }
@@ -77,7 +77,7 @@ class QuickInsertRepository
     public static function persist($object, $full = false, $extraFields = [], $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
-        if(is_object($object)){
+        if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
         } else {
@@ -88,13 +88,13 @@ class QuickInsertRepository
         $values = [];
 
         $columns = self::$mock[$tableName];
-        if(!empty($extraFields) && isset($extraFields[$tableName])) {
+        if (!empty($extraFields) && isset($extraFields[$tableName])) {
             $columns = array_merge(self::$mock[$tableName], $extraFields[$tableName]);
         }
 
         foreach ($columns as $value => $key) {
             $variable = null;
-            if(!is_array($key) && !is_array($value)) {
+            if (!is_array($key) && !is_array($value)) {
                 if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
                     $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
                 } else {
@@ -134,7 +134,7 @@ class QuickInsertRepository
             $id = null;
         }
         if ($sql && $id) {
-            if($out){
+            if ($out) {
                 $out = $sql;
             }
             $sth = self::$connection->prepare($sql);
@@ -154,11 +154,11 @@ class QuickInsertRepository
         ];
         $sql = '';
 
-        foreach($methods as $method){
-            if(isset($extra[$method])){
+        foreach ($methods as $method) {
+            if (isset($extra[$method])) {
                 $sql .= ' '.$method.' ';
-                if(is_array($extra[$method])){
-                    foreach($extra[$method] as $group){
+                if (is_array($extra[$method])) {
+                    foreach ($extra[$method] as $group) {
                         $sql .= $group.' ';
                     }
                 } else {
@@ -167,16 +167,16 @@ class QuickInsertRepository
             }
         }
 
-        if(isset($extra['LIMIT'])){
-            if(is_array($extra['LIMIT'])){
-                if(isset($extra['LIMIT'][1])){
+        if (isset($extra['LIMIT'])) {
+            if (is_array($extra['LIMIT'])) {
+                if (isset($extra['LIMIT'][1])) {
                     $offset = $extra['LIMIT'][0];
                     $limit = $extra['LIMIT'][1];
                 } else {
                     $offset = 0;
                     $limit = $extra['LIMIT'][0];
                 }
-                $sql .=  'LIMIT '.$offset.', '.$limit;
+                $sql .= 'LIMIT '.$offset.', '.$limit;
             }
         }
 
@@ -192,7 +192,7 @@ class QuickInsertRepository
             $skip = false;
             foreach ($where as $key => $value) {
                 $fk = $key;
-                if(is_array($value)){
+                if (is_array($value)) {
                     $skip = true;
                     $f = trim($value[0]);
                 } else {
@@ -200,18 +200,18 @@ class QuickInsertRepository
                 }
                 break;
             }
-            if(!$skip && isset(self::$mock[$tableName][$fk])) {
-                if(is_numeric($f)){
+            if (!$skip && isset(self::$mock[$tableName][$fk])) {
+                if (is_numeric($f)) {
                     $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = $f";
                 } else {
                     $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".addslashes(trim($f))."'";
                 }
             } else {
-                if(!$skip && is_numeric($f)){
+                if (!$skip && is_numeric($f)) {
                     $whereSql .= ' WHERE '.$fk." = $f";
-                } elseif(!$skip && !is_numeric($f)) {
+                } elseif (!$skip && !is_numeric($f)) {
                     $whereSql .= ' WHERE '.$fk." = '".addslashes(trim($f))."'";
-                } elseif($skip && is_numeric($fk)){
+                } elseif ($skip && is_numeric($fk)) {
                     $whereSql .= " WHERE $f";
                 }
             }
@@ -219,18 +219,18 @@ class QuickInsertRepository
             if ($where && is_array($where)) {
                 foreach ($where as $key => $value) {
                     $skip = is_array($value);
-                    if(!$skip && isset(self::$mock[$tableName][$key])) {
-                        if(is_numeric($value)){
+                    if (!$skip && isset(self::$mock[$tableName][$key])) {
+                        if (is_numeric($value)) {
                             $whereSql .= ' AND '.self::$mock[$tableName][$key]." = $value";
                         } else {
                             $whereSql .= ' AND '.self::$mock[$tableName][$key]." = '".addslashes(trim($value))."'";
                         }
                     } else {
-                        if(!$skip && is_numeric($value)){
+                        if (!$skip && is_numeric($value)) {
                             $whereSql .= ' AND '.$key." = $value";
-                        } elseif(!$skip && !is_numeric($f)) {
+                        } elseif (!$skip && !is_numeric($f)) {
                             $whereSql .= ' AND '.$key." = '".addslashes(trim($value))."'";
-                        } elseif($skip && is_numeric($key)){
+                        } elseif ($skip && is_numeric($key)) {
                             $whereSql .= " AND {$value[0]}";
                         }
                     }
@@ -244,7 +244,7 @@ class QuickInsertRepository
     public static function get($object, $one = false, $where = [], $no_fk_check = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init($no_fk_check, $manager);
-        if(is_object($object)){
+        if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
         } else {
@@ -252,26 +252,26 @@ class QuickInsertRepository
         }
         $whereSql = self::buildWhere($tableName, $where);
         $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
-        if(!$fields){
+        if (!$fields) {
             $sql = $select.'id FROM '.$tableName.' '.$whereSql;
         } else {
             $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.' '.$whereSql;
         }
-        if(!empty($extra)){
+        if (!empty($extra)) {
             $extraSql = self::buildExtra($tableName, $extra);
             $sql .= $extraSql;
         }
-        if($out){
+        if ($out) {
             $out = $sql;
         }
         $sth = self::$connection->prepare($sql);
         $sth->execute();
         $result = $sth->fetchAll();
         if ($one && $result) {
-            if(!$fields){
+            if (!$fields) {
                 return intval($result[0]['id']);
             } else {
-                if(count($fields) === 1){
+                if (count($fields) === 1) {
                     return $result[0][$fields[0]];
                 } else {
                     return $result[0];
@@ -280,19 +280,19 @@ class QuickInsertRepository
         }
 
         self::close($no_fk_check);
-        if($one || !$result) {
+        if ($one || !$result) {
             return null;
         }
 
         $field = null;
-        if(!$fields){
+        if (!$fields) {
             $field = 'id';
-        } elseif(count($fields) === 1 && $fields[0] !== '*'){
+        } elseif (count($fields) === 1 && $fields[0] !== '*') {
             $field = $fields[0];
         }
 
-        if($field){
-            foreach($result as &$res){
+        if ($field) {
+            foreach ($result as &$res) {
                 $res = $res[$field];
             }
         }
@@ -303,7 +303,7 @@ class QuickInsertRepository
     public static function link($object, $data, $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
-        if(is_object($object)){
+        if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
         } else {
@@ -322,7 +322,7 @@ class QuickInsertRepository
                 VALUES
                     (".implode(',', $values).")
             ";
-            if($out){
+            if ($out) {
                 $out = $sql;
             }
             $sth = self::$connection->prepare($sql);
@@ -335,7 +335,7 @@ class QuickInsertRepository
     public static function update($id, $object, $extra = [], $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
-        if(is_object($object)){
+        if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
         } else {
@@ -359,7 +359,7 @@ class QuickInsertRepository
         $data = [];
 
         $columns = self::$mock[$tableName];
-        if(!empty($extra) && isset($extra[$tableName])) {
+        if (!empty($extra) && isset($extra[$tableName])) {
             $columns = array_merge(self::$mock[$tableName], $extra[$tableName]);
         }
 
@@ -378,7 +378,7 @@ class QuickInsertRepository
             foreach ($data as $key => $value) {
                 $meta = self::$metadata[$tableName]->getFieldMapping($flip[$key]);
                 $meta = $meta['type'];
-                if(in_array($meta, ['boolean','integer','longint'])){
+                if (in_array($meta, ['boolean', 'integer', 'longint'])) {
                     $value = intval($value);
                 } else {
                     $value = "'".addslashes(trim($value))."'";
@@ -387,7 +387,7 @@ class QuickInsertRepository
             }
             $sqlu = substr($sqlu, 0, -1);
             $sqlu .= " WHERE id = ".$id;
-            if($out){
+            if ($out) {
                 $out = $sql;
             }
             $sthu = self::$connection->prepare($sqlu);
@@ -400,7 +400,7 @@ class QuickInsertRepository
     public static function delete($object, $where = [], $no_fk_check = false, $manager = null, &$out = null)
     {
         self::init($no_fk_check, $manager);
-        if(is_object($object)){
+        if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
         } else {
@@ -408,7 +408,7 @@ class QuickInsertRepository
         }
         $whereSql = self::buildWhere($tableName, $where);
         $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
-        if($out){
+        if ($out) {
             $out = $sql;
         }
         $sth = self::$connection->prepare($sql);
@@ -444,7 +444,7 @@ class QuickInsertRepository
             AND
                 table_schema = DATABASE()
         ";
-        if($out){
+        if ($out) {
             $out = $sql;
         }
         $sth = self::$connection->prepare($sql);
