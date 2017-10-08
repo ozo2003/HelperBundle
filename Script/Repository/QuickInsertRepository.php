@@ -12,7 +12,7 @@ class QuickInsertRepository
     public static $connection;
     public static $container;
 
-    public static function init($no_fk_check = false, $manager = null)
+    public static function init($noFkCheck = false, $manager = null)
     {
         global $kernel;
 
@@ -25,15 +25,15 @@ class QuickInsertRepository
         self::$em = self::$container->get('doctrine')->getManager($manager);
         self::$connection = self::$em->getConnection();
 
-        if (!$no_fk_check) {
+        if (!$noFkCheck) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
             $sth->execute();
         }
     }
 
-    public static function close($no_fk_check = false)
+    public static function close($noFkCheck = false)
     {
-        if (!$no_fk_check) {
+        if (!$noFkCheck) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
             $sth->execute();
         }
@@ -74,9 +74,9 @@ class QuickInsertRepository
         return $data;
     }
 
-    public static function persist($object, $full = false, $extraFields = [], $no_fk_check = false, $manager = null, &$out = null)
+    public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($no_fk_check, $manager);
+        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -141,7 +141,7 @@ class QuickInsertRepository
             $sth->execute();
         }
 
-        self::close($no_fk_check);
+        self::close($noFkCheck);
         return $id;
     }
 
@@ -241,9 +241,9 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    public static function get($object, $one = false, $where = [], $no_fk_check = true, $fields = [], $manager = null, $extra = [], &$out = null)
+    public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
-        self::init($no_fk_check, $manager);
+        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -279,7 +279,7 @@ class QuickInsertRepository
             }
         }
 
-        self::close($no_fk_check);
+        self::close($noFkCheck);
         if ($one || !$result) {
             return null;
         }
@@ -300,9 +300,9 @@ class QuickInsertRepository
         return $result;
     }
 
-    public static function link($object, $data, $no_fk_check = false, $manager = null, &$out = null)
+    public static function link($object, $data, $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($no_fk_check, $manager);
+        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -329,12 +329,12 @@ class QuickInsertRepository
             $sth->execute();
         }
 
-        self::close($no_fk_check);
+        self::close($noFkCheck);
     }
 
-    public static function update($id, $object, $extra = [], $no_fk_check = false, $manager = null, &$out = null)
+    public static function update($id, $object, $extra = [], $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($no_fk_check, $manager);
+        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -394,12 +394,12 @@ class QuickInsertRepository
             $sthu->execute();
         }
 
-        self::close($no_fk_check);
+        self::close($noFkCheck);
     }
 
-    public static function delete($object, $where = [], $no_fk_check = false, $manager = null, &$out = null)
+    public static function delete($object, $where = [], $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($no_fk_check, $manager);
+        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -414,7 +414,7 @@ class QuickInsertRepository
         $sth = self::$connection->prepare($sql);
         $sth->execute();
 
-        self::close($no_fk_check);
+        self::close($noFkCheck);
     }
 
     public static function isEmpty($variable)

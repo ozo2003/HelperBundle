@@ -17,7 +17,7 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * Recaptcha Private Key
      *
-     * @var Boolean
+     * @var String
      */
     protected $secretKey;
 
