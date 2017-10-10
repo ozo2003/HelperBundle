@@ -1,5 +1,5 @@
 services:
-    sludio_helper.position.handler:
+    sludio_helper.position_handler:
         class: Sludio\HelperBundle\Position\Service\PositionHandler
         public: false
         arguments:
@@ -10,10 +10,10 @@ services:
                 -
                     - "%sludio_helper.position.field%"
 
-    sludio_helper.twig.extension:
+    sludio_helper.twig.position_extension:
         class: Sludio\HelperBundle\Position\Twig\ObjectPositionExtension
         arguments:
-            - "@sludio_helper.position.handler"
+            - "@sludio_helper.position_handler"
             - '@service_container'
         public: false
         tags:
