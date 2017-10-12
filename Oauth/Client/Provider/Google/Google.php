@@ -100,10 +100,9 @@ class Google extends AbstractProvider
 
             if (is_array($error)) {
                 $code = $error['code'];
-                $error = $error['message'];
             }
 
-            throw new IdentityProviderException('error_google_bad_response', $code, $response);
+            throw new IdentityProviderException('error_google_bad_response', $code, $response->getBody());
         }
     }
 

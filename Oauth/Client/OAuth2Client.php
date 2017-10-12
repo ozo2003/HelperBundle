@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Oauth\Client;
 
-use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use LogicException;
 use Sludio\HelperBundle\Logger\SludioLogger;
@@ -20,7 +19,7 @@ class OAuth2Client
     protected $isStateless = true;
     protected $logger;
 
-    public function __construct(AbstractProvider $provider, RequestStack $requestStack, SludioLogger $logger)
+    public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
