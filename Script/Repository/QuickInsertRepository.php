@@ -39,6 +39,21 @@ class QuickInsertRepository
         }
     }
 
+    public static function isEmpty($variable)
+    {
+        $result = true;
+
+        if (is_array($variable) && count($variable) > 0) {
+            foreach ($variable as $value) {
+                $result = $result && self::isEmpty($value);
+            }
+        } else {
+            $result = empty($variable);
+        }
+
+        return $result;
+    }
+
     private static function extract($object)
     {
         $data = self::extractExt($object, self::$em);
@@ -68,81 +83,10 @@ class QuickInsertRepository
         $data = [
             'mock' => $result,
             'table' => $table,
-            'meta' => $metadata
+            'meta' => $metadata,
         ];
 
         return $data;
-    }
-
-    public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
-    {
-        self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-        } else {
-            $tableName = $object;
-        }
-        $id = self::findNextId($tableName);
-        $keys = [];
-        $values = [];
-
-        $columns = self::$mock[$tableName];
-        if (!empty($extraFields) && isset($extraFields[$tableName])) {
-            $columns = array_merge(self::$mock[$tableName], $extraFields[$tableName]);
-        }
-
-        foreach ($columns as $value => $key) {
-            $variable = null;
-            if (!is_array($key) && !is_array($value)) {
-                if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
-                    $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
-                } else {
-                    $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
-                }
-                if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
-                    $variable = null;
-                }
-                if ($variable) {
-                    $values[] = $variable;
-                    $keys[] = $key;
-                    if ($key === 'id') {
-                        $idd = $object->{'get'.ucfirst($value)}();
-                    }
-                }
-            }
-        }
-        $sql = null;
-        if (!$full && !self::isEmpty($values)) {
-            $sql = '
-                INSERT INTO
-                    '.$tableName.'
-                        (id, '.implode(',', $keys).")
-                VALUES
-                    ({$id},".implode(',', $values).')
-            ';
-        } elseif ($full && !self::isEmpty($values)) {
-            $id = $idd;
-            $sql = '
-                INSERT INTO
-                    '.$tableName.'
-                        ('.implode(',', $keys).")
-                VALUES
-                    (".implode(',', $values).')
-            ';
-        } else {
-            $id = null;
-        }
-        if ($sql && $id) {
-            if ($out) {
-                $out = $sql;
-            }
-            $sth = self::$connection->prepare($sql);
-            $sth->execute();
-        }
-
-        self::close($noFkCheck);
-        return $id;
     }
 
     private static function buildExtra($tableName, $extra)
@@ -241,6 +185,32 @@ class QuickInsertRepository
         return $whereSql;
     }
 
+    public static function findNextId($tableName, &$out = null)
+    {
+        $sql = "
+            SELECT
+                AUTO_INCREMENT
+            FROM
+                information_schema.tables
+            WHERE
+                table_name = '".$tableName."'
+            AND
+                table_schema = DATABASE()
+        ";
+        if ($out) {
+            $out = $sql;
+        }
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+        $result = $sth->fetch();
+
+        if (isset($result['AUTO_INCREMENT'])) {
+            return (int)$result['AUTO_INCREMENT'];
+        }
+
+        return 1;
+    }
+
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init($noFkCheck, $manager);
@@ -271,7 +241,7 @@ class QuickInsertRepository
             if (!$fields) {
                 return intval($result[0]['id']);
             } else {
-                if (count($fields) === 1) {
+                if (count($fields) === 1 && $fields[0] !== '*') {
                     return $result[0][$fields[0]];
                 } else {
                     return $result[0];
@@ -298,6 +268,212 @@ class QuickInsertRepository
         }
 
         return $result;
+    }
+
+    public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
+    {
+        self::init($noFkCheck, $manager);
+        if (is_object($object)) {
+            self::extract($object);
+            $tableName = self::$tableName;
+            $columns = self::$mock[$tableName] ?: [];
+            $type = 'object';
+        } else {
+            $tableName = $object['table_name'];
+            unset($object['table_name']);
+            $type = 'table';
+            $columns = array_keys($object) ?: [];
+        }
+
+        $id = self::findNextId($tableName);
+        $keys = [];
+        $values = [];
+
+        if (!empty($extraFields) && isset($extraFields[$tableName])) {
+            $columns = array_merge($columns, $extraFields[$tableName]);
+        }
+
+        if ($type === 'object') {
+            foreach ($columns as $value => $key) {
+                $variable = null;
+                if (!is_array($key) && !is_array($value)) {
+                    if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
+                        $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
+                    } else {
+                        $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
+                    }
+                    if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
+                        $variable = null;
+                    }
+                    if ($variable) {
+                        $values[] = $variable;
+                        $keys[] = $key;
+                        if ($key === 'id') {
+                            $idd = $object->{'get'.ucfirst($value)}();
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($columns as $value => $key) {
+                $variable = null;
+                if (!is_array($key) && !is_array($value) && isset($object[$value])) {
+                    if ($object[$value] instanceof \DateTime) {
+                        $variable = "'".addslashes(trim($object[$value]->format('Y-m-d H:i:s')))."'";
+                    } else {
+                        $variable = "'".addslashes(trim($object[$value]))."'";
+                    }
+                    if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
+                        $variable = null;
+                    }
+                    if ($variable) {
+                        $values[] = $variable;
+                        $keys[] = $key;
+                        if ($key === 'id') {
+                            $idd = $object[$value];
+                        }
+                    }
+                }
+            }
+        }
+
+        $sql = null;
+        if (!$full && !self::isEmpty($values)) {
+            $sql = '
+                INSERT INTO
+                    '.$tableName.'
+                        (id, '.implode(',', $keys).")
+                VALUES
+                    ({$id},".implode(',', $values).')
+            ';
+        } elseif ($full && !self::isEmpty($values)) {
+            $id = $idd;
+            $sql = '
+                INSERT INTO
+                    '.$tableName.'
+                        ('.implode(',', $keys).")
+                VALUES
+                    (".implode(',', $values).')
+            ';
+        } else {
+            $id = null;
+        }
+        if ($sql && $id) {
+            if ($out) {
+                $out = $sql;
+            }
+            $sth = self::$connection->prepare($sql);
+            $sth->execute();
+        }
+
+        self::close($noFkCheck);
+
+        return $id;
+    }
+
+    public static function update($id, $object, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
+    {
+        self::init($noFkCheck, $manager);
+
+        if (is_object($object)) {
+            self::extract($object);
+            $tableName = self::$tableName;
+            $columns = self::$mock[$tableName] ?: [];
+            $type = 'object';
+        } else {
+            $tableName = $object['table_name'];
+            unset($object['table_name']);
+            $type = 'table';
+            $columns = array_keys($object) ?: [];
+        }
+
+        $result = self::get($tableName, true, ['id' => $id], true, ['*']);
+        unset($result['id']);
+
+        $data = [];
+
+        if (!empty($extraFields) && isset($extraFields[$tableName])) {
+            $columns = array_merge($columns, $extraFields[$tableName]);
+        }
+
+        $flip = array_flip($columns);
+        if ($type === 'object') {
+            if ($object->getId()) {
+                foreach ($result as $key => $value) {
+                    if ($object->{'get'.ucfirst($flip[$key])}() !== $value) {
+                        $data[$columns[$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
+                    }
+                }
+            } else {
+                foreach ($result as $key => $value) {
+                    if ($object->{'get'.ucfirst($flip[$key])}() !== null) {
+                        if ($object->{'get'.ucfirst($flip[$key])}() !== $value) {
+                            $data[$columns[$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
+                        }
+                    }
+                }
+            }
+        } else {
+            foreach ($result as $key => $value) {
+                if (isset($object[$key]) && $object[$key] !== $value) {
+                    $data[$key] = $extraFields[$key];
+                }
+            }
+
+        }
+
+        if ($data) {
+            $sqlu = "
+                UPDATE
+                    ".$tableName."
+                SET
+
+            ";
+            foreach ($data as $key => $value) {
+                $meta = self::$metadata[$tableName]->getFieldMapping($flip[$key]);
+                $meta = $meta['type'];
+                if (in_array($meta, [
+                    'boolean',
+                    'integer',
+                    'longint',
+                ])) {
+                    $value = intval($value);
+                } else {
+                    $value = "'".addslashes(trim($value))."'";
+                }
+                $sqlu .= " ".$key." = ".$value.",";
+            }
+            $sqlu = substr($sqlu, 0, -1);
+            $sqlu .= " WHERE id = ".$id;
+            if ($out) {
+                $out = $sql;
+            }
+
+            $sthu = self::$connection->prepare($sqlu);
+            $sthu->execute();
+        }
+
+        self::close($noFkCheck);
+    }
+
+    public static function delete($object, $where = [], $noFkCheck = false, $manager = null, &$out = null)
+    {
+        self::init($noFkCheck, $manager);
+        if (is_object($object)) {
+            self::extract($object);
+            $tableName = self::$tableName;
+        } else {
+            $tableName = $object;
+        }
+        $whereSql = self::buildWhere($tableName, $where);
+        $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
+        if ($out) {
+            $out = $sql;
+        }
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+
+        self::close($noFkCheck);
     }
 
     public static function link($object, $data, $noFkCheck = false, $manager = null, &$out = null)
@@ -330,131 +506,5 @@ class QuickInsertRepository
         }
 
         self::close($noFkCheck);
-    }
-
-    public static function update($id, $object, $extra = [], $noFkCheck = false, $manager = null, &$out = null)
-    {
-        self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-        } else {
-            $tableName = $object;
-        }
-        $sqls = "
-            SELECT
-                *
-            FROM
-                ".$tableName."
-            WHERE
-                id = ".$id
-        ;
-        $sths = self::$connection->prepare($sqls);
-        $sths->execute();
-        $result = $sths->fetchAll();
-        if ($result && isset($result[0])) {
-            $result = $result[0];
-        }
-        unset($result['id']);
-        $data = [];
-
-        $columns = self::$mock[$tableName];
-        if (!empty($extra) && isset($extra[$tableName])) {
-            $columns = array_merge(self::$mock[$tableName], $extra[$tableName]);
-        }
-
-        $flip = array_flip($columns);
-        foreach ($result as $key => $value) {
-            $data[self::$mock[$tableName][$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
-        }
-
-        if ($data) {
-            $sqlu = "
-                UPDATE
-                    ".$tableName."
-                SET
-
-            ";
-            foreach ($data as $key => $value) {
-                $meta = self::$metadata[$tableName]->getFieldMapping($flip[$key]);
-                $meta = $meta['type'];
-                if (in_array($meta, ['boolean', 'integer', 'longint'])) {
-                    $value = intval($value);
-                } else {
-                    $value = "'".addslashes(trim($value))."'";
-                }
-                $sqlu .= " ".$key." = ".$value.",";
-            }
-            $sqlu = substr($sqlu, 0, -1);
-            $sqlu .= " WHERE id = ".$id;
-            if ($out) {
-                $out = $sql;
-            }
-            $sthu = self::$connection->prepare($sqlu);
-            $sthu->execute();
-        }
-
-        self::close($noFkCheck);
-    }
-
-    public static function delete($object, $where = [], $noFkCheck = false, $manager = null, &$out = null)
-    {
-        self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-        } else {
-            $tableName = $object;
-        }
-        $whereSql = self::buildWhere($tableName, $where);
-        $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
-        if ($out) {
-            $out = $sql;
-        }
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-
-        self::close($noFkCheck);
-    }
-
-    public static function isEmpty($variable)
-    {
-        $result = true;
-
-        if (is_array($variable) && count($variable) > 0) {
-            foreach ($variable as $value) {
-                $result = $result && self::isEmpty($value);
-            }
-        } else {
-            $result = empty($variable);
-        }
-
-        return $result;
-    }
-
-    public static function findNextId($tableName, &$out = null)
-    {
-        $sql = "
-            SELECT
-                AUTO_INCREMENT
-            FROM
-                information_schema.tables
-            WHERE
-                table_name = '".$tableName."'
-            AND
-                table_schema = DATABASE()
-        ";
-        if ($out) {
-            $out = $sql;
-        }
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
-
-        if (isset($result['AUTO_INCREMENT'])) {
-            return (int) $result['AUTO_INCREMENT'];
-        }
-
-        return 1;
     }
 }
