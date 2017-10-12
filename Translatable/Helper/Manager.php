@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Translatable\Helper;
 
 use Symfony\Bridge\Doctrine\RegistryInterface as Registry;
-use Symfony\Component\Form\Form as Form;
+use Symfony\Component\Form\FormInterface;
 
 class Manager
 {
@@ -25,12 +25,12 @@ class Manager
         $entity->{$setterFunctionName}($value);
     }
 
-    public function getTranslatedFields($class, $field, $id, $locales, $userLocale)
+    public function getTranslatedFields($class, $field, $id, $locales)
     {
         $em = $this->em;
         $entity = $em->getRepository($class)->find($id);
 
-        $translated;
+        $translated = [];
         foreach ($locales as $locale) {
             $translated[$locale][$field] = $this->getField($entity, $field, $locale);
         }
@@ -38,9 +38,9 @@ class Manager
         return $translated;
     }
 
-    public function getNewTranslatedFields($class, $field, $locales, $userLocale)
+    public function getNewTranslatedFields($field, $locales)
     {
-        $translated;
+        $translated = [];
         foreach ($locales as $locale) {
             $translated[$locale][$field] = '';
         }
@@ -48,7 +48,7 @@ class Manager
         return $translated;
     }
 
-    public function persistTranslations(Form $form, $class, $field, $id, $locales, $userLocale)
+    public function persistTranslations(FormInterface $form, $class, $field, $id, $locales)
     {
         $translations = $form->getData();
 

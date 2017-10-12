@@ -36,16 +36,15 @@ class TranslatorType extends AbstractType
         $className = $options['translation_data_class'];
         $id = $options['object_id'];
         $locales = $options['locales'];
-        $userLocale = $this->userLocale;
         $fieldType = $options['fieldtype'];
         $class = $options['class'];
         $new = $options['new'];
         $required = $options['required'];
 
         if ($new) {
-            $translations = $this->manager->getNewTranslatedFields($className, $fieldName, $locales, $userLocale);
+            $translations = $this->manager->getNewTranslatedFields($fieldName, $locales);
         } else {
-            $translations = $this->manager->getTranslatedFields($className, $fieldName, $id, $locales, $userLocale);
+            $translations = $this->manager->getTranslatedFields($className, $fieldName, $id, $locales);
         }
 
         // 'populate' fields by *hook on form generation
@@ -70,9 +69,9 @@ class TranslatorType extends AbstractType
             $form->add('currentFieldName', 'hidden', ['data' => $fieldName]);
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales) {
             $form = $event->getForm();
-            $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales, $userLocale);
+            $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales);
         });
     }
 

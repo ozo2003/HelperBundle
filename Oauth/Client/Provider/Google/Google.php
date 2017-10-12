@@ -72,7 +72,7 @@ class Google extends AbstractProvider
             'access_type' => $this->accessType,
             // if the user is logged in with more than one account ask which one to use for the login!
             'authuser' => '-1',
-        ]
+        ];
         $params = array_merge(parent::getAuthorizationParameters($options), array_filter($input));
 
         return $params;

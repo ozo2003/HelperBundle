@@ -3,7 +3,6 @@
 namespace Sludio\HelperBundle\Translatable\Listener;
 
 use Doctrine\Common\EventArgs;
-use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Gedmo\Exception\InvalidArgumentException;
 use Gedmo\Exception\RuntimeException;
@@ -23,8 +22,6 @@ use Gedmo\Translatable\TranslatableListener as BaseListener;
  * it is not a big overhead to lookup all entity annotations since
  * the caching is activated for metadata
  *
- * @author  Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
- * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class TranslatableListener extends BaseListener
 {
@@ -316,12 +313,6 @@ class TranslatableListener extends BaseListener
             }
             if ($this->isValidLocale($value)) {
                 $locale = $value;
-            }
-        } elseif ($om instanceof DocumentManager) {
-            list($mapping, $parentObject) = $om->getUnitOfWork()->getParentAssociation($object);
-            if ($parentObject != null) {
-                $parentMeta = $om->getClassMetadata(get_class($parentObject));
-                $locale = $this->getTranslatableLocale($parentObject, $parentMeta, $om);
             }
         }
 

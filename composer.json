@@ -1,14 +1,31 @@
 {
     "name": "sludio/helper-bundle",
-    "description": "Helper Bundle",
-    "type": "symfony-bundle",
-    "authors": [{
-        "name": "Dāvis Zālītis",
-        "email": "davis@source.lv"
-    }],
-    "license": [
-        "MIT"
+    "description": "Helper Bundle for Symfony",
+    "keywords": [
+        "symfony",
+        "helper",
+        "captcha",
+        "logger",
+        "oauth",
+        "openid",
+        "openidconnect",
+        "pagination",
+        "sortable",
+        "scripts",
+        "translatable"
     ],
+    "type": "symfony-bundle",
+    "authors": [
+        {
+            "name": "Dāvis Zālītis",
+            "email": "davis@source.lv"
+        }
+    ],
+    "homepage": "https://github.com/ozo2003/HelperBundle",
+    "support": {
+        "issues": "https://github.com/ozo2003/HelperBundle/issues"
+    },
+    "license": "MIT",
     "require": {
         "php": ">=5.5.9",
         "abraham/twitteroauth": "^0.6|^0.7",
@@ -19,17 +36,23 @@
         "predis/predis": "^1.1",
         "snc/redis-bundle": "^2",
         "symfony/symfony": "^2.8|^3",
-        "twig/twig": "^1|^2"
+        "twig/twig": "^1|^2",
+        "ocramius/proxy-manager": "^2.1"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"
+    },
+    "config": {
+        "sort-packages": true
     },
     "autoload": {
         "psr-4": {
             "Sludio\\HelperBundle\\": ""
         }
     },
-    "branch-alias": {
-        "dev-master": "master"
+    "extra": {
+        "branch-alias": {
+            "dev-master": "master"
+        }
     }
 }

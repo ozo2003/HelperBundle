@@ -20,7 +20,7 @@ class TranslationMappingListener
         $param = $kernel->getContainer()->getParameter('sludio_helper.translatable.table', 'sludio_helper_translation');
         if ($oldName === 'sludio_helper_translation' && $param !== $oldName) {
             $table['name'] = $param;
+            $classMetadata->setPrimaryTable($table);
         }
-        $classMetadata->setPrimaryTable($table);
     }
 }
