@@ -49,10 +49,5 @@
         "psr-4": {
             "Sludio\\HelperBundle\\": ""
         }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "master"
-        }
     }
 }
