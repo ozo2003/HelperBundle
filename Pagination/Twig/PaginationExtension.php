@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\Pagination\Twig;
 
-use Sludio\HelperBundle\Pagination\Twig\Behaviour\PaginationBehaviour;
 use Sludio\HelperBundle\Pagination\Twig\Behaviour\FixedLength;
-use Twig_SimpleFunction;
+use Sludio\HelperBundle\Pagination\Twig\Behaviour\PaginationBehaviour;
 use Twig_Extension;
+use Twig_SimpleFunction;
 
 class PaginationExtension extends Twig_Extension
 {
@@ -45,10 +45,10 @@ class PaginationExtension extends Twig_Extension
 
         $clone = clone $this;
 
-        $clone->functions[$functionName] = new Twig_SimpleFunction(
-            $functionName,
-            array($behaviour, 'getPaginationData')
-        );
+        $clone->functions[$functionName] = new Twig_SimpleFunction($functionName, [
+                $behaviour,
+                'getPaginationData',
+            ]);
 
         return $clone->functions[$functionName];
     }
@@ -71,7 +71,7 @@ class PaginationExtension extends Twig_Extension
     private function suffixFunctionName($functionName)
     {
         // Make sure the function name is not suffixed twice.
-        $functionName = preg_replace('/(_pagination)$/', '', (string) $functionName);
+        $functionName = preg_replace('/(_pagination)$/', '', (string)$functionName);
 
         return $functionName.'_pagination';
     }

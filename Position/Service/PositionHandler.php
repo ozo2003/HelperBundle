@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Position\Service;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
 
 class PositionHandler
 {
@@ -21,11 +21,7 @@ class PositionHandler
 
     public function getLastPosition($entity)
     {
-        $query = $this->em->createQuery(sprintf(
-            'SELECT MAX(m.%s) FROM %s m',
-            $positionFiles = $this->getPositionFieldByEntity($entity),
-            $entity
-        ));
+        $query = $this->em->createQuery(sprintf('SELECT MAX(m.%s) FROM %s m', $positionFiles = $this->getPositionFieldByEntity($entity), $entity));
         $result = $query->getResult();
 
         if (array_key_exists(0, $result)) {

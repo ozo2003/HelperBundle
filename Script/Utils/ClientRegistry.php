@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Utils;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ClientRegistry
 {

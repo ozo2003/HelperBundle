@@ -2,14 +2,14 @@
 
 namespace Sludio\HelperBundle\Oauth\Client;
 
-use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
-use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use LogicException;
 use Sludio\HelperBundle\Logger\SludioLogger;
+use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
+use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class OAuth2Client
 {
@@ -45,10 +45,7 @@ class OAuth2Client
         $url = $this->provider->getAuthorizationUrl($options);
 
         if (!$this->isStateless) {
-            $this->getSession()->set(
-                self::OAUTH2_SESSION_STATE_KEY,
-                $this->provider->getState()
-            );
+            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $this->provider->getState());
         }
 
         return new RedirectResponse($url);
@@ -74,9 +71,7 @@ class OAuth2Client
 
         return $this->provider->getAccessToken('authorization_code', [
             'code' => $code,
-        ],
-        $attributes
-        );
+        ], $attributes);
     }
 
     public function fetchUserFromToken(AccessToken $accessToken)

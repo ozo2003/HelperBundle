@@ -37,10 +37,10 @@ class Translator extends BaseTranslator
         return parent::getLoader($format);
     }
 
-    public function trans($id, array $parameters = array(), $domain = null, $locale = null)
-    {        
+    public function trans($id, array $parameters = [], $domain = null, $locale = null)
+    {
         $request = Request::createFromGlobals();
-        if (1||$request->get('sludio_debug') === 'text') {
+        if (1 || $request->get('sludio_debug') === 'text') {
             return $domain.'.'.$id;
         }
 

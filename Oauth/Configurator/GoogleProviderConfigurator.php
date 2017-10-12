@@ -8,6 +8,7 @@ class GoogleProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {
+        // @formatter:off
         $node
             ->scalarNode('access_type')
                 ->defaultNull()
@@ -34,6 +35,7 @@ class GoogleProviderConfigurator implements ProviderConfigurator
                 ->prototype('variable')->end()
             ->end()
         ;
+        // @formatter:on
     }
 
     public function getProviderClass(array $config)
@@ -46,7 +48,7 @@ class GoogleProviderConfigurator implements ProviderConfigurator
         $options = [
             'clientId' => $config['client_id'],
             'clientSecret' => $config['client_secret'],
-            'redirect_route' => $config['redirect_route']
+            'redirect_route' => $config['redirect_route'],
         ];
 
         if ($config['access_type']) {
@@ -61,12 +63,7 @@ class GoogleProviderConfigurator implements ProviderConfigurator
             $options['userFields'] = $config['user_fields'];
         }
 
-        return
-            array_merge(
-                $options,
-                $config['provider_options']
-            )
-        ;
+        return array_merge($options, $config['provider_options']);
     }
 
     public function getProviderDisplayName()

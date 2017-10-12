@@ -15,6 +15,7 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('sludio_helper');
 
+        // @formatter:off
         $rootNode
             ->fixXmlConfig('extension')
             ->children()
@@ -142,9 +143,6 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('template')
                                     ->defaultValue('SludioHelperBundle:Translatable:translations.html.twig')
                                 ->end()
-                                ->scalarNode('template_new')
-                                    ->defaultValue('SludioHelperBundle:Translatable:translations_new.html.twig')
-                                ->end()
                                 ->scalarNode('table')
                                     ->defaultValue('sludio_helper_translation')
                                 ->end()
@@ -186,6 +184,7 @@ class Configuration implements ConfigurationInterface
                 ->end()
             ->end()
         ;
+        // @formatter:on
 
         return $treeBuilder;
     }

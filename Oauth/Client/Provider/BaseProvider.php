@@ -26,6 +26,7 @@ abstract class BaseProvider extends AbstractProvider
      *
      * @param  mixed $grant
      * @param  array $options
+     *
      * @return AccessToken
      */
     public function getAccessToken($grant, array $options = [], array $attributes = [])
@@ -37,16 +38,16 @@ abstract class BaseProvider extends AbstractProvider
         }
 
         $params = [
-            'client_id'     => $this->clientId,
+            'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
-            'redirect_uri'  => $redirectUri ?: $this->redirectUri,
+            'redirect_uri' => $redirectUri ?: $this->redirectUri,
         ];
 
-        $params   = $grant->prepareRequestParameters($params, $options);
-        $request  = $this->getAccessTokenRequest($params);
+        $params = $grant->prepareRequestParameters($params, $options);
+        $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
-        $token    = $this->createAccessToken($prepared, $grant);
+        $token = $this->createAccessToken($prepared, $grant);
 
         return $token;
     }

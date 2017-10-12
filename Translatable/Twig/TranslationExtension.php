@@ -27,13 +27,19 @@ class TranslationExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = array(
-            new Twig_SimpleFilter('sludio_var', array($this, 'getVar')),
-        );
+        $array = [
+            new Twig_SimpleFilter('sludio_var', [
+                $this,
+                'getVar',
+            ]),
+        ];
 
-        $short_array = array(
-            new Twig_SimpleFilter('var', array($this, 'getVar')),
-        );
+        $short_array = [
+            new Twig_SimpleFilter('var', [
+                $this,
+                'getVar',
+            ]),
+        ];
 
         if ($this->short_functions) {
             return array_merge($array, $short_array);

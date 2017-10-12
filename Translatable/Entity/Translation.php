@@ -21,6 +21,7 @@ class Translation
     {
         return $this->id;
     }
+
     /**
      * @var string
      */
@@ -49,6 +50,7 @@ class Translation
     {
         return $this->locale;
     }
+
     /**
      * @var string
      */
@@ -77,6 +79,7 @@ class Translation
     {
         return $this->objectClass;
     }
+
     /**
      * @var string
      */
@@ -105,6 +108,7 @@ class Translation
     {
         return $this->field;
     }
+
     /**
      * @var int
      */

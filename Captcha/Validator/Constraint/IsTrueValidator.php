@@ -44,15 +44,15 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * Construct.
      *
-     * @param String       $secretKey
-     * @param Array        $httpProxy
-     * @param Boolean      $verifyHost
+     * @param String $secretKey
+     * @param Array $httpProxy
+     * @param Boolean $verifyHost
      */
     public function __construct($secretKey, array $httpProxy, $verifyHost)
     {
-        $this->secretKey  = $secretKey;
-        $this->request    = Request::createFromGlobals();
-        $this->httpProxy  = $httpProxy;
+        $this->secretKey = $secretKey;
+        $this->request = Request::createFromGlobals();
+        $this->httpProxy = $httpProxy;
         $this->verifyHost = $verifyHost;
     }
 
@@ -97,14 +97,11 @@ class IsTrueValidator extends ConstraintValidator
             return false;
         }
 
-        $response = $this->httpGet(
-            self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify",
-            array(
+        $response = $this->httpGet(self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify", [
                 "secret" => $secretKey,
                 "remoteip" => $remoteip,
-                "response" => $response
-            )
-        );
+                "response" => $response,
+            ]);
 
         return json_decode($response, true);
     }
@@ -138,13 +135,17 @@ class IsTrueValidator extends ConstraintValidator
             return null;
         }
 
-        $options = array();
-        foreach (array("http", "https") as $protocol) {
-            $options[$protocol] = array(
+        $options = [];
+        $protocols = [
+            "http",
+            "https",
+        ];
+        foreach ($protocols as $protocol) {
+            $options[$protocol] = [
                 "method" => "GET",
                 "proxy" => sprintf("tcp://%s:%s", $this->httpProxy["host"], $this->httpProxy["port"]),
-                "request_fulluri" => true
-            );
+                "request_fulluri" => true,
+            ];
 
             if (null !== $this->httpProxy["auth"]) {
                 $options[$protocol]["header"] = sprintf("Proxy-Authorization: Basic %s", base64_encode($this->httpProxy["auth"]));

@@ -17,13 +17,19 @@ class BrowserExtension extends Twig_Extension
 
     public function getFunctions()
     {
-        $array = array(
-            new Twig_SimpleFunction('sludio_is_ie', array($this, 'isIE')),
-        );
+        $array = [
+            new Twig_SimpleFunction('sludio_is_ie', [
+                $this,
+                'isIE',
+            ]),
+        ];
 
-        $short_array = array(
-            new Twig_SimpleFunction('is_ie', array($this, 'isIE')),
-        );
+        $short_array = [
+            new Twig_SimpleFunction('is_ie', [
+                $this,
+                'isIE',
+            ]),
+        ];
 
         if ($this->short_functions) {
             return array_merge($array, $short_array);

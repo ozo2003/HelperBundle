@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 interface Extensionable
 {

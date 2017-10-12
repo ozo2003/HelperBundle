@@ -2,16 +2,16 @@
 
 namespace Sludio\HelperBundle\Translatable\Form\Type;
 
+use Exception;
+use Sludio\HelperBundle\Translatable\Helper\Manager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Sludio\HelperBundle\Translatable\Helper\Manager;
-use Exception;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class TranslatorType extends AbstractType
 {
@@ -49,18 +49,28 @@ class TranslatorType extends AbstractType
         }
 
         // 'populate' fields by *hook on form generation
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $locales, $translations, $fieldType, $class, $required, $className, $id) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $locales, $translations, $fieldType, $class, $required, $className, $id) {
             $form = $event->getForm();
             foreach ($locales as $locale) {
                 $data = (array_key_exists($locale, $translations) && array_key_exists($fieldName, $translations[$locale])) ? $translations[$locale][$fieldName] : null;
-                $form->add($locale, $fieldType, ['label' => false, 'data' => $data, 'required' => $required, 'attr' => ['class' => $class, 'data-locale' => $locale, 'data-class' => $className, 'data-id' => $id]]);
+                $form->add($locale, $fieldType, [
+                    'label' => false,
+                    'data' => $data,
+                    'required' => $required,
+                    'attr' => [
+                        'class' => $class,
+                        'data-locale' => $locale,
+                        'data-class' => $className,
+                        'data-id' => $id,
+                    ],
+                ]);
             }
 
             // extra field for twig rendering
-            $form->add('currentFieldName', 'hidden', array('data' => $fieldName));
+            $form->add('currentFieldName', 'hidden', ['data' => $fieldName]);
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id, $locales, $userLocale) {
             $form = $event->getForm();
             $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales, $userLocale);
         });
@@ -81,7 +91,7 @@ class TranslatorType extends AbstractType
 
     private function getTabTranslations()
     {
-        $translatedLocaleCodes = array();
+        $translatedLocaleCodes = [];
         foreach ($this->locales as $locale) {
             $translatedLocaleCodes[$locale] = $this->getTranslatedLocalCode($locale);
         }
@@ -110,8 +120,7 @@ class TranslatorType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            array(
+        $resolver->setDefaults([
                 'locales' => $this->locales,
                 'translation_data_class' => '',
                 'object_id' => null,
@@ -121,7 +130,6 @@ class TranslatorType extends AbstractType
                 'fieldtype' => 'text',
                 'class' => '',
                 'new' => false,
-            )
-        );
+            ]);
     }
 }

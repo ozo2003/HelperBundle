@@ -12,7 +12,7 @@ trait ValidatorTrait
 
     public function __construct($name, $required = false)
     {
-        $this->name     = $name;
+        $this->name = $name;
         $this->required = $required;
     }
 

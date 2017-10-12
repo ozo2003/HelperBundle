@@ -2,9 +2,9 @@
 
 namespace Sludio\HelperBundle\Oauth\Utils;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Exception;
 use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ClientOpenIDRegistry
 {

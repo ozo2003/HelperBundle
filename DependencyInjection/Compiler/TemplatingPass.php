@@ -24,16 +24,17 @@ class TemplatingPass implements CompilerPassInterface
         $resources = $container->getParameter('twig.form.resources');
 
         $forms = [
-            'sludio_helper.translatable.template',
-            'sludio_helper.translatable.template_new',
-            'sludio_helper.captcha.client.recaptcha.template'
+            'sludio_helper.translatable.enabled' => 'sludio_helper.translatable.template',
+            'sludio_helper.captcha.enabled' => 'sludio_helper.captcha.client.recaptcha.template',
         ];
 
-        foreach ($forms as $form) {
-            if ($container->hasParameter($form)) {
-                if (false !== ($template = $container->getParameter($form))) {
-                    if (!in_array($template, $resources)) {
-                        $resources[] = $template;
+        foreach ($forms as $check => $form) {
+            if ($container->hasParameter($check) && $container->getParameter($check) === 1) {
+                if ($container->hasParameter($form)) {
+                    if (false !== ($template = $container->getParameter($form))) {
+                        if (!in_array($template, $resources)) {
+                            $resources[] = $template;
+                        }
                     }
                 }
             }

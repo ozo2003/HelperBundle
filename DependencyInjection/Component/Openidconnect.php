@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 class Openidconnect implements Extensionable
@@ -13,6 +13,8 @@ class Openidconnect implements Extensionable
     public function buildClientConfiguration(NodeDefinition &$node)
     {
         $optionsNode = $node->children();
+
+        // @formatter:off
         $optionsNode
             ->scalarNode('client_key')->isRequired()->defaultNull()->end()
             ->scalarNode('client_secret')->defaultNull()->end()
@@ -38,29 +40,33 @@ class Openidconnect implements Extensionable
                 ->end()
             ->end()
         ;
+        // @formatter:on
+
         $optionsNode->end();
     }
 
     private function buildUri(NodeDefinition &$node)
     {
         $optionsNode = $node->children();
+
+        // @formatter:off
         $optionsNode
             ->arrayNode('params')->prototype('variable')->end()->end()
             ->arrayNode('url_params')->prototype('variable')->end()->end()
         ;
+        // @formatter:on
+
         $optionsNode->end();
     }
 
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
-        $clientDefinition = $container->register(
-            $clientServiceKey, $container->getParameter($clientServiceKey.'.user_provider')
-        );
+        $clientDefinition = $container->register($clientServiceKey, $container->getParameter($clientServiceKey.'.user_provider'));
         $clientDefinition->setArguments([
             $clientServiceKey,
             $container->getParameter($clientServiceKey),
             [],
-            new Reference('router')
+            new Reference('router'),
         ]);
     }
 
@@ -70,13 +76,13 @@ class Openidconnect implements Extensionable
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $processor = new Processor();
-            $node = $tree->root('sludio_helper_openidconnect_client/clients/' . $key);
+            $node = $tree->root('sludio_helper_openidconnect_client/clients/'.$key);
             $this->buildClientConfiguration($node);
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
             $clientServiceKey = 'sludio_helper.openidconnect.client.'.$key;
             $container->setParameter($clientServiceKey, $clientConfig);
             $service = [
-                'key' => $clientServiceKey
+                'key' => $clientServiceKey,
             ];
             if (isset($config['options']) && isset($config['options']['name'])) {
                 $service['name'] = $config['options']['name'];

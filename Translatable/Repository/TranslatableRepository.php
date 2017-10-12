@@ -16,15 +16,16 @@ class TranslatableRepository
     public static $redis;
     public static $table;
 
-    public static $localeArr = array(
+    public static $localeArr = [
         'lv' => 'lv_LV',
         'en' => 'en_US',
         'ru' => 'ru_RU',
-    );
+    ];
 
     public static function getDefaultLocale()
     {
         self::init();
+
         return self::$container->getParameter('sludio_helper.translatable.default_locale');
     }
 
@@ -37,7 +38,9 @@ class TranslatableRepository
         }
         self::$container = $kernel->getContainer();
 
-        self::$em = self::$container->get('doctrine')->getManager(self::$container->getParameter('sludio_helper.translatable.manager'));
+        self::$em = self::$container->get('doctrine')
+            ->getManager(self::$container->getParameter('sludio_helper.translatable.manager'))
+        ;
         self::$connection = self::$em->getConnection();
 
         self::$redis = self::$container->get('snc_redis.'.self::$container->getParameter('sludio_helper.redis.translation'));
@@ -57,12 +60,12 @@ class TranslatableRepository
             $connection = self::$connection;
             $sql = 'SELECT * FROM '.self::$table.' WHERE object_class = :class AND foreign_key = :key';
             $sth = $connection->prepare($sql);
-            $options = array(
+            $options = [
                 'class' => $class,
                 'key' => $id,
-            );
+            ];
             $sth->execute($options);
-            $result = array();
+            $result = [];
             while ($row = $sth->fetch()) {
                 $result[$row['locale']][$row['field']] = $row['content'];
             }
@@ -85,10 +88,10 @@ class TranslatableRepository
         }
 
         $connection = self::$connection;
-        $options = array(
+        $options = [
             'class' => $class,
             'locale' => $locale,
-        );
+        ];
         $sql = "SELECT foreign_key FROM ".self::$table." WHERE object_class = :class AND field = '{$field}' AND locale = :locale";
         if ($id) {
             $sql .= ' AND foreign_key <> :id';
@@ -125,7 +128,7 @@ class TranslatableRepository
             $locale = self::$localeArr[$locale];
         }
 
-        $res = (int) self::findByLocale($class, $locale, $content, $field, null, $id);
+        $res = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
         $class = str_replace('\\', '\\\\', $class);
         $content = trim($content) != '' ? $content : null;
         if ($res) {
@@ -184,7 +187,7 @@ class TranslatableRepository
         $sql = 'SELECT * FROM '.self::$table;
         $sth = $connection->prepare($sql);
         $sth->execute();
-        $result = array();
+        $result = [];
         while ($row = $sth->fetch()) {
             $result[$row['object_class']][$row['foreign_key']][$row['locale']][$row['field']] = $row['content'];
         }
@@ -219,7 +222,7 @@ class TranslatableRepository
         $result = $sth->fetch();
 
         if (isset($result['AUTO_INCREMENT'])) {
-            return (int) $result['AUTO_INCREMENT'];
+            return (int)$result['AUTO_INCREMENT'];
         }
 
         return 1;

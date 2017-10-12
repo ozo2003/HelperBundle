@@ -20,15 +20,22 @@ class GulpExtension extends Twig_Extension
 
         $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
     }
+
     public function getFilters()
     {
-        $array = array(
-            new Twig_SimpleFilter('sludio_asset_version', array($this, 'getAssetVersion')),
-        );
+        $array = [
+            new Twig_SimpleFilter('sludio_asset_version', [
+                $this,
+                'getAssetVersion',
+            ]),
+        ];
 
-        $short_array = array(
-            new Twig_SimpleFilter('asset_version', array($this, 'getAssetVersion')),
-        );
+        $short_array = [
+            new Twig_SimpleFilter('asset_version', [
+                $this,
+                'getAssetVersion',
+            ]),
+        ];
 
         if ($this->short_functions) {
             return array_merge($array, $short_array);
@@ -36,6 +43,7 @@ class GulpExtension extends Twig_Extension
             return $array;
         }
     }
+
     public function getName()
     {
         return 'sludio_helper.twig.gulp_extension';

@@ -2,9 +2,8 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
 use Sludio\HelperBundle\Openidconnect\Component\Uriable;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Uri implements Uriable
 {
@@ -16,7 +15,7 @@ class Uri implements Uriable
 
     public function __construct(array $options, array $additional = [])
     {
-        $this->base = rtrim($additional['base_uri'], '/') . '/';
+        $this->base = rtrim($additional['base_uri'], '/').'/';
         unset($additional['base_uri']);
 
         $this->params = !empty($options['params']) ? $options['params'] : [];
@@ -36,7 +35,7 @@ class Uri implements Uriable
         }
         if (!empty($this->urlParams)) {
             $params = http_build_query($this->urlParams);
-            $url .= '?' . $params;
+            $url .= '?'.$params;
         }
         $url = urldecode($url);
         $this->setUrl($url);
@@ -50,6 +49,7 @@ class Uri implements Uriable
     public function getUrl()
     {
         $this->buildUrl();
+
         return $this->url;
     }
 

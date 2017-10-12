@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\DependencyInjection;
 
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ProviderFactory
 {
@@ -13,7 +13,7 @@ class ProviderFactory
     public function __construct(UrlGeneratorInterface $generator, RequestStack $requestStack)
     {
         $this->generator = $generator;
-        $this->request   = $requestStack->getCurrentRequest();
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     public function createProvider($class, array $options, array $redirectParams = [])
@@ -21,7 +21,7 @@ class ProviderFactory
         $redirectUri = $this->generateUrl($options['redirect_route'], $redirectParams);
 
         $options['redirectUri'] = $redirectUri;
-        $collaborators          = [];
+        $collaborators = [];
 
         return new $class($options, $collaborators, $this->generator);
     }
@@ -30,8 +30,7 @@ class ProviderFactory
     {
         $this->getUrlToken($redirectParams);
 
-        $redirectUri = $this->generator
-            ->generate($redirectUri, $redirectParams, UrlGeneratorInterface::ABSOLUTE_URL);
+        $redirectUri = $this->generator->generate($redirectUri, $redirectParams, UrlGeneratorInterface::ABSOLUTE_URL);
 
         return $redirectUri;
     }

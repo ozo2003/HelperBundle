@@ -22,14 +22,14 @@ final class LocaleResolver
     private $request;
 
     /**
-     * @param String       $defaultLocale
-     * @param Boolean      $useLocaleFromRequest
+     * @param String  $defaultLocale
+     * @param Boolean $useLocaleFromRequest
      */
     public function __construct($defaultLocale, $useLocaleFromRequest)
     {
-        $this->defaultLocale        = $defaultLocale;
+        $this->defaultLocale = $defaultLocale;
         $this->useLocaleFromRequest = $useLocaleFromRequest;
-        $this->request              = Request::createFromGlobals();
+        $this->request = Request::createFromGlobals();
     }
 
     /**

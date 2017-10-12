@@ -13,6 +13,7 @@ class EqualsTo implements Valid
         }
 
         $this->message = sprintf("%s is invalid as it does not equal expected %s", $actualValue, $expectedValue);
+
         return false;
     }
 }

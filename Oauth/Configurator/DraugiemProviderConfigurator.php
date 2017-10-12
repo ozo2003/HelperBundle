@@ -8,6 +8,7 @@ class DraugiemProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {
+        // @formatter:off
         $node
             ->scalarNode('client_class')
                 ->info('If you have a sub-class of OAuth2Client you want to use, add it here')
@@ -22,6 +23,7 @@ class DraugiemProviderConfigurator implements ProviderConfigurator
                 ->prototype('variable')->end()
             ->end()
         ;
+        // @formatter:on
     }
 
     public function getProviderClass(array $config)
@@ -31,16 +33,11 @@ class DraugiemProviderConfigurator implements ProviderConfigurator
 
     public function getProviderOptions(array $config)
     {
-        return
-            array_merge(
-                [
-                    'clientId' => $config['client_id'],
-                    'clientSecret' => $config['client_secret'],
-                    'redirect_route' => $config['redirect_route']
-                ],
-                $config['provider_options']
-            )
-        ;
+        return array_merge([
+            'clientId' => $config['client_id'],
+            'clientSecret' => $config['client_secret'],
+            'redirect_route' => $config['redirect_route'],
+        ], $config['provider_options']);
     }
 
     public function getProviderDisplayName()

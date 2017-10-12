@@ -18,6 +18,7 @@ class ValidatorChain
 
     /**
      * @param Valid[] $validators
+     *
      * @return $this
      */
     public function setValidators(array $validators)
@@ -33,7 +34,8 @@ class ValidatorChain
 
     /**
      * @param string $claim
-     * @param Valid $validator
+     * @param Valid  $validator
+     *
      * @return $this
      */
     public function addValidator(Valid $validator)
@@ -46,6 +48,7 @@ class ValidatorChain
     /**
      * @param array $data
      * @param Token $token
+     *
      * @return bool
      */
     public function validate(array $data, Token $token)
@@ -56,7 +59,7 @@ class ValidatorChain
                 $valid = false;
                 $this->messages[$claim] = sprintf("Missing required value for claim %s", $claim);
                 continue;
-            } else if (empty($data[$claim]) || false === $token->hasClaim($claim)) {
+            } elseif (empty($data[$claim]) || false === $token->hasClaim($claim)) {
                 continue;
             }
 
@@ -71,6 +74,7 @@ class ValidatorChain
 
     /**
      * @param $name
+     *
      * @return bool
      */
     public function hasValidator($name)
@@ -80,6 +84,7 @@ class ValidatorChain
 
     /**
      * @param $name
+     *
      * @return mixed
      */
     public function getValidator($name)

@@ -9,11 +9,11 @@ class BaseEntity
     public $className;
     public $translates;
 
-    public $localeArr = array(
+    public $localeArr = [
         'lv' => 'lv_LV',
         'en' => 'en_US',
         'ru' => 'ru_RU',
-    );
+    ];
 
     public function __construct()
     {

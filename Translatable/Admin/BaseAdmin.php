@@ -2,9 +2,9 @@
 
 namespace Sludio\HelperBundle\Translatable\Admin;
 
-use Sonata\AdminBundle\Admin\Admin;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 
-class BaseAdmin extends Admin
+class BaseAdmin extends AbstractAdmin
 {
     protected function getRedis()
     {
@@ -14,7 +14,9 @@ class BaseAdmin extends Admin
             $kernel = $kernel->getKernel();
         }
 
-        return $kernel->getContainer()->get('snc_redis.'.$kernel->getContainer()->getParameter('sludio_helper.redis.translation'));
+        return $kernel->getContainer()->get('snc_redis.'.$kernel->getContainer()
+                ->getParameter('sludio_helper.redis.translation'))
+            ;
     }
 
     public function postUpdate($object)
@@ -22,8 +24,9 @@ class BaseAdmin extends Admin
         $this->getRedis()->del($object->getClassName().':translations:'.$object->getId());
         $this->getRedis()->del($object->getClassName().':translations:'.$object->getId().':checked');
     }
-    
-    public function getTranslationFilter($queryBuilder, $alias, $field, $value) {
+
+    public function getTranslationFilter($queryBuilder, $alias, $field, $value)
+    {
         if (!isset($value['value'])) {
             return;
         }
@@ -32,7 +35,7 @@ class BaseAdmin extends Admin
         $queryBuilder->andWhere("t.objectClass = '".$objectClass = $this->getClass()."'");
         $queryBuilder->andWhere("t.content LIKE '%".$value['value']."%'");
         $queryBuilder->setFirstResult(0);
-        
+
         return true;
     }
 }

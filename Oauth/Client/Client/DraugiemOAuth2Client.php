@@ -3,8 +3,8 @@
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\DraugiemUser;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DraugiemOAuth2Client extends OAuth2Client
 {
@@ -25,16 +25,13 @@ class DraugiemOAuth2Client extends OAuth2Client
         $data = [
             'hash' => md5($this->provider->getClientSecret().$this->provider->getRedirectUri()),
             'redirect' => $this->provider->getRedirectUri(),
-            'app' => $this->provider->getClientId()
+            'app' => $this->provider->getClientId(),
         ];
 
         $url = $this->provider->getBaseAuthorizationUrl().'?'.http_build_query($data);
 
         if (!$this->isStateless) {
-            $this->getSession()->set(
-                self::OAUTH2_SESSION_STATE_KEY,
-                $this->provider->getState()
-            );
+            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $this->provider->getState());
         }
 
         return new RedirectResponse($url);
@@ -56,7 +53,7 @@ class DraugiemOAuth2Client extends OAuth2Client
         $data = [
             'app' => $this->provider->getClientSecret(),
             'code' => $this->getCurrentRequest()->get('dr_auth_code'),
-            'action' => 'authorize'
+            'action' => 'authorize',
         ];
 
         $url = $this->provider->getBaseAccessTokenUrl().'?'.http_build_query($data);

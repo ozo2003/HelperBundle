@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 class Openid implements Extensionable
@@ -15,13 +15,13 @@ class Openid implements Extensionable
         $clientConfigurations = $container->getParameter('sludio_helper.openid.clients');
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
-            $node = $tree->root('sludio_helper_openid_client/clients/' . $key);
+            $node = $tree->root('sludio_helper_openid_client/clients/'.$key);
             $this->buildClientConfiguration($node);
             $processor = new Processor();
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
             $clientServiceKey = 'sludio_helper.openid.client.'.$key;
             $service = [
-                'key' => $clientServiceKey
+                'key' => $clientServiceKey,
             ];
             if (isset($config['provider_options']) && isset($config['provider_options']['name'])) {
                 $service['name'] = $config['provider_options']['name'];
@@ -52,6 +52,8 @@ class Openid implements Extensionable
     public function buildClientConfiguration(NodeDefinition &$node)
     {
         $optionsNode = $node->children();
+
+        // @formatter:off
         $optionsNode
             ->scalarNode('api_key')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('openid_url')->isRequired()->cannotBeEmpty()->end()
@@ -62,15 +64,14 @@ class Openid implements Extensionable
             ->scalarNode('redirect_route')->isRequired()->cannotBeEmpty()->end()
             ->arrayNode('provider_options')->prototype('variable')->end()->end()
         ;
+        // @formatter:on
+
         $optionsNode->end();
     }
 
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
-        $clientDefinition = $container->register(
-            $clientServiceKey,
-            $container->getParameter($clientServiceKey.'.user_provider')
-        );
+        $clientDefinition = $container->register($clientServiceKey, $container->getParameter($clientServiceKey.'.user_provider'));
         $clientDefinition->setArguments([
             $clientServiceKey,
             new Reference('request_stack'),

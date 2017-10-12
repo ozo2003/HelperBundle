@@ -4,23 +4,17 @@ namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
-use Lcobucci\JWT\Token;
-use League\OAuth2\Client\Provider\GenericProvider;
-use League\OAuth2\Client\Provider\AbstractProvider;
-use InvalidArgumentException;
-use League\OAuth2\Client\Grant\AbstractGrant;
-use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
-use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
-use Psr\Http\Message\ResponseInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-
+use Lcobucci\JWT\Token;
+use League\OAuth2\Client\Grant\AbstractGrant;
+use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
+use Psr\Http\Message\ResponseInterface;
+use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Validator;
-use Sludio\HelperBundle\Openidconnect\Provider\Uri;
-use Sludio\HelperBundle\Openidconnect\Component\Providerable;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class OpenIDConnectProvider extends AbstractProvider implements Providerable
 {
@@ -76,8 +70,8 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
 
     /**
      * @param string $key
-     * @param array $options
-     * @param array $collaborators
+     * @param array  $options
+     * @param array  $collaborators
      * @param Router $router
      */
     public function __construct(string $key, array $options = [], array $collaborators = [], Router $router)
@@ -115,11 +109,11 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
             switch ($options['redirect']['type']) {
                 case 'uri':
                     $url = $options['redirect']['uri'];
-                break;
+                    break;
                 case 'route':
                     $params = !empty($options['redirect']['params']) ? $options['redirect']['params'] : [];
                     $url = $this->router->generate($options['redirect']['route'], $params, UrlGeneratorInterface::ABSOLUTE_URL);
-                break;
+                    break;
             }
             $this->redirectUri = $url;
 
@@ -129,7 +123,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
                     'client_secret' => $this->clientSecret,
                     'redirect_uri' => $this->redirectUri,
                     'state' => $this->state,
-                    'base_uri' => $this->baseUri
+                    'base_uri' => $this->baseUri,
                 ];
                 $this->uris[$name] = new Uri($uri, $opt);
             }
@@ -156,6 +150,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      *
      * @param  mixed $grant
      * @param  array $options
+     *
      * @return AccessToken
      */
     public function getAccessToken($grant, array $options = [])
@@ -207,12 +202,12 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         // The meaning and processing of acr Claim Values is out of scope for this specification.
         $currentTime = time();
         $data = [
-            'iss'       => $this->getIdTokenIssuer(),
-            'exp'       => $currentTime,
+            'iss' => $this->getIdTokenIssuer(),
+            'exp' => $currentTime,
             'auth_time' => $currentTime,
-            'iat'       => $currentTime,
-            'nbf'       => $currentTime,
-            'aud'       => $this->clientId
+            'iat' => $currentTime,
+            'nbf' => $currentTime,
+            'aud' => $this->clientId,
         ];
 
         // If the ID Token contains multiple audiences, the Client SHOULD verify that an azp Claim is present.
@@ -257,7 +252,8 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return $this->idTokenIssuer;
     }
 
-    public function check(array $response = []) {
+    public function check(array $response = [])
+    {
         return true;
     }
 
@@ -267,8 +263,9 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * The grant that was used to fetch the response can be used to provide
      * additional context.
      *
-     * @param  array $response
+     * @param  array         $response
      * @param  AbstractGrant $grant
+     *
      * @return AccessToken
      */
     protected function createAccessToken(array $response, AbstractGrant $grant)
@@ -276,6 +273,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         if ($this->check($response)) {
             return new AccessToken($response);
         }
+
         return null;
     }
 

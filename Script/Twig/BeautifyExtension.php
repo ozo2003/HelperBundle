@@ -1,6 +1,7 @@
 <?php
 
 namespace Sludio\HelperBundle\Script\Twig;
+
 use Twig_Extension;
 use Twig_SimpleFilter;
 
@@ -25,23 +26,59 @@ class BeautifyExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = array(
-            new Twig_SimpleFilter('sludio_beautify', array($this, 'beautify')),
-            new Twig_SimpleFilter('sludio_urldecode', array($this, 'url_decode')),
-            new Twig_SimpleFilter('sludio_parse', array($this, 'parse')),
-            new Twig_SimpleFilter('sludio_file_exists', array($this, 'file_exists')),
-            new Twig_SimpleFilter('sludio_html_entity_decode', array($this, 'html_entity_decode')),
-            new Twig_SimpleFilter('sludio_strip_descr', array($this, 'strip_descr')),
-        );
+        $array = [
+            new Twig_SimpleFilter('sludio_beautify', [
+                $this,
+                'beautify',
+            ]),
+            new Twig_SimpleFilter('sludio_urldecode', [
+                $this,
+                'url_decode',
+            ]),
+            new Twig_SimpleFilter('sludio_parse', [
+                $this,
+                'parse',
+            ]),
+            new Twig_SimpleFilter('sludio_file_exists', [
+                $this,
+                'file_exists',
+            ]),
+            new Twig_SimpleFilter('sludio_html_entity_decode', [
+                $this,
+                'html_entity_decode',
+            ]),
+            new Twig_SimpleFilter('sludio_strip_descr', [
+                $this,
+                'strip_descr',
+            ]),
+        ];
 
-        $short_array = array(
-            new Twig_SimpleFilter('beautify', array($this, 'beautify')),
-            new Twig_SimpleFilter('urldecode', array($this, 'url_decode')),
-            new Twig_SimpleFilter('parse', array($this, 'parse')),
-            new Twig_SimpleFilter('file_exists', array($this, 'file_exists')),
-            new Twig_SimpleFilter('html_entity_decode', array($this, 'html_entity_decode')),
-            new Twig_SimpleFilter('strip_descr', array($this, 'strip_descr')),
-        );
+        $short_array = [
+            new Twig_SimpleFilter('beautify', [
+                $this,
+                'beautify',
+            ]),
+            new Twig_SimpleFilter('urldecode', [
+                $this,
+                'url_decode',
+            ]),
+            new Twig_SimpleFilter('parse', [
+                $this,
+                'parse',
+            ]),
+            new Twig_SimpleFilter('file_exists', [
+                $this,
+                'file_exists',
+            ]),
+            new Twig_SimpleFilter('html_entity_decode', [
+                $this,
+                'html_entity_decode',
+            ]),
+            new Twig_SimpleFilter('strip_descr', [
+                $this,
+                'strip_descr',
+            ]),
+        ];
 
         if ($this->short_functions) {
             return array_merge($array, $short_array);

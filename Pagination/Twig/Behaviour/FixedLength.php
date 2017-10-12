@@ -40,7 +40,7 @@ final class FixedLength extends AbstractPaginationBehaviour
      */
     private function setMaximumVisible($maximumVisible)
     {
-        $maximumVisible = (int) $maximumVisible;
+        $maximumVisible = (int)$maximumVisible;
         $this->guardMaximumVisibleMinimumValue($maximumVisible);
         $this->maximumVisible = $maximumVisible;
     }
@@ -65,12 +65,7 @@ final class FixedLength extends AbstractPaginationBehaviour
         // 1 on each edge, 1 omitted chunk on each side, and 3 in the middle.
         // For example: [1][...][11][12][13][...][20]
         if ($maximumVisible < 3) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Maximum of number of visible pages (%d) should be at least 3.',
-                    $maximumVisible
-                )
-            );
+            throw new InvalidArgumentException(sprintf('Maximum of number of visible pages (%d) should be at least 3.', $maximumVisible));
         }
     }
 
@@ -113,7 +108,7 @@ final class FixedLength extends AbstractPaginationBehaviour
      */
     private function getSingleOmissionBreakpoint()
     {
-        return (int) floor($this->maximumVisible / 2) + 1;
+        return (int)floor($this->maximumVisible / 2) + 1;
     }
 
     /**
@@ -124,8 +119,7 @@ final class FixedLength extends AbstractPaginationBehaviour
      */
     public function hasSingleOmittedChunk($totalPages, $currentPage)
     {
-        return $this->hasSingleOmittedChunkNearLastPage($currentPage) ||
-            $this->hasSingleOmittedChunkNearStartPage($totalPages, $currentPage);
+        return $this->hasSingleOmittedChunkNearLastPage($currentPage) || $this->hasSingleOmittedChunkNearStartPage($totalPages, $currentPage);
     }
 
     /**
@@ -161,11 +155,11 @@ final class FixedLength extends AbstractPaginationBehaviour
         // Determine where the omitted chunk of pages will be.
         if ($this->hasSingleOmittedChunkNearLastPage($currentPage)) {
             $rest = $this->maximumVisible - $currentPage;
-            $omitPagesFrom = ((int) ceil($rest / 2)) + $currentPage;
+            $omitPagesFrom = ((int)ceil($rest / 2)) + $currentPage;
             $omitPagesTo = $totalPages - ($this->maximumVisible - $omitPagesFrom);
         } else {
             $rest = $this->maximumVisible - ($totalPages - $currentPage);
-            $omitPagesFrom = (int) ceil($rest / 2);
+            $omitPagesFrom = (int)ceil($rest / 2);
             $omitPagesTo = ($currentPage - ($rest - $omitPagesFrom));
         }
 
@@ -175,11 +169,7 @@ final class FixedLength extends AbstractPaginationBehaviour
         $pagesRight = range($omitPagesTo + 1, $totalPages);
 
         // Merge left side, omitted pages indicator, and right side together.
-        return array_merge(
-            $pagesLeft,
-            [$omittedPagesIndicator],
-            $pagesRight
-        );
+        return array_merge($pagesLeft, [$omittedPagesIndicator], $pagesRight);
     }
 
     /**
@@ -220,12 +210,6 @@ final class FixedLength extends AbstractPaginationBehaviour
 
         // Merge everything together with omitted chunks of pages in between
         // them.
-        return array_merge(
-            $pagesLeft,
-            [$omittedPagesIndicator],
-            $pagesCenter,
-            [$omittedPagesIndicator],
-            $pagesRight
-        );
+        return array_merge($pagesLeft, [$omittedPagesIndicator], $pagesCenter, [$omittedPagesIndicator], $pagesRight);
     }
 }

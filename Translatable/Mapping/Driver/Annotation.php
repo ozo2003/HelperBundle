@@ -12,7 +12,7 @@ use ReflectionClass;
  * metadata from Annotations specifically for Translatable
  * extension.
  *
- * @author Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
+ * @author  Gediminas Morkevicius <gediminas.morkevicius@gmail.com>
  * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 class Annotation extends Base
@@ -55,10 +55,7 @@ class Annotation extends Base
 
         // property annotations
         foreach ($class->getProperties() as $property) {
-            if ($meta->isMappedSuperclass && !$property->isPrivate() ||
-                $meta->isInheritedField($property->name) ||
-                isset($meta->associationMappings[$property->name]['inherited'])
-            ) {
+            if ($meta->isMappedSuperclass && !$property->isPrivate() || $meta->isInheritedField($property->name) || isset($meta->associationMappings[$property->name]['inherited'])) {
                 continue;
             }
             // translatable property

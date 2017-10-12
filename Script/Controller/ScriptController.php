@@ -2,12 +2,12 @@
 
 namespace Sludio\HelperBundle\Script\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArrayInput;
 use Predis\Client;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class ScriptController extends Controller
 {
@@ -26,9 +26,9 @@ class ScriptController extends Controller
             $this->container->get($snc)->flushdb();
         }
 
-        return new JsonResponse($data, 200, array(
+        return new JsonResponse($data, 200, [
             'Cache-Control' => 'no-cache',
-        ));
+        ]);
     }
 
     public function cacheAction(Request $request)
@@ -39,23 +39,28 @@ class ScriptController extends Controller
             $kernel = $kernel->getKernel();
         }
 
-        foreach (array('clear', 'warmup') as $command) {
+        $commands = [
+            'clear',
+            'warmup',
+        ];
+        foreach ($commands as $command) {
             $application = new Application($kernel);
             $application->setAutoExit(false);
-            $input = new ArrayInput(array(
+            $input = new ArrayInput([
                 'command' => 'cache:'.$command,
                 '--env' => $kernel->getEnvironment(),
-            ));
+            ]);
             $application->run($input);
             $data['success'] = 1;
         }
 
-        return new JsonResponse($data, 200, array(
+        return new JsonResponse($data, 200, [
             'Cache-Control' => 'no-cache',
-        ));
+        ]);
     }
 
-    public function ibrowsAction(Request $request) {
+    public function ibrowsAction(Request $request)
+    {
         global $kernel;
 
         if ('AppCache' === get_class($kernel)) {
@@ -65,14 +70,14 @@ class ScriptController extends Controller
         $application = new Application($kernel);
         $application->setAutoExit(false);
 
-        $input = new ArrayInput(array(
-            'command' => 'ibrows:sonatatranslationbundle:clearcache'
-        ));
+        $input = new ArrayInput([
+            'command' => 'ibrows:sonatatranslationbundle:clearcache',
+        ]);
         $application->run($input);
         $data['success'] = 1;
 
-        return new JsonResponse($data, 200, array(
+        return new JsonResponse($data, 200, [
             'Cache-Control' => 'no-cache',
-        ));
+        ]);
     }
 }

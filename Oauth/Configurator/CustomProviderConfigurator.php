@@ -8,6 +8,7 @@ class CustomProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {
+        // @formatter:off
         $node
             ->scalarNode('provider_class')
                 ->info('The class name of your provider class (e.g. the one that extends AbstractProvider)')
@@ -22,6 +23,7 @@ class CustomProviderConfigurator implements ProviderConfigurator
                 ->prototype('variable')->end()
             ->end()
         ;
+        // @formatter:on
     }
 
     public function getProviderClass(array $config)
@@ -31,14 +33,10 @@ class CustomProviderConfigurator implements ProviderConfigurator
 
     public function getProviderOptions(array $config)
     {
-        return
-            array_merge(
-            [
-                'client_id' => $config['client_id'],
-                'client_secret' => $config['client_secret'],
-            ],
-            $config['provider_options']
-        );
+        return array_merge([
+            'client_id' => $config['client_id'],
+            'client_secret' => $config['client_secret'],
+        ], $config['provider_options']);
     }
 
     public function getProviderDisplayName()

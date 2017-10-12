@@ -45,12 +45,13 @@ class Custom extends AbstractProvider
         return $this->domain.$this->token.'?client_id='.$this->options['client_id'].'&client_secret='.$this->options['client_secret'];
     }
 
-    public function getTokenData() {
-        $data = array(
+    public function getTokenData()
+    {
+        $data = [
             'url' => $this->domain.$this->token,
             'client_id' => $this->options['client_id'],
-            'client_secret' => $this->options['client_secret']
-        );
+            'client_secret' => $this->options['client_secret'],
+        ];
 
         return $data;
     }

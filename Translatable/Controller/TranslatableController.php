@@ -2,10 +2,9 @@
 
 namespace Sludio\HelperBundle\Translatable\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class TranslatableController extends Controller
 {
@@ -14,8 +13,8 @@ class TranslatableController extends Controller
         Sludio::getAllTranslations();
         $data['success'] = 1;
 
-        return new JsonResponse($data, 200, array(
+        return new JsonResponse($data, 200, [
             'Cache-Control' => 'no-cache',
-        ));
+        ]);
     }
 }

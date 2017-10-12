@@ -32,14 +32,12 @@ class ObjectPositionExtension extends Twig_Extension
 
     public function getFunctions()
     {
-        return array(
-            new Twig_SimpleFunction(self::NAME,
-                function($entity) {
-                    $getter = sprintf('get%s', ucfirst($this->positionService->getPositionFieldByEntity($entity)));
+        return [
+            new Twig_SimpleFunction(self::NAME, function ($entity) {
+                $getter = sprintf('get%s', ucfirst($this->positionService->getPositionFieldByEntity($entity)));
 
-                    return $entity->{$getter}();
-                }
-            ),
-        );
+                return $entity->{$getter}();
+            }),
+        ];
     }
 }

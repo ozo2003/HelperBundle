@@ -16,11 +16,8 @@ class GoogleOAuth2Client extends OAuth2Client
         }
 
         if (!$this->isStateless) {
-            $this->getSession()->set(
-                self::OAUTH2_SESSION_STATE_KEY,
-                $state ?: $this->provider->getState()
-            );
-            if($state){
+            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $state ?: $this->provider->getState());
+            if ($state) {
                 $this->provider->setState($state);
             }
         }

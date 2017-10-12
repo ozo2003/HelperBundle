@@ -13,6 +13,7 @@ class LesserOrEqualsTo implements Valid
         }
 
         $this->message = sprintf("%s is invalid as it is not less than %s", $actualValue, $expectedValue);
+
         return false;
 
     }

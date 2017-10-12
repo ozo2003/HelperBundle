@@ -10,6 +10,7 @@ class ReCaptchaConfigurator implements CaptchaConfigurator
 
     public function buildConfiguration(NodeBuilder $node)
     {
+        // @formatter:off
         $node
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('private_key')->isRequired()->cannotBeEmpty()->end()
@@ -30,33 +31,34 @@ class ReCaptchaConfigurator implements CaptchaConfigurator
                 ->end()
             ->end()
         ;
+        // @formatter:on
     }
-    
+
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
         /* RESOLVER */
-        $resolver      = $clientServiceKey.'.resolver';
+        $resolver = $clientServiceKey.'.resolver';
         $resolverClass = $container->getParameter($clientServiceKey.'.resolver_class');
 
         $resolverDefinition = $container->register($resolver, $resolverClass);
         $resolverDefinition->setPublic(false);
         $resolverDefinition->setArguments([
             $container->getParameter($clientServiceKey.'.locale_key'),
-            $container->getParameter($clientServiceKey.'.locale_from_request')
+            $container->getParameter($clientServiceKey.'.locale_from_request'),
         ]);
         /* TYPE */
-        $type                = $clientServiceKey.'.form.type';
-        $typeClass           = $container->getParameter($clientServiceKey.'.type_class');
-        $typeDefinition      = $container->register($type, $typeClass);
+        $type = $clientServiceKey.'.form.type';
+        $typeClass = $container->getParameter($clientServiceKey.'.type_class');
+        $typeDefinition = $container->register($type, $typeClass);
         $typeDefinition->setArguments([
             $container->getParameter($clientServiceKey.'.public_key'),
             $container->getParameter($clientServiceKey.'.ajax'),
-            $container->getDefinition($resolver)
+            $container->getDefinition($resolver),
         ]);
         $typeDefinition->addTag('form.type');
         /* VALIDATOR */
-        $validator           = $clientServiceKey.'.validator.true';
-        $validatorClass      = $container->getParameter($clientServiceKey.'.validator_class');
+        $validator = $clientServiceKey.'.validator.true';
+        $validatorClass = $container->getParameter($clientServiceKey.'.validator_class');
         $validatorDefinition = $container->register($validator, $validatorClass);
         $validatorDefinition->setArguments([
             $container->getParameter($clientServiceKey.'.private_key'),

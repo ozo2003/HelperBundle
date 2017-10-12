@@ -8,6 +8,7 @@ class FacebookProviderConfigurator implements ProviderConfigurator
 {
     public function buildConfiguration(NodeBuilder $node)
     {
+        // @formatter:off
         $node
             ->scalarNode('graph_api_version')
                 ->isRequired()
@@ -26,6 +27,7 @@ class FacebookProviderConfigurator implements ProviderConfigurator
                 ->prototype('variable')->end()
             ->end()
         ;
+        // @formatter:on
     }
 
     public function getProviderClass(array $config)
@@ -35,17 +37,12 @@ class FacebookProviderConfigurator implements ProviderConfigurator
 
     public function getProviderOptions(array $config)
     {
-        return
-            array_merge(
-                [
-                    'clientId' => $config['client_id'],
-                    'clientSecret' => $config['client_secret'],
-                    'graphApiVersion' => $config['graph_api_version'],
-                    'redirect_route' => $config['redirect_route']
-                ],
-                $config['provider_options']
-            )
-        ;
+        return array_merge([
+            'clientId' => $config['client_id'],
+            'clientSecret' => $config['client_secret'],
+            'graphApiVersion' => $config['graph_api_version'],
+            'redirect_route' => $config['redirect_route'],
+        ], $config['provider_options']);
     }
 
     public function getProviderDisplayName()

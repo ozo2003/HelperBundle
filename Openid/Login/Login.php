@@ -2,13 +2,13 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
+use Exception;
+use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Exception;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Login implements Loginable
 {
@@ -99,14 +99,14 @@ class Login implements Loginable
             }
         }
 
-        $params = array(
+        $params = [
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
             'openid.realm' => $altRealm != null ? $altRealm : (($useHttps ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST']),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
-        );
+        ];
 
         if ($this->ns_mode === 'sreg') {
             $params['openid.ns.sreg'] = 'http://openid.net/extensions/sreg/1.1';
@@ -127,12 +127,12 @@ class Login implements Loginable
         $get = $this->request->query->all();
 
         try {
-            $params = array(
+            $params = [
                 'openid.assoc_handle' => $get['openid_assoc_handle'],
                 'openid.signed' => $get['openid_signed'],
                 'openid.sig' => $get['openid_sig'],
                 'openid.ns' => 'http://specs.openid.net/auth/2.0',
-            );
+            ];
 
             $signed = explode(',', $get['openid_signed']);
 
@@ -145,16 +145,14 @@ class Login implements Loginable
 
             $data = http_build_query($params);
 
-            $context = stream_context_create(array(
-                'http' => array(
+            $context = stream_context_create([
+                'http' => [
                     'method' => 'POST',
-                    'header' => "Accept-language: en\r\n".
-                    "Content-type: application/x-www-form-urlencoded\r\n".
-                    'Content-Length: '.strlen($data)."\r\n",
+                    'header' => "Accept-language: en\r\n"."Content-type: application/x-www-form-urlencoded\r\n".'Content-Length: '.strlen($data)."\r\n",
                     'content' => $data,
                     'timeout' => $timeout,
-                ),
-            ));
+                ],
+            ]);
 
             $result = file_get_contents($this->openid_url.'/'.$this->api_key, false, $context);
 

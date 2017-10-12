@@ -2,11 +2,11 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Google;
 
+use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
-use League\OAuth2\Client\Provider\AbstractProvider;
 
 class Google extends AbstractProvider
 {
@@ -56,23 +56,24 @@ class Google extends AbstractProvider
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
         $fields = array_merge($this->defaultUserFields, $this->userFields);
-        return 'https://www.googleapis.com/plus/v1/people/me?'.http_build_query([
+
+        $input = [
             'fields' => implode(',', $fields),
-            'alt'    => 'json',
-        ]);
+            'alt' => 'json',
+        ];
+
+        return 'https://www.googleapis.com/plus/v1/people/me?'.http_build_query($input);
     }
 
     protected function getAuthorizationParameters(array $options)
     {
-        $params = array_merge(
-            parent::getAuthorizationParameters($options),
-            array_filter([
-                'hd'          => $this->hostedDomain,
-                'access_type' => $this->accessType,
-                // if the user is logged in with more than one account ask which one to use for the login!
-                'authuser'    => '-1'
-            ])
-        );
+        $input = [
+            'hd' => $this->hostedDomain,
+            'access_type' => $this->accessType,
+            // if the user is logged in with more than one account ask which one to use for the login!
+            'authuser' => '-1',
+        ]
+        $params = array_merge(parent::getAuthorizationParameters($options), array_filter($input));
 
         return $params;
     }
@@ -94,11 +95,11 @@ class Google extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if (!empty($data['error'])) {
-            $code  = 0;
+            $code = 0;
             $error = $data['error'];
 
             if (is_array($error)) {
-                $code  = $error['code'];
+                $code = $error['code'];
                 $error = $error['message'];
             }
 

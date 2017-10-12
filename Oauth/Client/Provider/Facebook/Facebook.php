@@ -2,12 +2,12 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Facebook;
 
-use League\OAuth2\Client\Token\AccessToken;
-use Sludio\HelperBundle\Oauth\Exception\FacebookProviderException;
+use InvalidArgumentException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
+use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Oauth\Client\Provider\BaseProvider;
-use InvalidArgumentException;
+use Sludio\HelperBundle\Oauth\Exception\FacebookProviderException;
 
 class Facebook extends BaseProvider
 {
@@ -70,19 +70,32 @@ class Facebook extends BaseProvider
 
     public function getDefaultScopes()
     {
-        return ['public_profile', 'email'];
+        return [
+            'public_profile',
+            'email',
+        ];
     }
 
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
         $fields = [
-            'id', 'name', 'first_name', 'last_name',
-            'email', 'hometown', 'picture.type(large){url,is_silhouette}',
-            'cover{source}', 'gender', 'locale', 'link', 'timezone', 'age_range'
+            'id',
+            'name',
+            'first_name',
+            'last_name',
+            'email',
+            'hometown',
+            'picture.type(large){url,is_silhouette}',
+            'cover{source}',
+            'gender',
+            'locale',
+            'link',
+            'timezone',
+            'age_range',
         ];
 
         // backwards compatibility with less than v2.8
-        if ((float) substr($this->graphApiVersion, 1) < 2.8) {
+        if ((float)substr($this->graphApiVersion, 1) < 2.8) {
             $fields[] = 'bio';
         }
 
@@ -103,7 +116,7 @@ class Facebook extends BaseProvider
     public function getLongLivedAccessToken($accessToken)
     {
         $params = [
-            'fb_exchange_token' => (string) $accessToken,
+            'fb_exchange_token' => (string)$accessToken,
         ];
 
         return $this->getAccessToken('fb_exchange_token', $params);

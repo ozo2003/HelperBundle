@@ -32,12 +32,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviour
     private function guardTotalPagesMinimumValue($totalPages)
     {
         if ($totalPages < 1) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Total number of pages (%d) should not be lower than 1.',
-                    $totalPages
-                )
-            );
+            throw new InvalidArgumentException(sprintf('Total number of pages (%d) should not be lower than 1.', $totalPages));
         }
     }
 
@@ -50,12 +45,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviour
     private function guardCurrentPageMinimumValue($currentPage)
     {
         if ($currentPage < 1) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Current page (%d) should not be lower than 1.',
-                    $currentPage
-                )
-            );
+            throw new InvalidArgumentException(sprintf('Current page (%d) should not be lower than 1.', $currentPage));
         }
     }
 
@@ -69,13 +59,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviour
     private function guardCurrentPageExistsInTotalPages($totalPages, $currentPage)
     {
         if ($currentPage > $totalPages) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Current page (%d) should not be higher than total number of pages (%d).',
-                    $currentPage,
-                    $totalPages
-                )
-            );
+            throw new InvalidArgumentException(sprintf('Current page (%d) should not be higher than total number of pages (%d).', $currentPage, $totalPages));
         }
     }
 
@@ -88,9 +72,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviour
     private function guardOmittedPagesIndicatorType($indicator)
     {
         if (!is_int($indicator) && !is_string($indicator)) {
-            throw new InvalidArgumentException(
-                'Omitted pages indicator should either be a string or an int.'
-            );
+            throw new InvalidArgumentException('Omitted pages indicator should either be a string or an int.');
         }
     }
 
@@ -105,13 +87,7 @@ abstract class AbstractPaginationBehaviour implements PaginationBehaviour
     private function guardOmittedPagesIndicatorIntValue($totalPages, $indicator)
     {
         if (is_int($indicator) && $indicator >= 1 && $indicator <= $totalPages) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'Omitted pages indicator (%d) should not be between 1 and total number of pages (%d).',
-                    $indicator,
-                    $totalPages
-                )
-            );
+            throw new InvalidArgumentException(sprintf('Omitted pages indicator (%d) should not be between 1 and total number of pages (%d).', $indicator, $totalPages));
         }
     }
 }

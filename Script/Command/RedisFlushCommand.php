@@ -2,19 +2,16 @@
 
 namespace Sludio\HelperBundle\Script\Command;
 
+use Predis\Client;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Predis\Client;
 
 class RedisFlushCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this
-            ->setName('sludio:redis:flush')
-            ->setDescription('FlushAll redis')
-        ;
+        $this->setName('sludio:redis:flush')->setDescription('FlushAll redis');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -31,7 +28,7 @@ class RedisFlushCommand extends ContainerAwareCommand
                 $clients[] = $id;
             }
         }
-        
+
         foreach ($clients as $snc) {
             $kernel->getContainer()->get($snc)->flushdb();
         }

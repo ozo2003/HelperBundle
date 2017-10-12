@@ -10,6 +10,7 @@ class AppSecretProof
      *
      * @param string $appSecret
      * @param string $accessToken
+     *
      * @return string
      */
     public static function create($appSecret, $accessToken)

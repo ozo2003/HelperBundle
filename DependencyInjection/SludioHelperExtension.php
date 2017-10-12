@@ -2,11 +2,10 @@
 
 namespace Sludio\HelperBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension as BaseExtension;
-use Sludio\HelperBundle\DependencyInjection\Extension;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -27,12 +26,14 @@ class SludioHelperExtension extends BaseExtension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration();
-        $config        = $this->processConfiguration($configuration, $configs);
+        $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $files  = array(
-            'components.yml', 'parameters.yml', 'services.yml',
-        );
+        $files = [
+            'components.yml',
+            'parameters.yml',
+            'services.yml',
+        ];
         foreach ($files as $file) {
             if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
                 $loader->load($file);
@@ -40,14 +41,16 @@ class SludioHelperExtension extends BaseExtension
         }
 
         foreach ($config['extensions'] as $key => $extension) {
-            $enabled  = $iterator = 0;
-            $length   = count($extension);
+            $enabled = $iterator = 0;
+            $length = count($extension);
             foreach ($extension as $variable => $value) {
                 $iterator++;
                 if ($variable == 'enabled' && $value) {
-                    $files  = array(
-                        'components.yml', 'parameters.yml', 'services.yml',
-                    );
+                    $files = [
+                        'components.yml',
+                        'parameters.yml',
+                        'services.yml',
+                    ];
                     $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
                     foreach ($files as $file) {
                         if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {

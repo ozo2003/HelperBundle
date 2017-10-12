@@ -26,15 +26,27 @@ class MissingExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = array(
-            new Twig_SimpleFilter('sludio_objects', array($this, 'getObjects')),
-            new Twig_SimpleFilter('sludio_svg', array($this, 'getSvg')),
-        );
+        $array = [
+            new Twig_SimpleFilter('sludio_objects', [
+                $this,
+                'getObjects',
+            ]),
+            new Twig_SimpleFilter('sludio_svg', [
+                $this,
+                'getSvg',
+            ]),
+        ];
 
-        $short_array = array(
-            new Twig_SimpleFilter('objects', array($this, 'getObjects')),
-            new Twig_SimpleFilter('svg', array($this, 'getSvg')),
-        );
+        $short_array = [
+            new Twig_SimpleFilter('objects', [
+                $this,
+                'getObjects',
+            ]),
+            new Twig_SimpleFilter('svg', [
+                $this,
+                'getSvg',
+            ]),
+        ];
 
         if ($this->short_functions) {
             return array_merge($array, $short_array);
@@ -45,8 +57,8 @@ class MissingExtension extends Twig_Extension
 
     public function getObjects($class, $by, $order = null, $one = false)
     {
-        $by = is_array($by) ? $by : array($by);
-        $order = is_array($order) ? $order : array($order);
+        $by = is_array($by) ? $by : [$by];
+        $order = is_array($order) ? $order : [$order];
 
         if ($one) {
             $objects = $this->em->getRepository($class)->findOneBy($by, $order);

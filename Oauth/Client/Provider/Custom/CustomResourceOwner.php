@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Custom;
 
-use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 use League\OAuth2\Client\Provider\GenericResourceOwner;
+use League\OAuth2\Client\Tool\ArrayAccessorTrait;
 
 class CustomResourceOwner extends GenericResourceOwner
 {
@@ -11,7 +11,7 @@ class CustomResourceOwner extends GenericResourceOwner
 
     protected $response;
 
-    public function __construct(array $response = array())
+    public function __construct(array $response = [])
     {
         $this->response = $response;
     }

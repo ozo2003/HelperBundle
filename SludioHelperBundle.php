@@ -11,10 +11,10 @@
 
 namespace Sludio\HelperBundle;
 
-use Symfony\Component\HttpKernel\Bundle\Bundle;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Sludio\HelperBundle\DependencyInjection\Compiler\TemplatingPass;
 use Sludio\HelperBundle\DependencyInjection\SludioHelperExtension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class SludioHelperBundle extends Bundle
 {

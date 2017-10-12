@@ -181,6 +181,7 @@ class FacebookUser implements ResourceOwnerInterface, SocialUser
         if (isset($this->response['age_range']['min'])) {
             return $this->response['age_range']['min'];
         }
+
         return null;
     }
 
@@ -194,6 +195,7 @@ class FacebookUser implements ResourceOwnerInterface, SocialUser
         if (isset($this->response['age_range']['max'])) {
             return $this->response['age_range']['max'];
         }
+
         return null;
     }
 

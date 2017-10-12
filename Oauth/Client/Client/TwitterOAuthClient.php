@@ -2,15 +2,15 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
+use Abraham\TwitterOAuth\TwitterOAuth;
+use Exception;
+use Sludio\HelperBundle\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
 use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Abraham\TwitterOAuth\TwitterOAuth;
-use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
-use Sludio\HelperBundle\Logger\SludioLogger;
-use Exception;
 
 class TwitterOAuthClient extends OAuth2Client
 {
@@ -59,10 +59,7 @@ class TwitterOAuthClient extends OAuth2Client
         $url = $this->provider->twitter->url(static::URL_AUTHORIZE, ['oauth_token' => $this->getRequestToken()]);
 
         if (!$this->isStateless) {
-            $this->getSession()->set(
-                self::OAUTH2_SESSION_STATE_KEY,
-                $this->provider->getState()
-            );
+            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $this->provider->getState());
         }
 
         return new RedirectResponse($url);
@@ -90,7 +87,7 @@ class TwitterOAuthClient extends OAuth2Client
         return $this->provider->getAccessToken('authorization_code', [
             'verifier' => $code,
             'token' => $token,
-            'code' => $code
+            'code' => $code,
         ]);
     }
 

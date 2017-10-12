@@ -36,13 +36,19 @@ class UsortExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = array(
-            new Twig_SimpleFilter('sludio_usort', array($this, 'usortFunction')),
-        );
+        $array = [
+            new Twig_SimpleFilter('sludio_usort', [
+                $this,
+                'usortFunction',
+            ]),
+        ];
 
-        $short_array = array(
-            new Twig_SimpleFilter('usort', array($this, 'usortFunction')),
-        );
+        $short_array = [
+            new Twig_SimpleFilter('usort', [
+                $this,
+                'usortFunction',
+            ]),
+        ];
 
         if ($this->short_functions) {
             return array_merge($array, $short_array);
@@ -59,7 +65,10 @@ class UsortExtension extends Twig_Extension
         if (is_object($objects)) {
             $objects = $objects->toArray();
         }
-        usort($objects, array(__CLASS__, 'cmpOrderBy'));
+        usort($objects, [
+            __CLASS__,
+            'cmpOrderBy',
+        ]);
 
         return $objects;
     }
