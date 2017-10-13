@@ -37,7 +37,8 @@
         "snc/redis-bundle": "^2",
         "symfony/symfony": "^2.8|^3",
         "twig/twig": "^1|^2",
-        "ocramius/proxy-manager": "^2.1"
+        "ocramius/proxy-manager": "^2.1",
+        "sonata-project/admin-bundle": "^2.3|^3"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"
