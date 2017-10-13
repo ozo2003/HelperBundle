@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\Translatable\Repository;
 ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', 0);
 
-use Sludio\HelperBundle\Insert\Repository\QuickInsertRepository as Quick;
+use Sludio\HelperBundle\Script\Repository\QuickInsertRepository as Quick;
 
 class TranslatableRepository
 {

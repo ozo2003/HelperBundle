@@ -40,7 +40,7 @@ class Translator extends BaseTranslator
     public function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
         $request = Request::createFromGlobals();
-        if (1 || $request->get('sludio_debug') === 'text') {
+        if ($request->get('sludio_debug') === 'text') {
             return $domain.'.'.$id;
         }
 

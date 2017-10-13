@@ -83,9 +83,20 @@ class TranslatorType extends AbstractType
         $view->vars['translatedtablocales'] = $this->getTabTranslations();
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return "translations";
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getName()
     {
-        return 'translations';
+        return $this->getBlockPrefix();
     }
 
     private function getTabTranslations()
