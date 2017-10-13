@@ -7,39 +7,18 @@ use Symfony\Component\HttpFoundation\Request;
 
 class Translator extends BaseTranslator
 {
-    public function addDatabaseResources()
-    {
-        return parent::addDatabaseResources();
-    }
-
-    public function removeCacheFile($locale)
-    {
-        return parent::removeCacheFile($locale);
-    }
-
-    public function removeLocalesCacheFiles(array $locales)
-    {
-        return parent::removeLocalesCacheFiles($locales);
-    }
-
-    protected function invalidateSystemCacheForFile($path)
-    {
-        return parent::invalidateSystemCacheForFile($path);
-    }
-
-    public function getFormats()
-    {
-        return parent::getFormats();
-    }
-
-    public function getLoader($format)
-    {
-        return parent::getLoader($format);
-    }
-
     public function trans($id, array $parameters = [], $domain = null, $locale = null)
     {
         $request = Request::createFromGlobals();
+        $locale = $locale ?: $request->cookies->get('hl');
+
+        if (!$locale) {
+            global $kernel;
+            $locale = $request->get('_locale', $kernel->getContainer()->getParameter('sludio_helper.locale'));
+        }
+
+        $locale = strtolower($locale);
+
         if ($request->get('sludio_debug') === 'text') {
             return $domain.'.'.$id;
         }

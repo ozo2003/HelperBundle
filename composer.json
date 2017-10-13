@@ -33,12 +33,14 @@
         "lcobucci/jwt": "^3.2",
         "league/oauth1-client": "^1",
         "league/oauth2-client": "^1.0|^2.0",
+        "lexik/translation-bundle": "*",
+        "ocramius/proxy-manager": "^1|^2.1",
         "predis/predis": "^1.1",
         "snc/redis-bundle": "^2",
+        "sonata-project/admin-bundle": "*",
+        "symfony/framework-bundle": ">=2.1",
         "symfony/symfony": "^2.8|^3",
-        "twig/twig": "^1|^2",
-        "ocramius/proxy-manager": "^1|^2.1",
-        "sonata-project/admin-bundle": "^2.3|^3"
+        "twig/twig": "^1|^2"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"

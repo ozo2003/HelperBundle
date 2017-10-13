@@ -72,8 +72,12 @@ class SludioHelperExtension extends BaseExtension
         }
 
         foreach ($config['other'] as $key => $other) {
-            foreach ($other as $variable => $value) {
-                $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['other'][$key][$variable]);
+            if(is_array($other)) {
+                foreach ($other as $variable => $value) {
+                    $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['other'][$key][$variable]);
+                }
+            } else {
+                $container->setParameter('sludio_helper.'.$key, $config['other'][$key]);
             }
         }
     }
