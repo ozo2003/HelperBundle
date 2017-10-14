@@ -1,0 +1,4 @@
+translations:
+    cache_removed: Кэш очищен
+    flash_batch_download_error: Ошибка при загрузке файла.
+    flash_batch_download_success: Файл успешно загружен.

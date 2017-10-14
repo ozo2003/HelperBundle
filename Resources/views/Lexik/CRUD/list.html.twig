@@ -1,0 +1,10 @@
+{% extends 'SonataAdminBundle:CRUD:list.html.twig' %}
+
+{% block actions %}
+    {% spaceless %}
+        <li>{% include 'SludioHelperBundle:Lexik:Core\\clear_cache_button.html.twig' %}</li>
+        {% if admin.hasRoute('create') and admin.isGranted('CREATE') %}
+            <li>{% include 'SonataAdminBundle:Core:create_button.html.twig' %}</li>
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}

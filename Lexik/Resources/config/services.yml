@@ -1,0 +1,34 @@
+services:
+    sludio_helper.lexik.crud.controller:
+        class: Sludio\HelperBundle\Lexik\Controller\TranslationCRUDController
+
+    sludio_helper.lexik.admin.orm:
+        class: Sludio\HelperBundle\Lexik\Admin\ORMTranslationAdmin
+        arguments:
+            - ~
+            - Lexik\Bundle\TranslationBundle\Entity\TransUnit
+            - "@sludio_helper.lexik.crud.controller"
+        tags:
+            -
+                name: sonata.admin
+                manager_type: orm
+                group: group.translation
+                label_catalogue: SludioHelperBundle
+                label: translation.title
+        calls:
+            -
+                - setEditableOptions
+                -
+                    - "%sludio_helper.lexik.editable%"
+                - setTranslationDomain
+                -
+                    - 'SludioHelperBundle'
+                - setTransUnitManager
+                -
+                    - "@lexik_translation.trans_unit.manager"
+                - setDefaultSelections
+                -
+                    - "%sludio_helper.lexik.default_selections%"
+                - setEmptyPrefixes
+                -
+                    - "%sludio_helper.lexik.empty_prefixes%"

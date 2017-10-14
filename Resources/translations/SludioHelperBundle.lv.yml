@@ -1,0 +1,14 @@
+group:
+    translation: Tulkojumi
+
+translation:
+    title:  Tulkojumi
+
+action:
+    clear_cache: Iztīrīt kešatmiņu
+    upload: Augšupielādēt tulkojumu failu
+
+show_non_translated_only: "Rādīt tikai neiztulkotos"
+
+batch:
+    download: 'Lejupielādēt'

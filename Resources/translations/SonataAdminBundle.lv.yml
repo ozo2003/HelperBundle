@@ -1,0 +1,4 @@
+translations:
+    cache_removed: Kešatmiņa veiksmīgi iztīrīta
+    flash_batch_download_error: Nav iespējams lejupielādēt.
+    flash_batch_download_success: Lejupielāde veiksmīga.

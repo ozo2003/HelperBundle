@@ -1,0 +1,14 @@
+group:
+    translation: Перевод
+
+translation:
+    title:  Перевод
+
+action:
+    clear_cache: Очистить кэш
+    upload: Загрузить файл с переводом
+
+show_non_translated_only: "Показывать только непереведенные"
+
+batch:
+    download: 'Скачать'
