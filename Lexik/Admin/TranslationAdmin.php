@@ -131,10 +131,6 @@ abstract class TranslationAdmin extends AbstractAdmin
      */
     public function getTemplate($name)
     {
-        if ($name === 'layout') {
-            return 'SludioHelperBundle:Lexik:translation_layout.html.twig';
-        }
-
         if ($name === 'list') {
             return 'SludioHelperBundle:Lexik:CRUD\list.html.twig';
         }

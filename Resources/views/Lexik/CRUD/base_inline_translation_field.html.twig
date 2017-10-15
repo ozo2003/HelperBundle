@@ -17,10 +17,10 @@
         {% set options = field_description.options.editable %}
         <script>
             jQuery('#{{ id }}').editable({
-                mode: "{{ options.mode }}",
+                mode: "inline",
                 type: "{{ options.type }}",
                 emptytext: "{{ options.emptytext }}",
-                placement: "{{ options.placement }}",
+                placement: "top",
                 url: {{ admin.generateObjectUrl(field_description.options.route.name, object, field_description.options.route.parameters)|json_encode|raw }},
                 name: {{ object.key|json_encode|raw }},
                 params: function (params) {

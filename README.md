@@ -44,10 +44,8 @@ sludio_helper:
             default_selections:
                 non_translated_only: true|false
             editable:
-                mode: inline
                 type: textarea
                 emptytext: Empty
-                placement: top
         oauth:
             enabled: true|false
             clients:
