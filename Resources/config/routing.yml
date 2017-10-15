@@ -4,14 +4,14 @@ sludio_helper_redis:
         _controller: Sludio\HelperBundle\Script\Controller\ScriptController::redisAction
     options:
         i18n: false
-        
+
 sludio_helper_cache:
     path: /cache
     defaults:
         _controller: Sludio\HelperBundle\Script\Controller\ScriptController::cacheAction
     options:
         i18n: false
-        
+
 sludio_helper_generate:
     path: /generate
     defaults:
@@ -19,9 +19,9 @@ sludio_helper_generate:
     options:
         i18n: false
 
-sludio_helper_ibrows:
-    path: /ibrows
+sludio_helper_lexik:
+    path: /lexik
     defaults:
-        _controller: Sludio\HelperBundle\Script\Controller\ScriptController::ibrowsAction
+        _controller: Sludio\HelperBundle\Script\Controller\ScriptController::lexikAction
     options:
         i18n: false

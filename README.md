@@ -34,6 +34,20 @@ sludio_helper:
             enabled: true|false
             clients:
                 ...
+        lexik:
+            enabled: true|false
+            default_domain: messages
+            empty_prefixes:
+                - '__'
+                - 'new_'
+                - ''
+            default_selections:
+                non_translated_only: true|false
+            editable:
+                mode: inline
+                type: textarea
+                emptytext: Empty
+                placement: top
         oauth:
             enabled: true|false
             clients:

@@ -2,17 +2,21 @@
     "name": "sludio/helper-bundle",
     "description": "Helper Bundle for Symfony",
     "keywords": [
-        "symfony",
-        "helper",
         "captcha",
+        "helper",
+        "lexik",
         "logger",
         "oauth",
         "openid",
         "openidconnect",
         "pagination",
-        "sortable",
         "scripts",
-        "translatable"
+        "sludio",
+        "sonata",
+        "sortable",
+        "symfony",
+        "translatable",
+        "translation"
     ],
     "type": "symfony-bundle",
     "authors": [

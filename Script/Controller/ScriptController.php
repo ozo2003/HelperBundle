@@ -7,11 +7,10 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 class ScriptController extends Controller
 {
-    public function redisAction(Request $request)
+    public function redisAction()
     {
         $data['success'] = 1;
 
@@ -31,7 +30,7 @@ class ScriptController extends Controller
         ]);
     }
 
-    public function cacheAction(Request $request)
+    public function cacheAction()
     {
         global $kernel;
 
@@ -59,7 +58,7 @@ class ScriptController extends Controller
         ]);
     }
 
-    public function ibrowsAction(Request $request)
+    public function lexikAction()
     {
         global $kernel;
 
@@ -71,7 +70,7 @@ class ScriptController extends Controller
         $application->setAutoExit(false);
 
         $input = new ArrayInput([
-            'command' => 'ibrows:sonatatranslationbundle:clearcache',
+            'command' => 'sludio:lexik:clear',
         ]);
         $application->run($input);
         $data['success'] = 1;
