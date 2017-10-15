@@ -12,8 +12,6 @@ class ScriptController extends Controller
 {
     public function redisAction()
     {
-        $data['success'] = 1;
-
         $clients = [];
         foreach ($this->container->getServiceIds() as $id) {
             if (substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof Client) {
@@ -25,7 +23,7 @@ class ScriptController extends Controller
             $this->container->get($snc)->flushdb();
         }
 
-        return new JsonResponse($data, 200, [
+        return new JsonResponse(['success' => 1], 200, [
             'Cache-Control' => 'no-cache',
         ]);
     }
@@ -50,10 +48,9 @@ class ScriptController extends Controller
                 '--env' => $kernel->getEnvironment(),
             ]);
             $application->run($input);
-            $data['success'] = 1;
         }
 
-        return new JsonResponse($data, 200, [
+        return new JsonResponse(['success' => 1], 200, [
             'Cache-Control' => 'no-cache',
         ]);
     }
@@ -73,9 +70,8 @@ class ScriptController extends Controller
             'command' => 'sludio:lexik:clear',
         ]);
         $application->run($input);
-        $data['success'] = 1;
 
-        return new JsonResponse($data, 200, [
+        return new JsonResponse(['success' => 1], 200, [
             'Cache-Control' => 'no-cache',
         ]);
     }
