@@ -47,8 +47,8 @@
         "sonata-project/doctrine-orm-admin-bundle": "*",
         "symfony/framework-bundle": ">=2.1",
         "symfony/symfony": "*",
-        "symfony/symfony": "^2.8|^3",
-        "twig/twig": "^1|^2"
+        "symfony/symfony": "*",
+        "twig/twig": "*"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"
