@@ -10,7 +10,7 @@ class PositionHandler
     protected $positionField;
 
     /**
-     * @var EntityManager
+     * @var EntityManagerInterface
      */
     protected $em;
 
