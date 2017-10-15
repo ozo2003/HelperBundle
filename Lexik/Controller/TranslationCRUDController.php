@@ -151,8 +151,7 @@ class TranslationCRUDController extends CRUDController
     {
         $flashType = 'success';
 
-        $dumper = new Dumper();
-        $dumper->setIndentation(4);
+        $dumper = new Dumper(4);
 
         $response = new StreamedResponse(function() use ($queryProxy, &$flashType, $dumper) {
             try {

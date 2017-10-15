@@ -125,9 +125,9 @@ abstract class TranslationAdmin extends AbstractAdmin
     }
 
     /**
-     * @param unknown $name
+     * @param string $name
      *
-     * @return multitype:|NULL
+     * @return array|NULL
      */
     public function getTemplate($name)
     {

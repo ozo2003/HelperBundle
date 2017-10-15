@@ -40,7 +40,11 @@
         "sonata-project/admin-bundle": "*",
         "symfony/framework-bundle": ">=2.1",
         "symfony/symfony": "^2.8|^3",
-        "twig/twig": "^1|^2"
+        "twig/twig": "^1|^2",
+        "sonata-project/doctrine-orm-admin-bundle": "*",
+        "doctrine/orm": "*",
+        "doctrine/dbal": "*",
+        "symfony/symfony": "*"
     },
     "require-dev": {
         "symfony/security-guard": "^2.8|^3.0"
