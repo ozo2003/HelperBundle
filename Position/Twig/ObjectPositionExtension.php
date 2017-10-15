@@ -33,7 +33,7 @@ class ObjectPositionExtension extends Twig_Extension
     public function getFunctions()
     {
         return [
-            new Twig_SimpleFunction(self::NAME, function ($entity) {
+            new Twig_SimpleFunction(self::NAME, function($entity) {
                 $getter = sprintf('get%s', ucfirst($this->positionService->getPositionFieldByEntity($entity)));
 
                 return $entity->{$getter}();
