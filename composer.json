@@ -47,7 +47,6 @@
         "sonata-project/doctrine-orm-admin-bundle": "*",
         "symfony/framework-bundle": ">=2.1",
         "symfony/symfony": "*",
-        "symfony/symfony": "*",
         "twig/twig": "*"
     },
     "require-dev": {
