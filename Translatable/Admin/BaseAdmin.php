@@ -32,7 +32,7 @@ class BaseAdmin extends AbstractAdmin
         }
         $queryBuilder->leftJoin('Sludio:Translation', 't', 'WITH', 't.foreignKey = '.$alias.'.id');
         $queryBuilder->andWhere("t.field = '$field'");
-        $queryBuilder->andWhere("t.objectClass = '".$objectClass = $this->getClass()."'");
+        $queryBuilder->andWhere("t.objectClass = '".$this->getClass()."'");
         $queryBuilder->andWhere("t.content LIKE '%".$value['value']."%'");
         $queryBuilder->setFirstResult(0);
 

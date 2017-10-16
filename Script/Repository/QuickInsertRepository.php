@@ -8,7 +8,7 @@ class QuickInsertRepository
     private static $metadata = [];
     private static $tableName;
 
-    public static $em;
+    public static $entityManager;
     public static $connection;
     public static $container;
 
@@ -22,8 +22,8 @@ class QuickInsertRepository
         self::$container = $kernel->getContainer();
 
         $manager = $manager ?: self::$container->getParameter('sludio_helper.entity.manager');
-        self::$em = self::$container->get('doctrine')->getManager($manager);
-        self::$connection = self::$em->getConnection();
+        self::$entityManager = self::$container->get('doctrine')->getManager($manager);
+        self::$connection = self::$entityManager->getConnection();
 
         if (!$noFkCheck) {
             $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
@@ -56,16 +56,16 @@ class QuickInsertRepository
 
     private static function extract($object)
     {
-        $data = self::extractExt($object, self::$em);
+        $data = self::extractExt($object, self::$entityManager);
 
         self::$mock = $data['mock'];
         self::$tableName = $data['table'];
         self::$metadata[$data['table']] = $data['meta'];
     }
 
-    public static function extractExt($object, $em)
+    public static function extractExt($object, $entityManager)
     {
-        $metadata = $em->getClassMetadata(get_class($object));
+        $metadata = $entityManager->getClassMetadata(get_class($object));
 
         $fields = $metadata->getFieldNames();
         $columns = $metadata->getColumnNames();
@@ -131,35 +131,35 @@ class QuickInsertRepository
 
     private static function buildWhere($tableName, $where)
     {
-        $whereSql = $f = $fk = '';
+        $whereSql = $fvalue = $fkey = '';
         if ($where && is_array($where)) {
             $skip = false;
             foreach ($where as $key => $value) {
-                $fk = $key;
+                $fkey = $key;
                 if (is_array($value)) {
                     $skip = true;
-                    $f = trim($value[0]);
+                    $fvalue = trim($value[0]);
                 } else {
-                    $f = trim($value);
+                    $fvalue = trim($value);
                 }
                 break;
             }
-            if (!$skip && isset(self::$mock[$tableName][$fk])) {
-                if (is_numeric($f)) {
-                    $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = $f";
+            if (!$skip && isset(self::$mock[$tableName][$fkey])) {
+                if (is_numeric($fvalue)) {
+                    $whereSql .= ' WHERE '.self::$mock[$tableName][$fkey]." = $fvalue";
                 } else {
-                    $whereSql .= ' WHERE '.self::$mock[$tableName][$fk]." = '".addslashes(trim($f))."'";
+                    $whereSql .= ' WHERE '.self::$mock[$tableName][$fkey]." = '".addslashes(trim($fvalue))."'";
                 }
             } else {
-                if (!$skip && is_numeric($f)) {
-                    $whereSql .= ' WHERE '.$fk." = $f";
-                } elseif (!$skip && !is_numeric($f)) {
-                    $whereSql .= ' WHERE '.$fk." = '".addslashes(trim($f))."'";
-                } elseif ($skip && is_numeric($fk)) {
-                    $whereSql .= " WHERE $f";
+                if (!$skip && is_numeric($fvalue)) {
+                    $whereSql .= ' WHERE '.$fkey." = $fvalue";
+                } elseif (!$skip && !is_numeric($fvalue)) {
+                    $whereSql .= ' WHERE '.$fkey." = '".addslashes(trim($fvalue))."'";
+                } elseif ($skip && is_numeric($fkey)) {
+                    $whereSql .= " WHERE $fvalue";
                 }
             }
-            unset($where[$fk]);
+            unset($where[$fkey]);
             if ($where && is_array($where)) {
                 foreach ($where as $key => $value) {
                     $skip = is_array($value);
@@ -172,7 +172,7 @@ class QuickInsertRepository
                     } else {
                         if (!$skip && is_numeric($value)) {
                             $whereSql .= ' AND '.$key." = $value";
-                        } elseif (!$skip && !is_numeric($f)) {
+                        } elseif (!$skip && !is_numeric($value)) {
                             $whereSql .= ' AND '.$key." = '".addslashes(trim($value))."'";
                         } elseif ($skip && is_numeric($key)) {
                             $whereSql .= " AND {$value[0]}";
@@ -211,10 +211,10 @@ class QuickInsertRepository
         return 1;
     }
 
-    public static function findNextIdExt($object, $em, &$out = null)
+    public static function findNextIdExt($object, $entityManager, &$out = null)
     {
         self::init(true);
-        $data = self::extractExt($object, $em);
+        $data = self::extractExt($object, $entityManager);
 
         return self::findNextId($data['table'], $out);
     }
