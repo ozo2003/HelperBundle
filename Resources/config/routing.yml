@@ -25,3 +25,8 @@ sludio_helper_lexik:
         _controller: Sludio\HelperBundle\Script\Controller\ScriptController::lexikAction
     options:
         i18n: false
+
+sludio_helper_position:
+    resource: "@SludioHelperBundle/Position/Resources/config/routing.yml"
+    options:
+        i18n: false

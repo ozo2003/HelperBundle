@@ -1,0 +1,27 @@
+{% extends 'SonataAdminBundle:CRUD:base_list_field.html.twig' %}
+
+{% block field %}
+    {% spaceless %}
+        {% if object.parent is defined and object.parent is not null %}
+            {% if object.parent.children[0].id != object.id %}
+                <a class="btn btn-sm btn-default btn-warning" href="{{ path('sludio_helper_moveup', {'id': object.id, 'class': object.getClassName()}) }}">
+                    ↑
+                </a>
+            {% else %}
+                <a class="btn btn-sm btn-default" disabled href="javascript:;">
+                    ↑
+                </a>
+            {% endif %}
+            &nbsp;
+            {% if object.parent.children[object.parent.children | length - 1].id != object.id %}
+                <a class="btn btn-sm btn-default btn-warning" href="{{ path('sludio_helper_movedown', {'id': object.id, 'class': object.getClassName()}) }}">
+                    ↓
+                </a>
+            {% else %}
+                <a class="btn btn-sm btn-default" disabled href="javascript:;">
+                    ↓
+                </a>
+            {% endif %}
+        {% endif %}
+    {% endspaceless %}
+{% endblock %}
