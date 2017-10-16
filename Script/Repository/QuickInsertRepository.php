@@ -89,7 +89,7 @@ class QuickInsertRepository
         return $data;
     }
 
-    private static function buildExtra($tableName, $extra)
+    private static function buildExtra($extra)
     {
         $methods = [
             'GROUP BY',
@@ -131,7 +131,7 @@ class QuickInsertRepository
 
     private static function buildWhere($tableName, $where)
     {
-        $whereSql = '';
+        $whereSql = $f = $fk = '';
         if ($where && is_array($where)) {
             $skip = false;
             foreach ($where as $key => $value) {
@@ -228,7 +228,7 @@ class QuickInsertRepository
             $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.' '.$whereSql;
         }
         if (!empty($extra)) {
-            $extraSql = self::buildExtra($tableName, $extra);
+            $extraSql = self::buildExtra($extra);
             $sql .= $extraSql;
         }
         if ($out) {
@@ -423,7 +423,7 @@ class QuickInsertRepository
         }
 
         if ($data) {
-            $sqlu = "
+            $sql = "
                 UPDATE
                     ".$tableName."
                 SET
@@ -441,15 +441,15 @@ class QuickInsertRepository
                 } else {
                     $value = "'".addslashes(trim($value))."'";
                 }
-                $sqlu .= " ".$key." = ".$value.",";
+                $sql .= " ".$key." = ".$value.",";
             }
-            $sqlu = substr($sqlu, 0, -1);
-            $sqlu .= " WHERE id = ".$id;
+            $sql = substr($sql, 0, -1);
+            $sql .= " WHERE id = ".$id;
             if ($out) {
                 $out = $sql;
             }
 
-            $sthu = self::$connection->prepare($sqlu);
+            $sthu = self::$connection->prepare($sql);
             $sthu->execute();
         }
 
