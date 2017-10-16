@@ -211,6 +211,14 @@ class QuickInsertRepository
         return 1;
     }
 
+    public static function findNextIdExt($object, $em, &$out = null)
+    {
+        self::init(true, $em);
+        $data = self::extractExt($object, $em);
+
+        return self::findNextId($data['table'], $out);
+    }
+
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init($noFkCheck, $manager);

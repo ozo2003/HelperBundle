@@ -107,6 +107,7 @@ class TranslatableRepository
         $sth = $connection->prepare($sql);
         $sth->execute($options);
         $result = $sth->fetchAll();
+
         if (isset($result[0])) {
             return $result;
         }
