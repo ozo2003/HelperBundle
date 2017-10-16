@@ -1,6 +1,7 @@
 services:
     sludio_helper.oauth.provider_factory:
         class: Sludio\HelperBundle\DependencyInjection\ProviderFactory
+        public: true
         public: false
         arguments:
             - "@router"
@@ -8,6 +9,7 @@ services:
 
     sludio_helper.oauth.registry:
         class: Sludio\HelperBundle\Script\Utils\ClientRegistry
+        public: true
         arguments:
             - "@service_container"
             - ~
@@ -17,6 +19,7 @@ services:
 
     sludio_helper.registry:
         class: Sludio\HelperBundle\Oauth\Utils\ClientOpenIDRegistry
+        public: true
         arguments:
             - "@service_container"
             - ~
@@ -24,3 +27,4 @@ services:
 
     openauth.registry:
         alias: sludio_helper.registry
+        public: true

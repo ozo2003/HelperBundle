@@ -12,6 +12,7 @@ services:
 
     sludio_helper.translatable.manager:
         class: Sludio\HelperBundle\Translatable\Helper\Manager
+        public: true
         arguments:
             - "@doctrine"
 
@@ -29,12 +30,14 @@ services:
 
     sludio_helper.command.generate_translations:
         class: Sludio\HelperBundle\Translatable\Command\TranslationsGenerateCommand
+        public: true
         tags:
             -
                 name: console.command
 
     sludio_helper.translatable.mapping.listener:
         class: Sludio\HelperBundle\Translatable\Listener\TranslationMappingListener
+        public: true
         tags:
             -
                 name: doctrine.event_listener

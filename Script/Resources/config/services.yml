@@ -1,6 +1,7 @@
 services:
     sludio_helper.command.redis_flush:
         class: Sludio\HelperBundle\Script\Command\RedisFlushCommand
+        public: true
         tags:
             -
                 name: console.command

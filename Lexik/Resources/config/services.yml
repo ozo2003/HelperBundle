@@ -1,9 +1,11 @@
 services:
     sludio_helper.lexik.crud.controller:
         class: Sludio\HelperBundle\Lexik\Controller\TranslationCRUDController
+        public: true
 
     sludio_helper.lexik.admin.orm:
         class: Sludio\HelperBundle\Lexik\Admin\ORMTranslationAdmin
+        public: true
         arguments:
             - ~
             - Lexik\Bundle\TranslationBundle\Entity\TransUnit

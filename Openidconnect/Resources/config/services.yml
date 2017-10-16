@@ -1,9 +1,11 @@
 services:
     sludio_helper.openidconnect.registry:
         class: Sludio\HelperBundle\script\Utils\ClientRegistry
+        public: true
         arguments:
             - "@service_container"
             - ~
 
     openidconnect.registry:
         alias: sludio_helper.openidconnect.registry
+        public: true
