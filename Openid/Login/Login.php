@@ -46,7 +46,7 @@ class Login implements Loginable
         $this->ns_mode = $container->getParameter($client_name.'.option.ns_mode') ?: $this->ns_mode;
 
         if ($container->hasParameter($client_name.'.option.sreg_fields')) {
-            $fields = $container->getParameter($client_name.'.option.sreg_fields', null);
+            $fields = $container->getParameter($client_name.'.option.sreg_fields');
             if ($fields && is_array($fields)) {
                 $this->sreg_fields = implode(',', $fields);
             }
