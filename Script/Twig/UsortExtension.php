@@ -27,10 +27,8 @@ class UsortExtension extends Twig_Extension
         switch ($this->order) {
             case 'asc':
                 return $a->{'get'.ucfirst($this->param)}() > $b->{'get'.ucfirst($this->param)}();
-                break;
             case 'desc':
                 return $a->{'get'.ucfirst($this->param)}() < $b->{'get'.ucfirst($this->param)}();
-                break;
         }
     }
 

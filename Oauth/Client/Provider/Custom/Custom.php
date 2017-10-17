@@ -77,7 +77,7 @@ class Custom extends AbstractProvider
 
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        $user = new CustomResourceOwner($response, $token);
+        $user = new CustomResourceOwner($response);
 
         return $user->setDomain($this->domain);
     }

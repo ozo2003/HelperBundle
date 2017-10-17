@@ -44,7 +44,7 @@ class Openid implements Extensionable
             $this->configureClient($container, $clientServiceKey);
         }
         $container->getDefinition('sludio_helper.openid.registry')->replaceArgument(1, $clientServiceKeys);
-        if ($container->getParameter('sludio_helper.oauth.enabled', false)) {
+        if ($container->getParameter('sludio_helper.oauth.enabled') == true) {
             $container->getDefinition('sludio_helper.registry')->replaceArgument(2, $clientServiceKeys);
         }
     }

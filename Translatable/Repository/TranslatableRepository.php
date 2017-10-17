@@ -168,7 +168,7 @@ class TranslatableRepository
         }
     }
 
-    public static function removeTranslations($object, $em)
+    public static function removeTranslations($object)
     {
         self::init();
         $class = get_class($object);

@@ -43,7 +43,7 @@ class Login implements Loginable
         if ($container->hasParameter($client_name.'.option.profile_url')) {
             $this->profile_url = $container->getParameter($client_name.'.option.profile_url');
         }
-        $this->ns_mode = $container->getParameter($client_name.'.option.ns_mode', $this->ns_mode);
+        $this->ns_mode = $container->getParameter($client_name.'.option.ns_mode') ?: $this->ns_mode;
 
         if ($container->hasParameter($client_name.'.option.sreg_fields')) {
             $fields = $container->getParameter($client_name.'.option.sreg_fields', null);
