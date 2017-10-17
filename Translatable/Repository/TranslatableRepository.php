@@ -50,6 +50,7 @@ class TranslatableRepository
     public static function getTranslations($class, $id)
     {
         self::init();
+        $class = str_replace('Proxies\\__CG__\\', '', $class);
         $className = explode('\\', $class);
         $className = end($className);
 
