@@ -6,7 +6,7 @@
         <script>
             function {{ name }}() {
                 var url = "{{ url(url_name) }}";
-                jQuery.get(url, function(data) {
+                jQuery.get(url, function (data) {
                     if (data['success'] === 1) {
                         alert('{{ (name ~ "_success")|trans({}, domain) }}');
                     } else {
@@ -19,11 +19,15 @@
             .fleft {
                 float: left;
             }
+
             .fright {
                 float: right;
             }
         </style>
         <div class="box">
+            <div class="btn-group" align="center" style="width: 100%">
+                {{ (name ~ "_help")|trans({}, domain) }}
+            </div>
             <a class="" href="javascript:{{ name }}()">
                 <table class="table">
                     <tr>
