@@ -3,23 +3,13 @@
 
         {% set currentFieldName = form.currentFieldName.vars.value %}
 
-        {% if app.request.locale == 'lv' %}
-            {% set currentlocale = 'lv_LV' %}
-        {% endif %}
-        {% if app.request.locale == 'ru' %}
-            {% set currentlocale = 'ru_RU' %}
-        {% endif %}
-        {% if app.request.locale == 'en' %}
-            {% set currentlocale = 'en_US' %}
-        {% endif %}
-
         <div class="nav-tabs-custom">
             <ul class="nav nav-tabs">
                 {% for locale in locales %}
                     {% set TabHref = '#tab_translate_' ~ locale ~ '_' ~ currentFieldName %}
 
                     {# tab localecode same as selected ? #}
-                    {% if locale == currentlocale or (loop.index0 == 0 and currentlocale is null) %}
+                    {% if locale == app.request.locale or (loop.index0 == 0 and app.request.locale not in locales) %}
                         {% set ActiveTab = 'active' %}
                     {% else %}
                         {% set ActiveTab = '' %}
@@ -39,7 +29,7 @@
                     {% set TabId = 'tab_translate_' ~ locale ~ '_' ~ currentFieldName %}
 
                     {# tab localecode same as selected ? #}
-                    {% if locale == currentlocale %}
+                    {% if locale == app.request.locale or (loop.index0 == 0 and app.request.locale not in locales) %}
                         {% set ActiveContent = 'active' %}
                     {% else %}
                         {% set ActiveContent = '' %}

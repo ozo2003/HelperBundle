@@ -6,6 +6,7 @@ ini_set('memory_limit', '1024M');
 ini_set('max_execution_time', 0);
 
 use Sludio\HelperBundle\Script\Repository\QuickInsertRepository as Quick;
+use Sludio\HelperBundle\Translatable\Entity\Translation;
 
 class TranslatableRepository
 {
@@ -38,11 +39,6 @@ class TranslatableRepository
         }
         self::$container = $kernel->getContainer();
 
-        self::$em = self::$container->get('doctrine')
-            ->getManager(self::$container->getParameter('sludio_helper.translatable.manager'))
-        ;
-        self::$connection = self::$em->getConnection();
-
         self::$redis = self::$container->get('snc_redis.'.self::$container->getParameter('sludio_helper.redis.translation'));
         self::$table = self::$container->getParameter('sludio_helper.translatable.table');
     }
@@ -58,16 +54,11 @@ class TranslatableRepository
         $checked = self::$redis ? unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked')) : null;
 
         if (!$result && !$checked) {
-            $connection = self::$connection;
-            $sql = 'SELECT * FROM '.self::$table.' WHERE object_class = :class AND foreign_key = :key';
-            $sth = $connection->prepare($sql);
-            $options = [
-                'class' => $class,
-                'key' => $id,
-            ];
-            $sth->execute($options);
-            $result = [];
-            while ($row = $sth->fetch()) {
+            $data = Quick::get(new Translation(), false, [
+                'object_class' => $class,
+                'foreign_key' => $id,
+            ], true, ['*']);
+            foreach ($data as $row) {
                 $result[$row['locale']][$row['field']] = $row['content'];
             }
 
@@ -88,32 +79,23 @@ class TranslatableRepository
             $locale = self::$localeArr[$locale];
         }
 
-        $connection = self::$connection;
-        $options = [
-            'class' => $class,
+        $where = [
+            'object_class' => $class,
             'locale' => $locale,
+            'field' => $field,
         ];
-        $sql = "SELECT foreign_key FROM ".self::$table." WHERE object_class = :class AND field = '{$field}' AND locale = :locale";
         if ($id) {
-            $sql .= ' AND foreign_key <> :id';
-            $options['id'] = $id;
+            $where[] = ['foreign_key <> '.$id];
         }
         if ($id2) {
-            $sql .= ' AND foreign_key = :id';
-            $options['id'] = $id2;
+            $where['foreign_key'] = $id2;
         } else {
-            $sql .= ' AND content = :content';
-            $options['content'] = $content;
-        }
-        $sth = $connection->prepare($sql);
-        $sth->execute($options);
-        $result = $sth->fetchAll();
-
-        if (isset($result[0])) {
-            return $result;
+            $where['content'] = $content;
         }
 
-        return null;
+        $result = Quick::get(new Translation(), false, $where, true, ['foreign_key']);
+
+        return $result;
     }
 
     public static function updateTranslations($class, $locale, $field, $content, $id = 0)
@@ -122,45 +104,38 @@ class TranslatableRepository
         $className = end($className);
         self::init();
 
-        if (!$id) {
-            $id = self::findNextId(new $class());
-        }
-
         if (strlen($locale) == 2) {
             $locale = self::$localeArr[$locale];
         }
 
-        $res = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
-        $class = str_replace('\\', '\\\\', $class);
-        $content = trim($content) != '' ? $content : null;
-        if ($res) {
-            $sql = "
-                UPDATE
-                    ".self::$table."
-                SET
-                    content = :content
-                WHERE
-                    object_class = '{$class}'
-                AND
-                    locale = '{$locale}'
-                AND
-                    field = '{$field}'
-                AND
-                    foreign_key = {$id}
-            ";
+        $update = 1;
+        if (!$id) {
+            $id = Quick::findNextIdExt(new $class(), self::$em);
+            $update = 0;
         } else {
-            $sql = "
-                INSERT INTO
-                    ".self::$table."
-                        (content, object_class, locale, field, foreign_key)
-                VALUES
-                    (:content,'{$class}', '{$locale}','{$field}',{$id})
-            ";
+            $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
         }
-        $connection = self::$connection;
-        $sth = $connection->prepare($sql);
-        $sth->bindValue('content', $content);
-        $sth->execute();
+
+        $content = trim($content) != '' ? $content : null;
+
+        $translation = new Translation();
+        $translation->setField($field)
+            ->setForeignKey($id)
+            ->setLocale($locale)
+            ->setObjectClass($class)
+            ->setContent($content);
+
+        if ($update === 0) {
+            Quick::persist($translation);
+        } else {
+            $where = [
+                'field' => $field,
+                'foreign_key' => $id,
+                'object_class' => $class,
+            ];
+            $tId = Quick::get(new Translation(), true, $where);
+            Quick::update($tId, $translation);
+        }
 
         if (self::$redis) {
             self::$redis->del(strtolower($className).':translations:'.$id);
@@ -173,24 +148,20 @@ class TranslatableRepository
         self::init();
         $class = get_class($object);
         $id = $object->getId();
-        $connection = self::$connection;
 
-        $sth = $connection->prepare('DELETE FROM '.self::$table.' WHERE object_class = :class AND foreign_key = :key');
-        $sth->bindValue('class', $class);
-        $sth->bindValue('key', $id);
-        $sth->execute();
+        $where = [
+            'object_class' => $class,
+            'foreign_key' => $id,
+        ];
+        Quick::delete(new Translation(), $where);
     }
 
     public static function getAllTranslations()
     {
         self::init();
 
-        $connection = self::$connection;
-        $sql = 'SELECT * FROM '.self::$table;
-        $sth = $connection->prepare($sql);
-        $sth->execute();
-        $result = [];
-        while ($row = $sth->fetch()) {
+        $data = Quick::get(new Translation(), false, [], true, ['*']);
+        foreach ($data as $row) {
             $result[$row['object_class']][$row['foreign_key']][$row['locale']][$row['field']] = $row['content'];
         }
 
@@ -204,29 +175,5 @@ class TranslatableRepository
         }
 
         return $result;
-    }
-
-    public static function findNextId($object)
-    {
-        $data = Quick::extractExt($object, self::$em);
-        $sql = "
-            SELECT
-                AUTO_INCREMENT
-            FROM
-                information_schema.tables
-            WHERE
-                table_name = '".$data['table']."'
-            AND
-                table_schema = DATABASE()
-        ";
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
-
-        if (isset($result['AUTO_INCREMENT'])) {
-            return (int)$result['AUTO_INCREMENT'];
-        }
-
-        return 1;
     }
 }

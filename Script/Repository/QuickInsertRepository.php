@@ -406,7 +406,7 @@ class QuickInsertRepository
 
         $flip = array_flip($columns);
         if ($type === 'object') {
-            if ($object->getId()) {
+            if ($id) {
                 foreach ($result as $key => $value) {
                     if ($object->{'get'.ucfirst($flip[$key])}() !== $value) {
                         $data[$columns[$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
