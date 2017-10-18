@@ -13,6 +13,7 @@ class Openid implements Extensionable
     public function configure(ContainerBuilder &$container)
     {
         $clientConfigurations = $container->getParameter('sludio_helper.openid.clients');
+        $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $node = $tree->root('sludio_helper_openid_client/clients/'.$key);

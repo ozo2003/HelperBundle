@@ -73,6 +73,7 @@ class Openidconnect implements Extensionable
     public function configure(ContainerBuilder &$container)
     {
         $clientConfigurations = $container->getParameter('sludio_helper.openidconnect.clients');
+        $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $processor = new Processor();

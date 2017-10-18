@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Openid\Component;
 
 interface Loginable
 {
-    public function url($return);
+    public function urlPath($return);
 
     public function validate();
 

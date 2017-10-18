@@ -368,7 +368,7 @@ class QuickInsertRepository
         } else {
             $id = null;
         }
-        if ($sql !== null && $id) {
+        if ($sql !== null && $id !== null) {
             if ($out) {
                 $out = $sql;
             }

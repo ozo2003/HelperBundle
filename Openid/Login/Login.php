@@ -82,18 +82,18 @@ class Login implements Loginable
      *
      * @return string
      */
-    public function url($return = null, $altRealm = null)
+    public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
-        $useHttps = !empty($_SERVER['HTTPS']) || (!empty($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https');
+        $useHttps = $this->request->server->get('HTTPS') || ($this->request->server->get('HTTP_X_FORWARDED_PROTO') && $this->request->server->get('HTTP_X_FORWARDED_PROTO') == 'https');
         if (!is_null($return)) {
             if (!$this->validateUrl($return)) {
                 throw new Exception('error_oauth_invalid_return_url');
             }
         } else {
             if ($altRealm == null) {
-                $return = ($useHttps ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST'].$_SERVER['SCRIPT_NAME'];
+                $return = ($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST').$this->request->server->get('SCRIPT_NAME');
             } else {
-                $return = $altRealm.$_SERVER['SCRIPT_NAME'];
+                $return = $altRealm.$this->request->server->get('SCRIPT_NAME');
             }
         }
 
@@ -101,7 +101,7 @@ class Login implements Loginable
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
-            'openid.realm' => $altRealm != null ? $altRealm : (($useHttps ? 'https' : 'http').'://'.$_SERVER['HTTP_HOST']),
+            'openid.realm' => $altRealm != null ? $altRealm : (($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST')),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];
@@ -201,6 +201,6 @@ class Login implements Loginable
         $providerFactory = new ProviderFactory($this->generator, $this->requestStack);
         $redirectUri = $providerFactory->generateUrl($this->redirectRoute, $this->redirectRouteParams);
 
-        return new RedirectResponse($this->url($redirectUri));
+        return new RedirectResponse($this->urlPath($redirectUri));
     }
 }
