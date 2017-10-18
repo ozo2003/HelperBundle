@@ -235,7 +235,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     }
 
     /**
-     * @return ValidatorChain|void
+     * @return Validator\ValidatorChain|void
      */
     public function getValidatorChain()
     {

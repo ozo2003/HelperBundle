@@ -11,9 +11,9 @@ class MissingExtension extends Twig_Extension
     protected $entityManager;
     protected $shortFunctions;
 
-    public function __construct($request_stack, $entityManager, $container)
+    public function __construct($requestStack, $entityManager, $container)
     {
-        $this->request = $request_stack->getCurrentRequest();
+        $this->request = $requestStack->getCurrentRequest();
         $this->entityManager = $entityManager;
 
         $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
