@@ -71,7 +71,7 @@ class BaseEntity
         return Sludio::getTranslations(get_called_class(), $this->getId());
     }
 
-    public function getVariableByLocale($variable, $locale = null, $return_original = false)
+    public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
     {
         $locale = $locale ?: Sludio::getDefaultLocale();
 
@@ -87,7 +87,7 @@ class BaseEntity
             return $this->translates[$locale][$variable];
         }
 
-        if ($return_original) {
+        if ($returnOriginal) {
             $variables = explode('_', $variable);
             foreach ($variables as &$v) {
                 $v = ucfirst($v);

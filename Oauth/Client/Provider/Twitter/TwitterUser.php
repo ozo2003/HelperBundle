@@ -60,7 +60,7 @@ class TwitterUser implements ResourceOwnerInterface, SocialUser
      */
     public function toArray()
     {
-        return $this->data;
+        return $this->response;
     }
 
     /**

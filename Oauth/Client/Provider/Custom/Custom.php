@@ -16,6 +16,8 @@ class Custom extends AbstractProvider
     public $authorize;
     public $token;
 
+    public $options;
+
     public function __construct(array $options, array $collaborators = [])
     {
         if (isset($options['domain'])) {

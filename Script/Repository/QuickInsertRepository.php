@@ -223,12 +223,8 @@ class QuickInsertRepository
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-        } else {
-            $tableName = $object;
-        }
+        self::getTable($object, $tableName, $columns, $type);
+
         $whereSql = self::buildWhere($tableName, $where);
         $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
         if (!$fields) {
@@ -279,9 +275,8 @@ class QuickInsertRepository
         return $result;
     }
 
-    public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
+    private static function getTable(&$object, &$tableName, &$columns, &$type)
     {
-        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -293,6 +288,12 @@ class QuickInsertRepository
             $type = 'table';
             $columns = array_keys($object) ?: [];
         }
+    }
+
+    public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
+    {
+        self::init($noFkCheck, $manager);
+        self::getTable($object, $tableName, $columns, $type);
 
         $id = self::findNextId($tableName);
         $keys = [];
@@ -314,7 +315,7 @@ class QuickInsertRepository
                     if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
                         $variable = null;
                     }
-                    if ($variable) {
+                    if ($variable !== null) {
                         $values[] = $variable;
                         $keys[] = $key;
                         if ($key === 'id') {
@@ -335,7 +336,7 @@ class QuickInsertRepository
                     if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
                         $variable = null;
                     }
-                    if ($variable) {
+                    if ($variable !== null) {
                         $values[] = $variable;
                         $keys[] = $key;
                         if ($key === 'id') {
@@ -367,7 +368,7 @@ class QuickInsertRepository
         } else {
             $id = null;
         }
-        if ($sql && $id) {
+        if ($sql !== null && $id) {
             if ($out) {
                 $out = $sql;
             }
@@ -383,18 +384,7 @@ class QuickInsertRepository
     public static function update($id, $object, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
     {
         self::init($noFkCheck, $manager);
-
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-            $columns = self::$mock[$tableName] ?: [];
-            $type = 'object';
-        } else {
-            $tableName = $object['table_name'];
-            unset($object['table_name']);
-            $type = 'table';
-            $columns = array_keys($object) ?: [];
-        }
+        self::getTable($object, $tableName, $columns, $type);
 
         $result = self::get($tableName, true, ['id' => $id], true, ['*']);
         unset($result['id']);
@@ -468,12 +458,8 @@ class QuickInsertRepository
     public static function delete($object, $where = [], $noFkCheck = false, $manager = null, &$out = null)
     {
         self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-        } else {
-            $tableName = $object;
-        }
+        self::getTable($object, $tableName, $columns, $type);
+
         $whereSql = self::buildWhere($tableName, $where);
         $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
         if ($out) {
@@ -488,12 +474,8 @@ class QuickInsertRepository
     public static function link($object, $data, $noFkCheck = false, $manager = null, &$out = null)
     {
         self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-        } else {
-            $tableName = $object;
-        }
+        self::getTable($object, $tableName, $columns, $type);
+
         if ($object && $data) {
             $keys = $values = [];
             foreach ($data as $key => $value) {

@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class Oauth implements Extensionable
 {
-    protected $checkExternalClassExistence;
+    protected $checkClassExistence;
 
     protected $configurators = [];
 
@@ -31,9 +31,9 @@ class Oauth implements Extensionable
         'draugiem' => Configurator\DraugiemProviderConfigurator::class,
     ];
 
-    public function __construct($checkExternalClassExistence = true)
+    public function __construct($checkClassExistence = true)
     {
-        $this->checkExternalClassExistence = $checkExternalClassExistence;
+        $this->checkClassExistence = $checkClassExistence;
     }
 
     public static function getAllSupportedTypes()
@@ -71,7 +71,7 @@ class Oauth implements Extensionable
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
         $providerClass = $options['provider_class'];
-        if ($this->checkExternalClassExistence && !class_exists($providerClass)) {
+        if ($this->checkClassExistence && !class_exists($providerClass)) {
             throw new LogicException(sprintf('Class "%s" does not exist.', $providerClass));
         }
 

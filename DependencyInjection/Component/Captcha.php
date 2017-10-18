@@ -23,6 +23,7 @@ class Captcha implements Extensionable
     ];
 
     protected $usedTypes = [];
+    public $configurators = [];
 
     public function getConfigurator($type)
     {

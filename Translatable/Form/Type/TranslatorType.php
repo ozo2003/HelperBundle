@@ -116,11 +116,11 @@ class TranslatorType extends AbstractType
 
     private function checkOptions($options)
     {
-        $condition_dataclass_empty = ($options['translation_data_class'] === '');
-        $condition_id_null = ($options['object_id'] === null && !$options['new']);
-        $condition_locales_invalidarray = (!is_array($options['locales']) || empty($options['locales']));
+        $conditionDataclassEmpty = ($options['translation_data_class'] === '');
+        $conditionIdNull = ($options['object_id'] === null && !$options['new']);
+        $conditionLocalesInvalid = (!is_array($options['locales']) || empty($options['locales']));
 
-        if ($condition_dataclass_empty || $condition_id_null || $condition_locales_invalidarray) {
+        if ($conditionDataclassEmpty || $conditionIdNull || $conditionLocalesInvalid) {
             throw new Exception('An Error Ocurred');
         }
     }

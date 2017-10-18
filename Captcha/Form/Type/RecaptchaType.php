@@ -37,6 +37,8 @@ class RecaptchaType extends AbstractType
      */
     protected $localeResolver;
 
+    public $scripts = [];
+
     /**
      * Construct.
      *
