@@ -56,6 +56,7 @@ class QuickInsertRepository
 
     private static function extract($object)
     {
+        self::init(false);
         $data = self::extractExt($object, self::$entityManager);
 
         self::$mock = $data['mock'];

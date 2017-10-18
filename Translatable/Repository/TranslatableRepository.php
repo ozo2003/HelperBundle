@@ -58,8 +58,10 @@ class TranslatableRepository
                 'object_class' => $class,
                 'foreign_key' => $id,
             ], true, ['*']);
-            foreach ($data as $row) {
-                $result[$row['locale']][$row['field']] = $row['content'];
+            if($data) {
+                foreach ($data as $row) {
+                    $result[$row['locale']][$row['field']] = $row['content'];
+                }
             }
 
             if ($result && self::$redis) {
