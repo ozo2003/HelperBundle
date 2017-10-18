@@ -11,14 +11,14 @@ class GulpExtension extends Twig_Extension
 
     protected $appDir;
     protected $kernel;
-    protected $short_functions;
+    protected $shortFunctions;
 
     public function __construct($appDir, $kernel, $container)
     {
         $this->appDir = $appDir;
         $this->kernel = $kernel;
 
-        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
+        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
     }
 
     public function getFilters()
@@ -37,7 +37,7 @@ class GulpExtension extends Twig_Extension
             ]),
         ];
 
-        if ($this->short_functions) {
+        if ($this->shortFunctions) {
             return array_merge($array, $short_array);
         } else {
             return $array;

@@ -29,7 +29,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     protected $signer;
 
     /**
-     * @var ValidatorChain
+     * @var Validator\ValidatorChain
      */
     protected $validatorChain;
 

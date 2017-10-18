@@ -12,52 +12,50 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Login implements Loginable
 {
-    protected $client_name;
     protected $request;
 
     public $requestStack;
 
     protected $generator;
-    protected $redirect_route;
-    protected $redirect_route_params = [];
+    protected $redirectRoute;
+    protected $redirectRouteParams = [];
 
-    protected $api_key;
-    protected $openid_url;
-    protected $preg_check;
-    protected $profile_url = false;
-    protected $ns_mode = 'auth';
-    protected $sreg_fields = 'email';
-    protected $user_class;
+    protected $apiKey;
+    protected $openidUrl;
+    protected $pregCheck;
+    protected $profileUrl = false;
+    protected $nsMode = 'auth';
+    protected $sregFields = 'email';
+    protected $userClass;
 
-    public function __construct($client_name, RequestStack $requestStack, ContainerInterface $container, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $container, UrlGeneratorInterface $generator)
     {
-        $this->client_name = $client_name;
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
         $this->generator = $generator;
 
-        $this->api_key = $container->getParameter($client_name.'.api_key');
-        $this->openid_url = $container->getParameter($client_name.'.openid_url');
-        $this->preg_check = $container->getParameter($client_name.'.preg_check');
-        $this->user_class = $container->getParameter($client_name.'.user_class');
-        if ($container->hasParameter($client_name.'.option.profile_url')) {
-            $this->profile_url = $container->getParameter($client_name.'.option.profile_url');
+        $this->apiKey = $container->getParameter($clientName.'.api_key');
+        $this->openidUrl = $container->getParameter($clientName.'.openid_url');
+        $this->pregCheck = $container->getParameter($clientName.'.preg_check');
+        $this->userClass = $container->getParameter($clientName.'.user_class');
+        if ($container->hasParameter($clientName.'.option.profile_url')) {
+            $this->profileUrl = $container->getParameter($clientName.'.option.profile_url');
         }
-        $this->ns_mode = $container->getParameter($client_name.'.option.ns_mode') ?: $this->ns_mode;
+        $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
 
-        if ($container->hasParameter($client_name.'.option.sreg_fields')) {
-            $fields = $container->getParameter($client_name.'.option.sreg_fields');
+        if ($container->hasParameter($clientName.'.option.sreg_fields')) {
+            $fields = $container->getParameter($clientName.'.option.sreg_fields');
             if ($fields && is_array($fields)) {
-                $this->sreg_fields = implode(',', $fields);
+                $this->sregFields = implode(',', $fields);
             }
         }
 
-        if ($container->hasParameter($client_name.'.redirect_route')) {
-            $this->redirect_route = $container->getParameter($client_name.'.redirect_route');
+        if ($container->hasParameter($clientName.'.redirect_route')) {
+            $this->redirectRoute = $container->getParameter($clientName.'.redirect_route');
         }
 
-        if ($container->hasParameter($client_name.'.option.params')) {
-            $this->redirect_route_params = $container->getParameter($client_name.'.option.params');
+        if ($container->hasParameter($clientName.'.option.params')) {
+            $this->redirectRouteParams = $container->getParameter($clientName.'.option.params');
         }
     }
 
@@ -108,12 +106,12 @@ class Login implements Loginable
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];
 
-        if ($this->ns_mode === 'sreg') {
+        if ($this->nsMode === 'sreg') {
             $params['openid.ns.sreg'] = 'http://openid.net/extensions/sreg/1.1';
-            $params['openid.sreg.required'] = $this->sreg_fields;
+            $params['openid.sreg.required'] = $this->sregFields;
         }
 
-        return $this->openid_url.'/'.$this->api_key.'/?'.http_build_query($params);
+        return $this->openidUrl.'/'.$this->apiKey.'/?'.http_build_query($params);
     }
 
     /**
@@ -154,9 +152,9 @@ class Login implements Loginable
                 ],
             ]);
 
-            $result = file_get_contents($this->openid_url.'/'.$this->api_key, false, $context);
+            $result = file_get_contents($this->openidUrl.'/'.$this->apiKey, false, $context);
 
-            preg_match($this->preg_check, urldecode($get['openid_claimed_id']), $matches);
+            preg_match($this->pregCheck, urldecode($get['openid_claimed_id']), $matches);
 
             $openID = (is_array($matches) && isset($matches[1])) ? $matches[1] : null;
 
@@ -171,10 +169,10 @@ class Login implements Loginable
     private function getData($openID = null)
     {
         if ($openID) {
-            $data = file_get_contents($this->profile_url.$openID);
+            $data = file_get_contents($this->profileUrl.$openID);
             $json = json_decode($data, true);
 
-            return new $this->user_class($json['response'], $openID);
+            return new $this->userClass($json['response'], $openID);
         }
 
         return null;
@@ -184,8 +182,8 @@ class Login implements Loginable
     {
         $user = $this->validate();
         if ($user !== null) {
-            if ($this->profile_url === false) {
-                $user = new $this->user_class($this->request->query->all(), $user);
+            if ($this->profileUrl === false) {
+                $user = new $this->userClass($this->request->query->all(), $user);
             } else {
                 $user = $this->getData($user);
             }
@@ -201,7 +199,7 @@ class Login implements Loginable
     public function redirect()
     {
         $providerFactory = new ProviderFactory($this->generator, $this->requestStack);
-        $redirectUri = $providerFactory->generateUrl($this->redirect_route, $this->redirect_route_params);
+        $redirectUri = $providerFactory->generateUrl($this->redirectRoute, $this->redirectRouteParams);
 
         return new RedirectResponse($this->url($redirectUri));
     }

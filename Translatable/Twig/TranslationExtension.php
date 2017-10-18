@@ -7,17 +7,15 @@ use Twig_SimpleFilter;
 
 class TranslationExtension extends Twig_Extension
 {
-    protected $em;
     protected $request;
     protected $defaultLocale;
-    protected $short_functions;
+    protected $shortFunctions;
 
-    public function __construct($em, $request_stack, $default, $container)
+    public function __construct($request_stack, $default, $container)
     {
-        $this->em = $em;
         $this->request = $request_stack->getCurrentRequest();
         $this->defaultLocale = $default;
-        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
+        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
     }
 
     public function getName()
@@ -41,7 +39,7 @@ class TranslationExtension extends Twig_Extension
             ]),
         ];
 
-        if ($this->short_functions) {
+        if ($this->shortFunctions) {
             return array_merge($array, $short_array);
         } else {
             return $array;

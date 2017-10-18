@@ -161,16 +161,19 @@ class TranslatableRepository
         self::init();
 
         $data = Quick::get(new Translation(), false, [], true, ['*']);
+        $result = [];
         foreach ($data as $row) {
             $result[$row['object_class']][$row['foreign_key']][$row['locale']][$row['field']] = $row['content'];
         }
 
-        foreach ($result as $class => $objects) {
-            $className = explode('\\', $class);
-            $className = end($className);
-            foreach ($objects as $id => $transl) {
-                self::$redis->set(strtolower($className).':translations:'.$id, serialize($transl));
-                self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
+        if (count($result)) {
+            foreach ($result as $class => $objects) {
+                $className = explode('\\', $class);
+                $className = end($className);
+                foreach ($objects as $id => $transl) {
+                    self::$redis->set(strtolower($className).':translations:'.$id, serialize($transl));
+                    self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
+                }
             }
         }
 

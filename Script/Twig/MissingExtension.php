@@ -8,15 +8,15 @@ use Twig_SimpleFilter;
 class MissingExtension extends Twig_Extension
 {
     protected $request;
-    protected $em;
-    protected $short_functions;
+    protected $entityManager;
+    protected $shortFunctions;
 
-    public function __construct($request_stack, $em, $container)
+    public function __construct($request_stack, $entityManager, $container)
     {
         $this->request = $request_stack->getCurrentRequest();
-        $this->em = $em;
+        $this->entityManager = $entityManager;
 
-        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
+        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
     }
 
     public function getName()
@@ -48,7 +48,7 @@ class MissingExtension extends Twig_Extension
             ]),
         ];
 
-        if ($this->short_functions) {
+        if ($this->shortFunctions) {
             return array_merge($array, $short_array);
         } else {
             return $array;
@@ -61,9 +61,9 @@ class MissingExtension extends Twig_Extension
         $order = is_array($order) ? $order : [$order];
 
         if ($one) {
-            $objects = $this->em->getRepository($class)->findOneBy($by, $order);
+            $objects = $this->entityManager->getRepository($class)->findOneBy($by, $order);
         } else {
-            $objects = $this->em->getRepository($class)->findBy($by, $order);
+            $objects = $this->entityManager->getRepository($class)->findBy($by, $order);
         }
 
         return $objects;

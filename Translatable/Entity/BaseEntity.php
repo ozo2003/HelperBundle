@@ -93,9 +93,9 @@ class BaseEntity
                 $v = ucfirst($v);
             }
             $variable = implode('', $variables);
-            $res = $this->{'get'.$variable}();
-            if (is_numeric($res)) {
-                return $res;
+            $result = $this->{'get'.$variable}();
+            if (is_numeric($result)) {
+                return $result;
             }
         }
 

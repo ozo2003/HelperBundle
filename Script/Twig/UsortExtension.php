@@ -10,11 +10,11 @@ class UsortExtension extends Twig_Extension
     private $param;
     private $order;
 
-    protected $short_functions;
+    protected $shortFunctions;
 
     public function __construct($container)
     {
-        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
+        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
     }
 
     public function getName()
@@ -48,7 +48,7 @@ class UsortExtension extends Twig_Extension
             ]),
         ];
 
-        if ($this->short_functions) {
+        if ($this->shortFunctions) {
             return array_merge($array, $short_array);
         } else {
             return $array;

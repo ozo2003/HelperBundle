@@ -8,15 +8,12 @@ use Twig_SimpleFilter;
 class BeautifyExtension extends Twig_Extension
 {
     protected $request;
-    protected $em;
-    protected $short_functions;
+    protected $shortFunctions;
 
-    public function __construct($request_stack, $em, $container)
+    public function __construct($requestStack, $container)
     {
-        $this->request = $request_stack->getCurrentRequest();
-        $this->em = $em;
-
-        $this->short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
+        $this->request = $requestStack->getCurrentRequest();
+        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
     }
 
     public function getName()
@@ -80,7 +77,7 @@ class BeautifyExtension extends Twig_Extension
             ]),
         ];
 
-        if ($this->short_functions) {
+        if ($this->shortFunctions) {
             return array_merge($array, $short_array);
         } else {
             return $array;

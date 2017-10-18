@@ -20,7 +20,6 @@ services:
         class: Sludio\HelperBundle\Translatable\Twig\TranslationExtension
         public: false
         arguments:
-            - '@doctrine.orm.default_entity_manager'
             - '@request_stack'
             - '%locale%'
             - '@service_container'
