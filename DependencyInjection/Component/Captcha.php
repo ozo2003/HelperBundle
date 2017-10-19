@@ -85,8 +85,6 @@ class Captcha implements Extensionable
     }
 
     /**
-     * Get the value of Type
-     *
      * @return mixed
      */
     public function getType()
@@ -95,11 +93,9 @@ class Captcha implements Extensionable
     }
 
     /**
-     * Set the value of Type
+     * @param $type
      *
-     * @param mixed type
-     *
-     * @return self
+     * @return $this
      */
     public function setType($type)
     {

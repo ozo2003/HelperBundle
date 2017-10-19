@@ -17,7 +17,6 @@ class Configuration implements ConfigurationInterface
 
         // @formatter:off
         $rootNode
-            ->fixXmlConfig('extension')
             ->children()
                 ->arrayNode('extensions')
                     ->addDefaultsIfNotSet()

@@ -166,8 +166,6 @@ class Oauth implements Extensionable
     }
 
     /**
-     * Get the value of Type
-     *
      * @return mixed
      */
     public function getType()
@@ -176,11 +174,9 @@ class Oauth implements Extensionable
     }
 
     /**
-     * Set the value of Type
+     * @param $type
      *
-     * @param mixed type
-     *
-     * @return self
+     * @return $this
      */
     public function setType($type)
     {

@@ -2,8 +2,7 @@
 
 namespace Sludio\HelperBundle\Logger;
 
-use Symfony\Component\HttpKernel\Log\LoggerInterface;
-use Psr\Log\LoggerInterface as PsrLoggerInterface;
+use Psr\Log\LoggerInterface;
 use InvalidArgumentException;
 
 class SludioLogger
@@ -13,12 +12,12 @@ class SludioLogger
     /**
      * Constructor.
      *
-     * @param LoggerInterface|PsrLoggerInterface $logger A LoggerInterface instance
+     * @param LoggerInterface $logger
      */
     public function __construct($logger = null)
     {
-        if (!$logger instanceof LoggerInterface && !$logger instanceof PsrLoggerInterface && null !== $logger) {
-            throw new InvalidArgumentException(sprintf('SludioLogger needs either the HttpKernel LoggerInterface or PSR-3 LoggerInterface, "%s" was injected instead.', is_object($logger) ? get_class($logger) : gettype($logger)));
+        if (!$logger instanceof LoggerInterface && null !== $logger) {
+            throw new InvalidArgumentException(sprintf('SludioLogger needs PSR-3 LoggerInterface, "%s" was injected instead.', is_object($logger) ? get_class($logger) : gettype($logger)));
         }
 
         $this->logger = $logger;
@@ -33,7 +32,7 @@ class SludioLogger
      */
     public function log($command, $error = false, $type = 'info')
     {
-        $this->logger->{$type}($command.': '.strtoupper($type).($error ? ': '.$error : ''));
+        $this->logger->{(string)$type}($command.': '.strtoupper((string)$type).($error !== false ? ': '.$error : ''));
     }
 
     public function error($command, $error)

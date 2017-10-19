@@ -44,8 +44,8 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * Construct.
      *
-     * @param String $secretKey
-     * @param Array $httpProxy
+     * @param String  $secretKey
+     * @param Array   $httpProxy
      * @param Boolean $verifyHost
      */
     public function __construct($secretKey, array $httpProxy, $verifyHost)
@@ -97,11 +97,12 @@ class IsTrueValidator extends ConstraintValidator
             return false;
         }
 
-        $response = $this->httpGet(self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify", [
-                "secret" => $secretKey,
-                "remoteip" => $remoteip,
-                "response" => $response,
-            ]);
+        $input = [
+            "secret" => $secretKey,
+            "remoteip" => $remoteip,
+            "response" => $response,
+        ];
+        $response = (string)$this->httpGet(self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify", $input);
 
         return json_decode($response, true);
     }
