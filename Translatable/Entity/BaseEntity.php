@@ -89,8 +89,8 @@ class BaseEntity
 
         if ($returnOriginal) {
             $variables = explode('_', $variable);
-            foreach ($variables as &$v) {
-                $v = ucfirst($v);
+            foreach ($variables as &$var) {
+                $var = ucfirst($var);
             }
             $variable = implode('', $variables);
             $result = $this->{'get'.$variable}();

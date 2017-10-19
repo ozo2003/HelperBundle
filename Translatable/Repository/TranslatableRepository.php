@@ -51,21 +51,24 @@ class TranslatableRepository
         $className = explode('\\', $class);
         $className = end($className);
 
-        $result = self::$redis ? unserialize(self::$redis->get(strtolower($className).':translations:'.$id)) : null;
-        $checked = self::$redis ? unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked')) : null;
+        $result = $checked = null;
+        if(self::$redis !== null){
+            $result = unserialize(self::$redis->get(strtolower($className).':translations:'.$id));
+            $checked = unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked'));
+        }
 
-        if (!$result && !$checked) {
+        if ($result !== null && $checked !== null) {
             $data = Quick::get(new Translation(), false, [
                 'object_class' => $class,
                 'foreign_key' => $id,
             ], true, ['*']);
-            if ($data) {
+            if ($data !== null) {
                 foreach ($data as $row) {
                     $result[$row['locale']][$row['field']] = $row['content'];
                 }
             }
 
-            if ($result && self::$redis) {
+            if ($result !== null && self::$redis !== null) {
                 self::$redis->set(strtolower($className).':translations:'.$id, serialize($result));
                 self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
             }
@@ -111,7 +114,6 @@ class TranslatableRepository
             $locale = self::$localeArr[$locale];
         }
 
-        $update = 1;
         if (!$id) {
             $id = Quick::findNextIdExt(new $class(), self::$entityManager);
             $update = 0;
