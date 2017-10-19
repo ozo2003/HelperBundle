@@ -56,7 +56,7 @@ class Uri implements Uriable
     /**
      * Set the value of Url
      *
-     * @param mixed url
+     * @param mixed $url
      *
      * @return self
      */

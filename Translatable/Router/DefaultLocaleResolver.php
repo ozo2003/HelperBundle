@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Translatable\Router;
 
-use JMS\I18nRoutingBundle\Router\LocaleResolverInterface as LocaleResolver;
+use JMS\I18nRoutingBundle\Router\LocaleResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @author Johannes M. Schmitt <schmittjoh@gmail.com>
  */
-class DefaultLocaleResolver implements LocaleResolver
+class DefaultLocaleResolver implements LocaleResolverInterface
 {
     private $cookieName;
     private $hostMap;
@@ -34,7 +34,7 @@ class DefaultLocaleResolver implements LocaleResolver
      */
     public function resolveLocale(Request $request, array $availableLocales)
     {
-        if ($this->hostMap && isset($this->hostMap[$host = $request->getHost()])) {
+        if (!empty($this->hostMap) && isset($this->hostMap[$host = $request->getHost()])) {
             return $this->hostMap[$host];
         }
 

@@ -7,37 +7,22 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class TreeController extends Controller
 {
-    public function downAction($class, $id)
+    public function moveAction(Request $request, $class, $id, $position)
     {
-        $em = $this->getDoctrine()->getManager($this->container->getParameter('sludio_helper.entity.manager'));
+        $entityManager = $this->getDoctrine()
+            ->getManager($this->container->getParameter('sludio_helper.entity.manager'))
+        ;
         $map = $this->container->getParameter('sludio_helper.position.field')['entities'];
         if (empty($map)) {
             throw new InvalidConfigurationException('Please configure sludio_helper.position.field.enties to use move functionality');
         }
         $class = $map[$class];
-        $repo = $em->getRepository($class);
+        $repo = $entityManager->getRepository($class);
         $object = $repo->findOneById($id);
         if ($object->getParent()) {
-            $repo->moveDown($object);
+            $repo->{'move'.ucfirst($position)}($object);
         }
 
-        return $this->redirect($this->getRequest()->headers->get('referer'));
-    }
-
-    public function upAction($class, $id)
-    {
-        $em = $this->getDoctrine()->getManager($this->container->getParameter('sludio_helper.entity.manager'));
-        $map = $this->container->getParameter('sludio_helper.position.field')['entities'];
-        if (empty($map)) {
-            throw new InvalidConfigurationException('Please configure sludio_helper.position.field.enties to use move functionality');
-        }
-        $class = $map[$class];
-        $repo = $em->getRepository($class);
-        $object = $repo->findOneById($id);
-        if ($object->getParent()) {
-            $repo->moveUp($object);
-        }
-
-        return $this->redirect($this->getRequest()->headers->get('referer'));
+        return $this->redirect($request->headers->get('referer'));
     }
 }

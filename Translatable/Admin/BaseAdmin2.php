@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Translatable\Admin;
 
 use Sonata\AdminBundle\Admin\Admin;
 
-class BaseAdmin2 extends Admin
+class BaseAdmin2 extends /** @scrutinizer ignore-deprecated */ Admin
 {
     protected function getRedis()
     {

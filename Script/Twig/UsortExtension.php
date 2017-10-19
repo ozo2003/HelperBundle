@@ -22,13 +22,13 @@ class UsortExtension extends Twig_Extension
         return 'sludio_helper.twig.usort_extension';
     }
 
-    public function cmpOrderBy($a, $b)
+    public function cmpOrderBy($aVar, $bVar)
     {
         switch ($this->order) {
             case 'asc':
-                return $a->{'get'.ucfirst($this->param)}() > $b->{'get'.ucfirst($this->param)}();
+                return $aVar->{'get'.ucfirst($this->param)}() > $bVar->{'get'.ucfirst($this->param)}();
             case 'desc':
-                return $a->{'get'.ucfirst($this->param)}() < $b->{'get'.ucfirst($this->param)}();
+                return $aVar->{'get'.ucfirst($this->param)}() < $bVar->{'get'.ucfirst($this->param)}();
         }
     }
 

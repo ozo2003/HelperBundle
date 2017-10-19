@@ -55,15 +55,15 @@ class MissingExtension extends Twig_Extension
         }
     }
 
-    public function getObjects($class, $by, $order = null, $one = false)
+    public function getObjects($class, $variable, $order = null, $one = false)
     {
-        $by = is_array($by) ? $by : [$by];
+        $variable = is_array($variable) ? $variable : [$variable];
         $order = is_array($order) ? $order : [$order];
 
         if ($one) {
-            $objects = $this->entityManager->getRepository($class)->findOneBy($by, $order);
+            $objects = $this->entityManager->getRepository($class)->findOneBy($variable, $order);
         } else {
-            $objects = $this->entityManager->getRepository($class)->findBy($by, $order);
+            $objects = $this->entityManager->getRepository($class)->findBy($variable, $order);
         }
 
         return $objects;

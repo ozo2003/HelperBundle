@@ -73,7 +73,7 @@ class BaseEntity
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
     {
-        $locale = $locale ?: Sludio::getDefaultLocale();
+        $locale = $locale ?: Sludio::$defaultLocale;
 
         if (!$this->translates && $this->getId()) {
             $this->translates = $this->getTranslations();

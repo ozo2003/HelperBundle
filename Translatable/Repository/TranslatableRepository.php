@@ -10,9 +10,7 @@ use Sludio\HelperBundle\Translatable\Entity\Translation;
 
 class TranslatableRepository
 {
-    public static $em;
-    public static $connection;
-    public static $container;
+    public static $defaultLocale;
 
     public static $redis;
     public static $table;
@@ -23,13 +21,6 @@ class TranslatableRepository
         'ru' => 'ru_RU',
     ];
 
-    public static function getDefaultLocale()
-    {
-        self::init();
-
-        return self::$container->getParameter('sludio_helper.translatable.default_locale');
-    }
-
     public static function init()
     {
         global $kernel;
@@ -37,10 +28,11 @@ class TranslatableRepository
         if ('AppCache' === get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
-        self::$container = $kernel->getContainer();
+        $container = $kernel->getContainer();
+        self::$defaultLocale = $container->getParameter('sludio_helper.translatable.default_locale');
 
-        self::$redis = self::$container->get('snc_redis.'.self::$container->getParameter('sludio_helper.redis.translation'));
-        self::$table = self::$container->getParameter('sludio_helper.translatable.table');
+        self::$redis = $container->get('snc_redis.'.$container->getParameter('sludio_helper.redis.translation'));
+        self::$table = $container->getParameter('sludio_helper.translatable.table');
     }
 
     public static function getTranslations($class, $id)
@@ -58,7 +50,7 @@ class TranslatableRepository
                 'object_class' => $class,
                 'foreign_key' => $id,
             ], true, ['*']);
-            if($data) {
+            if ($data) {
                 foreach ($data as $row) {
                     $result[$row['locale']][$row['field']] = $row['content'];
                 }
@@ -112,7 +104,7 @@ class TranslatableRepository
 
         $update = 1;
         if (!$id) {
-            $id = Quick::findNextIdExt(new $class(), self::$em);
+            $id = Quick::findNextIdExt(new $class());
             $update = 0;
         } else {
             $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
@@ -125,7 +117,8 @@ class TranslatableRepository
             ->setForeignKey($id)
             ->setLocale($locale)
             ->setObjectClass($class)
-            ->setContent($content);
+            ->setContent($content)
+        ;
 
         if ($update === 0) {
             Quick::persist($translation);

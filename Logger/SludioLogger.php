@@ -27,12 +27,12 @@ class SludioLogger
      * Logs a command
      *
      * @param string      $command Sludio command
-     * @param bool|string $error   Error message or null
+     * @param null|string $error   Error message or null
      * @param string      $type    Log type
      */
-    public function log($command, $error = false, $type = 'info')
+    public function log($command, $error = null, $type = 'info')
     {
-        $this->logger->{(string)$type}($command.': '.strtoupper((string)$type).($error !== false ? ': '.$error : ''));
+        $this->logger->{(string)$type}($command.': '.strtoupper((string)$type).($error !== null ? ': '.(string)$error : ''));
     }
 
     public function error($command, $error)

@@ -1,9 +1,12 @@
 sludio_helper_movedown:
     path: /movedown/{class}/{id}
     defaults:
-        _controller: Sludio\HelperBundle\Position\Controller\TreeController::downAction
+        _controller: Sludio\HelperBundle\Position\Controller\TreeController::moveAction
+        position: 'down'
 
 sludio_helper_moveup:
     path: /moveup/{class}/{id}
     defaults:
-        _controller: Sludio\HelperBundle\Position\Controller\TreeController::upAction
+        _controller: Sludio\HelperBundle\Position\Controller\TreeController::moveAction
+        position: 'up'
+
