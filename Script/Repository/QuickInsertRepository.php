@@ -13,22 +13,23 @@ class QuickInsertRepository
 
     public static function init($noFkCheck = false, $manager = null)
     {
-        if (!self::$connection) {
-            global $kernel;
+        if (self::$connection) {
+            return;
+        }
+        global $kernel;
 
-            if ('AppCache' === get_class($kernel)) {
-                $kernel = $kernel->getKernel();
-            }
-            $container = $kernel->getContainer();
+        if ('AppCache' === get_class($kernel)) {
+            $kernel = $kernel->getKernel();
+        }
+        $container = $kernel->getContainer();
 
-            $manager = $manager ?: $container->getParameter('sludio_helper.entity.manager');
-            self::$entityManager = $container->get('doctrine')->getManager($manager);
-            self::$connection = self::$entityManager->getConnection();
+        $manager = $manager ?: $container->getParameter('sludio_helper.entity.manager');
+        self::$entityManager = $container->get('doctrine')->getManager($manager);
+        self::$connection = self::$entityManager->getConnection();
 
-            if (!$noFkCheck) {
-                $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
-                $sth->execute();
-            }
+        if (!$noFkCheck) {
+            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
+            $sth->execute();
         }
     }
 
@@ -187,27 +188,30 @@ class QuickInsertRepository
         return $whereSql;
     }
 
+    private static function getTable(&$object, &$tableName, &$columns, &$type)
+    {
+        if (is_object($object)) {
+            self::extract($object);
+            $tableName = self::$tableName;
+            $columns = self::$mock[$tableName] ?: [];
+            $type = 'object';
+        } else {
+            $tableName = $object['table_name'];
+            unset($object['table_name']);
+            $type = 'table';
+            $columns = array_keys($object) ?: [];
+        }
+    }
+
     public static function findNextId($tableName, &$out = null)
     {
-        $sql = "
-            SELECT
-                AUTO_INCREMENT
-            FROM
-                information_schema.tables
-            WHERE
-                table_name = '".$tableName."'
-            AND
-                table_schema = DATABASE()
-        ";
-        if ($out) {
-            $out = $sql;
-        }
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetch();
+        $result = self::get(['table_name' => 'information_schema.tables'], true, [
+            'table_name' => $tableName,
+            ['table_schema = DATABASE()'],
+        ], true, ['AUTO_INCREMENT'], null, [], $out);
 
-        if (isset($result['AUTO_INCREMENT'])) {
-            return (int)$result['AUTO_INCREMENT'];
+        if ($result) {
+            return $result;
         }
 
         return 1;
@@ -276,18 +280,12 @@ class QuickInsertRepository
         return $result;
     }
 
-    private static function getTable(&$object, &$tableName, &$columns, &$type)
+    private static function value($object, $variable, $type)
     {
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-            $columns = self::$mock[$tableName] ?: [];
-            $type = 'object';
+        if ($type === 'object') {
+            return $object->{'get'.ucfirst($variable)}();
         } else {
-            $tableName = $object['table_name'];
-            unset($object['table_name']);
-            $type = 'table';
-            $columns = array_keys($object) ?: [];
+            return $object[$variable];
         }
     }
 
@@ -304,45 +302,24 @@ class QuickInsertRepository
             $columns = array_merge($columns, $extraFields[$tableName]);
         }
 
-        if ($type === 'object') {
-            foreach ($columns as $value => $key) {
-                $variable = null;
-                if (!is_array($key) && !is_array($value)) {
-                    if ($object->{'get'.ucfirst($value)}() instanceof \DateTime) {
-                        $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()->format('Y-m-d H:i:s')))."'";
-                    } else {
-                        $variable = "'".addslashes(trim($object->{'get'.ucfirst($value)}()))."'";
-                    }
-                    if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
-                        $variable = null;
-                    }
-                    if ($variable !== null) {
-                        $values[] = $variable;
-                        $keys[] = $key;
-                        if ($key === 'id') {
-                            $idd = $object->{'get'.ucfirst($value)}();
-                        }
-                    }
+        $idd = null;
+        foreach ($columns as $value => $key) {
+            $variable = null;
+            if (!is_array($key) && !is_array($value)) {
+                $value = self::value($object, $value, $type);
+                if ($value instanceof \DateTime) {
+                    $variable = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
+                } else {
+                    $variable = "'".addslashes(trim($value))."'";
                 }
-            }
-        } else {
-            foreach ($columns as $value => $key) {
-                $variable = null;
-                if (!is_array($key) && !is_array($value) && isset($object[$value])) {
-                    if ($object[$value] instanceof \DateTime) {
-                        $variable = "'".addslashes(trim($object[$value]->format('Y-m-d H:i:s')))."'";
-                    } else {
-                        $variable = "'".addslashes(trim($object[$value]))."'";
-                    }
-                    if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
-                        $variable = null;
-                    }
-                    if ($variable !== null) {
-                        $values[] = $variable;
-                        $keys[] = $key;
-                        if ($key === 'id') {
-                            $idd = $object[$value];
-                        }
+                if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
+                    $variable = null;
+                }
+                if ($variable !== null) {
+                    $values[] = $variable;
+                    $keys[] = $key;
+                    if ($key === 'id') {
+                        $idd = $value;
                     }
                 }
             }
