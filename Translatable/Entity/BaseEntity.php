@@ -41,7 +41,7 @@ class BaseEntity
     public function __get($property)
     {
         if (!method_exists($this, 'get'.ucfirst($property))) {
-            $locale = Sludio::$defaultLocale;
+            $locale = Sludio::getDefaultLocale();
         } else {
             $locale = strtolower(substr($property, -2));
             $property = substr($property, 0, -2);
@@ -59,7 +59,7 @@ class BaseEntity
         $locale = strtolower(substr($property, -2));
         if (in_array($locale, array_keys($this->localeArr))) {
             $property = substr($property, 0, -2);
-            Sludio::updateTranslations(get_called_class(), $this->localeArr[$locale], $property, $value, $this->getId());
+            Sludio::updateTranslations(get_class($this), $this->localeArr[$locale], $property, $value, $this->getId());
         }
         $this->{$property} = $value;
 
@@ -73,7 +73,7 @@ class BaseEntity
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
     {
-        $locale = $locale ?: Sludio::$defaultLocale;
+        $locale = $locale ?: Sludio::getDefaultLocale();
 
         if (!$this->translates && $this->getId()) {
             $this->translates = $this->getTranslations();

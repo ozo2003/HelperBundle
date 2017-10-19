@@ -22,6 +22,13 @@ class TranslatableRepository
         'ru' => 'ru_RU',
     ];
 
+    public function getDefaultLocale()
+    {
+        self::init();
+
+        return self::$defaultLocale;
+    }
+
     public static function init()
     {
         global $kernel;
@@ -129,6 +136,7 @@ class TranslatableRepository
                 'field' => $field,
                 'foreign_key' => $id,
                 'object_class' => $class,
+                'locale' => $locale,
             ];
             $tId = Quick::get(new Translation(), true, $where);
             Quick::update($tId, $translation);

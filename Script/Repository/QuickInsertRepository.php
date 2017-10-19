@@ -364,7 +364,7 @@ class QuickInsertRepository
         self::init($noFkCheck, $manager);
         self::getTable($object, $tableName, $columns, $type);
 
-        $result = self::get($tableName, true, ['id' => $id], true, ['*']);
+        $result = self::get(['table_name' => $tableName], true, ['id' => $id], true, ['*']);
         unset($result['id']);
 
         $data = [];
