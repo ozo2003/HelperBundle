@@ -104,10 +104,6 @@ class BaseEntity
 
     public function cleanText($text)
     {
-        $text = strip_tags($text);
-        $text = mb_convert_encoding($text, "UTF-8", "UTF-8");
-        $text = str_replace(' ?', '', $text);
-
-        return $text;
+        return html_entity_decode(preg_replace('/\s+/S', ' ', str_replace(' ?', '', mb_convert_encoding(strip_tags($text), "UTF-8", "UTF-8"))));
     }
 }

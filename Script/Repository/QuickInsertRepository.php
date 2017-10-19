@@ -10,24 +10,25 @@ class QuickInsertRepository
 
     public static $entityManager;
     public static $connection;
-    public static $container;
 
     public static function init($noFkCheck = false, $manager = null)
     {
-        global $kernel;
+        if (!self::$connection) {
+            global $kernel;
 
-        if ('AppCache' === get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-        self::$container = $kernel->getContainer();
+            if ('AppCache' === get_class($kernel)) {
+                $kernel = $kernel->getKernel();
+            }
+            $container = $kernel->getContainer();
 
-        $manager = $manager ?: self::$container->getParameter('sludio_helper.entity.manager');
-        self::$entityManager = self::$container->get('doctrine')->getManager($manager);
-        self::$connection = self::$entityManager->getConnection();
+            $manager = $manager ?: $container->getParameter('sludio_helper.entity.manager');
+            self::$entityManager = $container->get('doctrine')->getManager($manager);
+            self::$connection = self::$entityManager->getConnection();
 
-        if (!$noFkCheck) {
-            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
-            $sth->execute();
+            if (!$noFkCheck) {
+                $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
+                $sth->execute();
+            }
         }
     }
 
@@ -222,7 +223,7 @@ class QuickInsertRepository
 
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
-        self::init($noFkCheck, $manager);
+        self::init(true, $manager);
         self::getTable($object, $tableName, $columns, $type);
 
         $whereSql = self::buildWhere($tableName, $where);
@@ -254,7 +255,7 @@ class QuickInsertRepository
             }
         }
 
-        self::close($noFkCheck);
+        self::close(true);
         if ($one || !$result) {
             return null;
         }
