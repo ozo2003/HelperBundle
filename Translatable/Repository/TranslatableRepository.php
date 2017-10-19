@@ -52,7 +52,7 @@ class TranslatableRepository
         $className = end($className);
 
         $result = $checked = null;
-        if(self::$redis !== null){
+        if (self::$redis !== null) {
             $result = unserialize(self::$redis->get(strtolower($className).':translations:'.$id));
             $checked = unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked'));
         }
