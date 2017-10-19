@@ -41,7 +41,7 @@ class BaseEntity
     public function __get($property)
     {
         if (!method_exists($this, 'get'.ucfirst($property))) {
-            $locale = Sludio::getDefaultLocale();
+            $locale = Sludio::$defaultLocale;
         } else {
             $locale = strtolower(substr($property, -2));
             $property = substr($property, 0, -2);

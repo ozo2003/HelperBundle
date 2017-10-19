@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Script\Controller;
 
-use Predis\Client;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;

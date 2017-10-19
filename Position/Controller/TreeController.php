@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Position\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Symfony\Component\HttpFoundation\Request;
 
 class TreeController extends Controller
 {

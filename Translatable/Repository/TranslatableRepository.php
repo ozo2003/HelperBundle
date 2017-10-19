@@ -14,6 +14,7 @@ class TranslatableRepository
 
     public static $redis;
     public static $table;
+    public static $entityManager;
 
     public static $localeArr = [
         'lv' => 'lv_LV',
@@ -29,6 +30,7 @@ class TranslatableRepository
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();
+        self::$entityManager = $container->get('doctrine')->getManager();
         self::$defaultLocale = $container->getParameter('sludio_helper.translatable.default_locale');
 
         self::$redis = $container->get('snc_redis.'.$container->getParameter('sludio_helper.redis.translation'));
@@ -104,7 +106,7 @@ class TranslatableRepository
 
         $update = 1;
         if (!$id) {
-            $id = Quick::findNextIdExt(new $class());
+            $id = Quick::findNextIdExt(new $class(), self::$entityManager);
             $update = 0;
         } else {
             $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);

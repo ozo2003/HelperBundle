@@ -217,7 +217,7 @@ class QuickInsertRepository
         return 1;
     }
 
-    public static function findNextIdExt($object, $entityManager, &$out = null)
+    public static function findNextIdExt($object, $entityManager = null, &$out = null)
     {
         self::init(true);
         $data = self::extractExt($object, $entityManager);

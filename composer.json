@@ -36,6 +36,7 @@
         "doctrine/dbal": "*",
         "doctrine/orm": "*",
         "gedmo/doctrine-extensions": "*",
+        "jms/i18n-routing-bundle": "*",
         "lcobucci/jwt": "*",
         "league/oauth1-client": "*",
         "league/oauth2-client": "*",
