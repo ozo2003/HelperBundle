@@ -58,7 +58,6 @@ class Draugiem extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if (!empty($data['error'])) {
-            $message = $data['error']['description'];
             throw new IdentityProviderException('error_draugiem_bad_response', $data['error']['code'], $response);
         }
     }

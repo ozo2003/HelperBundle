@@ -24,7 +24,7 @@ class Extension
         return $this->ext;
     }
 
-    function setExt($ext)
+    private function setExt($ext)
     {
         $this->ext = $ext;
     }

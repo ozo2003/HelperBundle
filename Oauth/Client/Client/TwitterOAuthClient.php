@@ -94,7 +94,6 @@ class TwitterOAuthClient extends OAuth2Client
     public function fetchUser($request = null)
     {
         $code = $this->getCurrentRequest()->get('oauth_verifier');
-        $token = $this->getCurrentRequest()->get('oauth_token');
         $this->provider->twitter = new TwitterOAuth($this->provider->getClientId(), $this->provider->getClientSecret(), $this->session->get('oauth_token'), $this->session->get('oauth_token_secret'));
 
         try {

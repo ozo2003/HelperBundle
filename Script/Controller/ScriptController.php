@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio;
 
 class ScriptController extends Controller
 {
@@ -70,6 +71,15 @@ class ScriptController extends Controller
             'command' => 'sludio:lexik:clear',
         ]);
         $application->run($input);
+
+        return new JsonResponse(['success' => 1], 200, [
+            'Cache-Control' => 'no-cache',
+        ]);
+    }
+
+    public function generateAction()
+    {
+        Sludio::getAllTranslations();
 
         return new JsonResponse(['success' => 1], 200, [
             'Cache-Control' => 'no-cache',

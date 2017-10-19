@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Oauth\Client\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use League\OAuth2\Client\Token\AccessToken;
 
 abstract class BaseProvider extends AbstractProvider
 {
@@ -33,7 +34,8 @@ abstract class BaseProvider extends AbstractProvider
     {
         $grant = $this->verifyGrant($grant);
 
-        if ($attributes && $this->generator) {
+        $redirectUri = null;
+        if (!empty($attributes) && $this->generator) {
             $redirectUri = $this->generator->generate($attributes['_route'], $attributes['_route_params'], UrlGeneratorInterface::ABSOLUTE_URL);
         }
 

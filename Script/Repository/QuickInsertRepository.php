@@ -135,7 +135,7 @@ class QuickInsertRepository
     private static function buildWhere($tableName, $where)
     {
         $whereSql = $fvalue = $fkey = '';
-        if ($where && is_array($where)) {
+        if (is_array($where) && !empty($where)) {
             $skip = false;
             foreach ($where as $key => $value) {
                 $fkey = $key;
@@ -163,7 +163,7 @@ class QuickInsertRepository
                 }
             }
             unset($where[$fkey]);
-            if ($where && is_array($where)) {
+            if (is_array($where) && !empty($where)) {
                 foreach ($where as $key => $value) {
                     $skip = is_array($value);
                     if (!$skip && isset(self::$mock[$tableName][$key])) {
