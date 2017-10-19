@@ -22,7 +22,7 @@ class TranslatableRepository
         'ru' => 'ru_RU',
     ];
 
-    public function getDefaultLocale()
+    public static function getDefaultLocale()
     {
         self::init();
 
