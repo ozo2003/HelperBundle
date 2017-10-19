@@ -11,78 +11,59 @@ use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio
 
 class ScriptController extends Controller
 {
-    public function redisAction()
+    private function result()
     {
-        $clients = [];
-        foreach ($this->container->getServiceIds() as $id) {
-            if (substr($id, 0, 9) === 'snc_redis' && $this->container->get($id) instanceof Client) {
-                $clients[] = $id;
-            }
-        }
-
-        foreach ($clients as $snc) {
-            $this->container->get($snc)->flushdb();
-        }
-
         return new JsonResponse(['success' => 1], 200, [
             'Cache-Control' => 'no-cache',
         ]);
     }
 
-    public function cacheAction()
+    private function runApp($command, $params = [], $return = true)
     {
-        global $kernel;
-
-        if ('AppCache' === get_class($kernel)) {
-            $kernel = $kernel->getKernel();
+        $data = [
+            'command' => $command,
+        ];
+        if (!empty($params)) {
+            $data = array_merge($data, $params);
         }
 
+        $application = new Application($this->container->get('kernel'));
+        $application->setAutoExit(false);
+        $input = new ArrayInput($data);
+        $application->run($input);
+
+        if ($return === true) {
+            return $this->result();
+        }
+    }
+
+    public function redisAction()
+    {
+        return $this->runApp('sludio:redis:flush');
+    }
+
+    public function cacheAction()
+    {
         $commands = [
             'clear',
             'warmup',
         ];
         foreach ($commands as $command) {
-            $application = new Application($kernel);
-            $application->setAutoExit(false);
-            $input = new ArrayInput([
-                'command' => 'cache:'.$command,
-                '--env' => $kernel->getEnvironment(),
-            ]);
-            $application->run($input);
+            $this->runApp('cache:'.$command, ['--env' => $this->container->get('kernel')->getEnvironment()], false);
         }
 
-        return new JsonResponse(['success' => 1], 200, [
-            'Cache-Control' => 'no-cache',
-        ]);
+        return $this->result();
     }
 
     public function lexikAction()
     {
-        global $kernel;
-
-        if ('AppCache' === get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-
-        $application = new Application($kernel);
-        $application->setAutoExit(false);
-
-        $input = new ArrayInput([
-            'command' => 'sludio:lexik:clear',
-        ]);
-        $application->run($input);
-
-        return new JsonResponse(['success' => 1], 200, [
-            'Cache-Control' => 'no-cache',
-        ]);
+        return $this->runApp('sludio:lexik:clear');
     }
 
     public function generateAction()
     {
         Sludio::getAllTranslations();
 
-        return new JsonResponse(['success' => 1], 200, [
-            'Cache-Control' => 'no-cache',
-        ]);
+        return $this->result();
     }
 }

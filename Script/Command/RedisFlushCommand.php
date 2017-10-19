@@ -16,21 +16,15 @@ class RedisFlushCommand extends ContainerAwareCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        global $kernel;
-
-        if ('AppCache' == get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-
         $clients = [];
-        foreach ($kernel->getContainer()->getServiceIds() as $id) {
-            if (substr($id, 0, 9) === 'snc_redis' && $kernel->getContainer()->get($id) instanceof Client) {
+        foreach ($this->getContainer()->getServiceIds() as $id) {
+            if (substr($id, 0, 9) === 'snc_redis' && $this->getContainer()->get($id) instanceof Client) {
                 $clients[] = $id;
             }
         }
 
         foreach ($clients as $snc) {
-            $kernel->getContainer()->get($snc)->flushdb();
+            $this->getContainer()->get($snc)->flushdb();
         }
 
         $output->writeln('redis database flushed');
