@@ -57,8 +57,6 @@ class TranslationExtension extends Twig_Extension
             }
 
             $trans = $object->getVariableByLocale($type, $new_locale, $original);
-            $class = get_class($object);
-            $class = str_replace('Proxies\__CG__\\', '', $class);
 
             return $trans;
         } else {

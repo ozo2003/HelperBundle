@@ -233,9 +233,9 @@ class QuickInsertRepository
         $whereSql = self::buildWhere($tableName, $where);
         $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
         if (!$fields) {
-            $sql = $select.'id FROM '.$tableName.' '.$whereSql;
+            $sql = $select.'id FROM '.$tableName.$whereSql;
         } else {
-            $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.' '.$whereSql;
+            $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.$whereSql;
         }
         if (!empty($extra)) {
             $extraSql = self::buildExtra($extra);

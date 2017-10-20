@@ -51,13 +51,14 @@ class TranslatableRepository
         $className = explode('\\', $class);
         $className = end($className);
 
-        $result = $checked = null;
+        $result = [];
+        $checked = false;
         if (self::$redis !== null) {
             $result = unserialize(self::$redis->get(strtolower($className).':translations:'.$id));
             $checked = unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked'));
         }
 
-        if ($result !== null && $checked !== null) {
+        if (empty($result) && !$checked) {
             $data = Quick::get(new Translation(), false, [
                 'object_class' => $class,
                 'foreign_key' => $id,

@@ -106,6 +106,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
             $this->publicKey = 'file://'.$options['public_key'];
             $this->state = $this->getRandomState();
             $this->baseUri = $options['base_uri'];
+            $url = null;
             switch ($options['redirect']['type']) {
                 case 'uri':
                     $url = $options['redirect']['uri'];

@@ -117,14 +117,14 @@ class Openidconnect implements Extensionable
                             foreach ($subConfigValue as $subParameterKey => $subParameterValue) {
                                 $params[$subParameterKey] = $subParameterValue;
                             }
+                            if (!empty($params)) {
+                                $params['client_id'] = $container->getParameter('sludio_helper.openidconnect.client.'.$key.'.client_key');
+                                $container->setParameter($clientServiceKey.'.'.$subKey.'.'.$subConfigKey, $params);
+                            }
                         }
                     } else {
                         $container->setParameter($clientServiceKey.'.'.$subKey.'.'.$subConfigKey, $subConfigValue);
                     }
-                }
-                if (!empty($params)) {
-                    $params['client_id'] = $container->getParameter('sludio_helper.openidconnect.client.'.$key.'.client_key');
-                    $container->setParameter($clientServiceKey.'.'.$subKey.'.'.$subConfigKey, $params);
                 }
             }
             $this->configureClient($container, $clientServiceKey);

@@ -15,7 +15,7 @@ class ClearCacheCommand extends ContainerAwareCommand
 {
     public function configure()
     {
-        $this->setName('sludio:lexik:clear');;
+        $this->setName('sludio:lexik:clear');
     }
 
     /**
