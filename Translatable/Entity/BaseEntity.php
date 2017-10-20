@@ -37,7 +37,7 @@ abstract class BaseEntity
 
     public function getLocaleVar($locale)
     {
-        return $this->localeArr[$locale];
+        return isset($this->localeArr[$locale]) ? $this->localeArr[$locale] : $locale;
     }
 
     public function __get($property)
@@ -75,14 +75,10 @@ abstract class BaseEntity
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
     {
-        $locale = $locale ?: Sludio::getDefaultLocale();
+        $locale = $this->getLocaleVar($locale ?: Sludio::getDefaultLocale());
 
         if (!$this->translates && $this->getId()) {
             $this->translates = $this->getTranslations();
-        }
-
-        if (strlen($locale) == 2) {
-            $locale = $this->localeArr[$locale];
         }
 
         if (isset($this->translates[$locale][$variable])) {

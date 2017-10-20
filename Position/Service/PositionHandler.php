@@ -12,16 +12,16 @@ class PositionHandler
     /**
      * @var EntityManagerInterface
      */
-    protected $em;
+    protected $entityManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $entityManager;
+        $this->entityManager = $entityManager;
     }
 
     public function getLastPosition($entity)
     {
-        $query = $this->em->createQuery(sprintf('SELECT MAX(m.%s) FROM %s m', $positionFiles = $this->getPositionFieldByEntity($entity), $entity));
+        $query = $this->entityManager->createQuery(sprintf('SELECT MAX(m.%s) FROM %s m', $positionFiles = $this->getPositionFieldByEntity($entity), $entity));
         $result = $query->getResult();
 
         if (array_key_exists(0, $result)) {

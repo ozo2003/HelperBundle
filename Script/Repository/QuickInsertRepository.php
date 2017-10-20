@@ -454,26 +454,7 @@ class QuickInsertRepository
         self::init($noFkCheck, $manager);
         self::getTable($object, $tableName, $columns, $type);
 
-        if ($object && $data) {
-            $keys = $values = [];
-            foreach ($data as $key => $value) {
-                $keys[] = $key;
-                $values[] = $value;
-            }
-            $sql = "
-                INSERT IGNORE INTO
-                    ".$tableName."
-                        (".implode(',', $keys).")
-                VALUES
-                    (".implode(',', $values).")
-            ";
-            if ($out) {
-                $out = $sql;
-            }
-            $sth = self::$connection->prepare($sql);
-            $sth->execute();
-        }
-
-        self::close($noFkCheck);
+        $data['table_name'] = $tableName;
+        self::persist($data, true, [], $noFkCheck, $manager, $out);
     }
 }
