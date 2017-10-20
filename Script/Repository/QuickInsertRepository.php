@@ -186,8 +186,9 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    private static function getTable(&$object, &$tableName, &$columns, &$type)
+    private static function getTable(&$object, &$tableName, &$columns, &$type, $noFkCheck = true, $manager = null)
     {
+        self::init($noFkCheck, $manager);
         if (is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
@@ -237,8 +238,7 @@ class QuickInsertRepository
 
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
-        self::init(true, $manager);
-        self::getTable($object, $tableName, $columns, $type);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
         $whereSql = self::buildWhere($tableName, $where);
         $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
@@ -299,12 +299,10 @@ class QuickInsertRepository
 
     public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($noFkCheck, $manager);
-        self::getTable($object, $tableName, $columns, $type);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
         $id = self::findNextId($tableName);
-        $keys = [];
-        $values = [];
+        $keys = $values = [];
 
         if (!empty($extraFields) && isset($extraFields[$tableName])) {
             $columns = array_merge($columns, $extraFields[$tableName]);
@@ -368,8 +366,7 @@ class QuickInsertRepository
 
     public static function update($id, $object, $extraFields = [], $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($noFkCheck, $manager);
-        self::getTable($object, $tableName, $columns, $type);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
         $result = self::get(['table_name' => $tableName], true, ['id' => $id], true, ['*']);
         unset($result['id']);
@@ -441,8 +438,7 @@ class QuickInsertRepository
 
     public static function delete($object, $where = [], $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($noFkCheck, $manager);
-        self::getTable($object, $tableName, $columns, $type);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
         $whereSql = self::buildWhere($tableName, $where);
         $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
@@ -456,8 +452,7 @@ class QuickInsertRepository
 
     public static function link($object, $data, $noFkCheck = false, $manager = null, &$out = null)
     {
-        self::init($noFkCheck, $manager);
-        self::getTable($object, $tableName, $columns, $type);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
         $data['table_name'] = $tableName;
         self::persist($data, true, [], $noFkCheck, $manager, $out);
