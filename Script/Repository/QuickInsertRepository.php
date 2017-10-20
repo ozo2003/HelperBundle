@@ -28,16 +28,14 @@ class QuickInsertRepository
         self::$connection = self::$entityManager->getConnection();
 
         if (!$noFkCheck) {
-            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 0');
-            $sth->execute();
+            self::runSQL('SET FOREIGN_KEY_CHECKS = 0');
         }
     }
 
     public static function close($noFkCheck = false)
     {
         if (!$noFkCheck) {
-            $sth = self::$connection->prepare('SET FOREIGN_KEY_CHECKS = 1');
-            $sth->execute();
+            self::runSQL('SET FOREIGN_KEY_CHECKS = 1');
         }
     }
 
@@ -225,6 +223,18 @@ class QuickInsertRepository
         return self::findNextId($data['table'], $out);
     }
 
+    public static function runSQL($sql, $noFkCheck = true, $manager = null)
+    {
+        $sql = trim(preg_replace('/\s+/', ' ', $sql));
+        self::init($noFkCheck, $manager);
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+
+        if (substr($sql, 0, 6) === "SELECT") {
+            return $sth->fetchAll();
+        }
+    }
+
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [], &$out = null)
     {
         self::init(true, $manager);
@@ -244,9 +254,7 @@ class QuickInsertRepository
         if ($out) {
             $out = $sql;
         }
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-        $result = $sth->fetchAll();
+        $result = self::runSQL($sql);
         if ($one && $result) {
             if (!$fields) {
                 return intval($result[0]['id']);
@@ -350,8 +358,7 @@ class QuickInsertRepository
             if ($out) {
                 $out = $sql;
             }
-            $sth = self::$connection->prepare($sql);
-            $sth->execute();
+            self::runSQL($sql);
         }
 
         self::close($noFkCheck);
@@ -426,8 +433,7 @@ class QuickInsertRepository
                 $out = $sql;
             }
 
-            $sthu = self::$connection->prepare($sql);
-            $sthu->execute();
+            self::runSQL($sql);
         }
 
         self::close($noFkCheck);
@@ -443,8 +449,7 @@ class QuickInsertRepository
         if ($out) {
             $out = $sql;
         }
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
+        self::runSQL($sql);
 
         self::close($noFkCheck);
     }
