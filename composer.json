@@ -34,6 +34,7 @@
         "php": ">=5.5.9",
         "abraham/twitteroauth": "*",
         "doctrine/dbal": "*",
+        "doctrine/common": "*",
         "doctrine/orm": "*",
         "gedmo/doctrine-extensions": "*",
         "jms/i18n-routing-bundle": "*",

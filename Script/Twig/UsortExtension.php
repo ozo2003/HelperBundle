@@ -24,11 +24,13 @@ class UsortExtension extends Twig_Extension
 
     public function cmpOrderBy($aVar, $bVar)
     {
+        $aValue = $aVar->{'get'.ucfirst($this->param)}();
+        $bValue = $bVar->{'get'.ucfirst($this->param)}();
         switch ($this->order) {
             case 'asc':
-                return $aVar->{'get'.ucfirst($this->param)}() > $bVar->{'get'.ucfirst($this->param)}();
+                return $aValue > $bValue;
             case 'desc':
-                return $aVar->{'get'.ucfirst($this->param)}() < $bVar->{'get'.ucfirst($this->param)}();
+                return $aValue < $bValue;
         }
     }
 

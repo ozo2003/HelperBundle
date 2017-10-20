@@ -2,19 +2,25 @@
 
 namespace Sludio\HelperBundle\Translatable\Helper;
 
-use Symfony\Bridge\Doctrine\RegistryInterface as Registry;
+use Doctrine\Common\Persistence\ObjectRepository;
+use Doctrine\ORM\EntityManager;
+use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 use Symfony\Component\Form\FormInterface;
 
 class Manager
 {
-    protected $em;
+    /**
+     * @var EntityManager
+     */
+    protected $entityManager;
 
-    public function __construct(Registry $reg)
+    public function __construct(RegistryInterface $registry)
     {
-        $this->em = $reg->getManager();
+        $this->entityManager = $registry->getManager();
     }
 
-    private function getField($entity, $field, $locale)
+    private function getField(BaseEntity $entity, $field, $locale)
     {
         return $entity->getVariableByLocale($field, $locale);
     }
@@ -27,7 +33,7 @@ class Manager
 
     public function getTranslatedFields($class, $field, $id, $locales)
     {
-        $em = $this->em;
+        $em = $this->entityManager;
         $entity = $em->getRepository($class)->find($id);
 
         $translated = [];
@@ -48,16 +54,16 @@ class Manager
         return $translated;
     }
 
-    public function persistTranslations(FormInterface $form, $class, $field, $id, $locales)
+    public function persistTranslations(FormInterface $form, $class, $field, $identifier, $locales)
     {
         $translations = $form->getData();
 
-        $em = $this->em;
-        $repository = $em->getRepository($class);
-        if (!$id) {
+        $repository = $this->entityManager->getRepository($class);
+        /** @var $entity BaseEntity */
+        if (!$identifier) {
             $entity = new $class();
         } else {
-            $entity = $repository->find($id);
+            $entity = $repository->find($identifier);
         }
 
         foreach ($locales as $locale) {

@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Translatable\Entity;
 
 use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio;
 
-class BaseEntity
+abstract class BaseEntity
 {
     public $className;
     public $translates;
@@ -14,6 +14,8 @@ class BaseEntity
         'en' => 'en_US',
         'ru' => 'ru_RU',
     ];
+
+    abstract public function getId();
 
     public function __construct()
     {

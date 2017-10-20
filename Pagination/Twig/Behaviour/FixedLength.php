@@ -29,10 +29,10 @@ final class FixedLength extends AbstractPaginationBehaviour
      */
     public function withMaximumVisible($maximumVisible)
     {
-        $c = clone $this;
-        $c->setMaximumVisible($maximumVisible);
+        $clone = clone $this;
+        $clone->setMaximumVisible($maximumVisible);
 
-        return $c;
+        return $clone;
     }
 
     /**
