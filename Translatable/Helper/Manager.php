@@ -31,10 +31,9 @@ class Manager
         $entity->{$setterFunctionName}($value);
     }
 
-    public function getTranslatedFields($class, $field, $id, $locales)
+    public function getTranslatedFields($class, $field, $identifier, $locales)
     {
-        $em = $this->entityManager;
-        $entity = $em->getRepository($class)->find($id);
+        $entity = $this->entityManager->getRepository($class)->find($identifier);
 
         $translated = [];
         foreach ($locales as $locale) {
