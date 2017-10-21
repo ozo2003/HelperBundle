@@ -6,7 +6,6 @@ use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio;
 
 class ScriptController extends Controller
 {
@@ -61,8 +60,6 @@ class ScriptController extends Controller
 
     public function generateAction()
     {
-        Sludio::getAllTranslations();
-
-        return $this->result();
+        return $this->runApp('sludio:translations:generate');
     }
 }

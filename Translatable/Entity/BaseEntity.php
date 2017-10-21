@@ -19,9 +19,7 @@ abstract class BaseEntity
 
     public function __construct()
     {
-        if (method_exists($this, 'getId') && $this->getId()) {
-            $this->translates = $this->getTranslations();
-        }
+        $this->translates = $this->getTranslations();
         $this->getClassName();
     }
 
@@ -70,7 +68,9 @@ abstract class BaseEntity
 
     protected function getTranslations()
     {
-        return Sludio::getTranslations(get_called_class(), $this->getId());
+        if($this->getId()) {
+            return Sludio::getTranslations(get_called_class(), $this->getId());
+        }
     }
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)

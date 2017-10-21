@@ -34,8 +34,15 @@ class TranslatableRepository
         return self::$defaultLocale;
     }
 
-    public static function init()
+    public static function init($class = null, &$className = null)
     {
+        if ($class) {
+            $class = explode('\\', $class);
+            $className = end($class);
+        }
+        if (self::$redis) {
+            return;
+        }
         global $kernel;
 
         if ('AppCache' === get_class($kernel)) {
@@ -49,19 +56,39 @@ class TranslatableRepository
         self::$table = $container->getParameter('sludio_helper.translatable.table');
     }
 
-    public static function getTranslations($class, $id)
+    private static function getFromRedis($key, &$result, &$checked)
     {
-        self::init();
-        $class = str_replace('Proxies\\__CG__\\', '', $class);
-        $className = explode('\\', $class);
-        $className = end($className);
-
         $result = [];
         $checked = false;
         if (self::$redis !== null) {
-            $result = unserialize(self::$redis->get(strtolower($className).':translations:'.$id));
-            $checked = unserialize(self::$redis->get(strtolower($className).':translations:'.$id.':checked'));
+            $result = unserialize(self::$redis->get($key.':translations'));
+            $checked = unserialize(self::$redis->get($key.':checked'));
         }
+    }
+
+    private static function setToRedis($key, $result)
+    {
+        if (!empty($result) && self::$redis !== null) {
+            self::$redis->set($key.':translations', serialize($result));
+            self::$redis->set($key.':checked', serialize(true));
+        }
+    }
+
+    private static function delFromRedis($key)
+    {
+        if (self::$redis !== null) {
+            self::$redis->del($key.':translations');
+            self::$redis->del($key.':ckecked');
+        }
+    }
+
+    public static function getTranslations($class, $id)
+    {
+        $class = str_replace('Proxies\\__CG__\\', '', $class);
+        self::init($class, $className);
+
+        $key = strtolower($className).':translations:'.$id;
+        self::getFromRedis($key, $result, $checked);
 
         if (empty($result) && !$checked) {
             $data = Quick::get(new Translation(), false, [
@@ -74,16 +101,13 @@ class TranslatableRepository
                 }
             }
 
-            if ($result !== null && self::$redis !== null) {
-                self::$redis->set(strtolower($className).':translations:'.$id, serialize($result));
-                self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
-            }
+            self::setToRedis($key, $result);
         }
 
         return $result;
     }
 
-    public static function findByLocale($class, $locale, $content, $field = 'slug', $id = null, $id2 = null)
+    public static function findByLocale($class, $locale, $content, $field = 'slug', $notId = null, $isId = null)
     {
         self::init();
 
@@ -94,11 +118,11 @@ class TranslatableRepository
             'locale' => $locale,
             'field' => $field,
         ];
-        if ($id) {
-            $where[] = ['foreign_key <> '.$id];
+        if ($notId) {
+            $where[] = ['foreign_key <> '.$notId];
         }
-        if ($id2) {
-            $where['foreign_key'] = $id2;
+        if ($isId) {
+            $where['foreign_key'] = $isId;
         } else {
             $where['content'] = $content;
         }
@@ -110,13 +134,8 @@ class TranslatableRepository
 
     public static function updateTranslations($class, $locale, $field, $content, $id = 0)
     {
-        $className = explode('\\', $class);
-        $className = end($className);
-        self::init();
-
-        if (strlen($locale) == 2) {
-            $locale = self::$localeArr[$locale];
-        }
+        self::init($class, $className);
+        $locale = self::getLocaleVar($locale);
 
         if (!$id) {
             $id = Quick::findNextIdExt(new $class(), self::$entityManager);
@@ -148,16 +167,16 @@ class TranslatableRepository
             Quick::update($tId, $translation);
         }
 
-        if (self::$redis) {
-            self::$redis->del(strtolower($className).':translations:'.$id);
-            self::$redis->del(strtolower($className).':translations:'.$id.':ckecked');
-        }
+        $key = strtolower($className).':translations:'.$id;
+        self::delFromRedis($key);
+
+        self::getTranslations($class, $id);
     }
 
     public static function removeTranslations($object)
     {
-        self::init();
         $class = get_class($object);
+        self::init($class, $className);
         $id = $object->getId();
 
         $where = [
@@ -165,29 +184,19 @@ class TranslatableRepository
             'foreign_key' => $id,
         ];
         Quick::delete(new Translation(), $where);
+        $key = strtolower($className).':translations:'.$id;
+        self::delFromRedis($key);
     }
 
     public static function getAllTranslations()
     {
         self::init();
-
-        $data = Quick::get(new Translation(), false, [], true, ['*']);
-        $result = [];
-        foreach ($data as $row) {
-            $result[$row['object_class']][$row['foreign_key']][$row['locale']][$row['field']] = $row['content'];
-        }
-
-        if (count($result)) {
-            foreach ($result as $class => $objects) {
-                $className = explode('\\', $class);
-                $className = end($className);
-                foreach ($objects as $id => $transl) {
-                    self::$redis->set(strtolower($className).':translations:'.$id, serialize($transl));
-                    self::$redis->set(strtolower($className).':translations:'.$id.':checked', serialize(true));
-                }
+        $classes = Quick::get(new Translation(), false, [], true, ['object_class'], null, ['MODE' => 'DISTINCT']);
+        foreach ($classes as $class) {
+            $ids = Quick::get(new Translation(), false, ['object_class' => $class], true, ['foreign_key'], null, ['MODE' => 'DISTINCT']);
+            foreach ($ids as $id) {
+                self::getTranslations($class, $id);
             }
         }
-
-        return $result;
     }
 }

@@ -215,7 +215,7 @@ class QuickInsertRepository
         $fields = $fields ?: ['id'];
         $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.self::buildWhere($tableName, $where).self::buildExtra($extra);
 
-        $result = self::runSQL($sql);
+        $result = self::runSQL($sql) ?: null;
 
         if ($result) {
             $field = null;

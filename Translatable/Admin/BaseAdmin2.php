@@ -21,8 +21,9 @@ class BaseAdmin2 extends /** @scrutinizer ignore-deprecated */ Admin
 
     public function postUpdate($object)
     {
-        $this->getRedis()->del($object->getClassName().':translations:'.$object->getId());
-        $this->getRedis()->del($object->getClassName().':translations:'.$object->getId().':checked');
+        $key = strtolower($object->getClassName()).':translations:'.$object->getId();
+        $this->getRedis()->del($key.':translations');
+        $this->getRedis()->del($key.':checked');
     }
 
     public function getTranslationFilter($queryBuilder, $alias, $field, $value)
