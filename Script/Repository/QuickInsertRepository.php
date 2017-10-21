@@ -289,7 +289,6 @@ class QuickInsertRepository
 
         $idd = null;
         foreach ($columns as $value => $key) {
-            $variable = null;
             if (!is_array($key) && !is_array($value)) {
                 $value = self::value($object, $value, $type);
                 if ($value !== null) {
