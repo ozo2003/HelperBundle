@@ -68,7 +68,7 @@ abstract class BaseEntity
 
     protected function getTranslations()
     {
-        if($this->getId()) {
+        if ($this->getId()) {
             return Sludio::getTranslations(get_called_class(), $this->getId());
         }
     }
