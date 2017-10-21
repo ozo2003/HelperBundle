@@ -228,21 +228,52 @@ class QuickInsertRepository
                         $res = $res[$field];
                     }
                 } else {
-                    $result = $result[0];
+                    $result = $result[0][$field];
                 }
+            } elseif ($one) {
+                $result = $result[0];
             }
         }
 
         return $result;
     }
 
-    private static function value($object, $variable, $type)
+    private static function variable(&$value)
     {
-        if ($type === 'object') {
-            return $object->{'get'.ucfirst($variable)}();
-        } else {
-            return $object[$variable];
+        if ($value instanceof \DateTime) {
+            $value = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
+        } elseif (!is_numeric($value)) {
+            $value = "'".addslashes(trim($value))."'";
         }
+
+        if (trim($value) === '' || trim($value) === "''") {
+            $value = null;
+        }
+    }
+
+    private static function value($object, $variable, $type, $check = true)
+    {
+        $value = null;
+        if ($type === 'object') {
+
+            $variables = explode('_', $variable);
+            foreach ($variables as &$var) {
+                $var = ucfirst($var);
+            }
+            $variable = implode('', $variables);
+
+            $value = $object->{'get'.ucfirst($variable)}();
+        } else {
+            if (isset($object[$variable])) {
+                $value = $object[$variable];
+            }
+        }
+
+        if ($check) {
+            self::variable($value);
+        }
+
+        return $value;
     }
 
     public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null)
@@ -250,7 +281,7 @@ class QuickInsertRepository
         self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
         $id = self::findNextId($tableName);
-        $keys = $values = [];
+        $data = [];
 
         if (!empty($extraFields) && isset($extraFields[$tableName])) {
             $columns = array_merge($columns, $extraFields[$tableName]);
@@ -261,17 +292,8 @@ class QuickInsertRepository
             $variable = null;
             if (!is_array($key) && !is_array($value)) {
                 $value = self::value($object, $value, $type);
-                if ($value instanceof \DateTime) {
-                    $variable = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
-                } else {
-                    $variable = "'".addslashes(trim($value))."'";
-                }
-                if (trim($variable) === '' || trim($variable) === "''" || (is_numeric($variable) && $variable === 0)) {
-                    $variable = null;
-                }
-                if ($variable !== null) {
-                    $values[] = $variable;
-                    $keys[] = $key;
+                if ($value !== null) {
+                    $data[$key] = $value;
                     if ($key === 'id') {
                         $idd = $value;
                     }
@@ -280,26 +302,24 @@ class QuickInsertRepository
         }
 
         $sql = null;
-        if (!$full && !self::isEmpty($values)) {
-            $sql = '
-                INSERT INTO
-                    '.$tableName.'
-                        (id, '.implode(',', $keys).")
-                VALUES
-                    ({$id},".implode(',', $values).')
-            ';
-        } elseif ($full && !self::isEmpty($values)) {
+        if (!$full) {
+            $data['id'] = $id;
+        } else {
             $id = $idd;
+        }
+
+        if (!self::isEmpty($data)) {
             $sql = '
                 INSERT INTO
                     '.$tableName.'
-                        ('.implode(',', $keys).")
+                        ('.implode(',', array_keys($data)).')
                 VALUES
-                    (".implode(',', $values).')
+                    ('.implode(',', array_values($data)).')
             ';
         } else {
             $id = null;
         }
+
         if ($sql !== null && $id !== null) {
             self::runSQL($sql);
         }
@@ -321,41 +341,25 @@ class QuickInsertRepository
         }
 
         $flip = array_flip($columns);
-        if ($type === 'object') {
-            if ($id) {
-                foreach ($result as $key => $value) {
-                    if ($object->{'get'.ucfirst($flip[$key])}() !== $value) {
-                        $data[$columns[$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
-                    }
-                }
-            } else {
-                foreach ($result as $key => $value) {
-                    if ($object->{'get'.ucfirst($flip[$key])}() !== null) {
-                        if ($object->{'get'.ucfirst($flip[$key])}() !== $value) {
-                            $data[$columns[$flip[$key]]] = $object->{'get'.ucfirst($flip[$key])}();
-                        }
-                    }
-                }
+        foreach ($result as $key => $value) {
+            $content = self::value($object, $key, $type, false);
+            if ($content !== $value) {
+                $data[$key] = $content;
             }
-        } else {
-            foreach ($result as $key => $value) {
-                if (isset($object[$key]) && $object[$key] !== $value) {
-                    $data[$key] = $extraFields[$key];
-                }
+            if (!$id && $content === null) {
+                unset($data[$key]);
             }
-
         }
 
         if ($data) {
-            $sql = "
+            $sql = '
                 UPDATE
-                    ".$tableName."
+                    '.$tableName.'
                 SET
 
-            ";
+            ';
             foreach ($data as $key => $value) {
-                $meta = self::$metadata[$tableName]->getFieldMapping($flip[$key]);
-                $meta = $meta['type'];
+                $meta = self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'];
                 if (in_array($meta, [
                     'boolean',
                     'integer',
@@ -367,8 +371,7 @@ class QuickInsertRepository
                 }
                 $sql .= " ".$key." = ".$value.",";
             }
-            $sql = substr($sql, 0, -1);
-            $sql .= " WHERE id = ".$id;
+            $sql = substr($sql, 0, -1).' WHERE id = '.$id;
 
             self::runSQL($sql);
         }
@@ -378,8 +381,7 @@ class QuickInsertRepository
     {
         self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
 
-        $whereSql = self::buildWhere($tableName, $where);
-        $sql = 'DELETE FROM '.$tableName.' '.$whereSql;
+        $sql = 'DELETE FROM '.$tableName.self::buildWhere($tableName, $where);
         self::runSQL($sql);
     }
 

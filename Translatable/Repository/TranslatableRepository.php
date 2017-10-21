@@ -22,6 +22,11 @@ class TranslatableRepository
         'ru' => 'ru_RU',
     ];
 
+    public static function getLocaleVar($locale)
+    {
+        return isset(self::$localeArr[$locale]) ? self::$localeArr[$locale] : $locale;
+    }
+
     public static function getDefaultLocale()
     {
         self::init();
@@ -82,9 +87,7 @@ class TranslatableRepository
     {
         self::init();
 
-        if (strlen($locale) == 2) {
-            $locale = self::$localeArr[$locale];
-        }
+        $locale = self::getLocaleVar($locale ?: self::getDefaultLocale());
 
         $where = [
             'object_class' => $class,
