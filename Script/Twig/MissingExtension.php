@@ -2,11 +2,10 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
-use Twig_Extension;
-use Twig_SimpleFilter;
-
-class MissingExtension extends Twig_Extension
+class MissingExtension extends \Twig_Extension
 {
+    use TwigTrait;
+
     protected $request;
     protected $entityManager;
     protected $shortFunctions;
@@ -26,33 +25,12 @@ class MissingExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = [
-            new Twig_SimpleFilter('sludio_objects', [
-                $this,
-                'getObjects',
-            ]),
-            new Twig_SimpleFilter('sludio_svg', [
-                $this,
-                'getSvg',
-            ]),
+        $input = [
+            'objects' => 'getObjects',
+            'svg' => 'getSvg',
         ];
 
-        $short_array = [
-            new Twig_SimpleFilter('objects', [
-                $this,
-                'getObjects',
-            ]),
-            new Twig_SimpleFilter('svg', [
-                $this,
-                'getSvg',
-            ]),
-        ];
-
-        if ($this->shortFunctions) {
-            return array_merge($array, $short_array);
-        } else {
-            return $array;
-        }
+        return $this->makeArray($input);
     }
 
     public function getObjects($class, $variable, $order = null, $one = false)

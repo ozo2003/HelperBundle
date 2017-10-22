@@ -3,11 +3,11 @@
 namespace Sludio\HelperBundle\Script\Twig;
 
 use Symfony\Component\HttpFoundation\Request;
-use Twig_Extension;
-use Twig_SimpleFunction;
 
-class BrowserExtension extends Twig_Extension
+class BrowserExtension extends \Twig_Extension
 {
+    use TwigTrait;
+
     protected $shortFunctions;
 
     public function __construct($container)
@@ -17,25 +17,11 @@ class BrowserExtension extends Twig_Extension
 
     public function getFunctions()
     {
-        $array = [
-            new Twig_SimpleFunction('sludio_is_ie', [
-                $this,
-                'isIE',
-            ]),
+        $input = [
+            'is_ie' => 'isIE',
         ];
 
-        $short_array = [
-            new Twig_SimpleFunction('is_ie', [
-                $this,
-                'isIE',
-            ]),
-        ];
-
-        if ($this->shortFunctions) {
-            return array_merge($array, $short_array);
-        } else {
-            return $array;
-        }
+        return $this->makeArray($input, 'function');
     }
 
     public function getName()

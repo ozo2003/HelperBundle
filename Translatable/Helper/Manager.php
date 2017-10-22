@@ -68,11 +68,9 @@ class Manager
         foreach ($locales as $locale) {
             if (array_key_exists($locale, $translations) && ($translations[$locale] !== null)) {
                 $postedValue = $translations[$locale];
-                $storedValue = $this->getField($entity, $field, $locale);
-                if ($storedValue !== $postedValue) {
+                if ($this->getField($entity, $field, $locale) !== $postedValue) {
                     $lang = explode('_', $locale);
-                    $fieldName = $field.ucfirst(reset($lang));
-                    $entity->__set($fieldName, $postedValue);
+                    $entity->__set($field.ucfirst(reset($lang)), $postedValue);
                 }
             }
         }

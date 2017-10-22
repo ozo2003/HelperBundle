@@ -130,16 +130,17 @@ class TranslatorType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-                'locales' => $this->locales,
-                'translation_data_class' => '',
-                'object_id' => null,
-                'mapped' => false,
-                'required' => false,
-                'by_reference' => false,
-                'fieldtype' => 'text',
-                'class' => '',
-                'new' => false,
-            ]);
+        $defaults = [
+            'locales' => $this->locales,
+            'translation_data_class' => '',
+            'object_id' => null,
+            'mapped' => false,
+            'required' => false,
+            'by_reference' => false,
+            'fieldtype' => 'text',
+            'class' => '',
+            'new' => false,
+        ];
+        $resolver->setDefaults($defaults);
     }
 }

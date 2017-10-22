@@ -2,11 +2,10 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
-use Twig_Extension;
-use Twig_SimpleFilter;
-
-class GulpExtension extends Twig_Extension
+class GulpExtension extends \Twig_Extension
 {
+    use TwigTrait;
+
     private $paths = [];
 
     protected $appDir;
@@ -23,25 +22,11 @@ class GulpExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = [
-            new Twig_SimpleFilter('sludio_asset_version', [
-                $this,
-                'getAssetVersion',
-            ]),
+        $input = [
+            'asset_version' => 'getAssetVersion',
         ];
 
-        $short_array = [
-            new Twig_SimpleFilter('asset_version', [
-                $this,
-                'getAssetVersion',
-            ]),
-        ];
-
-        if ($this->shortFunctions) {
-            return array_merge($array, $short_array);
-        } else {
-            return $array;
-        }
+        return $this->makeArray($input);
     }
 
     public function getName()

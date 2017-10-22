@@ -2,11 +2,10 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
-use Twig_Extension;
-use Twig_SimpleFilter;
-
-class BeautifyExtension extends Twig_Extension
+class BeautifyExtension extends \Twig_Extension
 {
+    use TwigTrait;
+
     protected $request;
     protected $shortFunctions;
 
@@ -23,65 +22,16 @@ class BeautifyExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = [
-            new Twig_SimpleFilter('sludio_beautify', [
-                $this,
-                'beautify',
-            ]),
-            new Twig_SimpleFilter('sludio_urldecode', [
-                $this,
-                'url_decode',
-            ]),
-            new Twig_SimpleFilter('sludio_parse', [
-                $this,
-                'parse',
-            ]),
-            new Twig_SimpleFilter('sludio_file_exists', [
-                $this,
-                'file_exists',
-            ]),
-            new Twig_SimpleFilter('sludio_html_entity_decode', [
-                $this,
-                'html_entity_decode',
-            ]),
-            new Twig_SimpleFilter('sludio_strip_descr', [
-                $this,
-                'strip_descr',
-            ]),
+        $input = [
+            'beautify' => 'beautify',
+            'urldecode' => 'url_decode',
+            'parse' => 'parse',
+            'file_exists' => 'file_exists',
+            'html_entity_decode' => 'html_entity_decode',
+            'strip_descr' => 'strip_descr',
         ];
 
-        $short_array = [
-            new Twig_SimpleFilter('beautify', [
-                $this,
-                'beautify',
-            ]),
-            new Twig_SimpleFilter('urldecode', [
-                $this,
-                'url_decode',
-            ]),
-            new Twig_SimpleFilter('parse', [
-                $this,
-                'parse',
-            ]),
-            new Twig_SimpleFilter('file_exists', [
-                $this,
-                'file_exists',
-            ]),
-            new Twig_SimpleFilter('html_entity_decode', [
-                $this,
-                'html_entity_decode',
-            ]),
-            new Twig_SimpleFilter('strip_descr', [
-                $this,
-                'strip_descr',
-            ]),
-        ];
-
-        if ($this->shortFunctions) {
-            return array_merge($array, $short_array);
-        } else {
-            return $array;
-        }
+        return $this->makeArray($input);
     }
 
     public function url_decode($string)

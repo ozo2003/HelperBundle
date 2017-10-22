@@ -8,9 +8,10 @@ trait AdminTrait
     {
         global $kernel;
 
-        if ('AppCache' == get_class($kernel)) {
+        if ('AppCache' === get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
+        
         $redis = 'snc_redis.'.$kernel->getContainer()->getParameter('sludio_helper.redis.translation');
 
         return $kernel->getContainer()->get($redis);

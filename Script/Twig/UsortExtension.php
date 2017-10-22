@@ -2,11 +2,10 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
-use Twig_Extension;
-use Twig_SimpleFilter;
-
-class UsortExtension extends Twig_Extension
+class UsortExtension extends \Twig_Extension
 {
+    use TwigTrait;
+
     private $param;
     private $order;
 
@@ -36,25 +35,11 @@ class UsortExtension extends Twig_Extension
 
     public function getFilters()
     {
-        $array = [
-            new Twig_SimpleFilter('sludio_usort', [
-                $this,
-                'usortFunction',
-            ]),
+        $input = [
+            'usort' => 'usortFunction',
         ];
 
-        $short_array = [
-            new Twig_SimpleFilter('usort', [
-                $this,
-                'usortFunction',
-            ]),
-        ];
-
-        if ($this->shortFunctions) {
-            return array_merge($array, $short_array);
-        } else {
-            return $array;
-        }
+        return $this->makeArray($input);
     }
 
     public function usortFunction($objects, $parameter, $order = 'asc')

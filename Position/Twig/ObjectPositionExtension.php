@@ -3,21 +3,23 @@
 namespace Sludio\HelperBundle\Position\Twig;
 
 use Sludio\HelperBundle\Position\Service\PositionHandler;
-use Twig_Extension;
-use Twig_SimpleFunction;
+use Sludio\HelperBundle\Script\Twig\TwigTrait;
 
-class ObjectPositionExtension extends Twig_Extension
+class ObjectPositionExtension extends \Twig_Extension
 {
-    const NAME = 'sludio_position_object';
+    use TwigTrait;
+
+    const NAME = 'position_object';
 
     /**
      * PositionHandler.
      */
     private $positionService;
 
-    public function __construct(PositionHandler $positionService)
+    public function __construct(PositionHandler $positionService, $container)
     {
         $this->positionService = $positionService;
+        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
     }
 
     /**
@@ -32,12 +34,17 @@ class ObjectPositionExtension extends Twig_Extension
 
     public function getFunctions()
     {
-        return [
-            new Twig_SimpleFunction(self::NAME, function($entity) {
-                $getter = sprintf('get%s', ucfirst($this->positionService->getPositionFieldByEntity($entity)));
-
-                return $entity->{$getter}();
-            }),
+        $input = [
+            self::NAME => 'getter',
         ];
+
+        return $this->makeArray($input, 'function');
+    }
+
+    public function getter($entity)
+    {
+        $getter = sprintf('get%s', ucfirst($this->positionService->getPositionFieldByEntity($entity)));
+
+        return $entity->{$getter}();
     }
 }

@@ -4,10 +4,8 @@ namespace Sludio\HelperBundle\Pagination\Twig;
 
 use Sludio\HelperBundle\Pagination\Twig\Behaviour\FixedLength;
 use Sludio\HelperBundle\Pagination\Twig\Behaviour\PaginationBehaviour;
-use Twig_Extension;
-use Twig_SimpleFunction;
 
-class PaginationExtension extends Twig_Extension
+class PaginationExtension extends \Twig_Extension
 {
     /**
      * @var PaginationBehaviour[]
@@ -16,13 +14,13 @@ class PaginationExtension extends Twig_Extension
 
     public function __construct($container)
     {
-        $short_functions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
+        $shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
 
         $this->functions = [];
         if ($container->hasParameter('sludio_helper.pagination.behaviour') && !empty($container->getParameter('sludio_helper.pagination.behaviour', []))) {
             $functions = $container->getParameter('sludio_helper.pagination.behaviour');
             foreach ($functions as $function) {
-                if ($short_functions) {
+                if ($shortFunctions) {
                     array_push($this->functions, $this->withFunction(array_keys($function)[0], array_values($function)[0]));
                 }
                 array_push($this->functions, $this->withFunction('sludio_'.array_keys($function)[0], array_values($function)[0]));
@@ -45,10 +43,10 @@ class PaginationExtension extends Twig_Extension
 
         $clone = clone $this;
 
-        $clone->functions[$functionName] = new Twig_SimpleFunction($functionName, [
-                $behaviour,
-                'getPaginationData',
-            ]);
+        $clone->functions[$functionName] = new \Twig_SimpleFunction($functionName, [
+            $behaviour,
+            'getPaginationData',
+        ]);
 
         return $clone->functions[$functionName];
     }

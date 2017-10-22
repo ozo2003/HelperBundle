@@ -1,0 +1,27 @@
+<?php
+
+namespace Sludio\HelperBundle\Script\Twig;
+
+trait TwigTrait
+{
+    public function makeArray(array $input, $type = 'filter')
+    {
+        $output = [];
+        $class = '\\Twig_Simple'.ucfirst($type);
+
+        foreach ($input as $call => $function) {
+            $output[] = new $class('sludio_'.$call, [
+                $this,
+                $function,
+            ]);
+            if ($this->shortFunctions) {
+                $output[] = new $class($call, [
+                    $this,
+                    $function,
+                ]);
+            }
+        }
+
+        return $output;
+    }
+}
