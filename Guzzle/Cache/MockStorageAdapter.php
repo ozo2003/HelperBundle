@@ -62,8 +62,8 @@ class MockStorageAdapter implements StorageAdapterInterface
 
         $filename = $this->getFilename($strategy->filename($request));
 
-        $fs = new Filesystem();
-        $fs->mkdir(dirname($filename));
+        $fileSys = new Filesystem();
+        $fileSys->mkdir(dirname($filename));
 
         file_put_contents($filename, Psr7\str($response));
         $response->getBody()->rewind();

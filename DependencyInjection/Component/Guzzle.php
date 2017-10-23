@@ -8,8 +8,10 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
-use Symfony\Component\Config\Loader\LoaderInterface;
+use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass;
 
 class Guzzle
 {
@@ -26,11 +28,9 @@ class Guzzle
             $container->removeDefinition(self::NAME.'.data_collector.guzzle');
         }
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../../Guzzle/Resources/config'));
-
         $this->processLoggerConfiguration($container->getParameter(self::NAME.'.logger'), $container);
 
-        $this->processMockConfiguration($container->getParameter(self::NAME.'.mock'), $container, $loader, $container->getParameter(self::NAME.'.profiler')['enabled']);
+        $this->processMockConfiguration($container->getParameter(self::NAME.'.mock'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
 
         $this->processCacheConfiguration($container->getParameter(self::NAME.'.cache'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
 
@@ -62,7 +62,7 @@ class Guzzle
         }
     }
 
-    private function processMockConfiguration(array $config, ContainerBuilder $container, LoaderInterface $loader, $debug)
+    private function processMockConfiguration(array $config, ContainerBuilder $container, $debug)
     {
         if (!$config['enabled']) {
             return;
