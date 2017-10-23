@@ -49,7 +49,6 @@ class SludioHelperExtension extends Extension
                 $loader->load($file);
             }
         }
-        echo '<pre>';
 
         foreach ($config['extensions'] as $key => $extension) {
             if (!isset($extension['enabled']) || $extension['enabled'] !== true) {

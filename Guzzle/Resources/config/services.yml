@@ -1,0 +1,72 @@
+services:
+    sludio_helper.guzzle.data_collector.history_bag:
+        class: Sludio\HelperBundle\Guzzle\GuzzleHttp\History\History
+
+    sludio_helper.guzzle.data_collector.guzzle:
+        class: Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector
+        arguments:
+            - ~
+            - "@sludio_helper.guzzle.data_collector.history_bag"
+        tags:
+            -
+                name: data_collector
+                template: "@SludioHelper/Guzzle/Collector/guzzle.html.twig"
+                id: guzzle
+
+    sludio_helper.guzzle.middleware.stopwatch:
+        class: Closure
+        arguments:
+            - "@debug.stopwatch"
+        factory:
+            - Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware
+            - stopwatch
+        tags:
+            -
+                name: sludio_helper.guzzle.middleware
+                alias: stopwatch
+
+    sludio_helper.guzzle.middleware.history:
+        class: Closure
+        arguments:
+            - "@sludio_helper.guzzle.data_collector.history_bag"
+        factory:
+            - Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware
+            - history
+        tags:
+            -
+                name: sludio_helper.guzzle.middleware
+                alias: history
+                priority: -1000
+
+    sludio_helper.guzzle.middleware.logger:
+        class: Closure
+        arguments:
+            - "@logger"
+            - "@sludio_helper.guzzle.logger.message_formatter"
+            - ~
+        factory:
+            - GuzzleHttp\Middleware
+            - log
+        tags:
+            -
+                name: sludio_helper.guzzle.middleware
+                alias: logger
+
+    sludio_helper.guzzle.logger.message_formatter:
+        class: GuzzleHttp\MessageFormatter
+        public: false
+        arguments:
+            - ~
+
+    sludio_helper.guzzle.middleware.logger:
+        class: Closure
+        arguments:
+            - "@sludio_helper.guzzle.cache_adapter"
+        factory:
+            - Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware
+            - cache
+        tags:
+            -
+                name: sludio_helper.guzzle.middleware
+                alias: cache
+                priority: -1500
