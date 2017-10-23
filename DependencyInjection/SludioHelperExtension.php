@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 /**
@@ -38,7 +38,7 @@ class SludioHelperExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $files = [
             'components.yml',
             'parameters.yml',
@@ -49,30 +49,31 @@ class SludioHelperExtension extends Extension
                 $loader->load($file);
             }
         }
+        echo '<pre>';
 
         foreach ($config['extensions'] as $key => $extension) {
-            $enabled = $iterator = 0;
+            if (!isset($extension['enabled']) || $extension['enabled'] !== true) {
+                continue;
+            }
+            $iterator = 0;
             $length = count($extension);
             foreach ($extension as $variable => $value) {
                 $iterator++;
-                if ($variable == 'enabled' && $value) {
+                if ($iterator === 1) {
                     $files = [
                         'components.yml',
                         'parameters.yml',
                         'services.yml',
                     ];
-                    $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
+                    $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
                     foreach ($files as $file) {
                         if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
                             $loader->load($file);
                         }
                     }
-                    $enabled = 1;
                 }
-                if ($enabled === 1) {
-                    $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
-                }
-                if ($iterator === $length && $enabled === 1) {
+                $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
+                if ($iterator === $length) {
                     if ($ext = $this->checkExtension($key)) {
                         $ext->configure($container);
                     }

@@ -4,6 +4,8 @@ namespace Sludio\HelperBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector;
+use GuzzleHttp\MessageFormatter;
 
 class Configuration implements ConfigurationInterface
 {
@@ -23,10 +25,8 @@ class Configuration implements ConfigurationInterface
                     ->children()
                         ->arrayNode('captcha')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('clients')
                                     ->prototype('array')
                                         ->prototype('variable')->end()
@@ -36,18 +36,52 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('guzzle')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
+                                ->arrayNode('profiler')
+                                    ->canBeEnabled()
+                                    ->children()
+                                        ->integerNode('max_body_size')
+                                            ->defaultValue(GuzzleCollector::MAX_BODY_SIZE)
+                                        ->end()
+                                    ->end()
                                 ->end()
+                                ->arrayNode('logger')
+                                    ->canBeEnabled()
+                                    ->children()
+                                        ->scalarNode('service')->defaultValue(null)->end()
+                                        ->scalarNode('format')
+                                            ->beforeNormalization()
+                                                ->ifInArray(['clf', 'debug', 'short'])
+                                                ->then(function ($v) {
+                                                    return constant('GuzzleHttp\MessageFormatter::'.strtoupper($v));
+                                                })
+                                            ->end()
+                                            ->defaultValue(MessageFormatter::CLF)
+                                        ->end()
+                                        ->scalarNode('level')
+                                            ->beforeNormalization()
+                                                ->ifInArray([
+                                                    'emergency', 'alert', 'critical', 'error',
+                                                    'warning', 'notice', 'info', 'debug',
+                                                ])
+                                                ->then(function ($v) {
+                                                    return constant('Psr\Log\LogLevel::'.strtoupper($v));
+                                                })
+                                            ->end()
+                                            ->defaultValue('debug')
+                                        ->end()
+                                    ->end()
+                                ->end()
+                                ->append($this->createCacheNode())
+                                ->append($this->createClientsNode())
+                                ->append($this->createMockNode())
                             ->end()
                         ->end()
                         ->arrayNode('lexik')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->scalarNode('default_domain')->defaultValue('messages')->end()
                                 ->arrayNode('default_selections')
                                     ->addDefaultsIfNotSet()
@@ -70,10 +104,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('oauth')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('clients')
                                     ->prototype('array')
                                         ->prototype('variable')->end()
@@ -88,10 +120,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('openid')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('clients')
                                     ->prototype('array')
                                         ->prototype('variable')->end()
@@ -101,10 +131,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('openidconnect')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('clients')
                                     ->prototype('array')
                                         ->prototype('variable')->end()
@@ -114,10 +142,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('pagination')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('behaviour')
                                     ->prototype('array')
                                         ->prototype('variable')->end()
@@ -127,10 +153,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('position')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('field')
                                     ->addDefaultsIfNotSet()
                                     ->children()
@@ -146,10 +170,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('script')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->booleanNode('short_functions')
                                     ->defaultValue(false)
                                 ->end()
@@ -157,10 +179,8 @@ class Configuration implements ConfigurationInterface
                         ->end()
                         ->arrayNode('translatable')
                             ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
                             ->children()
-                                ->booleanNode('enabled')
-                                    ->defaultValue(false)
-                                ->end()
                                 ->arrayNode('locales')
                                     ->beforeNormalization()
                                         ->ifString()
@@ -223,5 +243,81 @@ class Configuration implements ConfigurationInterface
         // @formatter:on
 
         return $treeBuilder;
+    }
+
+    private function createCacheNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $node = $treeBuilder->root('cache');
+
+        // @formatter:off
+        $node
+            ->canBeEnabled()
+            ->validate()
+                ->ifTrue(function($v) {
+                    return $v['enabled'] && null === $v['adapter'];
+                })
+                ->thenInvalid('The \'sludio_helper.guzzle.cache.adapter\' key is mandatory if you enable the cache middleware')
+            ->end()
+            ->children()
+                ->scalarNode('adapter')->defaultNull()->end()
+            ->end()
+        ;
+        // @formatter:on
+
+        return $node;
+    }
+
+    private function createClientsNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $node = $treeBuilder->root('clients');
+
+        // @formatter:off
+        $node
+            ->useAttributeAsKey('name')
+            ->prototype('array')
+                ->children()
+                    ->scalarNode('class')
+                        ->defaultValue('GuzzleHttp\Client')
+                    ->end()
+                    ->booleanNode('lazy')
+                        ->defaultFalse()
+                    ->end()
+                    ->variableNode('config')->end()
+                    ->arrayNode('middleware')
+                        ->prototype('scalar')->end()
+                    ->end()
+                    ->scalarNode('alias')->defaultNull()->end()
+                ->end()
+            ->end()
+        ;
+        // @formatter:on
+
+        return $node;
+    }
+
+    private function createMockNode()
+    {
+        $treeBuilder = new TreeBuilder();
+        $node = $treeBuilder->root('mock');
+
+        // @formatter:off
+        $node
+            ->canBeEnabled()
+            ->children()
+                ->scalarNode('storage_path')->isRequired()->end()
+                ->scalarNode('mode')->defaultValue('replay')->end()
+                ->arrayNode('request_headers_blacklist')
+                    ->prototype('scalar')->end()
+                ->end()
+                ->arrayNode('response_headers_blacklist')
+                    ->prototype('scalar')->end()
+                ->end()
+            ->end()
+        ;
+        // @formatter:on
+
+        return $node;
     }
 }
