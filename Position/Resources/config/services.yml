@@ -14,7 +14,7 @@ services:
         class: Sludio\HelperBundle\Position\Twig\ObjectPositionExtension
         arguments:
             - "@sludio_helper.position_handler"
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         public: false
         tags:
             -

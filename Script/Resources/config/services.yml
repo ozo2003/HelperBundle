@@ -11,7 +11,7 @@ services:
         public: false
         arguments:
             - '@request_stack'
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         tags:
             -
                 name: twig.extension
@@ -20,7 +20,7 @@ services:
         class: Sludio\HelperBundle\Script\Twig\BrowserExtension
         public: false
         arguments:
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         tags:
             -
                 name: twig.extension
@@ -31,7 +31,7 @@ services:
         arguments:
             - "%kernel.root_dir%"
             - "@kernel"
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         tags:
             -
                 name: twig.extension
@@ -42,7 +42,7 @@ services:
         arguments:
             - '@request_stack'
             - '@doctrine.orm.default_entity_manager'
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         tags:
             -
                 name: twig.extension
@@ -51,7 +51,7 @@ services:
         class: Sludio\HelperBundle\Script\Twig\UsortExtension
         public: false
         arguments:
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         tags:
             -
                 name: twig.extension

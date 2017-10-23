@@ -11,12 +11,12 @@ class GulpExtension extends \Twig_Extension
     protected $appDir;
     protected $kernel;
 
-    public function __construct($appDir, $kernel, $container)
+    public function __construct($appDir, $kernel, $shortFunctions)
     {
         $this->appDir = $appDir;
         $this->kernel = $kernel;
 
-        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
+        $this->shortFunctions = $shortFunctions;
     }
 
     public function getFilters()

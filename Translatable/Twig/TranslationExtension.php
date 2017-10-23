@@ -11,11 +11,11 @@ class TranslationExtension extends \Twig_Extension
     protected $request;
     protected $defaultLocale;
 
-    public function __construct($requestStack, $default, $container)
+    public function __construct($requestStack, $default, $shortFunctions)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->defaultLocale = $default;
-        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
+        $this->shortFunctions = $shortFunctions;
     }
 
     public function getName()

@@ -8,10 +8,10 @@ class BeautifyExtension extends \Twig_Extension
 
     protected $request;
 
-    public function __construct($requestStack, $container)
+    public function __construct($requestStack, $shortFunctions)
     {
         $this->request = $requestStack->getCurrentRequest();
-        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
+        $this->shortFunctions = $shortFunctions;
     }
 
     public function getName()
@@ -28,9 +28,22 @@ class BeautifyExtension extends \Twig_Extension
             'file_exists' => 'file_exists',
             'html_entity_decode' => 'html_entity_decode',
             'strip_descr' => 'strip_descr',
+            'pretty_print' => 'prettyPrint',
+            'status_code_class' => 'statusCodeClass',
+            'format_duration' => 'formatDuration',
+            'short_uri' => 'shorthenUri',
         ];
 
         return $this->makeArray($input);
+    }
+
+    public function getFunctions()
+    {
+        $input = [
+            'detect_lang' => 'detectLang',
+        ];
+
+        return $this->makeArray($input, 'function');
     }
 
     public function url_decode($string)
@@ -91,4 +104,79 @@ class BeautifyExtension extends \Twig_Extension
 
         return $body;
     }
+
+    public function detectLang($body)
+    {
+        switch (true) {
+            case 0 === strpos($body, '<?xml'):
+                return 'xml';
+            case 0 === strpos($body, '{'):
+            case 0 === strpos($body, '['):
+                return 'json';
+            default:
+                return 'markup';
+        }
+    }
+
+    public function prettyPrint($code, $lang)
+    {
+        switch ($lang) {
+            case 'json':
+                return json_encode(json_decode($code), JSON_PRETTY_PRINT);
+            case 'xml':
+                $xml = new \DomDocument('1.0');
+                $xml->preserveWhiteSpace = false;
+                $xml->formatOutput = true;
+                $xml->loadXml($code);
+
+                return $xml->saveXml();
+            default:
+                return $code;
+        }
+    }
+
+    public function statusCodeClass($statusCode)
+    {
+        switch (true) {
+            case $statusCode >= 500:
+                return 'server-error';
+            case $statusCode >= 400:
+                return 'client-error';
+            case $statusCode >= 300:
+                return 'redirection';
+            case $statusCode >= 200:
+                return 'success';
+            case $statusCode >= 100:
+                return 'informational';
+            default:
+                return 'unknown';
+        }
+    }
+
+    public function formatDuration($seconds)
+    {
+        $formats = [
+            '%.2f s',
+            '%d ms',
+            '%d µs',
+        ];
+
+        while ($format = array_shift($formats)) {
+            if ($seconds > 1) {
+                break;
+            }
+
+            $seconds *= 1000;
+        }
+
+        return sprintf($format, $seconds);
+    }
+
+    public function shortenUri($uri)
+    {
+        $parts = parse_url($uri);
+
+        return sprintf('%s://%s%s', isset($parts['scheme']) ? $parts['scheme'] : 'http', $parts['host'], isset($parts['port']) ? (':'.$parts['port']) : '');
+    }
+
 }

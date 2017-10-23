@@ -16,10 +16,10 @@ class ObjectPositionExtension extends \Twig_Extension
      */
     private $positionService;
 
-    public function __construct(PositionHandler $positionService, $container)
+    public function __construct(PositionHandler $positionService, $shortFunctions)
     {
         $this->positionService = $positionService;
-        $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');
+        $this->shortFunctions = $shortFunctions;
     }
 
     /**

@@ -22,7 +22,7 @@ services:
         arguments:
             - '@request_stack'
             - '%locale%'
-            - '@service_container'
+            - '%sludio_helper.script.short_functions%'
         tags:
             -
                 name: twig.extension

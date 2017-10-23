@@ -12,10 +12,8 @@ class PaginationExtension extends \Twig_Extension
      */
     private $functions;
 
-    public function __construct($container)
+    public function __construct($container, $shortFunctions)
     {
-        $shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions', false);
-
         $this->functions = [];
         if ($container->hasParameter('sludio_helper.pagination.behaviour') && !empty($container->getParameter('sludio_helper.pagination.behaviour', []))) {
             $functions = $container->getParameter('sludio_helper.pagination.behaviour');
