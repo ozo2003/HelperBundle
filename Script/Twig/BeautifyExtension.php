@@ -137,17 +137,18 @@ class BeautifyExtension extends \Twig_Extension
 
     public function statusCodeClass($statusCode)
     {
-        switch (true) {
-            case $statusCode >= 500:
+        $code = (int)floor(intval($statusCode) / 100);
+        switch ($code) {
+            case 5:
                 return 'server-error';
-            case $statusCode >= 400:
+            case 4:
                 return 'client-error';
-            case $statusCode >= 300:
-                return 'redirection';
-            case $statusCode >= 200:
+            case 3:
+                return 'redirect';
+            case 2:
                 return 'success';
-            case $statusCode >= 100:
-                return 'informational';
+            case 1:
+                return 'info';
             default:
                 return 'unknown';
         }
