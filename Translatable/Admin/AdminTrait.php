@@ -5,7 +5,7 @@ use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 
 trait AdminTrait
 {
-    abstract function getClass();
+    public abstract function getClass();
 
     protected function getRedis()
     {
