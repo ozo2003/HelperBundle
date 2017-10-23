@@ -8,7 +8,6 @@ class MissingExtension extends \Twig_Extension
 
     protected $request;
     protected $entityManager;
-    protected $shortFunctions;
 
     public function __construct($requestStack, $entityManager, $container)
     {

@@ -44,7 +44,7 @@ class Configuration implements ConfigurationInterface
                                 ->arrayNode('default_selections')
                                     ->addDefaultsIfNotSet()
                                     ->children()
-                                        ->booleanNode('non_translated_only')->defaultFalse()->end()
+                                        ->booleanNode('non_translated_only')->defaultValue(false)->end()
                                     ->end()
                                 ->end()
                                 ->arrayNode('empty_prefixes')

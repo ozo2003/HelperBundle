@@ -9,8 +9,6 @@ class UsortExtension extends \Twig_Extension
     private $param;
     private $order;
 
-    protected $shortFunctions;
-
     public function __construct($container)
     {
         $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');

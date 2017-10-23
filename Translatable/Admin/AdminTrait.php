@@ -1,9 +1,12 @@
 <?php
 
 namespace Sludio\HelperBundle\Translatable\Admin;
+use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 
 trait AdminTrait
 {
+    abstract function getClass();
+
     protected function getRedis()
     {
         global $kernel;
@@ -11,7 +14,7 @@ trait AdminTrait
         if ('AppCache' === get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
-        
+
         $redis = 'snc_redis.'.$kernel->getContainer()->getParameter('sludio_helper.redis.translation');
 
         return $kernel->getContainer()->get($redis);
@@ -19,6 +22,7 @@ trait AdminTrait
 
     public function postUpdate($object)
     {
+        /** @var $object BaseEntity */
         $key = strtolower($object->getClassName()).':translations:'.$object->getId();
         $this->getRedis()->del($key.':translations');
         $this->getRedis()->del($key.':checked');
@@ -27,7 +31,7 @@ trait AdminTrait
     public function getTranslationFilter($queryBuilder, $alias, $field, $value)
     {
         if (!isset($value['value'])) {
-            return;
+            return false;
         }
         $queryBuilder->leftJoin('Sludio:Translation', 't', 'WITH', 't.foreignKey = '.$alias.'.id');
         $queryBuilder->andWhere("t.field = '$field'");

@@ -7,7 +7,6 @@ class BeautifyExtension extends \Twig_Extension
     use TwigTrait;
 
     protected $request;
-    protected $shortFunctions;
 
     public function __construct($requestStack, $container)
     {

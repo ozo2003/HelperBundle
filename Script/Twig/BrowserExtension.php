@@ -8,8 +8,6 @@ class BrowserExtension extends \Twig_Extension
 {
     use TwigTrait;
 
-    protected $shortFunctions;
-
     public function __construct($container)
     {
         $this->shortFunctions = $container->hasParameter('sludio_helper.script.short_functions') && $container->getParameter('sludio_helper.script.short_functions');

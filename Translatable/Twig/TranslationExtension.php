@@ -10,7 +10,6 @@ class TranslationExtension extends \Twig_Extension
 
     protected $request;
     protected $defaultLocale;
-    protected $shortFunctions;
 
     public function __construct($requestStack, $default, $container)
     {

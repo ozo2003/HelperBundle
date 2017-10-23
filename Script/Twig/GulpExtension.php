@@ -10,7 +10,6 @@ class GulpExtension extends \Twig_Extension
 
     protected $appDir;
     protected $kernel;
-    protected $shortFunctions;
 
     public function __construct($appDir, $kernel, $container)
     {
