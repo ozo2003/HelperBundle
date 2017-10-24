@@ -6,14 +6,11 @@ class MissingExtension extends \Twig_Extension
 {
     use TwigTrait;
 
-    protected $request;
     protected $entityManager;
 
-    public function __construct($requestStack, $entityManager, $shortFunctions)
+    public function __construct($entityManager, $shortFunctions)
     {
-        $this->request = $requestStack->getCurrentRequest();
         $this->entityManager = $entityManager;
-
         $this->shortFunctions = $shortFunctions;
     }
 

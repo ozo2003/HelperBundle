@@ -12,12 +12,15 @@ class BeautifyExtension extends \Twig_Extension
     const CLIENT = 'client_error';
     const SERVER = 'server_error';
 
-    protected $request;
+    protected $appDir;
+    private $paths = [];
 
-    public function __construct($requestStack, $shortFunctions)
+    public function __construct($shortFunctions)
     {
-        $this->request = $requestStack->getCurrentRequest();
+        global $kernel;
+
         $this->shortFunctions = $shortFunctions;
+        $this->appDir = $kernel->getRootDir();
     }
 
     public function getName()
@@ -38,6 +41,9 @@ class BeautifyExtension extends \Twig_Extension
             'status_code_class' => 'statusCodeClass',
             'format_duration' => 'formatDuration',
             'short_uri' => 'shorthenUri',
+            'is_ie' => 'isIE',
+            'asset_version' => 'getAssetVersion',
+            'usort' => 'usortFunction',
         ];
 
         return $this->makeArray($input);
@@ -181,4 +187,58 @@ class BeautifyExtension extends \Twig_Extension
         return sprintf('%s://%s%s', isset($parts['scheme']) ? $parts['scheme'] : 'http', $parts['host'], isset($parts['port']) ? (':'.$parts['port']) : '');
     }
 
+    public function isIE()
+    {
+        $request = Request::createFromGlobals();
+        $agent = $request->server->get('HTTP_USER_AGENT');
+        if (strpos($agent, 'MSIE') || strpos($agent, 'Edge') || strpos($agent, 'Trident/7')) {
+            return 1;
+        }
+
+        return 0;
+    }
+
+    public function getAssetVersion($filename)
+    {
+        if (count($this->paths) === 0) {
+            $manifestPath = $this->appDir.'/Resources/assets/rev-manifest.json';
+            if (!file_exists($manifestPath)) {
+                return $filename;
+            }
+            $this->paths = json_decode(file_get_contents($manifestPath), true);
+            if (!isset($this->paths[$filename])) {
+                return $filename;
+            }
+        }
+
+        return $this->paths[$filename];
+    }
+
+    public function cmpOrderBy($aVar, $bVar)
+    {
+        $aValue = $aVar->{'get'.ucfirst($this->param)}();
+        $bValue = $bVar->{'get'.ucfirst($this->param)}();
+        switch ($this->order) {
+            case 'asc':
+                return $aValue > $bValue;
+            case 'desc':
+                return $aValue < $bValue;
+        }
+    }
+
+    public function usortFunction($objects, $parameter, $order = 'asc')
+    {
+        $this->param = $parameter;
+        $this->order = strtolower($order);
+
+        if (is_object($objects)) {
+            $objects = $objects->toArray();
+        }
+        usort($objects, [
+            __CLASS__,
+            'cmpOrderBy',
+        ]);
+
+        return $objects;
+    }
 }

@@ -10,27 +10,6 @@ services:
         class: Sludio\HelperBundle\Script\Twig\BeautifyExtension
         public: false
         arguments:
-            - '@request_stack'
-            - '%sludio_helper.script.short_functions%'
-        tags:
-            -
-                name: twig.extension
-
-    sludio_helper.twig.browser_extension:
-        class: Sludio\HelperBundle\Script\Twig\BrowserExtension
-        public: false
-        arguments:
-            - '%sludio_helper.script.short_functions%'
-        tags:
-            -
-                name: twig.extension
-
-    sludio_helper.twig.gulp_extension:
-        class: Sludio\HelperBundle\Script\Twig\GulpExtension
-        public: false
-        arguments:
-            - "%kernel.root_dir%"
-            - "@kernel"
             - '%sludio_helper.script.short_functions%'
         tags:
             -
@@ -40,17 +19,7 @@ services:
         class: Sludio\HelperBundle\Script\Twig\MissingExtension
         public: false
         arguments:
-            - '@request_stack'
             - '@doctrine.orm.default_entity_manager'
-            - '%sludio_helper.script.short_functions%'
-        tags:
-            -
-                name: twig.extension
-
-    sludio_helper.twig.usort_extension:
-        class: Sludio\HelperBundle\Script\Twig\UsortExtension
-        public: false
-        arguments:
             - '%sludio_helper.script.short_functions%'
         tags:
             -

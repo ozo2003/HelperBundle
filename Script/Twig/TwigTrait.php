@@ -6,8 +6,11 @@ trait TwigTrait
 {
     protected $shortFunctions;
 
-    public function makeArray(array $input, $type = 'filter')
+    public function makeArray(array $input, $type = 'filter', $onlyShort = false)
     {
+        if($onlyShort){
+            $this->shortFunctions = true;
+        }
         $output = [];
         $class = '\\Twig_Simple'.ucfirst($type);
 
