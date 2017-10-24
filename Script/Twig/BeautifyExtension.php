@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class BeautifyExtension extends \Twig_Extension
 {
     use TwigTrait;
@@ -14,6 +16,8 @@ class BeautifyExtension extends \Twig_Extension
 
     protected $appDir;
     private $paths = [];
+    protected $param;
+    protected $order;
 
     public function __construct($shortFunctions)
     {

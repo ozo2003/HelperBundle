@@ -156,7 +156,7 @@ class QuickInsertRepository
         return $whereSql;
     }
 
-    private static function getTable(&$object, &$tableName, &$columns, &$type, $noFkCheck = true, $manager = null)
+    private static function getTable(&$object, &$tableName, &$columns, &$type, $noFkCheck = true, $manager = null, $extraFields = [])
     {
         self::init($noFkCheck, $manager);
         if (is_object($object)) {
@@ -169,6 +169,10 @@ class QuickInsertRepository
             unset($object['table_name']);
             $type = 'table';
             $columns = array_keys($object) ?: [];
+        }
+
+        if (!empty($extraFields) && isset($extraFields[$tableName])) {
+            $columns = array_merge($columns, $extraFields[$tableName]);
         }
     }
 
@@ -278,14 +282,10 @@ class QuickInsertRepository
 
     public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null)
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager, $extraFields);
 
         $id = self::findNextId($tableName);
         $data = [];
-
-        if (!empty($extraFields) && isset($extraFields[$tableName])) {
-            $columns = array_merge($columns, $extraFields[$tableName]);
-        }
 
         $idd = null;
         foreach ($columns as $value => $key) {
@@ -328,16 +328,11 @@ class QuickInsertRepository
 
     public static function update($id, $object, $extraFields = [], $noFkCheck = false, $manager = null)
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
+        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager, $extraFields);
 
         $result = self::get(['table_name' => $tableName], true, ['id' => $id], true, ['*']);
         unset($result['id']);
-
         $data = [];
-
-        if (!empty($extraFields) && isset($extraFields[$tableName])) {
-            $columns = array_merge($columns, $extraFields[$tableName]);
-        }
 
         $flip = array_flip($columns);
         foreach ($result as $key => $value) {
