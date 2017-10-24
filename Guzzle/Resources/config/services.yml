@@ -14,24 +14,18 @@ services:
                 id: guzzle
 
     sludio_helper.guzzle.middleware.stopwatch:
-        class: Closure
+        class: Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\StopwatchMiddleware
         arguments:
             - "@debug.stopwatch"
-        factory:
-            - Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware
-            - stopwatch
         tags:
             -
                 name: sludio_helper.guzzle.middleware
                 alias: stopwatch
 
     sludio_helper.guzzle.middleware.history:
-        class: Closure
+        class: Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\HistoryMiddleware
         arguments:
             - "@sludio_helper.guzzle.data_collector.history_bag"
-        factory:
-            - Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware
-            - history
         tags:
             -
                 name: sludio_helper.guzzle.middleware
@@ -58,13 +52,10 @@ services:
         arguments:
             - ~
 
-    sludio_helper.guzzle.middleware.logger:
-        class: Closure
+    sludio_helper.guzzle.middleware.cache:
+        class: Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\CacheMiddleware
         arguments:
             - "@sludio_helper.guzzle.cache_adapter"
-        factory:
-            - Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware
-            - cache
         tags:
             -
                 name: sludio_helper.guzzle.middleware

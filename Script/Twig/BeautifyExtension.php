@@ -137,21 +137,16 @@ class BeautifyExtension extends \Twig_Extension
 
     public function statusCodeClass($statusCode)
     {
+        $codes = [
+            5 => 'server-error',
+            4 => 'client-error',
+            3 => 'redirect',
+            2 => 'success',
+            1 => 'info',
+        ];
         $code = (int)floor(intval($statusCode) / 100);
-        switch ($code) {
-            case 5:
-                return 'server-error';
-            case 4:
-                return 'client-error';
-            case 3:
-                return 'redirect';
-            case 2:
-                return 'success';
-            case 1:
-                return 'info';
-            default:
-                return 'unknown';
-        }
+
+        return isset($codes[$code]) ? $codes[$code] : 'unknown';
     }
 
     public function formatDuration($seconds)
