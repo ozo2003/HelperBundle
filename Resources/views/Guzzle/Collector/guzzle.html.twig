@@ -1,8 +1,6 @@
 {% extends '@WebProfiler/Profiler/layout.html.twig' %}
 
 {% block toolbar %}
-    {% set profiler_markup_version = profiler_markup_version|default(1) %}
-
     {% set callCount = collector.calls|length %}
     {% set errorCount = collector.errors|length %}
 
@@ -90,13 +88,11 @@
     {{ parent() }}
     <link rel="stylesheet" href="{{ asset('bundles/sludiohelper/css/screen.min.css') }}">
     <script src="{{ asset('bundles/sludiohelper/js/guzzle.min.js') }}"></script>
-    {% set profiler_markup_version = profiler_markup_version|default(1) %}
 {% endblock %}
 
 {% block menu %}
     <span class="label {% if collector.errors|length > 0 %}label-status-error{% endif %}">
         <span class="icon">
-            {% set profiler_markup_version = profiler_markup_version|default(1) %}
             {{ include('@SludioHelper/Guzzle/icon.svg') }}
         </span>
         <strong>{{ collector.name|capitalize|default('HTTP calls') }}</strong>
