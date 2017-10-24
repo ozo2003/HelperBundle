@@ -61,3 +61,13 @@ services:
                 name: sludio_helper.guzzle.middleware
                 alias: cache
                 priority: -1500
+
+    sludio_helper.guzzle.cache_adapter.redis:
+        class: Sludio\HelperBundle\Guzzle\Cache\DoctrineAdapter
+        arguments:
+            - "@sludio_helper.guzzle.redis_cache"
+
+    sludio_helper.guzzle.redis_cache:
+        class: Doctrine\Common\Cache\PredisCache
+        arguments:
+            - ~

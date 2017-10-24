@@ -2,16 +2,16 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
+use Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
-use Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass;
+use Symfony\Component\DependencyInjection\Reference;
 
 class Guzzle
 {
@@ -29,11 +29,8 @@ class Guzzle
         }
 
         $this->processLoggerConfiguration($container->getParameter(self::NAME.'.logger'), $container);
-
         $this->processMockConfiguration($container->getParameter(self::NAME.'.mock'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
-
         $this->processCacheConfiguration($container->getParameter(self::NAME.'.cache'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
-
         $this->processClientsConfiguration($container->getParameter(self::NAME.'.clients'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
     }
 
@@ -77,7 +74,6 @@ class Guzzle
 
         $middleware = $container->getDefinition(self::NAME.'.middleware.mock');
         $middleware->replaceArgument(1, $config['mode']);
-
         $middleware->replaceArgument(2, $debug);
     }
 
@@ -90,6 +86,8 @@ class Guzzle
         }
 
         $container->getDefinition(self::NAME.'.middleware.cache')->addArgument($debug);
+        $container->getDefinition(self::NAME.'.redis_cache')
+            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
 
         $container->setAlias(self::NAME.'.cache_adapter', $config['adapter']);
     }

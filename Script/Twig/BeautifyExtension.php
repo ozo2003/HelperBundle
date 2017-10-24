@@ -6,6 +6,12 @@ class BeautifyExtension extends \Twig_Extension
 {
     use TwigTrait;
 
+    const INFO = 'info';
+    const SUCCESS = 'success';
+    const REDIRECT = 'redirect';
+    const CLIENT = 'client_error';
+    const SERVER = 'server_error';
+
     protected $request;
 
     public function __construct($requestStack, $shortFunctions)
@@ -138,11 +144,11 @@ class BeautifyExtension extends \Twig_Extension
     public function statusCodeClass($statusCode)
     {
         $codes = [
-            5 => 'server-error',
-            4 => 'client-error',
-            3 => 'redirect',
-            2 => 'success',
-            1 => 'info',
+            5 => self::SERVER,
+            4 => self::CLIENT,
+            3 => self::REDIRECT,
+            2 => self::SUCCESS,
+            1 => self::INFO,
         ];
         $code = (int)floor(intval($statusCode) / 100);
 

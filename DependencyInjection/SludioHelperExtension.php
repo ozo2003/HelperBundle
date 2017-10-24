@@ -50,6 +50,16 @@ class SludioHelperExtension extends Extension
             }
         }
 
+        foreach ($config['other'] as $key => $other) {
+            if (is_array($other)) {
+                foreach ($other as $variable => $value) {
+                    $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['other'][$key][$variable]);
+                }
+            } else {
+                $container->setParameter('sludio_helper.'.$key, $config['other'][$key]);
+            }
+        }
+
         foreach ($config['extensions'] as $key => $extension) {
             if (!isset($extension['enabled']) || $extension['enabled'] !== true) {
                 continue;
@@ -77,16 +87,6 @@ class SludioHelperExtension extends Extension
                         $ext->configure($container);
                     }
                 }
-            }
-        }
-
-        foreach ($config['other'] as $key => $other) {
-            if (is_array($other)) {
-                foreach ($other as $variable => $value) {
-                    $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['other'][$key][$variable]);
-                }
-            } else {
-                $container->setParameter('sludio_helper.'.$key, $config['other'][$key]);
             }
         }
     }
