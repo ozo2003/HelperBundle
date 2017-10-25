@@ -54,7 +54,7 @@ class Helper
         $month = intval(substr($date, 2, 2));
         $year = intval(substr($date, 4, 2));
 
-        if ($month < 0 | $month > 12) {
+        if ($month < 0 || $month > 12) {
             return false;
         }
         // @formatter:off
