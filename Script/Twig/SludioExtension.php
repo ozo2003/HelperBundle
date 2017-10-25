@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Script\Twig;
 
 use Symfony\Component\HttpFoundation\Request;
+use Sludio\HelperBundle\Script\Utils\Helper;
 
 class SludioExtension extends \Twig_Extension
 {
@@ -73,10 +74,12 @@ class SludioExtension extends \Twig_Extension
     public function getAvailableDevices()
     {
         $availableDevices = [];
-        $rules = array_change_key_case($this->detector->getRules());
+        $phones = $this->detector->getPhoneDevices();
+        $tablets = $this->detector->getTabletDevices();
+        $rules = array_keys(array_change_key_case(array_merge($phones, $tablets)));
 
-        foreach ($rules as $device => $rule) {
-            $availableDevices[$device] = static::fromCamelCase($device);
+        foreach ($rules as $device) {
+            $availableDevices[$device] = Helper::fromCamelCase($device);
         }
 
         return $availableDevices;
@@ -88,16 +91,6 @@ class SludioExtension extends \Twig_Extension
             $this->detector,
             $name,
         ], $arguments);
-    }
-
-    protected static function toCamelCase($string)
-    {
-        return preg_replace('~\s+~', '', lcfirst(ucwords(strtr($string, '_', ' '))));
-    }
-
-    protected static function fromCamelCase($string, $separator = '_')
-    {
-        return strtolower(preg_replace('/(?!^)[[:upper:]]+/', $separator.'$0', $string));
     }
 
     public function url_decode($string)

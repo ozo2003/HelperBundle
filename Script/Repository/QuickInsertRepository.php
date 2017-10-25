@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Repository;
 
+use Sludio\HelperBundle\Script\Utils\Helper;
+
 class QuickInsertRepository
 {
     private static $mock = [];
@@ -38,21 +40,6 @@ class QuickInsertRepository
         if (!$noFkCheck) {
             self::runSQL('SET FOREIGN_KEY_CHECKS = 1');
         }
-    }
-
-    public static function isEmpty($variable)
-    {
-        $result = true;
-
-        if (is_array($variable) && count($variable) > 0) {
-            foreach ($variable as $value) {
-                $result = $result && self::isEmpty($value);
-            }
-        } else {
-            $result = empty($variable);
-        }
-
-        return $result;
     }
 
     private static function extract($object)
@@ -249,31 +236,11 @@ class QuickInsertRepository
         return $result;
     }
 
-    private static function variable(&$value)
-    {
-        if ($value instanceof \DateTime) {
-            $value = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
-        } elseif (!is_numeric($value)) {
-            $value = "'".addslashes(trim($value))."'";
-        }
-
-        if (trim($value) === '' || trim($value) === "''") {
-            $value = null;
-        }
-    }
-
     private static function value($object, $variable, $type, $check = true)
     {
         $value = null;
         if ($type === 'object') {
-
-            $variables = explode('_', $variable);
-            foreach ($variables as &$var) {
-                $var = ucfirst($var);
-            }
-            $variable = implode('', $variables);
-
-            $value = $object->{'get'.ucfirst($variable)}();
+            $value = $object->{'get'.ucfirst(Helper::toCamelCase($variable))}();
         } else {
             if (isset($object[$variable])) {
                 $value = $object[$variable];
@@ -281,7 +248,7 @@ class QuickInsertRepository
         }
 
         if ($check) {
-            self::variable($value);
+            Helper::variable($value);
         }
 
         return $value;
@@ -313,7 +280,7 @@ class QuickInsertRepository
             $id = $idd;
         }
 
-        if (self::isEmpty($data) && $id !== null) {
+        if (Helper::isEmpty($data) && $id !== null) {
             return null;
         }
 

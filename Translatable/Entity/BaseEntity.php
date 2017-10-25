@@ -2,6 +2,7 @@
 
 namespace Sludio\HelperBundle\Translatable\Entity;
 
+use Sludio\HelperBundle\Script\Utils\Helper;
 use Sludio\HelperBundle\Translatable\Repository\TranslatableRepository as Sludio;
 
 abstract class BaseEntity
@@ -86,15 +87,7 @@ abstract class BaseEntity
         }
 
         if ($returnOriginal) {
-            $variables = explode('_', $variable);
-            foreach ($variables as &$var) {
-                $var = ucfirst($var);
-            }
-            $variable = implode('', $variables);
-            $result = $this->{'get'.$variable}();
-            if (is_numeric($result)) {
-                return $result;
-            }
+            return $this->{'get'.Helper::toCamelCase($variable)}();
         }
 
         return '';
