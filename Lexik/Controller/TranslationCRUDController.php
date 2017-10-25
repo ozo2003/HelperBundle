@@ -67,7 +67,7 @@ class TranslationCRUDController extends CRUDController
             ], 422);
         }
 
-        /* @var $translation \Lexik\Bundle\TranslationBundle\Model\Translation */
+        /* @var $translation \Lexik\Bundle\TranslationBundle\Entity\Translation */
         if ($parameters->get('pk')) {
             $translation = $transUnitManager->updateTranslation($transUnit, $locale, $content, true);
         } else {

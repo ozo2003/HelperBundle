@@ -171,32 +171,9 @@ class FacebookUser implements ResourceOwnerInterface, SocialUser
         return $this->getField('timezone');
     }
 
-    /**
-     * Returns the lower bound of the user's age range
-     *
-     * @return integer|null
-     */
-    public function getMinAge()
+    public function getAgeRange()
     {
-        if (isset($this->response['age_range']['min'])) {
-            return $this->response['age_range']['min'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Returns the upper bound of the user's age range
-     *
-     * @return integer|null
-     */
-    public function getMaxAge()
-    {
-        if (isset($this->response['age_range']['max'])) {
-            return $this->response['age_range']['max'];
-        }
-
-        return null;
+        return $this->getField('age_range');
     }
 
     /**

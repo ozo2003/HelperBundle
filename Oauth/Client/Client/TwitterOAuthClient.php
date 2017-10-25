@@ -71,7 +71,7 @@ class TwitterOAuthClient extends OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
-                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'Invalid state: '.var_export(var_export($actualState, 1).var_export($expectedState, 1), 1), 401);
+                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'Invalid state: '.serialize($actualState).', '.serialize($expectedState), 401);
                 throw new InvalidStateException('error_oauth_invalid_state');
             }
         }

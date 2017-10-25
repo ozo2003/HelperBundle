@@ -39,6 +39,11 @@ abstract class BaseEntity
         return isset($this->localeArr[$locale]) ? $this->localeArr[$locale] : $locale;
     }
 
+    private function check($locale)
+    {
+        return in_array($locale, array_keys($this->localeArr));
+    }
+
     public function __get($property)
     {
         if (!method_exists($this, 'get'.ucfirst($property))) {
@@ -48,7 +53,7 @@ abstract class BaseEntity
             $property = substr($property, 0, -2);
         }
 
-        if (in_array($locale, array_keys($this->localeArr))) {
+        if ($this->check($locale)) {
             return $this->getVariableByLocale($property, $this->localeArr[$locale]);
         }
 
@@ -57,10 +62,12 @@ abstract class BaseEntity
 
     public function __set($property, $value)
     {
-        $locale = strtolower(substr($property, -2));
-        if (in_array($locale, array_keys($this->localeArr))) {
-            $property = substr($property, 0, -2);
-            Sludio::updateTranslations(get_class($this), $this->localeArr[$locale], $property, $value, $this->getId());
+        if (!method_exists($this, 'set'.ucfirst($property))) {
+            $locale = strtolower(substr($property, -2));
+            if ($this->check($locale)) {
+                $property = substr($property, 0, -2);
+                Sludio::updateTranslations(get_class($this), $this->localeArr[$locale], $property, $value, $this->getId());
+            }
         }
         $this->{$property} = $value;
 

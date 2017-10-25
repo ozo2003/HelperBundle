@@ -34,6 +34,31 @@ sludio_helper:
             enabled: true|false
             clients:
                 ...
+        guzzle:
+            profiler:
+                enabled: true|false
+                max_body_size: 0x10000
+            logger:
+                enabled: true|false
+                service: ~
+                format: clf|debug|short
+                level: emergency|alert|critical|error|warning|notice|info|debug
+            cache:
+                enabled: true|false
+                adapter: sludio_helper.guzzle.cache_adapter.redis
+            clients:
+                acme:
+                    class: GuzzleHttp\Client
+                    lazy: true|false
+                    config: ~
+                    middleware: ~
+                    alias: ~
+            mock:
+                enabled: true|false
+                storage_path: ~
+                mode: replay
+                request_headers_blacklist: ~
+                response_headers_blacklist: ~
         lexik:
             enabled: true|false
             default_domain: messages
@@ -87,6 +112,7 @@ sludio_helper:
             class: Sludio\HelperBundle\Logger\SludioLogger
         redis:
             translation: session
+            guzzle: session
         entity:
             manager: default
         locale: en

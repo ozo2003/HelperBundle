@@ -6,6 +6,7 @@ use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken;
 use League\OAuth2\Client\Tool\BearerAuthorizationTrait;
 use Psr\Http\Message\ResponseInterface;
+use Sludio\HelperBundle\Oauth\Exception\CustomIdentityProviderException;
 
 class Custom extends AbstractProvider
 {

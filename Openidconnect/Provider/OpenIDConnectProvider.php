@@ -218,7 +218,6 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         }
 
         if (false === $this->validatorChain->validate($data, $token)) {
-            ld($this->validatorChain->getMessages());
             throw new InvalidTokenException('The id_token did not pass validation.');
         }
 
@@ -253,7 +252,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return $this->idTokenIssuer;
     }
 
-    public function check(array $response = [])
+    public function check()
     {
         return true;
     }
@@ -271,7 +270,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      */
     protected function createAccessToken(array $response, AbstractGrant $grant)
     {
-        if ($this->check($response)) {
+        if ($this->check()) {
             return new AccessToken($response);
         }
 

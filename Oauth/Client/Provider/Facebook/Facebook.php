@@ -130,7 +130,7 @@ class Facebook extends BaseProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
         if (!empty($data['error'])) {
-            throw new IdentityProviderException('error_facebook_bad_response', 400, $response);
+            throw new IdentityProviderException('error_facebook_bad_response', 400, $response->getBody());
         }
     }
 
