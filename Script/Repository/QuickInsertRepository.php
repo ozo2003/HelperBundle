@@ -7,6 +7,7 @@ class QuickInsertRepository
     private static $mock = [];
     private static $metadata = [];
     private static $tableName;
+    private static $identifier;
 
     public static $entityManager;
     public static $connection;
@@ -62,6 +63,7 @@ class QuickInsertRepository
         self::$mock = $data['mock'];
         self::$tableName = $data['table'];
         self::$metadata[$data['table']] = $data['meta'];
+        self::$identifier = $data['identifier'];
     }
 
     public static function extractExt($object, $entityManager)
@@ -71,12 +73,16 @@ class QuickInsertRepository
         $fields = $metadata->getFieldNames();
         $columns = $metadata->getColumnNames();
         $table = $metadata->getTableName();
+        $identifier = null;
 
         $result = [];
         foreach ($fields as $key => $field) {
             foreach ($columns as $key2 => $column) {
                 if ($key === $key2) {
                     $result[$table][$field] = $column;
+                    if($field === $metadata->getIdentifier()[0]){
+                        $identifier = $column;
+                    }
                 }
             }
         }
@@ -85,6 +91,7 @@ class QuickInsertRepository
             'mock' => $result,
             'table' => $table,
             'meta' => $metadata,
+            'identifier' => $identifier
         ];
 
         return $data;
@@ -171,7 +178,7 @@ class QuickInsertRepository
             $columns = array_keys($object) ?: [];
         }
 
-        if (!empty($extraFields) && isset($extraFields[$tableName])) {
+        if (isset($extraFields[$tableName])) {
             $columns = array_merge($columns, $extraFields[$tableName]);
         }
     }
@@ -293,35 +300,32 @@ class QuickInsertRepository
                 $value = self::value($object, $value, $type);
                 if ($value !== null) {
                     $data[$key] = $value;
-                    if ($key === 'id') {
+                    if ($key === self::$identifier) {
                         $idd = $value;
                     }
                 }
             }
         }
 
-        $sql = null;
         if (!$full) {
-            $data['id'] = $id;
+            $data[self::$identifier] = $id;
         } else {
             $id = $idd;
         }
 
-        if (!self::isEmpty($data)) {
-            $sql = '
-                INSERT INTO
-                    '.$tableName.'
-                        ('.implode(',', array_keys($data)).')
-                VALUES
-                    ('.implode(',', array_values($data)).')
-            ';
-        } else {
-            $id = null;
+        if (self::isEmpty($data) && $id !== null) {
+            return null;
         }
 
-        if ($sql !== null && $id !== null) {
-            self::runSQL($sql);
-        }
+        $sql = '
+            INSERT INTO
+                '.$tableName.'
+                    ('.implode(',', array_keys($data)).')
+            VALUES
+                ('.implode(',', array_values($data)).')
+        ';
+
+        self::runSQL($sql);
 
         return $id;
     }
