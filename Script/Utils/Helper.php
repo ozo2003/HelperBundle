@@ -47,29 +47,14 @@ class Helper
         return bin2hex(openssl_random_pseudo_bytes($length));
     }
 
-    private static function subDate($date, $from, $to)
-    {
-        return intval(substr($date, $from, $to));
-    }
-
     public static function validateDate($date)
     {
         $date = str_replace('-', '', $date);
-        $day = $month = $year = null;
+        $day = intval(substr($date, 0, 2));
+        $month = intval(substr($date, 2, 2));
+        $year = intval(substr($date, 4, 2));
 
-        // @formatter:off
-        $list = [
-            'day' => [0, 2],
-            'month' => [2, 2],
-            'year' => [4, 2]
-        ];
-        // @formatter:on
-
-        foreach ($list as $variable => $nums) {
-            $$variable = self::subDate($date, $nums[0], $nums[1]);
-        }
-
-        if ($month === 0 || $month > 12) {
+        if ($month < 0 | $month > 12) {
             return false;
         }
         // @formatter:off
