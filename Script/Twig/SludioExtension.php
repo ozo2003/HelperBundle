@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Script\Twig;
 
 use Symfony\Component\HttpFoundation\Request;
 
-class BeautifyExtension extends \Twig_Extension
+class SludioExtension extends \Twig_Extension
 {
     use TwigTrait;
 
@@ -18,6 +18,7 @@ class BeautifyExtension extends \Twig_Extension
     private $paths = [];
     protected $param;
     protected $order;
+    protected $detector;
 
     public function __construct($shortFunctions)
     {
@@ -25,11 +26,12 @@ class BeautifyExtension extends \Twig_Extension
 
         $this->shortFunctions = $shortFunctions;
         $this->appDir = $kernel->getRootDir();
+        $this->detector = new \Mobile_Detect();
     }
 
     public function getName()
     {
-        return 'sludio_helper.twig.beautify_extension';
+        return 'sludio_helper.twig.extension';
     }
 
     public function getFilters()
@@ -57,9 +59,45 @@ class BeautifyExtension extends \Twig_Extension
     {
         $input = [
             'detect_lang' => 'detectLang',
+            'get_available_devices' => 'getAvailableDevices',
+            'is_mobile' => 'isMobile',
+            'is_tablet' => 'isTablet',
         ];
+        foreach ($this->getAvailableDevices() as $device => $fixed) {
+            $input['is_'.$fixed] = 'is'.$device;
+        }
 
         return $this->makeArray($input, 'function');
+    }
+
+    public function getAvailableDevices()
+    {
+        $availableDevices = [];
+        $rules = array_change_key_case($this->detector->getRules());
+
+        foreach ($rules as $device => $rule) {
+            $availableDevices[$device] = static::fromCamelCase($device);
+        }
+
+        return $availableDevices;
+    }
+
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array([
+            $this->detector,
+            $name,
+        ], $arguments);
+    }
+
+    protected static function toCamelCase($string)
+    {
+        return preg_replace('~\s+~', '', lcfirst(ucwords(strtr($string, '_', ' '))));
+    }
+
+    protected static function fromCamelCase($string, $separator = '_')
+    {
+        return strtolower(preg_replace('/(?!^)[[:upper:]]+/', $separator.'$0', $string));
     }
 
     public function url_decode($string)

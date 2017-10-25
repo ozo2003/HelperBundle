@@ -6,8 +6,8 @@ services:
             -
                 name: console.command
 
-    sludio_helper.twig.beautify_extension:
-        class: Sludio\HelperBundle\Script\Twig\BeautifyExtension
+    sludio_helper.twig.extension:
+        class: Sludio\HelperBundle\Script\Twig\SludioExtension
         public: false
         arguments:
             - '%sludio_helper.script.short_functions%'

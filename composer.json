@@ -43,6 +43,7 @@
         "league/oauth1-client": "*",
         "league/oauth2-client": "*",
         "lexik/translation-bundle": "*",
+        "mobiledetect/mobiledetectlib": "*",
         "namshi/cuzzle": "^2.0",
         "ocramius/proxy-manager": "*",
         "predis/predis": "*",
