@@ -86,9 +86,7 @@ abstract class QuickInsertFunctions
             if (isset($extra[$method])) {
                 $sql .= ' '.$method.' ';
                 if (is_array($extra[$method])) {
-                    foreach ($extra[$method] as $group) {
-                        $sql .= $group.' ';
-                    }
+                    $sql .= implode(' ', $extra[$method]).' ';
                 } else {
                     $sql .= $extra[$method].' ';
                 }
@@ -108,27 +106,23 @@ abstract class QuickInsertFunctions
             }
         }
 
-        $sql = str_replace('  ', ' ', $sql);
-
-        return $sql;
+        return Helper::oneSpace($sql);
     }
 
-    protected static function buildWhere($tableName, $where)
+    protected static function buildWhere($tableName, array $where)
     {
         $whereSql = '';
-        if (is_array($where) && !empty($where)) {
+        if (!empty($where)) {
             reset($where);
             $first = key($where);
             $path = ' WHERE ';
             foreach ($where as $key => $value) {
                 if (!is_array($value) && isset(self::$mock[$tableName][$key])) {
                     $whereSql .= $path.self::$mock[$tableName][$key]." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
+                } elseif (is_array($value)) {
+                    $whereSql .= $path.$value[0];
                 } else {
-                    if (is_array($value)) {
-                        $whereSql .= $path.$value[0];
-                    } else {
-                        $whereSql .= $path.$key." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
-                    }
+                    $whereSql .= $path.$key." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
                 }
                 if ($key === $first) {
                     $path = ' AND ';

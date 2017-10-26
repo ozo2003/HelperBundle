@@ -129,4 +129,48 @@ class Helper
     {
         $array = array_map('unserialize', array_unique(array_map('serialize', $array)));
     }
+
+    public static function cleanText($text)
+    {
+        $functions = [
+            'strip_tags' => [
+                'variable' => 0,
+            ],
+            'mb_convert_encoding' => [
+                'variable' => 0,
+                'params' => [
+                    null,
+                    "UTF-8",
+                    "UTF-8",
+                ],
+            ],
+            'str_replace' => [
+                'variable' => 2,
+                'params' => [
+                    ' ?',
+                    '',
+                    null,
+                ],
+            ],
+            'self::oneSpace' => [
+                'variable' => 0,
+            ],
+            'html_entity_decode' => [
+                'variable' => 0,
+            ],
+        ];
+
+        foreach ($functions as $key => $function) {
+            $params = isset($function['params']) ? $function['params'] : [];
+            $params[$function['variable']] = $text;
+            $text = call_user_func_array($key, $params);
+        }
+
+        return $text;
+    }
+
+    public static function oneSpace($string)
+    {
+        return preg_replace('/\s+/S', ' ', $string);
+    }
 }
