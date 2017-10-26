@@ -3,7 +3,6 @@
 namespace Sludio\HelperBundle\Script\Twig;
 
 use Symfony\Component\HttpFoundation\Request;
-use Sludio\HelperBundle\Script\Utils\Helper;
 
 class SludioExtension extends \Twig_Extension
 {
@@ -19,7 +18,8 @@ class SludioExtension extends \Twig_Extension
     private $paths = [];
     protected $param;
     protected $order;
-    protected $detector;
+
+    public $detector;
 
     public function __construct($shortFunctions)
     {
@@ -60,37 +60,17 @@ class SludioExtension extends \Twig_Extension
     {
         $input = [
             'detect_lang' => 'detectLang',
-            'get_available_devices' => 'getAvailableDevices',
-            'is_mobile' => 'isMobile',
-            'is_tablet' => 'isTablet',
+            'is_mobile' => [
+                $this->detector,
+                'isMobile',
+            ],
+            'is_tablet' => [
+                $this->detector,
+                'isTablet',
+            ],
         ];
-        foreach ($this->getAvailableDevices() as $device => $fixed) {
-            $input['is_'.$fixed] = 'is'.$device;
-        }
 
         return $this->makeArray($input, 'function');
-    }
-
-    public function getAvailableDevices()
-    {
-        $availableDevices = [];
-        $phones = $this->detector->getPhoneDevices();
-        $tablets = $this->detector->getTabletDevices();
-        $rules = array_keys(array_change_key_case(array_merge($phones, $tablets)));
-
-        foreach ($rules as $device) {
-            $availableDevices[$device] = Helper::fromCamelCase($device);
-        }
-
-        return $availableDevices;
-    }
-
-    public function __call($name, $arguments)
-    {
-        return call_user_func_array([
-            $this->detector,
-            $name,
-        ], $arguments);
     }
 
     public function url_decode($string)
