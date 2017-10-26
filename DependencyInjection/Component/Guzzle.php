@@ -62,6 +62,9 @@ class Guzzle
     private function processMockConfiguration(array $config, ContainerBuilder $container, $debug)
     {
         if (!$config['enabled']) {
+            $container->removeDefinition(self::NAME.'.middleware.mock');
+            $container->removeDefinition(self::NAME.'.mock.storage');
+
             return;
         }
 
@@ -81,6 +84,7 @@ class Guzzle
     {
         if (!$config['enabled']) {
             $container->removeDefinition(self::NAME.'.middleware.cache');
+            $container->removeDefinition(self::NAME.'.cache_adapter.redis');
 
             return;
         }

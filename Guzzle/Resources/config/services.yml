@@ -47,7 +47,7 @@ services:
                 alias: logger
 
     sludio_helper.guzzle.logger.message_formatter:
-        class: GuzzleHttp\MessageFormatter
+        class: Sludio\HelperBundle\Guzzle\GuzzleHttp\MessageFormatter
         public: false
         arguments:
             - ~
@@ -71,3 +71,21 @@ services:
         class: Doctrine\Common\Cache\PredisCache
         arguments:
             - ~
+
+    sludio_helper.guzzle.mock.storage:
+        class: Sludio\HelperBundle\Guzzle\Cache\MockStorageAdapter
+        public: false
+        arguments:
+            - ~
+
+    sludio_helper.guzzle.middleware.mock:
+        class: Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\MockMiddleware
+        arguments:
+            - "@sludio_helper.guzzle.mock.storage"
+            - ~
+            - ~
+        tags:
+            -
+                name: sludio_helper.guzzle.middleware
+                alias: mock
+                priority: -1250

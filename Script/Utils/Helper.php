@@ -117,4 +117,9 @@ class Helper
 
         return 'error_empty';
     }
+
+    public static function translit($string, $transliterator = 'Russian-Latin/BGN')
+    {
+        return transliterator_transliterate($transliterator, $string);
+    }
 }

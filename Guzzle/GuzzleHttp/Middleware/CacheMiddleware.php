@@ -38,7 +38,10 @@ class CacheMiddleware
     protected function handleSave(callable $handler, RequestInterface $request, array $options)
     {
         return $handler($request, $options)->then(function(ResponseInterface $response) use ($request) {
-            $this->adapter->save($request, $response);
+            $code = (int)floor(intval($response->getStatusCode()) / 100);
+            if($code === 2) {
+                $this->adapter->save($request, $response);
+            }
 
             return $this->addDebugHeader($response, static::DEBUG_HEADER_MISS);
         });
