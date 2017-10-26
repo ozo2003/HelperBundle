@@ -118,8 +118,10 @@ class Helper
         return 'error_empty';
     }
 
-    public static function translit($string, $transliterator = 'Russian-Latin/BGN')
+    public static function swap(&$x, &$y)
     {
-        return transliterator_transliterate($transliterator, $string);
+        $tmp = $x;
+        $x = $y;
+        $y = $tmp;
     }
 }

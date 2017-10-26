@@ -9,6 +9,8 @@ use Psr\Http\Message\ResponseInterface;
 
 class MessageFormatter extends BaseMessageFormatter
 {
+    public $template;
+
     /**
      * {@inheritdoc}
      */
