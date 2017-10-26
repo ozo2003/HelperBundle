@@ -124,4 +124,9 @@ class Helper
         $foo = $bar;
         $bar = $tmp;
     }
+
+    public static function removeDuplicates(&$array)
+    {
+        $array = array_map('unserialize', array_unique(array_map('serialize', $array)));
+    }
 }

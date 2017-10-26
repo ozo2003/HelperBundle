@@ -4,202 +4,45 @@ namespace Sludio\HelperBundle\Script\Repository;
 
 use Sludio\HelperBundle\Script\Utils\Helper;
 
-class QuickInsertRepository
+class QuickInsertRepository extends QuickInsertFunctions
 {
-    private static $mock = [];
-    private static $metadata = [];
-    private static $tableName;
-    private static $identifier;
-
-    public static $entityManager;
-    public static $connection;
-
-    public static function init($noFkCheck = false, $manager = null)
-    {
-        if (self::$connection) {
-            return;
-        }
-        global $kernel;
-
-        if ('AppCache' === get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-        $container = $kernel->getContainer();
-
-        $manager = $manager ?: $container->getParameter('sludio_helper.entity.manager');
-        self::$entityManager = $container->get('doctrine')->getManager($manager);
-        self::$connection = self::$entityManager->getConnection();
-
-        if (!$noFkCheck) {
-            self::runSQL('SET FOREIGN_KEY_CHECKS = 0');
-        }
-    }
-
-    public static function close($noFkCheck = false)
-    {
-        if (!$noFkCheck) {
-            self::runSQL('SET FOREIGN_KEY_CHECKS = 1');
-        }
-    }
-
-    private static function extract($object)
-    {
-        self::init(false);
-        $data = self::extractExt($object, self::$entityManager);
-
-        self::$mock = $data['mock'];
-        self::$tableName = $data['table'];
-        self::$metadata[$data['table']] = $data['meta'];
-        self::$identifier = $data['identifier'];
-    }
-
-    public static function extractExt($object, $entityManager)
-    {
-        $metadata = $entityManager->getClassMetadata(get_class($object));
-
-        $fields = $metadata->getFieldNames();
-        $columns = $metadata->getColumnNames();
-        $table = $metadata->getTableName();
-        $identifier = null;
-
-        $result = [];
-        foreach ($fields as $key => $field) {
-            foreach ($columns as $key2 => $column) {
-                if ($key === $key2) {
-                    $result[$table][$field] = $column;
-                    if($field === $metadata->getIdentifier()[0]){
-                        $identifier = $column;
-                    }
-                }
-            }
-        }
-
-        $data = [
-            'mock' => $result,
-            'table' => $table,
-            'meta' => $metadata,
-            'identifier' => $identifier
-        ];
-
-        return $data;
-    }
-
-    private static function buildExtra($extra)
-    {
-        $methods = [
-            'GROUP BY',
-            'HAVING',
-            'ORDER BY',
-        ];
-        $sql = '';
-
-        foreach ($methods as $method) {
-            if (isset($extra[$method])) {
-                $sql .= ' '.$method.' ';
-                if (is_array($extra[$method])) {
-                    foreach ($extra[$method] as $group) {
-                        $sql .= $group.' ';
-                    }
-                } else {
-                    $sql .= $extra[$method].' ';
-                }
-            }
-        }
-
-        if (isset($extra['LIMIT'])) {
-            if (is_array($extra['LIMIT'])) {
-                if (isset($extra['LIMIT'][1])) {
-                    $offset = $extra['LIMIT'][0];
-                    $limit = $extra['LIMIT'][1];
-                } else {
-                    $offset = 0;
-                    $limit = $extra['LIMIT'][0];
-                }
-                $sql .= 'LIMIT '.$offset.', '.$limit;
-            }
-        }
-
-        $sql = str_replace('  ', ' ', $sql);
-
-        return $sql;
-    }
-
-    private static function buildWhere($tableName, $where)
-    {
-        $whereSql = '';
-        if (is_array($where) && !empty($where)) {
-            reset($where);
-            $first = key($where);
-            $path = ' WHERE ';
-            foreach ($where as $key => $value) {
-                if (!is_array($value) && isset(self::$mock[$tableName][$key])) {
-                    $whereSql .= $path.self::$mock[$tableName][$key]." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
-                } else {
-                    if (is_array($value)) {
-                        $whereSql .= $path.$value[0];
-                    } else {
-                        $whereSql .= $path.$key." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
-                    }
-                }
-                if ($key === $first) {
-                    $path = ' AND ';
-                }
-            }
-        }
-
-        return $whereSql;
-    }
-
-    private static function getTable(&$object, &$tableName, &$columns, &$type, $noFkCheck = true, $manager = null, $extraFields = [])
-    {
-        self::init($noFkCheck, $manager);
-        if (is_object($object)) {
-            self::extract($object);
-            $tableName = self::$tableName;
-            $columns = self::$mock[$tableName] ?: [];
-            $type = 'object';
-        } else {
-            $tableName = $object['table_name'];
-            unset($object['table_name']);
-            $type = 'table';
-            $columns = array_keys($object) ?: [];
-        }
-
-        if (isset($extraFields[$tableName])) {
-            $columns = array_merge($columns, $extraFields[$tableName]);
-        }
-    }
-
-    public static function findNextId($tableName)
-    {
-        $result = self::get(['table_name' => 'information_schema.tables'], true, [
-            'table_name' => $tableName,
-            ['table_schema = DATABASE()'],
-        ], true, ['AUTO_INCREMENT'], null, []);
-
-        if ($result) {
-            return $result;
-        }
-
-        return 1;
-    }
-
     public static function findNextIdExt($object, $entityManager = null)
     {
-        self::init(true);
+        self::init();
         $data = self::extractExt($object, $entityManager);
 
         return self::findNextId($data['table']);
     }
 
-    public static function runSQL($sql, $noFkCheck = true, $manager = null)
+    public static function findNextId($tableName)
+    {
+        return self::get(['table_name' => 'information_schema.tables'], true, [
+            'table_name' => $tableName,
+            ['table_schema = DATABASE()'],
+        ], true, ['AUTO_INCREMENT'], null, []) ?: 1;
+    }
+
+    public static function setFK($fkCheck = 0, $noFkCheck = false)
+    {
+        if (!$noFkCheck) {
+            self::runSQL("SET FOREIGN_KEY_CHECKS = $fkCheck", false, null, true);
+        }
+    }
+
+    public static function runSQL($sql, $noFkCheck = true, $manager = null, $skip = false)
     {
         $sql = trim(preg_replace('/\s+/', ' ', $sql));
-        self::init($noFkCheck, $manager);
+        self::init($manager);
+        if (!$skip) {
+            self::setFK(0, $noFkCheck);
+        }
+
         $sth = self::$connection->prepare($sql);
         $sth->execute();
 
-        self::close($noFkCheck);
+        if (!$skip) {
+            self::setFK(1, $noFkCheck);
+        }
         if (substr($sql, 0, 6) === "SELECT") {
             return $sth->fetchAll();
         }
@@ -207,7 +50,7 @@ class QuickInsertRepository
 
     public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [])
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
+        self::getTable($object, $tableName, $columns, $type, $manager);
 
         $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
         $fields = $fields ?: ['id'];
@@ -236,27 +79,9 @@ class QuickInsertRepository
         return $result;
     }
 
-    private static function value($object, $variable, $type, $check = true)
-    {
-        $value = null;
-        if ($type === 'object') {
-            $value = $object->{'get'.ucfirst(Helper::toCamelCase($variable))}();
-        } else {
-            if (isset($object[$variable])) {
-                $value = $object[$variable];
-            }
-        }
-
-        if ($check) {
-            Helper::variable($value);
-        }
-
-        return $value;
-    }
-
     public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null)
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager, $extraFields);
+        self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
         $id = self::findNextId($tableName);
         $data = [];
@@ -292,14 +117,14 @@ class QuickInsertRepository
                 ('.implode(',', array_values($data)).')
         ';
 
-        self::runSQL($sql);
+        self::runSQL($sql, $noFkCheck);
 
         return $id;
     }
 
     public static function update($id, $object, $extraFields = [], $noFkCheck = false, $manager = null)
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager, $extraFields);
+        self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
         $result = self::get(['table_name' => $tableName], true, ['id' => $id], true, ['*']);
         unset($result['id']);
@@ -338,21 +163,21 @@ class QuickInsertRepository
             }
             $sql = substr($sql, 0, -1).' WHERE id = '.$id;
 
-            self::runSQL($sql);
+            self::runSQL($sql, $noFkCheck);
         }
     }
 
     public static function delete($object, $where = [], $noFkCheck = false, $manager = null)
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
+        self::getTable($object, $tableName, $columns, $type, $manager);
 
         $sql = 'DELETE FROM '.$tableName.self::buildWhere($tableName, $where);
-        self::runSQL($sql);
+        self::runSQL($sql, $noFkCheck);
     }
 
     public static function link($object, $data, $noFkCheck = false, $manager = null)
     {
-        self::getTable($object, $tableName, $columns, $type, $noFkCheck, $manager);
+        self::getTable($object, $tableName, $columns, $type, $manager);
 
         $data['table_name'] = $tableName;
         self::persist($data, true, [], $noFkCheck, $manager);
