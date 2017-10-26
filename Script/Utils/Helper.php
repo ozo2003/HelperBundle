@@ -133,9 +133,7 @@ class Helper
     public static function cleanText($text)
     {
         $functions = [
-            'strip_tags' => [
-                'variable' => 0,
-            ],
+            'strip_tags',
             'mb_convert_encoding' => [
                 'variable' => 0,
                 'params' => [
@@ -152,17 +150,18 @@ class Helper
                     null,
                 ],
             ],
-            'self::oneSpace' => [
-                'variable' => 0,
-            ],
-            'html_entity_decode' => [
-                'variable' => 0,
-            ],
+            'self::oneSpace',
+            'html_entity_decode',
         ];
 
         foreach ($functions as $key => $function) {
+            if(is_numeric($key)){
+                $key = $function;
+                $function = array_values($function);
+            }
             $params = isset($function['params']) ? $function['params'] : [];
-            $params[$function['variable']] = $text;
+            $variable = isset($function['variable']) ? intval($function['variable']) : 0;
+            $params[$variable] = $text;
             $text = call_user_func_array($key, $params);
         }
 

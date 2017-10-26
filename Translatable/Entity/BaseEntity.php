@@ -30,6 +30,8 @@ abstract class BaseEntity
             $className = explode('\\', get_called_class());
             $this->className = strtolower(end($className));
         }
+
+        return $this->className;
     }
 
     public function getLocaleVar($locale)
