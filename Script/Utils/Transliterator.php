@@ -65,13 +65,13 @@ class Transliterator
      */
     public static function transliterate($text, $direction = true)
     {
-        $from = self::$cyrMap;
-        $to = self::$latMap;
+        $fromMap = self::$cyrMap;
+        $toMap = self::$latMap;
 
         if ($direction) {
-            Helper::swap($from, $to);
+            Helper::swap($fromMap, $toMap);
         }
 
-        return str_replace($from, $to, $text);
+        return str_replace($fromMap, $toMap, $text);
     }
 }

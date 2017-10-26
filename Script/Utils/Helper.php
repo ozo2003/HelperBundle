@@ -118,10 +118,10 @@ class Helper
         return 'error_empty';
     }
 
-    public static function swap(&$x, &$y)
+    public static function swap(&$foo, &$bar)
     {
-        $tmp = $x;
-        $x = $y;
-        $y = $tmp;
+        $tmp = $foo;
+        $foo = $bar;
+        $bar = $tmp;
     }
 }
