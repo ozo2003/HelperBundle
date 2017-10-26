@@ -53,7 +53,7 @@ class Configuration implements ConfigurationInterface
                                         ->scalarNode('format')
                                             ->beforeNormalization()
                                                 ->ifInArray(['clf', 'debug', 'short'])
-                                                ->then(function ($v) {
+                                                ->then(function($v) {
                                                     return constant('GuzzleHttp\MessageFormatter::'.strtoupper($v));
                                                 })
                                             ->end()
@@ -65,7 +65,7 @@ class Configuration implements ConfigurationInterface
                                                     'emergency', 'alert', 'critical', 'error',
                                                     'warning', 'notice', 'info', 'debug',
                                                 ])
-                                                ->then(function ($v) {
+                                                ->then(function($v) {
                                                     return constant('Psr\Log\LogLevel::'.strtoupper($v));
                                                 })
                                             ->end()

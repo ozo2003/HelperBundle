@@ -58,7 +58,7 @@ class Helper
             return false;
         }
         // @formatter:off
-        $months = [31,28,31,30,31,30,31,31,30,31,30,31];
+        $months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         // @formatter:on
         if ($year % 4 === 0) {
             $months[1] = 29;
@@ -72,15 +72,15 @@ class Helper
         $personCode = str_replace('-', '', $personCode);
         // @formatter:off
         $sum =
-            (substr($personCode, 0, 1) * 1)  +
-            (substr($personCode, 1, 1) * 6)  +
-            (substr($personCode, 2, 1) * 3)  +
-            (substr($personCode, 3, 1) * 7)  +
-            (substr($personCode, 4, 1) * 9)  +
+            (substr($personCode, 0, 1) * 1) +
+            (substr($personCode, 1, 1) * 6) +
+            (substr($personCode, 2, 1) * 3) +
+            (substr($personCode, 3, 1) * 7) +
+            (substr($personCode, 4, 1) * 9) +
             (substr($personCode, 5, 1) * 10) +
-            (substr($personCode, 6, 1) * 5)  +
-            (substr($personCode, 7, 1) * 8)  +
-            (substr($personCode, 8, 1) * 4)  +
+            (substr($personCode, 6, 1) * 5) +
+            (substr($personCode, 7, 1) * 8) +
+            (substr($personCode, 8, 1) * 4) +
             (substr($personCode, 9, 1) * 2);
         // @formatter:on
 
