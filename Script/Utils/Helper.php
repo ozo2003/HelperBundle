@@ -138,8 +138,8 @@ class Helper
                 'variable' => 0,
                 'params' => [
                     null,
-                    "UTF-8",
-                    "UTF-8",
+                    'UTF-8',
+                    'UTF-8',
                 ],
             ],
             'str_replace' => [
@@ -155,9 +155,9 @@ class Helper
         ];
 
         foreach ($functions as $key => $function) {
-            if(is_numeric($key)){
+            if (is_numeric($key)) {
                 $key = $function;
-                $function = array_values($function);
+                $function = is_array($function) ? array_values($function) : $function;
             }
             $params = isset($function['params']) ? $function['params'] : [];
             $variable = isset($function['variable']) ? intval($function['variable']) : 0;
