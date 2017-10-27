@@ -133,7 +133,7 @@ class MessageFormatter extends BaseMessageFormatter
 
             $method = Helper::toCamelCase('sludio_'.$matches[1]);
             if (method_exists($this, $method)) {
-                $result = $this->{$method}([
+                $cache[$matches[1]] = $this->{$method}([
                     'request' => $request,
                     'response' => $response,
                     'error' => $error,
