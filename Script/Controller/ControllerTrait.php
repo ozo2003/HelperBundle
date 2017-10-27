@@ -8,11 +8,11 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 trait ControllerTrait
 {
-    public $container;
+    protected $container;
 
-    private function result()
+    private function result($success = 1, $code = 200)
     {
-        return new JsonResponse(['success' => 1], 200, [
+        return new JsonResponse(['success' => intval($success)], intval($code), [
             'Cache-Control' => 'no-cache',
         ]);
     }

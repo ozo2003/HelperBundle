@@ -79,6 +79,8 @@ abstract class BaseEntity
         if ($this->getId()) {
             return Sludio::getTranslations(get_called_class(), $this->getId());
         }
+
+        return null;
     }
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
