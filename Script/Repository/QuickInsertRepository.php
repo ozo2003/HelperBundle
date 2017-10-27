@@ -19,7 +19,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         return self::get(['table_name' => 'information_schema.tables'], true, [
             'table_name' => $tableName,
             ['table_schema = DATABASE()'],
-        ], true, ['AUTO_INCREMENT'], null, []) ?: 1;
+        ], ['AUTO_INCREMENT'], null, []) ?: 1;
     }
 
     public static function setFK($fkCheck = 0, $noFkCheck = false)
@@ -48,7 +48,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         }
     }
 
-    public static function get($object, $one = false, $where = [], $noFkCheck = true, $fields = [], $manager = null, $extra = [])
+    public static function get($object, $one = false, $where = [], $fields = [], $manager = null, $extra = [])
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
 
@@ -126,7 +126,7 @@ class QuickInsertRepository extends QuickInsertFunctions
     {
         self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
-        $result = self::get(['table_name' => $tableName], true, ['id' => $id], true, ['*']);
+        $result = self::get(['table_name' => $tableName], true, ['id' => $id], ['*']);
         unset($result['id']);
         $data = [];
 

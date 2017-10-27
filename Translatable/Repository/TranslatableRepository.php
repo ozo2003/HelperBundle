@@ -94,7 +94,7 @@ class TranslatableRepository
             $data = Quick::get(new Translation(), false, [
                 'object_class' => $class,
                 'foreign_key' => $id,
-            ], true, ['*']);
+            ], ['*']);
             if ($data !== null) {
                 foreach ($data as $row) {
                     $result[$row['locale']][$row['field']] = $row['content'];
@@ -127,7 +127,7 @@ class TranslatableRepository
             $where['content'] = $content;
         }
 
-        $result = Quick::get(new Translation(), false, $where, true, ['foreign_key']);
+        $result = Quick::get(new Translation(), false, $where, ['foreign_key']);
 
         return $result;
     }
@@ -151,8 +151,7 @@ class TranslatableRepository
             ->setForeignKey($id)
             ->setLocale($locale)
             ->setObjectClass($class)
-            ->setContent($content)
-        ;
+            ->setContent($content);
 
         if ($update === 0) {
             Quick::persist($translation);
@@ -191,9 +190,9 @@ class TranslatableRepository
     public static function getAllTranslations()
     {
         self::init();
-        $classes = Quick::get(new Translation(), false, [], true, ['object_class'], null, ['MODE' => 'DISTINCT']);
+        $classes = Quick::get(new Translation(), false, [], ['object_class'], null, ['MODE' => 'DISTINCT']);
         foreach ($classes as $class) {
-            $ids = Quick::get(new Translation(), false, ['object_class' => $class], true, ['foreign_key'], null, ['MODE' => 'DISTINCT']);
+            $ids = Quick::get(new Translation(), false, ['object_class' => $class], ['foreign_key'], null, ['MODE' => 'DISTINCT']);
             foreach ($ids as $id) {
                 self::getTranslations($class, $id);
             }
