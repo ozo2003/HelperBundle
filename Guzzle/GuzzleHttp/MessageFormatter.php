@@ -146,7 +146,7 @@ class MessageFormatter extends BaseMessageFormatter
                 }
             }
 
-            return $result;
+            return $cache[$matches[1]];
         }, $this->template);
     }
 }
