@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Lexik\Admin;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 class ORMTranslationAdmin extends TranslationAdmin
 {
@@ -27,7 +28,7 @@ class ORMTranslationAdmin extends TranslationAdmin
         ksort($domains);
 
         $filter->add('locale', 'doctrine_orm_callback', [
-            'callback' => function(QueryBuilder $queryBuilder, $alias, $field, $options) {
+            'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $options) {
                 /* @var $queryBuilder \Doctrine\ORM\QueryBuilder */
                 if (!isset($options['value']) || empty($options['value'])) {
                     return;
@@ -43,7 +44,7 @@ class ORMTranslationAdmin extends TranslationAdmin
             ],
             'field_type' => 'choice',
         ])->add('show_non_translated_only', 'doctrine_orm_callback', [
-            'callback' => function(QueryBuilder $queryBuilder, $alias, $field, $options) {
+            'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $options) {
                 /* @var $queryBuilder \Doctrine\ORM\QueryBuilder */
                 if (!isset($options['value']) || empty($options['value']) || false === $options['value']) {
                     return;
@@ -76,7 +77,7 @@ class ORMTranslationAdmin extends TranslationAdmin
             ],
             'field_type' => 'choice',
         ])->add('content', 'doctrine_orm_callback', [
-            'callback' => function(QueryBuilder $queryBuilder, $alias, $field, $options) {
+            'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $options) {
                 /* @var $queryBuilder \Doctrine\ORM\QueryBuilder */
                 if (!isset($options['value']) || empty($options['value'])) {
                     return;
@@ -93,10 +94,10 @@ class ORMTranslationAdmin extends TranslationAdmin
     }
 
     /**
-     * @param QueryBuilder $queryBuilder
+     * @param ProxyQuery $queryBuilder
      * @param String     $alias
      */
-    private function joinTranslations(QueryBuilder $queryBuilder, $alias, array $locales = null)
+    private function joinTranslations(ProxyQuery $queryBuilder, $alias, array $locales = null)
     {
         $alreadyJoined = false;
         $joins = $queryBuilder->getDQLPart('join');

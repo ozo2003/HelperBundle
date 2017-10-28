@@ -54,9 +54,6 @@
         "symfony/symfony": "*",
         "twig/twig": "*"
     },
-    "require-dev": {
-        "symfony/security-guard": "^2.8|^3.0"
-    },
     "config": {
         "sort-packages": true
     },
