@@ -56,6 +56,34 @@ class PositionHandler
         }
     }
 
+    private function sludioUp($actual)
+    {
+        if ($actual > 0) {
+            return $actual - 1;
+        }
+    }
+
+    private function sludioDown($actual, $last)
+    {
+        if ($actual < $last) {
+            return $actual + 1;
+        }
+    }
+
+    private function sludioTop($actual)
+    {
+        if ($actual > 0) {
+            return 0;
+        }
+    }
+
+    private function sludioBottom($actual, $last)
+    {
+        if ($actual < $last) {
+            return $last;
+        }
+    }
+
     /**
      * @param $object
      * @param $position
@@ -66,34 +94,8 @@ class PositionHandler
     public function getPosition($object, $position, $lastPosition)
     {
         $getter = sprintf('get%s', ucfirst($this->getPositionFieldByEntity($object)));
-        $newPosition = 0;
+        $result = $this->{'sludio'.ucfirst($position)}($object->{$getter}(), $lastPosition);
 
-        switch ($position) {
-            case 'up':
-                if ($object->{$getter}() > 0) {
-                    $newPosition = $object->{$getter}() - 1;
-                }
-                break;
-
-            case 'down':
-                if ($object->{$getter}() < $lastPosition) {
-                    $newPosition = $object->{$getter}() + 1;
-                }
-                break;
-
-            case 'top':
-                if ($object->{$getter}() > 0) {
-                    $newPosition = 0;
-                }
-                break;
-
-            case 'bottom':
-                if ($object->{$getter}() < $lastPosition) {
-                    $newPosition = $lastPosition;
-                }
-                break;
-        }
-
-        return $newPosition;
+        return $result === null ? 0 : $result;
     }
 }
