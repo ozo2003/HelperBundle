@@ -27,9 +27,9 @@ class SludioHelperBundle extends Bundle
             'Sludio\HelperBundle\DependencyInjection\Compiler\TemplatingPass',
             'Sludio\HelperBundle\DependencyInjection\Compiler\LoaderPass',
             'Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass',
-            'Sludio\HelperBundle\DependencyInjection\Compiler\UrlProviderPass'
+            'Sludio\HelperBundle\DependencyInjection\Compiler\UrlProviderPass',
         ];
-        foreach($passes as $pass){
+        foreach ($passes as $pass) {
             $container->addCompilerPass(new $pass());
         }
     }

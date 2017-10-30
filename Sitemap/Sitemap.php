@@ -71,6 +71,7 @@ class Sitemap
 
         if (count($this->sitemapIndexes)) {
             $this->dumper->setFilename($this->originalFilename);
+            
             $this->dumper->dump($this->formatter->getSitemapIndexStart());
             foreach ($this->sitemapIndexes as $sitemapIndex) {
                 $this->dumper->dump($this->formatter->formatSitemapIndex($sitemapIndex));
