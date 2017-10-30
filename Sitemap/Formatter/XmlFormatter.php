@@ -38,16 +38,16 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
     {
         $buffer = "\t".'<loc>'.$this->escape($url->getLoc()).'</loc>'."\n";
 
-        if ($url->getLastmod() !== null) {
-            $buffer .= "\t".'<lastmod>'.$this->escape($url->getLastmod()).'</lastmod>'."\n";
-        }
+        $checks = [
+            'getLastmod' => "\t".'<lastmod>'.$this->escape($url->getLastmod()).'</lastmod>'."\n",
+            'getChangefreq' => "\t".'<changefreq>'.$this->escape($url->getChangefreq()).'</changefreq>'."\n",
+            'getPriority' => "\t".'<priority>'.$this->escape($url->getPriority()).'</priority>'."\n",
+        ];
 
-        if ($url->getChangefreq() !== null) {
-            $buffer .= "\t".'<changefreq>'.$this->escape($url->getChangefreq()).'</changefreq>'."\n";
-        }
-
-        if ($url->getPriority() !== null) {
-            $buffer .= "\t".'<priority>'.$this->escape($url->getPriority()).'</priority>'."\n";
+        foreach ($checks as $check => $text) {
+            if ($url->{$check}() !== null) {
+                $buffer .= $text;
+            }
         }
 
         foreach ($url->getVideos() as $video) {
@@ -85,8 +85,23 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         $buffer .= "\t\t".'<video:description>'.$this->escape($video->getDescription()).'</video:description>'."\n";
         $buffer .= "\t\t".'<video:thumbnail_loc>'.$this->escape($video->getThumbnailLoc()).'</video:thumbnail_loc>'."\n";
 
-        if ($video->getContentLoc() !== null) {
-            $buffer .= "\t\t".'<video:content_loc>'.$this->escape($video->getContentLoc()).'</video:content_loc>'."\n";
+        $checks = [
+            'getContentLoc' => "\t\t".'<video:content_loc>'.$this->escape($video->getContentLoc()).'</video:content_loc>'."\n",
+            'getDuration' => "\t\t".'<video:duration>'.$this->escape($video->getDuration()).'</video:duration>'."\n",
+            'getExpirationDate' => "\t\t".'<video:expiration_date>'.$this->escape($video->getExpirationDate()).'</video:expiration_date>'."\n",
+            'getRating' => "\t\t".'<video:rating>'.$this->escape($video->getRating()).'</video:rating>'."\n",
+            'getViewCount' => "\t\t".'<video:view_count>'.$this->escape($video->getViewCount()).'</video:view_count>'."\n",
+            'getPublicationDate' => "\t\t".'<video:publication_date>'.$this->escape($video->getPublicationDate()).'</video:publication_date>'."\n",
+            'getCategory' => "\t\t".'<video:category>'.$this->escape($video->getCategory()).'</video:category>'."\n",
+            'getRequiresSubscription' => "\t\t".'<video:requires_subscription>'.($video->getRequiresSubscription() ? 'yes' : 'no').'</video:requires_subscription>'."\n",
+            'getLive' => "\t\t".'<video:live>'.($video->getLive() ? 'yes' : 'no').'</video:live>'."\n",
+            'getFamilyFriendly' => "\t\t".'<video:family_friendly>no</video:family_friendly>'."\n",
+        ];
+
+        foreach ($checks as $check => $text) {
+            if ($video->{$check}() !== null) {
+                $buffer .= $text;
+            }
         }
 
         if ($video->getPlayerLoc() !== null) {
@@ -97,38 +112,10 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             $buffer .= "\t\t".sprintf('<video:player_loc allow_embed="%s"%s>', $allowEmbed, $autoplay).$this->escape($playerLoc['loc']).'</video:player_loc>'."\n";
         }
 
-        if ($video->getDuration() !== null) {
-            $buffer .= "\t\t".'<video:duration>'.$this->escape($video->getDuration()).'</video:duration>'."\n";
-        }
-
-        if ($video->getExpirationDate() !== null) {
-            $buffer .= "\t\t".'<video:expiration_date>'.$this->escape($video->getExpirationDate()).'</video:expiration_date>'."\n";
-        }
-
-        if ($video->getRating() !== null) {
-            $buffer .= "\t\t".'<video:rating>'.$this->escape($video->getRating()).'</video:rating>'."\n";
-        }
-
-        if ($video->getViewCount() !== null) {
-            $buffer .= "\t\t".'<video:view_count>'.$this->escape($video->getViewCount()).'</video:view_count>'."\n";
-        }
-
-        if ($video->getPublicationDate() !== null) {
-            $buffer .= "\t\t".'<video:publication_date>'.$this->escape($video->getPublicationDate()).'</video:publication_date>'."\n";
-        }
-
-        if ($video->getFamilyFriendly() === false) {
-            $buffer .= "\t\t".'<video:family_friendly>no</video:family_friendly>'."\n";
-        }
-
         if ($video->getTags() !== null) {
             foreach ($video->getTags() as $tag) {
                 $buffer .= "\t\t".'<video:tag>'.$this->escape($tag).'</video:tag>'."\n";
             }
-        }
-
-        if ($video->getCategory() !== null) {
-            $buffer .= "\t\t".'<video:category>'.$this->escape($video->getCategory()).'</video:category>'."\n";
         }
 
         if ($video->getRestrictions() !== null) {
@@ -145,10 +132,6 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             $buffer .= "\t\t".sprintf('<video:gallery_loc%s>', $title).$this->escape($galleryLoc['loc']).'</video:gallery_loc>'."\n";
         }
 
-        if ($video->getRequiresSubscription() !== null) {
-            $buffer .= "\t\t".'<video:requires_subscription>'.($video->getRequiresSubscription() ? 'yes' : 'no').'</video:requires_subscription>'."\n";
-        }
-
         if ($video->getUploader() !== null) {
             $uploader = $video->getUploader();
             $info = $uploader['info'] !== null ? sprintf(' info="%s"', $this->escape($uploader['info'])) : '';
@@ -162,10 +145,6 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             }
         }
 
-        if ($video->getLive() !== null) {
-            $buffer .= "\t\t".'<video:live>'.($video->getLive() ? 'yes' : 'no').'</video:live>'."\n";
-        }
-
         return $buffer."\t".'</video:video>'."\n";
     }
 
@@ -175,20 +154,17 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
 
         $buffer .= "\t\t".'<image:loc>'.$this->escape($image->getLoc()).'</image:loc>'."\n";
 
-        if ($image->getCaption() !== null) {
-            $buffer .= "\t\t".'<image:caption>'.$this->escape($image->getCaption()).'</image:caption>'."\n";
-        }
+        $checks = [
+            'getCaption' => "\t\t".'<image:caption>'.$this->escape($image->getCaption()).'</image:caption>'."\n",
+            'getGeoLocation' => "\t\t".'<image:geo_location>'.$this->escape($image->getGeoLocation()).'</image:geo_location>'."\n",
+            'getTitle' => "\t\t".'<image:title>'.$this->escape($image->getTitle()).'</image:title>'."\n",
+            'getLicense' => "\t\t".'<image:license>'.$this->escape($image->getLicense()).'</image:license>'."\n",
+        ];
 
-        if ($image->getGeoLocation() !== null) {
-            $buffer .= "\t\t".'<image:geo_location>'.$this->escape($image->getGeoLocation()).'</image:geo_location>'."\n";
-        }
-
-        if ($image->getTitle() !== null) {
-            $buffer .= "\t\t".'<image:title>'.$this->escape($image->getTitle()).'</image:title>'."\n";
-        }
-
-        if ($image->getLicense() !== null) {
-            $buffer .= "\t\t".'<image:license>'.$this->escape($image->getLicense()).'</image:license>'."\n";
+        foreach ($checks as $check => $text) {
+            if ($image->{$check}() !== null) {
+                $buffer .= $text;
+            }
         }
 
         return $buffer."\t".'</image:image>'."\n";

@@ -78,7 +78,6 @@ class Helper
         $date = str_replace('-', '', $date);
         $day = intval(substr($date, 0, 2));
         $month = intval(substr($date, 2, 2));
-        $year = intval(substr($date, 4, 2));
 
         if ($month < 0 || $month > 12) {
             return false;
@@ -86,7 +85,7 @@ class Helper
         // @formatter:off
         $months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         // @formatter:on
-        if ($year % 4 === 0) {
+        if (intval(substr($date, 4, 2)) % 4 === 0) {
             $months[1] = 29;
         }
 
@@ -118,11 +117,12 @@ class Helper
             return substr($personCode, 10, 1) == (1 - $remainder);
         }
     }
-
+    
     public static function validatePersonCode($personCode = null)
     {
-        if ($personCode) {
+        if ($personCode !== null) {
             $personCode = str_replace('-', '', $personCode);
+
             if (strlen($personCode) !== 11) {
                 return 'error_length';
             }
