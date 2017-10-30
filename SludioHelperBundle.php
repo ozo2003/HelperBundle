@@ -11,7 +11,6 @@
 
 namespace Sludio\HelperBundle;
 
-use Sludio\HelperBundle\DependencyInjection\Compiler;
 use Sludio\HelperBundle\DependencyInjection\SludioHelperExtension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -24,10 +23,15 @@ class SludioHelperBundle extends Bundle
     public function build(ContainerBuilder $container)
     {
         parent::build($container);
-
-        $container->addCompilerPass(new Compiler\TemplatingPass());
-        $container->addCompilerPass(new Compiler\LoaderPass());
-        $container->addCompilerPass(new Compiler\MiddlewarePass());
+        $passes = [
+            'Sludio\HelperBundle\DependencyInjection\Compiler\TemplatingPass',
+            'Sludio\HelperBundle\DependencyInjection\Compiler\LoaderPass',
+            'Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass',
+            'Sludio\HelperBundle\DependencyInjection\Compiler\UrlProviderPass'
+        ];
+        foreach($passes as $pass){
+            $container->addCompilerPass(new $pass());
+        }
     }
 
     /**

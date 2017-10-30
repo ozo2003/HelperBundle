@@ -26,7 +26,32 @@ sludio_helper_lexik:
     options:
         i18n: false
 
-sludio_helper_position:
-    resource: "@SludioHelperBundle/Position/Resources/config/routing.yml"
+sludio_helper_movedown:
+    path: /movedown/{class}/{id}
+    defaults:
+        _controller: Sludio\HelperBundle\Position\Controller\TreeController::moveAction
+        position: 'down'
+    options:
+        i18n: false
+
+sludio_helper_moveup:
+    path: /moveup/{class}/{id}
+    defaults:
+        _controller: Sludio\HelperBundle\Position\Controller\TreeController::moveAction
+        position: 'up'
+    options:
+        i18n: false
+
+sludio_sitemap_generate:
+    path: /sitemap
+    defaults:
+        _controller: Sludio\HelperBundle\Script\Controller\ScriptController::sitemapGenerateAction
+    options:
+        i18n: false
+
+sludio_sitemap:
+    path: /sitemap.xml
+    defaults:
+        _controller: Sludio\HelperBundle\Script\Controller\ScriptController::sitemapAction
     options:
         i18n: false

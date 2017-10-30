@@ -5,6 +5,8 @@ namespace Sludio\HelperBundle\Script\Controller;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Console\Output\BufferedOutput;
 
 trait ControllerTrait
 {
@@ -14,6 +16,13 @@ trait ControllerTrait
     {
         return new JsonResponse(['success' => intval($success)], intval($code), [
             'Cache-Control' => 'no-cache',
+        ]);
+    }
+
+    private function resultXml($data, $code = 200)
+    {
+        return new Response($data, intval($code), [
+            'Content-Type' => 'application/xml',
         ]);
     }
 
@@ -29,10 +38,15 @@ trait ControllerTrait
         $application = new Application($this->container->get('kernel'));
         $application->setAutoExit(false);
         $input = new ArrayInput($data);
+        $output = new BufferedOutput();
         $application->run($input);
 
         if ($return === true) {
             return $this->result();
         }
+
+        $content = $output->fetch();
+
+        return $content;
     }
 }

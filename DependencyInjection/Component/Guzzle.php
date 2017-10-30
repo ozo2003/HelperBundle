@@ -13,7 +13,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 
-class Guzzle
+class Guzzle implements Configurable
 {
     const NAME = 'sludio_helper.guzzle';
 
@@ -82,7 +82,7 @@ class Guzzle
 
     private function processCacheConfiguration(array $config, ContainerBuilder $container, $debug)
     {
-        if (!$config['enabled']) {
+        if (!$config['enabled'] || $config['disabled'] === true) {
             $container->removeDefinition(self::NAME.'.middleware.cache');
             $container->removeDefinition(self::NAME.'.cache_adapter.redis');
 

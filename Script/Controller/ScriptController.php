@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Script\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sludio\HelperBundle\Sitemap\Dumper\MemoryDumper;
 
 class ScriptController extends Controller
 {
@@ -34,5 +35,20 @@ class ScriptController extends Controller
     public function generateAction()
     {
         return $this->runApp('sludio:translations:generate');
+    }
+
+    public function sitemapAction()
+    {
+        $format = $this->container->getParameter('sludio_helper.sitemap.format');
+        $type = $this->container->getParameter('sludio_helper.sitemap.type');
+        $sitemap = $this->container->get("sludio_helper.sitemap.{$format}.{$type}");
+        $sitemap->setDumper(new MemoryDumper());
+
+        return $this->resultXml($sitemap->build());
+    }
+
+    public function sitemapGenerateAction()
+    {
+        return $this->runApp('sludio:sitemap:generate');
     }
 }

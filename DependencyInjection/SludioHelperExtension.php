@@ -6,6 +6,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Sludio\HelperBundle\DependencyInjection\Component\Configurable;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -20,11 +21,14 @@ class SludioHelperExtension extends Extension
         return 'sludio_helper';
     }
 
-    private function checkExtension($key)
+    private function checkComponent($key)
     {
         $className = 'Sludio\\HelperBundle\\DependencyInjection\\Component\\'.ucfirst($key);
         if (class_exists($className)) {
-            return new $className();
+            $class = new $className();
+            if ($class instanceof Configurable) {
+                return $class;
+            }
         }
 
         return null;
@@ -65,7 +69,6 @@ class SludioHelperExtension extends Extension
                 continue;
             }
             $iterator = 0;
-            $length = count($extension);
             foreach ($extension as $variable => $value) {
                 $iterator++;
                 if ($iterator === 1) {
@@ -82,11 +85,9 @@ class SludioHelperExtension extends Extension
                     }
                 }
                 $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
-                if ($iterator === $length) {
-                    if ($ext = $this->checkExtension($key)) {
-                        $ext->configure($container);
-                    }
-                }
+            }
+            if ($component = $this->checkComponent($key)) {
+                $component->configure($container);
             }
         }
     }

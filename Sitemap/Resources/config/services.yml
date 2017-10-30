@@ -1,0 +1,47 @@
+services:
+    sludio_helper.sitemap.sitemap_simple_formatter:
+        class: Sludio\HelperBundle\Sitemap\Formatter\XmlFormatter
+
+    sludio_helper.sitemap.sitemap_rich_formatter:
+        class: Sludio\HelperBundle\Sitemap\Formatter\RichXmlFormatter
+
+    sludio_helper.sitemap.sitemap_simple_dumper:
+        class: Sludio\HelperBundle\Sitemap\Dumper\FileDumper
+        arguments:
+            - "%kernel.root_dir%/../web/sitemap.xml"
+
+    sludio_helper.sitemap.sitemap_gz_dumper:
+        class: Sludio\HelperBundle\Sitemap\Dumper\GzFileDumper
+        arguments:
+            - "%kernel.root_dir%/../web/sitemap.xml.gz"
+
+    sludio_helper.sitemap.simple.simple:
+        class: Sludio\HelperBundle\Sitemap\Sitemap
+        arguments:
+            - "@sludio_helper.sitemap.sitemap_simple_dumper"
+            - "@sludio_helper.sitemap.sitemap_simple_formatter"
+            - "%sludio_helper.sitemap.base_host%"
+            - "%sludio_helper.sitemap.limit%"
+
+    sludio_helper.sitemap.simple.gz:
+        parent: sludio_helper.sitemap.simple.simple
+        arguments:
+            index_0: "@sludio_helper.sitemap.sitemap_gz_dumper"
+
+    sludio_helper.sitemap.rich.simple:
+        parent: sludio_helper.sitemap.simple.simple
+        arguments:
+            index_1: "@sludio_helper.sitemap.sitemap_rich_formatter"
+
+    sludio_helper.sitemap.rich.gz:
+        parent: sludio_helper.sitemap.simple.simple
+        arguments:
+            index_0: "@sludio_helper.sitemap.sitemap_gz_dumper"
+            index_1: "@sludio_helper.sitemap.sitemap_rich_formatter"
+
+    sludio_helper.command.generate_sitemap:
+        class: Sludio\HelperBundle\Sitemap\Command\SitemapGenerateCommand
+        public: true
+        tags:
+            -
+                name: console.command
