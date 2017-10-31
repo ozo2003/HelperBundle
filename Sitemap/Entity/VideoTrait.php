@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Sitemap\Entity;
 
-trait VariableTrait
+trait VideoTrait
 {
     protected $thumbnailLoc = null;
     protected $title = null;

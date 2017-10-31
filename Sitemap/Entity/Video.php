@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Sitemap\Entity;
 
 class Video
 {
-    use VariableTrait;
+    use VideoTrait;
 
     const RESTRICTION_DENY = 'deny';
     const RESTRICTION_ALLOW = 'allow';

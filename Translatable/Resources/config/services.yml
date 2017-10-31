@@ -5,6 +5,7 @@ services:
             - '%sludio_helper.translatable.locales%'
             - '@sludio_helper.translatable.manager'
             - '@translator'
+            - "@service_container"
         tags:
             -
                 name: form.type

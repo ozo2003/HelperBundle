@@ -16,7 +16,9 @@
         "sortable",
         "symfony",
         "translatable",
-        "translation"
+        "translation",
+        "sitemap",
+        "specification"
     ],
     "type": "symfony-bundle",
     "authors": [

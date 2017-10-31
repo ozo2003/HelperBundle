@@ -73,9 +73,50 @@ class Configuration implements ConfigurationInterface
                                         ->end()
                                     ->end()
                                 ->end()
-                                ->append($this->createCacheNode())
-                                ->append($this->createClientsNode())
-                                ->append($this->createMockNode())
+                                ->arrayNode('cache')
+                                    ->canBeEnabled()
+                                    ->validate()
+                                        ->ifTrue(function($v) {
+                                            return $v['enabled'] && null === $v['adapter'];
+                                        })
+                                        ->thenInvalid('The \'sludio_helper.guzzle.cache.adapter\' key is mandatory if you enable the cache middleware')
+                                    ->end()
+                                    ->children()
+                                        ->scalarNode('adapter')->defaultNull()->end()
+                                        ->booleanNode('disabled')->defaultValue(null)->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('clients')
+                                    ->useAttributeAsKey('name')
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('class')
+                                                ->defaultValue('GuzzleHttp\Client')
+                                            ->end()
+                                            ->booleanNode('lazy')
+                                                ->defaultFalse()
+                                            ->end()
+                                            ->variableNode('config')->end()
+                                            ->arrayNode('middleware')
+                                                ->prototype('scalar')->end()
+                                            ->end()
+                                            ->scalarNode('alias')->defaultNull()->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
+                                ->arrayNode('mock')
+                                    ->canBeEnabled()
+                                    ->children()
+                                        ->scalarNode('storage_path')->isRequired()->end()
+                                        ->scalarNode('mode')->defaultValue('replay')->end()
+                                        ->arrayNode('request_headers_blacklist')
+                                            ->prototype('scalar')->end()
+                                        ->end()
+                                        ->arrayNode('response_headers_blacklist')
+                                            ->prototype('scalar')->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
                             ->end()
                         ->end()
                         ->arrayNode('lexik')
@@ -222,6 +263,31 @@ class Configuration implements ConfigurationInterface
                                 ->scalarNode('manager')
                                     ->defaultValue('default')
                                 ->end()
+                                ->arrayNode('entities')
+                                    ->useAttributeAsKey('name')
+                                    ->prototype('array')
+                                        ->children()
+                                            ->scalarNode('entity')
+                                                ->defaultValue(null)
+                                            ->end()
+                                            ->arrayNode('fields')
+                                                ->useAttributeAsKey('name')
+                                                ->prototype('array')
+                                                    ->children()
+                                                        ->enumNode('class')
+                                                            ->values(['titled', 'slugged', 'ck_item', null])
+                                                            ->defaultValue(null)
+                                                        ->end()
+                                                        ->enumNode('type')
+                                                            ->values(['text', 'ckeditor'])
+                                                            ->defaultValue('text')
+                                                        ->end()
+                                                    ->end()
+                                                ->end()
+                                            ->end()
+                                        ->end()
+                                    ->end()
+                                ->end()
                             ->end()
                         ->end()
                     ->end()
@@ -266,82 +332,5 @@ class Configuration implements ConfigurationInterface
         // @formatter:on
 
         return $treeBuilder;
-    }
-
-    private function createCacheNode()
-    {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('cache');
-
-        // @formatter:off
-        $node
-            ->canBeEnabled()
-            ->validate()
-                ->ifTrue(function($v) {
-                    return $v['enabled'] && null === $v['adapter'];
-                })
-                ->thenInvalid('The \'sludio_helper.guzzle.cache.adapter\' key is mandatory if you enable the cache middleware')
-            ->end()
-            ->children()
-                ->scalarNode('adapter')->defaultNull()->end()
-                ->booleanNode('disabled')->defaultValue(null)->end()
-            ->end()
-        ;
-        // @formatter:on
-
-        return $node;
-    }
-
-    private function createClientsNode()
-    {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('clients');
-
-        // @formatter:off
-        $node
-            ->useAttributeAsKey('name')
-            ->prototype('array')
-                ->children()
-                    ->scalarNode('class')
-                        ->defaultValue('GuzzleHttp\Client')
-                    ->end()
-                    ->booleanNode('lazy')
-                        ->defaultFalse()
-                    ->end()
-                    ->variableNode('config')->end()
-                    ->arrayNode('middleware')
-                        ->prototype('scalar')->end()
-                    ->end()
-                    ->scalarNode('alias')->defaultNull()->end()
-                ->end()
-            ->end()
-        ;
-        // @formatter:on
-
-        return $node;
-    }
-
-    private function createMockNode()
-    {
-        $treeBuilder = new TreeBuilder();
-        $node = $treeBuilder->root('mock');
-
-        // @formatter:off
-        $node
-            ->canBeEnabled()
-            ->children()
-                ->scalarNode('storage_path')->isRequired()->end()
-                ->scalarNode('mode')->defaultValue('replay')->end()
-                ->arrayNode('request_headers_blacklist')
-                    ->prototype('scalar')->end()
-                ->end()
-                ->arrayNode('response_headers_blacklist')
-                    ->prototype('scalar')->end()
-                ->end()
-            ->end()
-        ;
-        // @formatter:on
-
-        return $node;
     }
 }

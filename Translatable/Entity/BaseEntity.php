@@ -16,13 +16,18 @@ abstract class BaseEntity
         'ru' => 'ru_RU',
     ];
 
-    abstract public function getId();
-
     public function __construct()
     {
         $this->translates = $this->getTranslations();
         $this->getClassName();
     }
+
+    protected function getTranslations()
+    {
+        return $this->getId() ? Sludio::getTranslations(get_class($this), $this->getId()) : null;
+    }
+
+    abstract public function getId();
 
     public function getClassName()
     {
@@ -34,53 +39,55 @@ abstract class BaseEntity
         return $this->className;
     }
 
-    public function getLocaleVar($locale)
+    public function __call($name, $arguments)
     {
-        return isset($this->localeArr[$locale]) ? $this->localeArr[$locale] : $locale;
+        $pos = strpos($name, '_');
+        if ($pos !== false) {
+            $locale = strtolower(substr($name, $pos + 1));
+            if (count($arguments) === 0 && $this->check($locale) === true) {
+                return $this->__get($name);
+            }
+        }
     }
 
-    private function check($locale)
+    protected function check($locale)
     {
         return in_array($locale, array_keys($this->localeArr));
     }
 
     public function __get($property)
     {
-        if (!method_exists($this, 'get'.ucfirst($property))) {
-            $locale = Sludio::getDefaultLocale();
-        } else {
-            $locale = strtolower(substr($property, -2));
-            $property = substr($property, 0, -2);
+        $getter = 'get'.ucfirst($property);
+
+        $pos = strpos($property, '_');
+        if (!method_exists($this, $getter) && $pos !== false) {
+            $locale = strtolower(substr($property, $pos + 1));
+            $property = substr($property, 0, -3);
+
+            if ($this->check($locale)) {
+                return $this->getVariableByLocale($property, $this->getLocaleVar($locale));
+            }
         }
 
-        if ($this->check($locale)) {
-            return $this->getVariableByLocale($property, $this->localeArr[$locale]);
-        }
-
-        return $this->{$property};
+        return $this->{$getter}();
     }
 
     public function __set($property, $value)
     {
-        if (!method_exists($this, 'set'.ucfirst($property))) {
-            $locale = strtolower(substr($property, -2));
+        $pos = strpos($property, '_');
+        $setter = 'set'.ucfirst($property);
+
+        if (!method_exists($this, $setter) && $pos !== false) {
+            $locale = strtolower(substr($property, $pos + 1));
+            $property = substr($property, 0, -3);
+
             if ($this->check($locale)) {
-                $property = substr($property, 0, -2);
-                Sludio::updateTranslations(get_class($this), $this->localeArr[$locale], $property, $value, $this->getId());
+                Sludio::updateTranslations(get_class($this), $this->getLocaleVar($locale), $property, $value, $this->getId());
             }
         }
         $this->{$property} = $value;
 
         return $this;
-    }
-
-    protected function getTranslations()
-    {
-        if ($this->getId()) {
-            return Sludio::getTranslations(get_called_class(), $this->getId());
-        }
-
-        return null;
     }
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
@@ -100,6 +107,11 @@ abstract class BaseEntity
         }
 
         return '';
+    }
+
+    public function getLocaleVar($locale)
+    {
+        return $this->check($locale) ? $this->localeArr[$locale] : $locale;
     }
 
     public function cleanText($text)

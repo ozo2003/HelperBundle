@@ -19,38 +19,73 @@ class TranslatorType extends AbstractType
     private $locales;
     private $userLocale;
     private $translator;
+    protected $container;
 
-    public function __construct($locales, Manager $manager, TranslatorInterface $translator)
+    const DEFAULT_CLASS = '';
+    const DEFAULT_TYPE = 'text';
+
+    public function __construct($locales, Manager $manager, TranslatorInterface $translator, $container)
     {
         $this->manager = $manager;
         $this->translator = $translator;
         $this->locales = $locales;
         $this->userLocale = $this->translator->getLocale();
+        $this->container = $container;
+    }
+
+    private function checkOptions(array $object, $field){
+        if(!isset($object['fields']) || !isset($object['fields'][$field])){
+            return false;
+        }
+
+        $fields = ['class', 'type'];
+        foreach($fields as $type){
+            if(!isset($object['fields'][$field][$type])){
+                $object['ields'][$field][$type] = constant('self::DEFAULT_'.strtoupper($type));
+            }
+        }
+
+        return true;
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $this->checkOptions($options);
+        $admin = $options['sonata_field_description']->getAdmin();
 
+        $entities = $this->container->getParameter('sludio_helper.translatable.entities');
+        $entity = null;
+        $className = $admin->getClass();
+        foreach($entities as $entity){
+            if($entity['entity'] === $className){
+                break;
+            }
+        }
+
+        if($entity === null){
+            throw new \Exception('No entities defined');
+        }
+
+        $id = $admin->getSubject()->getId();
         $fieldName = $builder->getName();
-        $className = $options['translation_data_class'];
-        $id = $options['object_id'];
-        $locales = $options['locales'];
-        $fieldType = $options['fieldtype'];
-        $class = $options['class'];
-        $new = $options['new'];
+
+        if(!$this->checkOptions($entity, $fieldName)){
+            throw new \Exception('No fields defined for this entity');
+        }
+
+        $fieldType = $entity['fields'][$fieldName]['type'];
+        $class = $entity['fields'][$fieldName]['class'];
         $required = $options['required'];
 
-        if ($new) {
-            $translations = $this->manager->getNewTranslatedFields($fieldName, $locales);
+        if (!$id) {
+            $translations = $this->manager->getNewTranslatedFields($fieldName, $this->locales);
         } else {
-            $translations = $this->manager->getTranslatedFields($className, $fieldName, $id, $locales);
+            $translations = $this->manager->getTranslatedFields($className, $fieldName, $id, $this->locales);
         }
 
         // 'populate' fields by *hook on form generation
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $locales, $translations, $fieldType, $class, $required, $className, $id) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
             $form = $event->getForm();
-            foreach ($locales as $locale) {
+            foreach ($this->locales as $locale) {
                 $data = (array_key_exists($locale, $translations) && array_key_exists($fieldName, $translations[$locale])) ? $translations[$locale][$fieldName] : null;
                 $form->add($locale, $fieldType, [
                     'label' => false,
@@ -69,9 +104,9 @@ class TranslatorType extends AbstractType
             $form->add('currentFieldName', 'hidden', ['data' => $fieldName]);
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id, $locales) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id) {
             $form = $event->getForm();
-            $this->manager->persistTranslations($form, $className, $fieldName, $id, $locales);
+            $this->manager->persistTranslations($form, $className, $fieldName, $id, $this->locales);
         });
     }
 
@@ -112,17 +147,6 @@ class TranslatorType extends AbstractType
     private function getTranslatedLocalCode($locale)
     {
         return \Locale::getDisplayLanguage($locale, $this->userLocale);
-    }
-
-    private function checkOptions($options)
-    {
-        $conditionDataclassEmpty = ($options['translation_data_class'] === '');
-        $conditionIdNull = ($options['object_id'] === null && !$options['new']);
-        $conditionLocalesInvalid = (!is_array($options['locales']) || empty($options['locales']));
-
-        if ($conditionDataclassEmpty || $conditionIdNull || $conditionLocalesInvalid) {
-            throw new Exception('An Error Ocurred');
-        }
     }
 
     /**

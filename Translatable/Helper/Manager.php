@@ -20,17 +20,6 @@ class Manager
         $this->entityManager = $registry->getManager();
     }
 
-    private function getField(BaseEntity $entity, $field, $locale)
-    {
-        return $entity->getVariableByLocale($field, $locale);
-    }
-
-    private function setField($entity, $field, $value)
-    {
-        $setterFunctionName = 'set'.$field;
-        $entity->{$setterFunctionName}($value);
-    }
-
     public function getTranslatedFields($class, $field, $identifier, $locales)
     {
         $entity = $this->entityManager->getRepository($class)->find($identifier);
@@ -41,6 +30,11 @@ class Manager
         }
 
         return $translated;
+    }
+
+    private function getField(BaseEntity $entity, $field, $locale)
+    {
+        return $entity->getVariableByLocale($field, $locale);
     }
 
     public function getNewTranslatedFields($field, $locales)
@@ -70,9 +64,15 @@ class Manager
                 $postedValue = $translations[$locale];
                 if ($this->getField($entity, $field, $locale) !== $postedValue) {
                     $lang = explode('_', $locale);
-                    $entity->__set($field.ucfirst(reset($lang)), $postedValue);
+                    $entity->__set($field.'_'.strtolower(reset($lang)), $postedValue);
                 }
             }
         }
+    }
+
+    private function setField($entity, $field, $value)
+    {
+        $setterFunctionName = 'set'.$field;
+        $entity->{$setterFunctionName}($value);
     }
 }

@@ -9,7 +9,7 @@ Add the `sludio/helper-bundle` package to your `require` section in the `compose
 $ composer require sludio/helper-bundle dev-master
 ```
 
-Add the SludioHelperBundle to your application's kernel. Preferably after bundles required by this bundle but before Doctrine bundle:
+Add the SludioHelperBundle to your application's kernel. Preferably after bundles overridden by this bundle:
 
 ``` php
 <?php
