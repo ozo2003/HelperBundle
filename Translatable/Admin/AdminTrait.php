@@ -5,6 +5,8 @@ use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 
 trait AdminTrait
 {
+    abstract public function getClass();
+
     public function getTranslationFilter($queryBuilder, $alias, $field, $value)
     {
         if (!isset($value['value'])) {

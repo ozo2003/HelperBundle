@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Translatable\Form\Type;
 
-use Exception;
 use Sludio\HelperBundle\Translatable\Helper\Manager;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -33,14 +32,18 @@ class TranslatorType extends AbstractType
         $this->container = $container;
     }
 
-    private function checkOptions(array $object, $field){
-        if(!isset($object['fields']) || !isset($object['fields'][$field])){
+    private function checkOptions(array $object, $field)
+    {
+        if (!isset($object['fields']) || !isset($object['fields'][$field])) {
             return false;
         }
 
-        $fields = ['class', 'type'];
-        foreach($fields as $type){
-            if(!isset($object['fields'][$field][$type])){
+        $fields = [
+            'class',
+            'type',
+        ];
+        foreach ($fields as $type) {
+            if (!isset($object['fields'][$field][$type])) {
                 $object['ields'][$field][$type] = constant('self::DEFAULT_'.strtoupper($type));
             }
         }
@@ -55,22 +58,22 @@ class TranslatorType extends AbstractType
         $entities = $this->container->getParameter('sludio_helper.translatable.entities');
         $entity = null;
         $className = $admin->getClass();
-        foreach($entities as $key => &$entity){
+        foreach ($entities as $key => &$entity) {
             $entity['name'] = $key;
-            if($entity['entity'] === $className){
+            if ($entity['entity'] === $className) {
                 break;
             }
         }
 
         $under = 'sludio_helper.extensions.translatable.entities';
-        if($entity === null || $entity['entity'] !== $className){
+        if ($entity === null || $entity['entity'] !== $className) {
             throw new \Exception('Entity '.$className.' not defined under '.$under);
         }
 
         $id = $admin->getSubject()->getId();
         $fieldName = $builder->getName();
 
-        if(!$this->checkOptions($entity, $fieldName)){
+        if (!$this->checkOptions($entity, $fieldName)) {
             throw new \Exception('No fields defined for '.$className.' under '.$under.'.'.$entity['name']);
         }
 
@@ -85,7 +88,7 @@ class TranslatorType extends AbstractType
         }
 
         // 'populate' fields by *hook on form generation
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
             $form = $event->getForm();
             foreach ($this->locales as $locale) {
                 $data = (array_key_exists($locale, $translations) && array_key_exists($fieldName, $translations[$locale])) ? $translations[$locale][$fieldName] : null;
@@ -106,7 +109,7 @@ class TranslatorType extends AbstractType
             $form->add('currentFieldName', 'hidden', ['data' => $fieldName]);
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id) {
             $form = $event->getForm();
             $this->manager->persistTranslations($form, $className, $fieldName, $id, $this->locales);
         });
@@ -115,7 +118,7 @@ class TranslatorType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         // pass some variables for field rendering
-        $view->vars['locales'] = $options['locales'];
+        $view->vars['locales'] = $this->locales;
         $view->vars['currentlocale'] = $this->userLocale;
         $view->vars['translatedtablocales'] = $this->getTabTranslations();
     }
@@ -157,15 +160,9 @@ class TranslatorType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $defaults = [
-            'locales' => $this->locales,
-            'translation_data_class' => '',
-            'object_id' => null,
             'mapped' => false,
             'required' => false,
             'by_reference' => false,
-            'fieldtype' => 'text',
-            'class' => '',
-            'new' => false,
         ];
         $resolver->setDefaults($defaults);
     }

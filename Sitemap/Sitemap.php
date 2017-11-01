@@ -71,7 +71,7 @@ class Sitemap
 
         if (count($this->sitemapIndexes)) {
             $this->dumper->setFilename($this->originalFilename);
-            
+
             $this->dumper->dump($this->formatter->getSitemapIndexStart());
             foreach ($this->sitemapIndexes as $sitemapIndex) {
                 $this->dumper->dump($this->formatter->formatSitemapIndex($sitemapIndex));
@@ -153,10 +153,7 @@ class Sitemap
 
     protected function createSitemapIndex()
     {
-        $sitemapIndexFilename = $this->getSitemapIndexFilename($this->originalFilename);
         $sitemapIndex = new SitemapIndex();
-        $loc = DIRECTORY_SEPARATOR.basename($sitemapIndexFilename);
-
         $sitemapIndex->setLastMod(new \DateTime());
 
         return $sitemapIndex;

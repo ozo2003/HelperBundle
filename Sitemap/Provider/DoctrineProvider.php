@@ -11,7 +11,7 @@ use Sludio\HelperBundle\Sitemap\Sitemap;
 class DoctrineProvider extends AbstractProvider
 {
     protected $router;
-    protected $em;
+    protected $entityManager;
 
     protected $options = [
         'entity' => null,
@@ -25,15 +25,15 @@ class DoctrineProvider extends AbstractProvider
     /**
      * Constructor
      *
-     * @param Entitymanager   $em      Doctrine entity manager.
+     * @param Entitymanager   $entityManager      Doctrine entity manager.
      * @param RouterInterface $router  The application router.
      * @param array           $options The options (see the class comment).
      */
-    public function __construct(EntityManager $em, RouterInterface $router, array $options)
+    public function __construct(EntityManager $entityManager, RouterInterface $router, array $options)
     {
         parent::__construct($router, $options);
 
-        $this->em = $em;
+        $this->entityManager = $entityManager;
     }
 
     /**
@@ -50,13 +50,13 @@ class DoctrineProvider extends AbstractProvider
         while (($result = $results->next()) !== false) {
             $sitemap->add($this->resultToUrl($result[0]));
 
-            $this->em->detach($result[0]);
+            $this->entityManager->detach($result[0]);
         }
     }
 
     protected function getQuery($entity, $method = null)
     {
-        $repo = $this->em->getRepository($entity);
+        $repo = $this->entityManager->getRepository($entity);
 
         if ($method !== null) {
             $query = $repo->$method();

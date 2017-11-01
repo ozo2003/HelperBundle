@@ -98,7 +98,7 @@ class TranslatableRepository
         $key = strtolower($className).':translations:'.$id;
         $result = [];
         $checked = false;
-        if($skip === false) {
+        if ($skip === false) {
             self::getFromRedis($key, $result, $checked);
         } else {
             self::delFromRedis($key);

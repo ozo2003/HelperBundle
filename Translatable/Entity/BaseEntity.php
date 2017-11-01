@@ -55,12 +55,17 @@ abstract class BaseEntity
         return in_array($locale, array_keys($this->localeArr));
     }
 
+    protected function notExist($method, $pos)
+    {
+        return !method_exists($this, $method) && $pos !== false;
+    }
+
     public function __get($property)
     {
         $getter = 'get'.ucfirst($property);
 
         $pos = strpos($property, '_');
-        if (!method_exists($this, $getter) && $pos !== false) {
+        if ($this->notExist($getter, $pos)) {
             $locale = strtolower(substr($property, $pos + 1));
             $property = substr($property, 0, -3);
 
@@ -77,7 +82,7 @@ abstract class BaseEntity
         $pos = strpos($property, '_');
         $setter = 'set'.ucfirst($property);
 
-        if (!method_exists($this, $setter) && $pos !== false) {
+        if ($this->notExist($setter, $pos)) {
             $locale = strtolower(substr($property, $pos + 1));
             $property = substr($property, 0, -3);
 
