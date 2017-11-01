@@ -1,6 +1,6 @@
 services:
     sludio_helper.openidconnect.registry:
-        class: Sludio\HelperBundle\script\Utils\ClientRegistry
+        class: Sludio\HelperBundle\Script\Utils\ClientRegistry
         public: true
         arguments:
             - "@service_container"
