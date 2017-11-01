@@ -22,9 +22,9 @@ abstract class BaseEntity
         $this->getClassName();
     }
 
-    protected function getTranslations()
+    protected function getTranslations($skip = false)
     {
-        return $this->getId() ? Sludio::getTranslations(get_class($this), $this->getId()) : null;
+        return $this->getId() ? Sludio::getTranslations(get_class($this), $this->getId(), $skip) : null;
     }
 
     abstract public function getId();
@@ -83,6 +83,7 @@ abstract class BaseEntity
 
             if ($this->check($locale)) {
                 Sludio::updateTranslations(get_class($this), $this->getLocaleVar($locale), $property, $value, $this->getId());
+                $this->getTranslations();
             }
         }
         $this->{$property} = $value;

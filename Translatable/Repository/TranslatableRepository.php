@@ -58,39 +58,53 @@ class TranslatableRepository
 
     private static function getFromRedis($key, &$result, &$checked)
     {
-        $result = [];
-        $checked = false;
         if (self::$redis !== null) {
-            $result = unserialize(self::$redis->get($key.':translations'));
-            $checked = unserialize(self::$redis->get($key.':checked'));
+            $result = unserialize(self::$redis->get(self::tKey($key)));
+            $checked = unserialize(self::$redis->get(self::cKey($key)));
         }
     }
 
     private static function setToRedis($key, $result)
     {
         if (!empty($result) && self::$redis !== null) {
-            self::$redis->set($key.':translations', serialize($result));
-            self::$redis->set($key.':checked', serialize(true));
+            self::$redis->set(self::tKey($key), serialize($result));
+            self::$redis->set(self::cKey($key), serialize(true));
         }
     }
 
     private static function delFromRedis($key)
     {
         if (self::$redis !== null) {
-            self::$redis->del($key.':translations');
-            self::$redis->del($key.':ckecked');
+            self::$redis->del(self::tKey($key));
+            self::$redis->del(self::cKey($key));
         }
     }
 
-    public static function getTranslations($class, $id)
+    private static function tKey(&$key)
+    {
+        return $key.':translations';
+    }
+
+    private static function cKey(&$key)
+    {
+        return $key.':checked';
+    }
+
+    public static function getTranslations($class, $id, $skip = false)
     {
         $class = str_replace('Proxies\\__CG__\\', '', $class);
         self::init($class, $className);
 
         $key = strtolower($className).':translations:'.$id;
-        self::getFromRedis($key, $result, $checked);
+        $result = [];
+        $checked = false;
+        if($skip === false) {
+            self::getFromRedis($key, $result, $checked);
+        } else {
+            self::delFromRedis($key);
+        }
 
-        if (empty($result) && !$checked) {
+        if ((empty($result) && !$checked)) {
             $data = Quick::get(new Translation(), false, [
                 'object_class' => $class,
                 'foreign_key' => $id,
@@ -110,7 +124,6 @@ class TranslatableRepository
     public static function findByLocale($class, $locale, $content, $field = 'slug', $notId = null, $isId = null)
     {
         self::init();
-
         $locale = self::getLocaleVar($locale ?: self::getDefaultLocale());
 
         $where = [
@@ -166,10 +179,7 @@ class TranslatableRepository
             Quick::update($tId, $translation);
         }
 
-        $key = strtolower($className).':translations:'.$id;
-        self::delFromRedis($key);
-
-        self::getTranslations($class, $id);
+        self::getTranslations($class, $id, true);
     }
 
     public static function removeTranslations($object)
@@ -194,7 +204,7 @@ class TranslatableRepository
         foreach ($classes as $class) {
             $ids = Quick::get(new Translation(), false, ['object_class' => $class], ['foreign_key'], null, ['MODE' => 'DISTINCT']);
             foreach ($ids as $id) {
-                self::getTranslations($class, $id);
+                self::getTranslations($class, $id, true);
             }
         }
     }

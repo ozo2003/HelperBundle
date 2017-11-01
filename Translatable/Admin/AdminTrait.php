@@ -5,29 +5,6 @@ use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 
 trait AdminTrait
 {
-    public abstract function getClass();
-
-    protected function getRedis()
-    {
-        global $kernel;
-
-        if ('AppCache' === get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-
-        $redis = 'snc_redis.'.$kernel->getContainer()->getParameter('sludio_helper.redis.translation');
-
-        return $kernel->getContainer()->get($redis);
-    }
-
-    public function postUpdate($object)
-    {
-        /** @var $object BaseEntity */
-        $key = strtolower($object->getClassName()).':translations:'.$object->getId();
-        $this->getRedis()->del($key.':translations');
-        $this->getRedis()->del($key.':checked');
-    }
-
     public function getTranslationFilter($queryBuilder, $alias, $field, $value)
     {
         if (!isset($value['value'])) {

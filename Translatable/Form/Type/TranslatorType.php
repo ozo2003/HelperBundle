@@ -55,21 +55,23 @@ class TranslatorType extends AbstractType
         $entities = $this->container->getParameter('sludio_helper.translatable.entities');
         $entity = null;
         $className = $admin->getClass();
-        foreach($entities as $entity){
+        foreach($entities as $key => &$entity){
+            $entity['name'] = $key;
             if($entity['entity'] === $className){
                 break;
             }
         }
 
-        if($entity === null){
-            throw new \Exception('No entities defined');
+        $under = 'sludio_helper.extensions.translatable.entities';
+        if($entity === null || $entity['entity'] !== $className){
+            throw new \Exception('Entity '.$className.' not defined under '.$under);
         }
 
         $id = $admin->getSubject()->getId();
         $fieldName = $builder->getName();
 
         if(!$this->checkOptions($entity, $fieldName)){
-            throw new \Exception('No fields defined for this entity');
+            throw new \Exception('No fields defined for '.$className.' under '.$under.'.'.$entity['name']);
         }
 
         $fieldType = $entity['fields'][$fieldName]['type'];
