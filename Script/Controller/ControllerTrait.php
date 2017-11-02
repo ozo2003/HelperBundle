@@ -10,8 +10,6 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 trait ControllerTrait
 {
-    protected $container;
-
     private function result($success = 1, $code = 200)
     {
         return new JsonResponse(['success' => intval($success)], intval($code), [
