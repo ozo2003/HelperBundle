@@ -19,6 +19,8 @@ class Oauth implements Extension
 
     protected $type;
 
+    protected $alias;
+
     /**
      * List of available Oauth providers
      * @var array
@@ -75,13 +77,13 @@ class Oauth implements Extension
             throw new LogicException(sprintf('Class "%s" does not exist.', $providerClass));
         }
 
-        $providerServiceKey = sprintf('sludio_helper.oauth.provider.%s', $clientServiceKey);
+        $providerServiceKey = sprintf($this->alias.'.provider.%s', $clientServiceKey);
 
         $providerDefinition = $container->register($providerServiceKey, $providerClass);
         $providerDefinition->setPublic(false);
 
         $providerDefinition->setFactory([
-            new Reference('sludio_helper.oauth.provider_factory'),
+            new Reference($this->alias.'.provider_factory'),
             'createProvider',
         ]);
 
@@ -98,7 +100,7 @@ class Oauth implements Extension
 
         $providerDefinition->setArguments(array_merge($mandatory, $optional));
 
-        $clientServiceKey = sprintf('sludio_helper.oauth.client.%s', $clientServiceKey);
+        $clientServiceKey = sprintf($this->alias.'.client.%s', $clientServiceKey);
         $clientClass = $options['client_class'];
         $clientDefinition = $container->register($clientServiceKey, $clientClass);
         $clientDefinition->setArguments([
@@ -114,9 +116,10 @@ class Oauth implements Extension
         return $clientServiceKey;
     }
 
-    public function configure(ContainerBuilder &$container)
+    public function configure(ContainerBuilder &$container, $alias)
     {
-        $clientConfigurations = $container->getParameter('sludio_helper.oauth.clients');
+        $this->alias = $alias.'.oauth';
+        $clientConfigurations = $container->getParameter($this->alias.'.clients');
         $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
@@ -161,8 +164,8 @@ class Oauth implements Extension
             $clientServiceKeys[$key] = $service;
         }
 
-        $container->getDefinition('sludio_helper.oauth.registry')->replaceArgument(1, $clientServiceKeys);
-        $container->getDefinition('sludio_helper.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition($alias.'.registry')->replaceArgument(1, $clientServiceKeys);
     }
 
     /**

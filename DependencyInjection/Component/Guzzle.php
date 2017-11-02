@@ -15,42 +15,43 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class Guzzle implements Configurable
 {
-    const NAME = 'sludio_helper.guzzle';
+    protected $alias;
 
-    public function configure(ContainerBuilder &$container)
+    public function configure(ContainerBuilder &$container, $alias)
     {
-        $dataCollector = $container->getDefinition(self::NAME.'.data_collector.guzzle');
-        $dataCollector->replaceArgument(0, $container->getParameter(self::NAME.'.profiler')['max_body_size']);
+        $this->alias = $alias.'.guzzle';
+        $dataCollector = $container->getDefinition($this->alias.'.data_collector.guzzle');
+        $dataCollector->replaceArgument(0, $container->getParameter($this->alias.'.profiler')['max_body_size']);
 
-        if (!$container->getParameter(self::NAME.'.profiler')['enabled']) {
-            $container->removeDefinition(self::NAME.'.middleware.history');
-            $container->removeDefinition(self::NAME.'.middleware.stopwatch');
-            $container->removeDefinition(self::NAME.'.data_collector.guzzle');
+        if (!$container->getParameter($this->alias.'.profiler')['enabled']) {
+            $container->removeDefinition($this->alias.'.middleware.history');
+            $container->removeDefinition($this->alias.'.middleware.stopwatch');
+            $container->removeDefinition($this->alias.'.data_collector.guzzle');
         }
 
-        $this->processLoggerConfiguration($container->getParameter(self::NAME.'.logger'), $container);
-        $this->processMockConfiguration($container->getParameter(self::NAME.'.mock'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
-        $this->processCacheConfiguration($container->getParameter(self::NAME.'.cache'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
-        $this->processClientsConfiguration($container->getParameter(self::NAME.'.clients'), $container, $container->getParameter(self::NAME.'.profiler')['enabled']);
+        $this->processLoggerConfiguration($container->getParameter($this->alias.'.logger'), $container);
+        $this->processMockConfiguration($container->getParameter($this->alias.'.mock'), $container, $container->getParameter($this->alias.'.profiler')['enabled']);
+        $this->processCacheConfiguration($container->getParameter($this->alias.'.cache'), $container, $container->getParameter($this->alias.'.profiler')['enabled']);
+        $this->processClientsConfiguration($container->getParameter($this->alias.'.clients'), $container, $container->getParameter($this->alias.'.profiler')['enabled']);
     }
 
     private function processLoggerConfiguration(array $config, ContainerBuilder $container)
     {
         if (!$config['enabled']) {
-            $container->removeDefinition(self::NAME.'.middleware.logger');
-            $container->removeDefinition(self::NAME.'.logger.message_formatter');
+            $container->removeDefinition($this->alias.'.middleware.logger');
+            $container->removeDefinition($this->alias.'.logger.message_formatter');
 
             return;
         }
 
-        $loggerDefinition = $container->getDefinition(self::NAME.'.middleware.logger');
+        $loggerDefinition = $container->getDefinition($this->alias.'.middleware.logger');
 
         if ($config['service']) {
             $loggerDefinition->replaceArgument(0, new Reference($config['service']));
         }
 
         if ($config['format']) {
-            $formatterDefinition = $container->getDefinition(self::NAME.'.logger.message_formatter');
+            $formatterDefinition = $container->getDefinition($this->alias.'.logger.message_formatter');
             $formatterDefinition->replaceArgument(0, $config['format']);
         }
 
@@ -62,20 +63,20 @@ class Guzzle implements Configurable
     private function processMockConfiguration(array $config, ContainerBuilder $container, $debug)
     {
         if (!$config['enabled']) {
-            $container->removeDefinition(self::NAME.'.middleware.mock');
-            $container->removeDefinition(self::NAME.'.mock.storage');
+            $container->removeDefinition($this->alias.'.middleware.mock');
+            $container->removeDefinition($this->alias.'.mock.storage');
 
             return;
         }
 
-        $storage = $container->getDefinition(self::NAME.'.mock.storage');
+        $storage = $container->getDefinition($this->alias.'.mock.storage');
         $storage->setArguments([
             $config['storage_path'],
             $config['request_headers_blacklist'],
             $config['response_headers_blacklist'],
         ]);
 
-        $middleware = $container->getDefinition(self::NAME.'.middleware.mock');
+        $middleware = $container->getDefinition($this->alias.'.middleware.mock');
         $middleware->replaceArgument(1, $config['mode']);
         $middleware->replaceArgument(2, $debug);
     }
@@ -83,17 +84,17 @@ class Guzzle implements Configurable
     private function processCacheConfiguration(array $config, ContainerBuilder $container, $debug)
     {
         if (!$config['enabled'] || $config['disabled'] === true) {
-            $container->removeDefinition(self::NAME.'.middleware.cache');
-            $container->removeDefinition(self::NAME.'.cache_adapter.redis');
+            $container->removeDefinition($this->alias.'.middleware.cache');
+            $container->removeDefinition($this->alias.'.cache_adapter.redis');
 
             return;
         }
 
-        $container->getDefinition(self::NAME.'.middleware.cache')->addArgument($debug);
-        $container->getDefinition(self::NAME.'.redis_cache')
+        $container->getDefinition($this->alias.'.middleware.cache')->addArgument($debug);
+        $container->getDefinition($this->alias.'.redis_cache')
             ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
 
-        $container->setAlias(self::NAME.'.cache_adapter', $config['adapter']);
+        $container->setAlias($this->alias.'.cache_adapter', $config['adapter']);
     }
 
     private function processClientsConfiguration(array $config, ContainerBuilder $container, $debug)
@@ -104,7 +105,7 @@ class Guzzle implements Configurable
 
             if (isset($options['config'])) {
                 if (!is_array($options['config'])) {
-                    throw new InvalidArgumentException(sprintf('Config for "'.self::NAME.'.client.%s" should be an array, but got %s', $name, gettype($options['config'])));
+                    throw new InvalidArgumentException(sprintf('Config for "'.$this->alias.'.client.%s" should be an array, but got %s', $name, gettype($options['config'])));
                 }
                 $client->addArgument($this->buildGuzzleConfig($options['config'], $debug));
             }
@@ -135,7 +136,7 @@ class Guzzle implements Configurable
 
             $client->addTag(MiddlewarePass::CLIENT_TAG, $attributes);
 
-            $clientServiceId = sprintf(self::NAME.'.client.%s', $name);
+            $clientServiceId = sprintf($this->alias.'.client.%s', $name);
             $container->setDefinition($clientServiceId, $client);
 
             if (isset($options['alias'])) {
@@ -152,7 +153,7 @@ class Guzzle implements Configurable
 
         if ($debug && function_exists('curl_init')) {
             $config['on_stats'] = [
-                new Reference(self::NAME.'.data_collector.history_bag'),
+                new Reference($this->alias.'.data_collector.history_bag'),
                 'addStats',
             ];
         }

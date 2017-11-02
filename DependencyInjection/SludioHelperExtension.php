@@ -39,7 +39,7 @@ class SludioHelperExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
+        $configuration = new Configuration($this->getAlias());
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -57,10 +57,10 @@ class SludioHelperExtension extends Extension
         foreach ($config['other'] as $key => $other) {
             if (is_array($other)) {
                 foreach ($other as $variable => $value) {
-                    $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['other'][$key][$variable]);
+                    $container->setParameter($this->getAlias().$key.'.'.$variable, $config['other'][$key][$variable]);
                 }
             } else {
-                $container->setParameter('sludio_helper.'.$key, $config['other'][$key]);
+                $container->setParameter($this->getAlias().$key, $config['other'][$key]);
             }
         }
 
@@ -84,10 +84,10 @@ class SludioHelperExtension extends Extension
                         }
                     }
                 }
-                $container->setParameter('sludio_helper.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
+                $container->setParameter($this->getAlias().$key.'.'.$variable, $config['extensions'][$key][$variable]);
             }
             if ($component = $this->checkComponent($key)) {
-                $component->configure($container);
+                $component->configure($container, $this->getAlias());
             }
         }
     }

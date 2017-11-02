@@ -6,5 +6,5 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 interface Configurable
 {
-    public function configure(ContainerBuilder &$container);
+    public function configure(ContainerBuilder &$container, $alias);
 }

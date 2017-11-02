@@ -10,9 +10,12 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class Openid implements Extension
 {
-    public function configure(ContainerBuilder &$container)
+    protected $alias;
+
+    public function configure(ContainerBuilder &$container, $alias)
     {
-        $clientConfigurations = $container->getParameter('sludio_helper.openid.clients');
+        $this->alias = $alias.'.openid';
+        $clientConfigurations = $container->getParameter($this->alias.'.clients');
         $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
@@ -20,7 +23,7 @@ class Openid implements Extension
             $this->buildClientConfiguration($node);
             $processor = new Processor();
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
-            $clientServiceKey = 'sludio_helper.openid.client.'.$key;
+            $clientServiceKey = $this->alias.'.client.'.$key;
             $service = [
                 'key' => $clientServiceKey,
             ];
@@ -44,9 +47,9 @@ class Openid implements Extension
             }
             $this->configureClient($container, $clientServiceKey);
         }
-        $container->getDefinition('sludio_helper.openid.registry')->replaceArgument(1, $clientServiceKeys);
-        if ($container->getParameter('sludio_helper.oauth.enabled') == true) {
-            $container->getDefinition('sludio_helper.registry')->replaceArgument(2, $clientServiceKeys);
+        $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
+        if ($container->getParameter($alias.'.oauth.enabled') == true) {
+            $container->getDefinition($alias.'.registry')->replaceArgument(2, $clientServiceKeys);
         }
     }
 

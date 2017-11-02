@@ -13,6 +13,8 @@ class Captcha implements Extension
 {
     protected $type;
 
+    protected $alias;
+
     /**
      * List of available Oauth providers
      * @var array
@@ -36,9 +38,10 @@ class Captcha implements Extension
         return $this->configurators[$type];
     }
 
-    public function configure(ContainerBuilder &$container)
+    public function configure(ContainerBuilder &$container, $alias)
     {
-        $clientConfigurations = $container->getParameter('sludio_helper.captcha.clients');
+        $this->alias = $alias.'.captcha';
+        $clientConfigurations = $container->getParameter($this->alias.'.clients');
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $processor = new Processor();
@@ -64,7 +67,7 @@ class Captcha implements Extension
             $node = $tree->root('sludio_helper_captcha_client/clients/'.$key);
             $this->buildClientConfiguration($node);
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
-            $clientServiceKey = 'sludio_helper.captcha.client.'.$key;
+            $clientServiceKey = $this->alias.'.client.'.$key;
             foreach ($config as $ckey => $cvalue) {
                 $container->setParameter($clientServiceKey.'.'.$ckey, $cvalue);
             }

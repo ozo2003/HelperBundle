@@ -9,13 +9,23 @@ use GuzzleHttp\MessageFormatter;
 
 class Configuration implements ConfigurationInterface
 {
+    protected $alias;
+
+    /**
+     * Configuration constructor.
+     */
+    public function __construct($alias)
+    {
+        $this->alias = $alias;
+    }
+
     /**
      * {@inheritdoc}
      */
     public function getConfigTreeBuilder()
     {
         $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('sludio_helper');
+        $rootNode = $treeBuilder->root($this->alias);
 
         // @formatter:off
         $rootNode
@@ -79,7 +89,7 @@ class Configuration implements ConfigurationInterface
                                         ->ifTrue(function($v) {
                                             return $v['enabled'] && null === $v['adapter'];
                                         })
-                                        ->thenInvalid('The \'sludio_helper.guzzle.cache.adapter\' key is mandatory if you enable the cache middleware')
+                                        ->thenInvalid('The \''.$this->alias.'.guzzle.cache.adapter\' key is mandatory if you enable the cache middleware')
                                     ->end()
                                     ->children()
                                         ->scalarNode('adapter')->defaultNull()->end()

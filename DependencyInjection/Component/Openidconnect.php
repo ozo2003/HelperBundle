@@ -10,6 +10,8 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class Openidconnect implements Extension
 {
+    protected $alias;
+
     public function buildClientConfiguration(NodeDefinition &$node)
     {
         $optionsNode = $node->children();
@@ -51,8 +53,12 @@ class Openidconnect implements Extension
 
         // @formatter:off
         $optionsNode
-            ->arrayNode('params')->prototype('variable')->end()->end()
-            ->arrayNode('url_params')->prototype('variable')->end()->end()
+            ->arrayNode('params')
+                ->prototype('variable')->end()
+            ->end()
+            ->arrayNode('url_params')
+                ->prototype('variable')->end()
+            ->end()
         ;
         // @formatter:on
 
@@ -70,9 +76,10 @@ class Openidconnect implements Extension
         ]);
     }
 
-    public function configure(ContainerBuilder &$container)
+    public function configure(ContainerBuilder &$container, $alias)
     {
-        $clientConfigurations = $container->getParameter('sludio_helper.openidconnect.clients');
+        $this->alias = $alias.'.openidconnect';
+        $clientConfigurations = $container->getParameter($this->alias.'.clients');
         $clientServiceKeys = [];
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
@@ -80,7 +87,7 @@ class Openidconnect implements Extension
             $node = $tree->root('sludio_helper_openidconnect_client/clients/'.$key);
             $this->buildClientConfiguration($node);
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
-            $clientServiceKey = 'sludio_helper.openidconnect.client.'.$key;
+            $clientServiceKey = $this->alias.'.client.'.$key;
             $container->setParameter($clientServiceKey, $clientConfig);
             $service = [
                 'key' => $clientServiceKey,
@@ -103,7 +110,7 @@ class Openidconnect implements Extension
                     $container->setParameter($clientServiceKey.'.'.$configKey, $configValue);
                 }
             }
-            $uriConfigurations = $container->getParameter('sludio_helper.openidconnect.client.'.$key.'.uris');
+            $uriConfigurations = $container->getParameter($this->alias.'.client.'.$key.'.uris');
             foreach ($uriConfigurations as $subKey => $uriConfig) {
                 $tree = new TreeBuilder();
                 $processor = new Processor();
@@ -118,7 +125,7 @@ class Openidconnect implements Extension
                                 $params[$subParameterKey] = $subParameterValue;
                             }
                             if (!empty($params)) {
-                                $params['client_id'] = $container->getParameter('sludio_helper.openidconnect.client.'.$key.'.client_key');
+                                $params['client_id'] = $container->getParameter($this->alias.'.client.'.$key.'.client_key');
                                 $container->setParameter($clientServiceKey.'.'.$subKey.'.'.$subConfigKey, $params);
                             }
                         }
@@ -129,6 +136,6 @@ class Openidconnect implements Extension
             }
             $this->configureClient($container, $clientServiceKey);
         }
-        $container->getDefinition('sludio_helper.openidconnect.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
     }
 }
