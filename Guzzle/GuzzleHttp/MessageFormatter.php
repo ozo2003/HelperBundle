@@ -120,7 +120,7 @@ class MessageFormatter extends BaseMessageFormatter
     /**
      * {@inheritdoc}
      */
-    public function format(RequestInterface $request, ResponseInterface $response = null, $error = null)
+    public function format(RequestInterface $request, ResponseInterface $response = null, \Exception $error = null)
     {
         $cache = [];
 
