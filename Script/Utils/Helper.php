@@ -158,7 +158,7 @@ class Helper
 
     public static function cleanText($text)
     {
-        return html_entity_decode(self::oneSpace('/\s+/S', ' ', str_replace(' ?', '', mb_convert_encoding(strip_tags($text), "UTF-8", "UTF-8"))));
+        return html_entity_decode(self::oneSpace(str_replace(' ?', '', mb_convert_encoding(strip_tags($text), "UTF-8", "UTF-8"))));
     }
 
     public static function oneSpace($text)
