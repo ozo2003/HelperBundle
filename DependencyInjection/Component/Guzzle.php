@@ -92,7 +92,8 @@ class Guzzle implements Configurable
 
         $container->getDefinition($this->alias.'.middleware.cache')->addArgument($debug);
         $container->getDefinition($this->alias.'.redis_cache')
-            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
+            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')))
+        ;
 
         $container->setAlias($this->alias.'.cache_adapter', $config['adapter']);
     }
@@ -119,6 +120,7 @@ class Guzzle implements Configurable
                     foreach ($options['middleware'] as $middleware) {
                         if ('!' === ($middleware[0])) {
                             $addDebugMiddleware = false;
+                            break;
                         }
                     }
 

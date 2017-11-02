@@ -117,7 +117,7 @@ class Helper
             return substr($personCode, 10, 1) == (1 - $remainder);
         }
     }
-    
+
     public static function validatePersonCode($personCode = null)
     {
         if ($personCode !== null) {
@@ -158,45 +158,12 @@ class Helper
 
     public static function cleanText($text)
     {
-        $functions = [
-            'strip_tags',
-            'mb_convert_encoding' => [
-                'variable' => 0,
-                'params' => [
-                    null,
-                    'UTF-8',
-                    'UTF-8',
-                ],
-            ],
-            'str_replace' => [
-                'variable' => 2,
-                'params' => [
-                    ' ?',
-                    '',
-                    null,
-                ],
-            ],
-            'self::oneSpace',
-            'html_entity_decode',
-        ];
-
-        foreach ($functions as $key => $function) {
-            if (is_numeric($key)) {
-                $key = $function;
-                $function = is_array($function) ? array_values($function) : $function;
-            }
-            $params = isset($function['params']) ? $function['params'] : [];
-            $variable = isset($function['variable']) ? intval($function['variable']) : 0;
-            $params[$variable] = $text;
-            $text = call_user_func_array($key, $params);
-        }
-
-        return $text;
+        return html_entity_decode(self::oneSpace('/\s+/S', ' ', str_replace(' ?', '', mb_convert_encoding(strip_tags($text), "UTF-8", "UTF-8"))));
     }
 
-    public static function oneSpace($string)
+    public static function oneSpace($text)
     {
-        return preg_replace('/\s+/S', ' ', $string);
+        return preg_replace('/\s+/S', ' ', $text);
     }
 
     /**
@@ -221,5 +188,16 @@ class Helper
     public static function translit4($text)
     {
         return str_replace(self::$latMap, self::$cyrMap, $text);
+    }
+
+    public static function multiple(array $keys)
+    {
+        foreach ($keys as $key) {
+            if (!is_array($key)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

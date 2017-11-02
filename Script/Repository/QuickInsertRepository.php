@@ -88,7 +88,11 @@ class QuickInsertRepository extends QuickInsertFunctions
 
         $idd = null;
         foreach ($columns as $value => $key) {
-            if (!is_array($key) && !is_array($value)) {
+            $keys = [
+                $key,
+                $value,
+            ];
+            if (!Helper::multiple($keys)) {
                 $value = self::value($object, $value, $type);
                 if ($value !== null) {
                     $data[$key] = $value;
@@ -149,17 +153,17 @@ class QuickInsertRepository extends QuickInsertFunctions
 
             ';
             foreach ($data as $key => $value) {
-                $meta = self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'];
-                if (in_array($meta, [
+                $intTypes = [
                     'boolean',
                     'integer',
                     'longint',
-                ])) {
+                ];
+                if (in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes)) {
                     $value = intval($value);
                 } else {
                     $value = "'".addslashes(trim($value))."'";
                 }
-                $sql .= " ".$key." = ".$value.",";
+                $sql .= ' '.$key." = ".$value.",";
             }
             $sql = substr($sql, 0, -1).' WHERE id = '.$id;
 
