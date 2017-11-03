@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Validator;
 
-class NotEmpty implements Valid
+class NotEmpty implements ValidInterface
 {
     use ValidatorTrait;
 

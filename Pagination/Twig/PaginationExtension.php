@@ -3,12 +3,12 @@
 namespace Sludio\HelperBundle\Pagination\Twig;
 
 use Sludio\HelperBundle\Pagination\Twig\Behaviour\FixedLength;
-use Sludio\HelperBundle\Pagination\Twig\Behaviour\PaginationBehaviour;
+use Sludio\HelperBundle\Pagination\Twig\Behaviour\BehaviourInterface;
 
 class PaginationExtension extends \Twig_Extension
 {
     /**
-     * @var PaginationBehaviour[]
+     * @var BehaviourInterface[]
      */
     private $functions;
 

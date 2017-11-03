@@ -1,11 +1,11 @@
 <?php
 
-namespace Sludio\HelperBundle\Oauth\Client\Provider\Twitter;
+namespace Sludio\HelperBundle\Oauth\Client\Provider\Google;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Sludio\HelperBundle\Oauth\Component\SocialUser;
+use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class TwitterUser implements ResourceOwnerInterface, SocialUser
+class GoogleUserInterface implements ResourceOwnerInterface, SocialUserInterface
 {
     /**
      * @var array
@@ -38,23 +38,51 @@ class TwitterUser implements ResourceOwnerInterface, SocialUser
     protected $username;
 
     /**
-     * @param  array $response
+     * @param array $response
      */
     public function __construct(array $response)
     {
         $this->response = $response;
 
-        $this->id = intval($this->response['user_id']);
+        $this->id = intval($this->response['id']);
 
-        if (isset($this->response['email'])) {
-            $this->email = $this->response['email'];
+        if (!empty($this->response['emails'])) {
+            $this->email = $this->response['emails'][0]['value'];
         }
 
-        $this->username = preg_replace('/[^a-z\d]/i', '', $this->response['screen_name']);
+        $this->firstName = $this->response['name']['givenName'];
+
+        $this->lastName = $this->response['name']['familyName'];
+
+        $username = explode('@', $this->email);
+        $username = preg_replace('/[^a-z\d]/i', '', $username[0]);
+        $this->username = $username;
     }
 
     /**
-     * Returns all the data obtained about the user.
+     * Get preferred display name.
+     *
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->response['displayName'];
+    }
+
+    /**
+     * Get avatar image URL.
+     *
+     * @return string|null
+     */
+    public function getAvatar()
+    {
+        if (!empty($this->response['image']['url'])) {
+            return $this->response['image']['url'];
+        }
+    }
+
+    /**
+     * Get user data as an array.
      *
      * @return array
      */

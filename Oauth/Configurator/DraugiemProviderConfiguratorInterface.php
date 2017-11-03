@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Oauth\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-class TwitterProviderConfigurator implements ProviderConfigurator
+class DraugiemProviderConfiguratorInterface implements ProviderConfiguratorInterface
 {
     public function buildConfiguration(NodeBuilder $node)
     {
@@ -12,7 +12,7 @@ class TwitterProviderConfigurator implements ProviderConfigurator
         $node
             ->scalarNode('client_class')
                 ->info('If you have a sub-class of OAuth2Client you want to use, add it here')
-                ->defaultValue('Sludio\HelperBundle\Oauth\Client\Client\TwitterOAuthClient')
+                ->defaultValue('Sludio\HelperBundle\Oauth\Client\Client\DraugiemOAuth2Client')
             ->end()
             ->scalarNode('redirect_route')
                 ->isRequired()
@@ -28,7 +28,7 @@ class TwitterProviderConfigurator implements ProviderConfigurator
 
     public function getProviderClass(array $config)
     {
-        return 'Sludio\HelperBundle\Oauth\Client\Provider\Twitter\Twitter';
+        return 'Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\Draugiem';
     }
 
     public function getProviderOptions(array $config)
@@ -42,7 +42,7 @@ class TwitterProviderConfigurator implements ProviderConfigurator
 
     public function getProviderDisplayName()
     {
-        return 'Twitter';
+        return 'Draugiem.lv';
     }
 
     public function getClientClass(array $config)

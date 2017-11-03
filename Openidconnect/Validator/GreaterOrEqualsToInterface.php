@@ -2,17 +2,17 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Validator;
 
-class EqualsTo implements Valid
+class GreaterOrEqualsTo implements ValidInterface
 {
     use ValidatorTrait;
 
     public function isValid($expectedValue, $actualValue)
     {
-        if ($expectedValue === $actualValue) {
+        if ($actualValue >= $expectedValue) {
             return true;
         }
 
-        $this->message = sprintf("%s is invalid as it does not equal expected %s", $actualValue, $expectedValue);
+        $this->message = sprintf("%s is invalid as it is not greater than %s", $actualValue, $expectedValue);
 
         return false;
     }

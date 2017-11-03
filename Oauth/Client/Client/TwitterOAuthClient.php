@@ -6,7 +6,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 use Exception;
 use Sludio\HelperBundle\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
-use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
+use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUserInterface;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
 use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -105,6 +105,6 @@ class TwitterOAuthClient extends OAuth2Client
             }
         }
 
-        return new TwitterUser($user_token);
+        return new TwitterUserInterface($user_token);
     }
 }

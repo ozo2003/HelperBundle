@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\DependencyInjection\Component;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-interface Extension extends Configurable
+interface ExtensionInterface extends Configurable
 {
     public function buildClientConfiguration(NodeDefinition &$node);
 

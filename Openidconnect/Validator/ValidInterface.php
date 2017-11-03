@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Validator;
 
-interface Valid
+interface ValidInterface
 {
     public function getName();
 

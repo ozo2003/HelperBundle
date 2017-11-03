@@ -9,7 +9,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class Captcha implements Extension
+class Captcha implements ExtensionInterface
 {
     protected $type;
 
@@ -20,8 +20,8 @@ class Captcha implements Extension
      * @var array
      */
     protected static $supportedTypes = [
-        'recaptcha_v2' => Configurator\ReCaptchaConfigurator::class,
-        'custom' => Configurator\CustomCaptchaConfigurator::class,
+        'recaptcha_v2' => Configurator\ReCaptchaConfiguratorInterface::class,
+        'custom' => Configurator\CustomCaptchaConfiguratorInterface::class,
     ];
 
     protected $usedTypes = [];

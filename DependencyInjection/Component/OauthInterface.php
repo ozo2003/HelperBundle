@@ -11,7 +11,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class Oauth implements Extension
+class Oauth implements ExtensionInterface
 {
     protected $checkClassExistence;
 
@@ -26,11 +26,11 @@ class Oauth implements Extension
      * @var array
      */
     protected static $supportedProviderTypes = [
-        'custom' => Configurator\CustomProviderConfigurator::class,
-        'facebook' => Configurator\FacebookProviderConfigurator::class,
-        'google' => Configurator\GoogleProviderConfigurator::class,
-        'twitter' => Configurator\TwitterProviderConfigurator::class,
-        'draugiem' => Configurator\DraugiemProviderConfigurator::class,
+        'custom' => Configurator\CustomProviderConfiguratorInterface::class,
+        'facebook' => Configurator\FacebookProviderConfiguratorInterface::class,
+        'google' => Configurator\GoogleProviderConfiguratorInterface::class,
+        'twitter' => Configurator\TwitterProviderConfiguratorInterface::class,
+        'draugiem' => Configurator\DraugiemProviderConfiguratorInterface::class,
     ];
 
     public function __construct($checkClassExistence = true)

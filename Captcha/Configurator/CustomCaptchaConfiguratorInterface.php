@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\Captcha\Configurator;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-class CustomCaptchaConfigurator implements CaptchaConfigurator
+class CustomCaptchaConfiguratorInterface implements CaptchaConfiguratorInterface
 {
 
     public function buildConfiguration(NodeBuilder $node)

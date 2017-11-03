@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 
 use InvalidArgumentException;
 
-final class FixedLength extends AbstractPaginationBehaviour
+final class FixedLength extends AbstractBehaviourInterface
 {
     /**
      * @var int

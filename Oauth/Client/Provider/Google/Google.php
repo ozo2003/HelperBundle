@@ -108,7 +108,7 @@ class Google extends AbstractProvider
 
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new GoogleUser($response);
+        return new GoogleUserInterface($response);
     }
 
     public function setState($state = null)

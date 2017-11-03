@@ -1,20 +1,18 @@
 <?php
 
-namespace Sludio\HelperBundle\Openid\Client;
+namespace Sludio\HelperBundle\Oauth\Client\Provider\Draugiem;
 
-use Sludio\HelperBundle\Oauth\Component\SocialUser;
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class InboxUser implements SocialUser
+class DraugiemUserInterface implements ResourceOwnerInterface, SocialUserInterface
 {
     /**
      * @var array
      */
     protected $response;
 
-    /**
-     * @var integer
-     */
-    protected $originalId;
+    protected $userData;
 
     /**
      * @var integer
@@ -44,25 +42,28 @@ class InboxUser implements SocialUser
     /**
      * @param  array $response
      */
-    public function __construct(array $response, $id = null)
+    public function __construct(array $response)
     {
         $this->response = $response;
-        $this->originalId = $id;
+        $this->userData = reset($this->response['users']);
 
-        $this->id = $this->getField('openid_sreg_email');
+        $this->id = intval($this->response['uid']);
 
-        $this->email = $this->getField('openid_sreg_email');
+        $this->firstName = $this->getField('name');
 
-        $name = $this->getField('openid_sreg_fullname');
-        $data = explode(' ', $name, 2);
+        $this->lastName = $this->getField('surname');
 
-        $this->firstName = $data[0];
+        $this->username = preg_replace('/[^a-z\d]/i', '', $this->getField('url'));
+    }
 
-        $this->lastName = $data[1];
-
-        $username = explode('@', $this->originalId ?: $this->email);
-        $username = preg_replace('/[^a-z\d]/i', '', $username[0]);
-        $this->username = $username;
+    /**
+     * Returns all the data obtained about the user.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->response;
     }
 
     /**
@@ -74,17 +75,7 @@ class InboxUser implements SocialUser
      */
     private function getField($key)
     {
-        return isset($this->response[$key]) ? $this->response[$key] : null;
-    }
-
-    /**
-     * Get the value of Original Id
-     *
-     * @return integer
-     */
-    public function getOriginalId()
-    {
-        return $this->originalId;
+        return isset($this->userData[$key]) ? $this->userData[$key] : null;
     }
 
     /**
@@ -136,5 +127,4 @@ class InboxUser implements SocialUser
     {
         return $this->username;
     }
-
 }

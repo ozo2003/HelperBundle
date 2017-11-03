@@ -8,7 +8,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class Openidconnect implements Extension
+class Openidconnect implements ExtensionInterface
 {
     protected $alias;
 

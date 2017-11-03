@@ -3,9 +3,9 @@
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Facebook;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
-use Sludio\HelperBundle\Oauth\Component\SocialUser;
+use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class FacebookUser implements ResourceOwnerInterface, SocialUser
+class FacebookUserInterface implements ResourceOwnerInterface, SocialUserInterface
 {
     /**
      * @var array

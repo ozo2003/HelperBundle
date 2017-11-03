@@ -17,7 +17,7 @@ class ValidatorChain
     protected $messages = [];
 
     /**
-     * @param Valid[] $validators
+     * @param ValidInterface[] $validators
      *
      * @return $this
      */
@@ -33,12 +33,12 @@ class ValidatorChain
     }
 
     /**
-     * @param string $claim
-     * @param Valid  $validator
+     * @param string         $claim
+     * @param ValidInterface $validator
      *
      * @return $this
      */
-    public function addValidator(Valid $validator)
+    public function addValidator(ValidInterface $validator)
     {
         $this->validators[$validator->getName()] = $validator;
 

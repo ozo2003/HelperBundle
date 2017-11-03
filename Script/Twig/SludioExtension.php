@@ -39,11 +39,11 @@ class SludioExtension extends \Twig_Extension
     {
         $input = [
             'beautify' => 'beautify',
-            'urldecode' => 'url_decode',
+            'urldecode' => 'urlDecode',
             'parse' => 'parse',
-            'file_exists' => 'file_exists',
-            'html_entity_decode' => 'html_entity_decode',
-            'strip_descr' => 'strip_descr',
+            'file_exists' => 'fileExists',
+            'html_entity_decode' => 'htmlEntityDecode',
+            'strip_descr' => 'stripDescr',
             'pretty_print' => 'prettyPrint',
             'status_code_class' => 'statusCodeClass',
             'format_duration' => 'formatDuration',
@@ -73,7 +73,7 @@ class SludioExtension extends \Twig_Extension
         return $this->makeArray($input, 'function');
     }
 
-    public function url_decode($string)
+    public function urlDecode($string)
     {
         return urldecode($string);
     }
@@ -82,20 +82,20 @@ class SludioExtension extends \Twig_Extension
     {
         $str = parse_url($string);
 
-        $argv = [];
+        $arguments = [];
         if (isset($str['query'])) {
             $args = explode('&', $str['query']);
 
             foreach ($args as $arg) {
                 $tmp = explode('=', $arg, 2);
-                $argv[$tmp[0]] = $tmp[1];
+                $arguments[$tmp[0]] = $tmp[1];
             }
         }
 
-        return $argv;
+        return $arguments;
     }
 
-    public function file_exists($file)
+    public function fileExists($file)
     {
         return file_exists(getcwd().$file);
     }
@@ -108,7 +108,7 @@ class SludioExtension extends \Twig_Extension
         return $string;
     }
 
-    public function html_entity_decode($str)
+    public function htmlEntityDecode($str)
     {
         $str = html_entity_decode($str);
         $str = preg_replace('#\R+#', '', $str);
@@ -116,7 +116,7 @@ class SludioExtension extends \Twig_Extension
         return $str;
     }
 
-    public function strip_descr($body, $fallback = null, $type = null, $lengthIn = 300)
+    public function stripDescr($body, $fallback = null, $type = null, $lengthIn = 300)
     {
         if ($type && $fallback) {
             $length = isset($fallback[$type]) ? $fallback[$type] : null;

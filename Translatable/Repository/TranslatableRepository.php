@@ -2,11 +2,9 @@
 
 namespace Sludio\HelperBundle\Translatable\Repository;
 
-ini_set('memory_limit', '1024M');
-ini_set('max_execution_time', 0);
-
 use Sludio\HelperBundle\Script\Repository\QuickInsertRepository as Quick;
 use Sludio\HelperBundle\Translatable\Entity\Translation;
+use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 
 class TranslatableRepository
 {
@@ -182,7 +180,7 @@ class TranslatableRepository
         self::getTranslations($class, $id, true);
     }
 
-    public static function removeTranslations($object)
+    public static function removeTranslations(BaseEntity $object)
     {
         $class = get_class($object);
         self::init($class, $className);

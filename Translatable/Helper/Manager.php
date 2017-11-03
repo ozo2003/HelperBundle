@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Translatable\Helper;
 
-use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
 use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -70,7 +69,7 @@ class Manager
         }
     }
 
-    private function setField($entity, $field, $value)
+    private function setField(BaseEntity $entity, $field, $value)
     {
         $setterFunctionName = 'set'.$field;
         $entity->{$setterFunctionName}($value);
