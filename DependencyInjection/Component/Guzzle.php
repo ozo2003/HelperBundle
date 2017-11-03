@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
 use Sludio\HelperBundle\Script\Utils\Helper;
 
-class Guzzle implements Configurable
+class Guzzle implements ConfigureInterface
 {
     protected $alias;
 

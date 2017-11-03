@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Oauth\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 
-class CustomProviderConfiguratorInterface implements ProviderConfiguratorInterface
+class CustomProviderConfigurator implements ProviderConfiguratorInterface
 {
     public function buildConfiguration(NodeBuilder $node)
     {

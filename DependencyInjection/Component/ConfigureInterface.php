@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\DependencyInjection\Component;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
-interface Configurable
+interface ConfigureInterface
 {
     public function configure(ContainerBuilder &$container, $alias);
 }

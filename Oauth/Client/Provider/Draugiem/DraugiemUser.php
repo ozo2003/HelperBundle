@@ -1,16 +1,18 @@
 <?php
 
-namespace Sludio\HelperBundle\Oauth\Client\Provider\Twitter;
+namespace Sludio\HelperBundle\Oauth\Client\Provider\Draugiem;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class TwitterUserInterface implements ResourceOwnerInterface, SocialUserInterface
+class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
 {
     /**
      * @var array
      */
     protected $response;
+
+    protected $userData;
 
     /**
      * @var integer
@@ -43,14 +45,15 @@ class TwitterUserInterface implements ResourceOwnerInterface, SocialUserInterfac
     public function __construct(array $response)
     {
         $this->response = $response;
+        $this->userData = reset($this->response['users']);
 
-        $this->id = intval($this->response['user_id']);
+        $this->id = intval($this->response['uid']);
 
-        if (isset($this->response['email'])) {
-            $this->email = $this->response['email'];
-        }
+        $this->firstName = $this->getField('name');
 
-        $this->username = preg_replace('/[^a-z\d]/i', '', $this->response['screen_name']);
+        $this->lastName = $this->getField('surname');
+
+        $this->username = preg_replace('/[^a-z\d]/i', '', $this->getField('url'));
     }
 
     /**
@@ -61,6 +64,18 @@ class TwitterUserInterface implements ResourceOwnerInterface, SocialUserInterfac
     public function toArray()
     {
         return $this->response;
+    }
+
+    /**
+     * Returns a field from the Graph node data.
+     *
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    private function getField($key)
+    {
+        return isset($this->userData[$key]) ? $this->userData[$key] : null;
     }
 
     /**
@@ -112,5 +127,4 @@ class TwitterUserInterface implements ResourceOwnerInterface, SocialUserInterfac
     {
         return $this->username;
     }
-
 }

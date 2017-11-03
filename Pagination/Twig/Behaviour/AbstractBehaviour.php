@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 
 use InvalidArgumentException;
 
-abstract class AbstractBehaviourInterface implements BehaviourInterface
+abstract class AbstractBehaviour implements BehaviourInterface
 {
     /**
      * @param int        $totalPages

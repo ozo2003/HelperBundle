@@ -20,8 +20,8 @@ class Captcha implements ExtensionInterface
      * @var array
      */
     protected static $supportedTypes = [
-        'recaptcha_v2' => Configurator\ReCaptchaConfiguratorInterface::class,
-        'custom' => Configurator\CustomCaptchaConfiguratorInterface::class,
+        'recaptcha_v2' => Configurator\ReCaptchaConfigurator::class,
+        'custom' => Configurator\CustomCaptchaConfigurator::class,
     ];
 
     protected $usedTypes = [];

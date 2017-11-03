@@ -52,7 +52,7 @@ class Draugiem extends AbstractProvider
 
     protected function createResourceOwner(array $response, AccessToken $token = null)
     {
-        return new DraugiemUserInterface($response);
+        return new DraugiemUser($response);
     }
 
     protected function checkResponse(ResponseInterface $response, $data)

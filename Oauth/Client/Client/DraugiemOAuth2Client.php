@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
-use Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\DraugiemUserInterface;
+use Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\DraugiemUser;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DraugiemOAuth2Client extends OAuth2Client
@@ -41,7 +41,7 @@ class DraugiemOAuth2Client extends OAuth2Client
     {
         $user = $this->returnRedirect();
 
-        return new DraugiemUserInterface($user);
+        return new DraugiemUser($user);
     }
 
     public function returnRedirect(array $scopes = [], array $options = [])

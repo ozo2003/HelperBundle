@@ -6,7 +6,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Sludio\HelperBundle\DependencyInjection\Component\Configurable;
+use Sludio\HelperBundle\DependencyInjection\Component\ConfigureInterface;
 
 /**
  * This is the class that loads and manages your bundle configuration.
@@ -26,7 +26,7 @@ class SludioHelperExtension extends Extension
         $className = 'Sludio\\HelperBundle\\DependencyInjection\\Component\\'.ucfirst($key);
         if (class_exists($className)) {
             $class = new $className();
-            if ($class instanceof Configurable) {
+            if ($class instanceof ConfigureInterface) {
                 return $class;
             }
         }

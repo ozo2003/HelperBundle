@@ -26,11 +26,11 @@ class Oauth implements ExtensionInterface
      * @var array
      */
     protected static $supportedProviderTypes = [
-        'custom' => Configurator\CustomProviderConfiguratorInterface::class,
-        'facebook' => Configurator\FacebookProviderConfiguratorInterface::class,
-        'google' => Configurator\GoogleProviderConfiguratorInterface::class,
-        'twitter' => Configurator\TwitterProviderConfiguratorInterface::class,
-        'draugiem' => Configurator\DraugiemProviderConfiguratorInterface::class,
+        'custom' => Configurator\CustomProviderConfigurator::class,
+        'facebook' => Configurator\FacebookProviderConfigurator::class,
+        'google' => Configurator\GoogleProviderConfigurator::class,
+        'twitter' => Configurator\TwitterProviderConfigurator::class,
+        'draugiem' => Configurator\DraugiemProviderConfigurator::class,
     ];
 
     public function __construct($checkClassExistence = true)

@@ -1,18 +1,20 @@
 <?php
 
-namespace Sludio\HelperBundle\Oauth\Client\Provider\Draugiem;
+namespace Sludio\HelperBundle\Openid\Client;
 
-use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class DraugiemUserInterface implements ResourceOwnerInterface, SocialUserInterface
+class InboxUser implements SocialUserInterface
 {
     /**
      * @var array
      */
     protected $response;
 
-    protected $userData;
+    /**
+     * @var integer
+     */
+    protected $originalId;
 
     /**
      * @var integer
@@ -42,28 +44,25 @@ class DraugiemUserInterface implements ResourceOwnerInterface, SocialUserInterfa
     /**
      * @param  array $response
      */
-    public function __construct(array $response)
+    public function __construct(array $response, $id = null)
     {
         $this->response = $response;
-        $this->userData = reset($this->response['users']);
+        $this->originalId = $id;
 
-        $this->id = intval($this->response['uid']);
+        $this->id = $this->getField('openid_sreg_email');
 
-        $this->firstName = $this->getField('name');
+        $this->email = $this->getField('openid_sreg_email');
 
-        $this->lastName = $this->getField('surname');
+        $name = $this->getField('openid_sreg_fullname');
+        $data = explode(' ', $name, 2);
 
-        $this->username = preg_replace('/[^a-z\d]/i', '', $this->getField('url'));
-    }
+        $this->firstName = $data[0];
 
-    /**
-     * Returns all the data obtained about the user.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->response;
+        $this->lastName = $data[1];
+
+        $username = explode('@', $this->originalId ?: $this->email);
+        $username = preg_replace('/[^a-z\d]/i', '', $username[0]);
+        $this->username = $username;
     }
 
     /**
@@ -75,7 +74,17 @@ class DraugiemUserInterface implements ResourceOwnerInterface, SocialUserInterfa
      */
     private function getField($key)
     {
-        return isset($this->userData[$key]) ? $this->userData[$key] : null;
+        return isset($this->response[$key]) ? $this->response[$key] : null;
+    }
+
+    /**
+     * Get the value of Original Id
+     *
+     * @return integer
+     */
+    public function getOriginalId()
+    {
+        return $this->originalId;
     }
 
     /**
@@ -127,4 +136,5 @@ class DraugiemUserInterface implements ResourceOwnerInterface, SocialUserInterfa
     {
         return $this->username;
     }
+
 }

@@ -1,20 +1,16 @@
 <?php
 
-namespace Sludio\HelperBundle\Openid\Client;
+namespace Sludio\HelperBundle\Oauth\Client\Provider\Google;
 
+use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class InboxUserInterface implements SocialUserInterface
+class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
 {
     /**
      * @var array
      */
     protected $response;
-
-    /**
-     * @var integer
-     */
-    protected $originalId;
 
     /**
      * @var integer
@@ -42,49 +38,57 @@ class InboxUserInterface implements SocialUserInterface
     protected $username;
 
     /**
-     * @param  array $response
+     * @param array $response
      */
-    public function __construct(array $response, $id = null)
+    public function __construct(array $response)
     {
         $this->response = $response;
-        $this->originalId = $id;
 
-        $this->id = $this->getField('openid_sreg_email');
+        $this->id = intval($this->response['id']);
 
-        $this->email = $this->getField('openid_sreg_email');
+        if (!empty($this->response['emails'])) {
+            $this->email = $this->response['emails'][0]['value'];
+        }
 
-        $name = $this->getField('openid_sreg_fullname');
-        $data = explode(' ', $name, 2);
+        $this->firstName = $this->response['name']['givenName'];
 
-        $this->firstName = $data[0];
+        $this->lastName = $this->response['name']['familyName'];
 
-        $this->lastName = $data[1];
-
-        $username = explode('@', $this->originalId ?: $this->email);
+        $username = explode('@', $this->email);
         $username = preg_replace('/[^a-z\d]/i', '', $username[0]);
         $this->username = $username;
     }
 
     /**
-     * Returns a field from the Graph node data.
+     * Get preferred display name.
      *
-     * @param string $key
-     *
-     * @return mixed|null
+     * @return string
      */
-    private function getField($key)
+    public function getName()
     {
-        return isset($this->response[$key]) ? $this->response[$key] : null;
+        return $this->response['displayName'];
     }
 
     /**
-     * Get the value of Original Id
+     * Get avatar image URL.
      *
-     * @return integer
+     * @return string|null
      */
-    public function getOriginalId()
+    public function getAvatar()
     {
-        return $this->originalId;
+        if (!empty($this->response['image']['url'])) {
+            return $this->response['image']['url'];
+        }
+    }
+
+    /**
+     * Get user data as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->response;
     }
 
     /**

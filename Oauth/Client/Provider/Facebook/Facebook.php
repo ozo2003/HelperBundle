@@ -124,7 +124,7 @@ class Facebook extends BaseProvider
 
     protected function createResourceOwner(array $response, AccessToken $token)
     {
-        return new FacebookUserInterface($response);
+        return new FacebookUser($response);
     }
 
     protected function checkResponse(ResponseInterface $response, $data)
