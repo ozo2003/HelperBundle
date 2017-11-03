@@ -200,4 +200,15 @@ class Helper
 
         return true;
     }
+
+    public static function multiset(array $keys)
+    {
+        foreach ($keys as $key) {
+            if ($key === null) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
