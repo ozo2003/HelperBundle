@@ -103,7 +103,7 @@ abstract class QuickInsertFunctions
                     $offset = 0;
                     $limit = $extra['LIMIT'][0];
                 }
-                $sql .= 'LIMIT '.$offset.', '.$limit;
+                $sql = sprintf('%sLIMIT %s, %s', $sql, $offset, $limit);
             }
         }
 
