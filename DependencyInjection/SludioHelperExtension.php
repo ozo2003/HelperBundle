@@ -57,10 +57,10 @@ class SludioHelperExtension extends Extension
         foreach ($config['other'] as $key => $other) {
             if (is_array($other)) {
                 foreach ($other as $variable => $value) {
-                    $container->setParameter($this->getAlias().$key.'.'.$variable, $config['other'][$key][$variable]);
+                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['other'][$key][$variable]);
                 }
             } else {
-                $container->setParameter($this->getAlias().$key, $config['other'][$key]);
+                $container->setParameter($this->getAlias().'.'.$key, $config['other'][$key]);
             }
         }
 
@@ -84,7 +84,7 @@ class SludioHelperExtension extends Extension
                         }
                     }
                 }
-                $container->setParameter($this->getAlias().$key.'.'.$variable, $config['extensions'][$key][$variable]);
+                $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
             }
             if ($component = $this->checkComponent($key)) {
                 $component->configure($container, $this->getAlias());
