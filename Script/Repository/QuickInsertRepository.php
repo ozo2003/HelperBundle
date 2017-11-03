@@ -52,7 +52,7 @@ class QuickInsertRepository extends QuickInsertFunctions
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
 
-        $select = (isset($extra['MODE']) ? 'SELECT '.$extra['MODE'] : 'SELECT').' ';
+        $select = sprintf('SELECT %s ', isset($extra['MODE']) ? $extra['MODE'] : '');
         $fields = $fields ?: ['id'];
         $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.self::buildWhere($tableName, $where).self::buildExtra($extra);
 
@@ -146,12 +146,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         }
 
         if ($data) {
-            $sql = '
-                UPDATE
-                    '.$tableName.'
-                SET
-
-            ';
+            $sql = sprintf('UPDATE %s SET ', $tableName);
             foreach ($data as $key => $value) {
                 $intTypes = [
                     'boolean',
@@ -174,8 +169,8 @@ class QuickInsertRepository extends QuickInsertFunctions
     public static function delete($object, $where = [], $noFkCheck = false, $manager = null)
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
-
-        $sql = 'DELETE FROM '.$tableName.self::buildWhere($tableName, $where);
+        
+        $sql = sprintf('DELETE FROM %s%s', $tableName, self::buildWhere($tableName, $where));
         self::runSQL($sql, $noFkCheck);
     }
 
