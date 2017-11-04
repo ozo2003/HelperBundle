@@ -7,114 +7,130 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Script\Utils\Helper;
+use GuzzleHttp\Psr7;
 
 class MessageFormatter extends BaseMessageFormatter
 {
     public $template;
 
-    private function sludioRequest($arguments)
+    /**
+     * @var RequestInterface
+     */
+    protected $request;
+
+    /**
+     * @var ResponseInterface
+     */
+    protected $response;
+
+    /**
+     * @var \Exception
+     */
+    protected $error;
+
+    protected function sludioRequest()
     {
-        return Psr7\str($arguments['request']);
+        return Psr7\str($this->request);
     }
 
-    private function sludioResponse($arguments)
+    protected function sludioResponse()
     {
-        return $arguments['response'] ? Psr7\str($arguments['response']) : '';
+        return $this->response ? Psr7\str($this->response) : '';
     }
 
-    private function sludioReqHeaders($arguments)
+    protected function sludioReqHeaders()
     {
-        return trim($arguments['request']->getMethod().' '.$arguments['request']->getRequestTarget()).' HTTP/'.$arguments['request']->getProtocolVersion()."\r\n".$this->headers($arguments['request']);
+        return trim($this->request->getMethod().' '.(string)$this->request).' HTTP/'.$this->request->getProtocolVersion()."\r\n".$this->headers($this->request);
     }
 
-    private function sludioResHeaders($arguments)
+    protected function sludioResHeaders()
     {
-        return $arguments['response'] ? sprintf('HTTP/%s %d %s', $arguments['response']->getProtocolVersion(), $arguments['response']->getStatusCode(), $arguments['response']->getReasonPhrase())."\r\n".$this->headers($arguments['response']) : 'NULL';
+        return $this->response ? sprintf('HTTP/%s %d %s', $this->response->getProtocolVersion(), $this->response->getStatusCode(), $this->response->getReasonPhrase())."\r\n".$this->headers($this->response) : 'NULL';
     }
 
-    private function sludioReqBody($arguments)
+    protected function sludioReqBody()
     {
-        return $arguments['request']->getBody();
+        return $this->request->getBody();
     }
 
-    private function sludioResBody($arguments)
+    protected function sludioResBody()
     {
-        return $arguments['response'] ? $arguments['response']->getBody() : 'NULL';
+        return $this->response ? $this->response->getBody() : 'NULL';
     }
 
-    private function sludioTs()
+    protected function sludioTs()
     {
         return gmdate('c');
     }
 
-    private function sludioDateIso8601()
+    protected function sludioDateIso8601()
     {
         return $this->sludioTs();
     }
 
-    private function sludioDateCommonLog()
+    protected function sludioDateCommonLog()
     {
         return date('d/M/Y:H:i:s O');
     }
 
-    private function sludioMethod($arguments)
+    protected function sludioMethod()
     {
-        return $arguments['request']->getMethod();
+        return $this->request->getMethod();
     }
 
-    private function sludioVersion($arguments)
+    protected function sludioVersion()
     {
-        return $arguments['request']->getProtocolVersion();
+        return $this->request->getProtocolVersion();
     }
 
-    private function sludioUri($arguments)
+    protected function sludioUri()
     {
-        return $arguments['request']->getUri();
+        return $this->request->getUri();
     }
 
-    private function sludioUrl($arguments)
+    protected function sludioUrl()
     {
-        return $this->sludioUri($arguments);
+        return $this->sludioUri();
     }
 
-    private function sludioTarget($arguments)
+    protected function sludioTarget()
     {
-        return $arguments['request']->getRequestTarget();
+        return $this->request->getRequestTarget();
     }
 
-    private function sludioReqVersion($arguments)
+    protected function sludioReqVersion()
     {
-        return $arguments['request']->getProtocolVersion();
+        return $this->request->getProtocolVersion();
     }
 
-    private function sludioResVersion($arguments)
+    protected function sludioResVersion()
     {
-        return $arguments['response'] ? $arguments['response']->getProtocolVersion() : 'NULL';
+        return $this->response ? $this->response->getProtocolVersion() : 'NULL';
     }
 
-    private function sludioHost($arguments)
+    protected function sludioHost()
     {
-        return $arguments['request']->getHeaderLine('Host');
+        return $this->request->getHeaderLine('Host');
     }
 
-    private function sludioHostname()
+    protected function sludioHostname()
     {
         return gethostname();
     }
 
-    private function sludioCode($arguments)
+    protected function sludioCode()
     {
-        return $arguments['response'] ? $arguments['response']->getStatusCode() : 'NULL';
+        return $this->response ? $this->response->getStatusCode() : 'NULL';
     }
 
-    private function sludioPhrase($arguments)
+    protected function sludioPhrase()
     {
-        return $arguments['response'] ? $arguments['response']->getReasonPhrase() : 'NULL';
+        return $this->response ? $this->response->getReasonPhrase() : 'NULL';
     }
 
-    private function sludioError($arguments)
+    protected function sludioError()
     {
-        return $arguments['error'] ? $arguments['error'] instanceof \Exception ? $arguments['error']->getMessage() : (string)$arguments['error'] : 'NULL';
+        return $this->error ? $this->error instanceof \Exception ? $this->error->getMessage() : (string)$this->error : 'NULL';
     }
 
     /**
@@ -124,7 +140,7 @@ class MessageFormatter extends BaseMessageFormatter
     {
         $cache = [];
 
-        return preg_replace_callback('/{\s*([A-Za-z_\-\.0-9]+)\s*}/', function (array $matches) use ($request, $response, $error, &$cache) {
+        return preg_replace_callback('/{\s*([A-Za-z_\-\.0-9]+)\s*}/', function(array $matches) use ($request, $response, $error, &$cache) {
             if (isset($cache[$matches[1]])) {
                 return $cache[$matches[1]];
             }
@@ -133,11 +149,11 @@ class MessageFormatter extends BaseMessageFormatter
 
             $method = Helper::toCamelCase('sludio_'.$matches[1]);
             if (method_exists($this, $method)) {
-                $cache[$matches[1]] = $this->{$method}([
-                    'request' => $request,
-                    'response' => $response,
-                    'error' => $error,
-                ]);
+                $this->request = $request;
+                $this->response = $response;
+                $this->error = $error;
+
+                $cache[$matches[1]] = $this->{$method}();
             } else {
                 if (strpos($matches[1], 'req_header_') === 0) {
                     $cache[$matches[1]] = $request->getHeaderLine(substr($matches[1], 11));
@@ -148,5 +164,15 @@ class MessageFormatter extends BaseMessageFormatter
 
             return $cache[$matches[1]];
         }, $this->template);
+    }
+
+    private function headers(MessageInterface $message)
+    {
+        $result = '';
+        foreach ($message->getHeaders() as $name => $values) {
+            $result .= $name.': '.implode(', ', $values)."\r\n";
+        }
+
+        return trim($result);
     }
 }

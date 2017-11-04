@@ -21,7 +21,7 @@ class PositionHandler
 
     public function getLastPosition($entity)
     {
-        $query = $this->entityManager->createQuery(sprintf('SELECT MAX(m.%s) FROM %s m', $positionFiles = $this->getPositionFieldByEntity($entity), $entity));
+        $query = $this->entityManager->createQuery(sprintf('SELECT MAX(m.%s) FROM %s m', $this->getPositionFieldByEntity($entity), $entity));
         $result = $query->getResult();
 
         if (array_key_exists(0, $result)) {
@@ -56,28 +56,28 @@ class PositionHandler
         }
     }
 
-    private function sludioUp($actual)
+    protected function sludioUp($actual)
     {
         if ($actual > 0) {
             return $actual - 1;
         }
     }
 
-    private function sludioDown($actual, $last)
+    protected function sludioDown($actual, $last)
     {
         if ($actual < $last) {
             return $actual + 1;
         }
     }
 
-    private function sludioTop($actual)
+    protected function sludioTop($actual)
     {
         if ($actual > 0) {
             return 0;
         }
     }
 
-    private function sludioBottom($actual, $last)
+    protected function sludioBottom($actual, $last)
     {
         if ($actual < $last) {
             return $last;

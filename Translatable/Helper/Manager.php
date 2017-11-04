@@ -69,7 +69,7 @@ class Manager
         }
     }
 
-    private function setField(BaseEntity $entity, $field, $value)
+    protected function setField(BaseEntity $entity, $field, $value)
     {
         $setterFunctionName = 'set'.$field;
         $entity->{$setterFunctionName}($value);

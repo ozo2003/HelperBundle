@@ -14,14 +14,6 @@ class DraugiemOAuth2Client extends OAuth2Client
 
     public function redirect(array $scopes = [], array $options = [], $token = null)
     {
-        if (!empty($scopes)) {
-            $options['scope'] = $scopes;
-        }
-
-        if ($token) {
-            $options['token'] = $token;
-        }
-
         $data = [
             'hash' => md5($this->provider->getClientSecret().$this->provider->getRedirectUri()),
             'redirect' => $this->provider->getRedirectUri(),
@@ -37,7 +29,7 @@ class DraugiemOAuth2Client extends OAuth2Client
         return new RedirectResponse($url);
     }
 
-    public function fetchUser()
+    public function fetchUser(array $attributes = [])
     {
         $user = $this->returnRedirect();
 
