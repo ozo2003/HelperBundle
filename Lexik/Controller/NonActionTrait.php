@@ -13,6 +13,10 @@ use Symfony\Component\Yaml\Dumper;
 
 trait NonActionTrait
 {
+    protected $container;
+
+    abstract protected function addFlash($type, $message);
+
     /**
      * Execute a batch download
      *
