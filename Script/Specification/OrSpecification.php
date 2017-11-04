@@ -11,7 +11,7 @@ class OrSpecification extends CompositeSpecification
      * @var SpecificationInterface One specification
      */
     private $one;
-    
+
     /**
      * @var SpecificationInterface Other specification
      */
