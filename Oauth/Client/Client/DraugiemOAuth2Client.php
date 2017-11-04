@@ -38,10 +38,6 @@ class DraugiemOAuth2Client extends OAuth2Client
 
     public function returnRedirect(array $scopes = [], array $options = [])
     {
-        if (!empty($scopes)) {
-            $options['scope'] = $scopes;
-        }
-
         $data = [
             'app' => $this->provider->getClientSecret(),
             'code' => $this->getCurrentRequest()->get('dr_auth_code'),
