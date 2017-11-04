@@ -11,6 +11,7 @@ services:
         public: false
         arguments:
             - '%sludio_helper.script.short_functions%'
+            - "%kernel.root_dir%"
         tags:
             -
                 name: twig.extension

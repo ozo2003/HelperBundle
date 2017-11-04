@@ -21,12 +21,10 @@ class SludioExtension extends \Twig_Extension
 
     public $detector;
 
-    public function __construct($shortFunctions)
+    public function __construct($shortFunctions, $appDir)
     {
-        global $kernel;
-
         $this->shortFunctions = $shortFunctions;
-        $this->appDir = $kernel->getRootDir();
+        $this->appDir = $appDir;
         $this->detector = new \Mobile_Detect();
     }
 

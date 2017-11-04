@@ -48,7 +48,7 @@ class Openid implements ExtensionInterface
             $this->configureClient($container, $clientServiceKey);
         }
         $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
-        if ($container->getParameter($alias.'.oauth.enabled') == true) {
+        if ($container->getParameter($alias.'.oauth.enabled') === true) {
             $container->getDefinition($alias.'.registry')->replaceArgument(2, $clientServiceKeys);
         }
     }

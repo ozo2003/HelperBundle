@@ -6,19 +6,24 @@ use Doctrine\ORM\Event\LoadClassMetadataEventArgs;
 
 class TranslationMappingListener
 {
+    protected $tableName;
+
+    /**
+     * TranslationMappingListener constructor.
+     *
+     * @param $tableName
+     */
+    public function __construct($tableName)
+    {
+        $this->tableName = $tableName;
+    }
+
     public function loadClassMetadata(LoadClassMetadataEventArgs $eventArgs)
     {
-        global $kernel;
-
-        if ('AppCache' === get_class($kernel)) {
-            $kernel = $kernel->getKernel();
-        }
-
         $classMetadata = $eventArgs->getClassMetadata();
         $oldName = $classMetadata->getTableName();
-        $param = $kernel->getContainer()->getParameter('sludio_helper.translatable.table');
-        if ($oldName === 'sludio_helper_translation' && $param !== $oldName) {
-            $classMetadata->setPrimaryTable(['name' => $param]);
+        if ($oldName === 'sludio_helper_translation' && $this->tableName !== $oldName) {
+            $classMetadata->setPrimaryTable(['name' => $this->tableName]);
         }
     }
 }

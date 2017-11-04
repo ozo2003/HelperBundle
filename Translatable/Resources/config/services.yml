@@ -38,6 +38,8 @@ services:
     sludio_helper.translatable.mapping.listener:
         class: Sludio\HelperBundle\Translatable\Listener\TranslationMappingListener
         public: true
+        arguments:
+            - "%sludio_helper.translatable.table%"
         tags:
             -
                 name: doctrine.event_listener

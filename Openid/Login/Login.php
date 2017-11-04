@@ -90,7 +90,7 @@ class Login implements Loginable
                 throw new Exception('error_oauth_invalid_return_url');
             }
         } else {
-            if ($altRealm == null) {
+            if ($altRealm === null) {
                 $return = ($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST').$this->request->server->get('SCRIPT_NAME');
             } else {
                 $return = $altRealm.$this->request->server->get('SCRIPT_NAME');
@@ -101,7 +101,7 @@ class Login implements Loginable
             'openid.ns' => 'http://specs.openid.net/auth/2.0',
             'openid.mode' => 'checkid_setup',
             'openid.return_to' => $return,
-            'openid.realm' => $altRealm != null ? $altRealm : (($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST')),
+            'openid.realm' => $altRealm !== null ? $altRealm : (($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST')),
             'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
             'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
         ];

@@ -1,13 +1,14 @@
 <?php
 
 namespace Sludio\HelperBundle\Translatable\Admin;
-use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
+
+use Doctrine\ORM\QueryBuilder;
 
 trait AdminTrait
 {
     abstract public function getClass();
 
-    public function getTranslationFilter($queryBuilder, $alias, $field, $value)
+    public function getTranslationFilter(QueryBuilder $queryBuilder, $alias, $field, $value)
     {
         if (!isset($value['value'])) {
             return false;
