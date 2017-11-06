@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Script\Repository;
 
 use Sludio\HelperBundle\Script\Utils\Helper;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 abstract class QuickInsertFunctions
 {
@@ -34,7 +35,7 @@ abstract class QuickInsertFunctions
     protected static function extract($object)
     {
         self::init(false);
-        $data = self::extractExt($object, self::$entityManager);
+        $data = self::extractExt(self::$entityManager->getMetadataFactory()->getMetadataFor(get_class($object)));
 
         self::$mock = $data['mock'];
         self::$tableName = $data['table'];
@@ -42,10 +43,8 @@ abstract class QuickInsertFunctions
         self::$identifier = $data['identifier'];
     }
 
-    public static function extractExt($object, $entityManager)
+    public static function extractExt(ClassMetadata $metadata)
     {
-        $metadata = $entityManager->getClassMetadata(get_class($object));
-
         $fields = $metadata->getFieldNames();
         $columns = $metadata->getColumnNames();
         $table = $metadata->getTableName();

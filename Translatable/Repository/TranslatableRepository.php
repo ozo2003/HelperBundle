@@ -149,7 +149,7 @@ class TranslatableRepository
         $locale = self::getLocaleVar($locale);
 
         if (!$id) {
-            $id = Quick::findNextIdExt(new $class(), self::$entityManager);
+            $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
             $update = 0;
         } else {
             $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);

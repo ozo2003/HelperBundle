@@ -3,13 +3,14 @@
 namespace Sludio\HelperBundle\Script\Repository;
 
 use Sludio\HelperBundle\Script\Utils\Helper;
+use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 class QuickInsertRepository extends QuickInsertFunctions
 {
-    public static function findNextIdExt($object, $entityManager = null)
+    public static function findNextIdExt(ClassMetadata $metadata, $manager = null)
     {
-        self::init();
-        $data = self::extractExt($object, $entityManager);
+        self::init($manager);
+        $data = self::extractExt($metadata);
 
         return self::findNextId($data['table']);
     }
@@ -169,7 +170,7 @@ class QuickInsertRepository extends QuickInsertFunctions
     public static function delete($object, $where = [], $noFkCheck = false, $manager = null)
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
-        
+
         $sql = sprintf('DELETE FROM %s%s', $tableName, self::buildWhere($tableName, $where));
         self::runSQL($sql, $noFkCheck);
     }
