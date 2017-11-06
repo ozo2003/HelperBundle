@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Oauth\Utils;
 use Exception;
 use InvalidArgumentException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ClientOpenIDRegistry
 {
@@ -12,7 +13,7 @@ class ClientOpenIDRegistry
 
     private $serviceMap;
 
-    public function __construct(ContainerInterface $container, array $oAuthServiceMap, array $openIDServiceMap)
+    public function __construct(ContainerBuilder $container, array $oAuthServiceMap, array $openIDServiceMap)
     {
         $this->container = $container;
 
