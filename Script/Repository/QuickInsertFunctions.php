@@ -3,7 +3,6 @@
 namespace Sludio\HelperBundle\Script\Repository;
 
 use Sludio\HelperBundle\Script\Utils\Helper;
-use Doctrine\ORM\EntityManagerInterface;
 
 abstract class QuickInsertFunctions
 {
@@ -43,7 +42,7 @@ abstract class QuickInsertFunctions
         self::$identifier = $data['identifier'];
     }
 
-    public static function extractExt($object, EntityManagerInterface $entityManager)
+    public static function extractExt($object, $entityManager)
     {
         $metadata = $entityManager->getClassMetadata(get_class($object));
 

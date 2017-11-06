@@ -69,7 +69,6 @@ class Openidconnect implements ExtensionInterface
     {
         $clientDefinition = $container->register($clientServiceKey, $container->getParameter($clientServiceKey.'.user_provider'));
         $clientDefinition->setArguments([
-            $clientServiceKey,
             $container->getParameter($clientServiceKey),
             [],
             new Reference('router'),

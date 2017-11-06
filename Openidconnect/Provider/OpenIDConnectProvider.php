@@ -69,12 +69,11 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     protected $baseUri;
 
     /**
-     * @param string $key
      * @param array  $options
      * @param array  $collaborators
      * @param Router $router
      */
-    public function __construct(string $key, array $options = [], array $collaborators = [], Router $router)
+    public function __construct(array $options = [], array $collaborators = [], Router $router)
     {
         $this->signer = new Sha256();
 
