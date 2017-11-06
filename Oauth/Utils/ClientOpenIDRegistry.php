@@ -4,7 +4,6 @@ namespace Sludio\HelperBundle\Oauth\Utils;
 
 use Exception;
 use InvalidArgumentException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class ClientOpenIDRegistry

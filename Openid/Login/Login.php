@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\Openid\Login;
 use Exception;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,7 +28,7 @@ class Login implements Loginable
     protected $sregFields = 'email';
     protected $userClass;
 
-    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $container, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, ContainerBuilder $container, UrlGeneratorInterface $generator)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
