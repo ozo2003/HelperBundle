@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Script\Twig;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class SludioExtension extends \Twig_Extension
 {
@@ -20,12 +21,14 @@ class SludioExtension extends \Twig_Extension
     protected $order;
 
     public $detector;
+    protected $request;
 
-    public function __construct($shortFunctions, $appDir)
+    public function __construct($shortFunctions, $appDir, RequestStack $requestStack)
     {
         $this->shortFunctions = $shortFunctions;
         $this->appDir = $appDir;
         $this->detector = new \Mobile_Detect();
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     public function getName()
@@ -202,8 +205,7 @@ class SludioExtension extends \Twig_Extension
 
     public function isIE()
     {
-        $request = Request::createFromGlobals();
-        $agent = $request->server->get('HTTP_USER_AGENT');
+        $agent = $this->request->server->get('HTTP_USER_AGENT');
         if (strpos($agent, 'MSIE') || strpos($agent, 'Edge') || strpos($agent, 'Trident/7')) {
             return 1;
         }

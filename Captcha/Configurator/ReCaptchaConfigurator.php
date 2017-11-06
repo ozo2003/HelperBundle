@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Captcha\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 
 class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
 {
@@ -45,6 +46,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
         $resolverDefinition->setArguments([
             $container->getParameter($clientServiceKey.'.locale_key'),
             $container->getParameter($clientServiceKey.'.locale_from_request'),
+            new Reference('request_stack'),
         ]);
         /* TYPE */
         $type = $clientServiceKey.'.form.type';
@@ -64,6 +66,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             $container->getParameter($clientServiceKey.'.private_key'),
             $container->getParameter($clientServiceKey.'.http_proxy'),
             $container->getParameter($clientServiceKey.'.verify_host'),
+            new Reference('request_stack'),
         ]);
         $validatorDefinition->addTag('validator.constraint_validator');
     }

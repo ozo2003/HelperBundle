@@ -1,2 +1,0 @@
-parameters:
-    lexik_translation.translator.class: Sludio\HelperBundle\Script\Component\Translation\Translator

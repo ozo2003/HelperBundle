@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Captcha\Validator\Constraint;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -48,10 +49,10 @@ class IsTrueValidator extends ConstraintValidator
      * @param Array   $httpProxy
      * @param Boolean $verifyHost
      */
-    public function __construct($secretKey, array $httpProxy, $verifyHost)
+    public function __construct($secretKey, array $httpProxy, $verifyHost, RequestStack $requestStack)
     {
         $this->secretKey = $secretKey;
-        $this->request = Request::createFromGlobals();
+        $this->request = $requestStack->getCurrentRequest();
         $this->httpProxy = $httpProxy;
         $this->verifyHost = $verifyHost;
     }

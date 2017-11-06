@@ -12,6 +12,7 @@ services:
         arguments:
             - '%sludio_helper.script.short_functions%'
             - "%kernel.root_dir%"
+            - "@request_stack"
         tags:
             -
                 name: twig.extension

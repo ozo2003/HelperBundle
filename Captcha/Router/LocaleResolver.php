@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Captcha\Router;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 final class LocaleResolver
 {
@@ -25,11 +26,11 @@ final class LocaleResolver
      * @param String  $defaultLocale
      * @param Boolean $useLocaleFromRequest
      */
-    public function __construct($defaultLocale, $useLocaleFromRequest)
+    public function __construct($defaultLocale, $useLocaleFromRequest, RequestStack $requestStack)
     {
         $this->defaultLocale = $defaultLocale;
         $this->useLocaleFromRequest = $useLocaleFromRequest;
-        $this->request = Request::createFromGlobals();
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**
