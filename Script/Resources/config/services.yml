@@ -25,3 +25,10 @@ services:
         tags:
             -
                 name: twig.extension
+
+    sludio_helper.repository.insert:
+        class: Sludio\HelperBundle\Script\Repository\InsertRepository
+        public: false
+        arguments:
+            - '@doctrine.orm.default_entity_manager'
+            - ~
