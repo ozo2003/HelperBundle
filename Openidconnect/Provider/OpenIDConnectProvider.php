@@ -12,7 +12,7 @@ use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
-use Sludio\HelperBundle\Openidconnect\Validator;
+use Sludio\HelperBundle\Openidconnect\Specification;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -29,7 +29,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     protected $signer;
 
     /**
-     * @var Validator\ValidatorChain
+     * @var Specification\ValidatorChain
      */
     protected $validatorChain;
 
@@ -77,17 +77,17 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     {
         $this->signer = new Sha256();
 
-        $this->validatorChain = new Validator\ValidatorChain();
+        $this->validatorChain = new Specification\ValidatorChain();
         $this->validatorChain->setValidators([
-            new Validator\NotEmpty('iat', true),
-            new Validator\GreaterOrEqualsTo('exp', true),
-            new Validator\EqualsTo('iss', true),
-            new Validator\EqualsTo('aud', true),
-            new Validator\NotEmpty('sub', true),
-            new Validator\LesserOrEqualsTo('nbf'),
-            new Validator\EqualsTo('jti'),
-            new Validator\EqualsTo('azp'),
-            new Validator\EqualsTo('nonce'),
+            new Specification\NotEmpty('iat', true),
+            new Specification\GreaterOrEqualsTo('exp', true),
+            new Specification\EqualsTo('iss', true),
+            new Specification\EqualsTo('aud', true),
+            new Specification\NotEmpty('sub', true),
+            new Specification\LesserOrEqualsTo('nbf'),
+            new Specification\EqualsTo('jti'),
+            new Specification\EqualsTo('azp'),
+            new Specification\EqualsTo('nonce'),
         ]);
 
         $this->router = $router;
@@ -234,7 +234,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     }
 
     /**
-     * @return Validator\ValidatorChain|void
+     * @return Specification\ValidatorChain|void
      */
     public function getValidatorChain()
     {

@@ -4,10 +4,19 @@ namespace Sludio\HelperBundle\Openidconnect\Specification;
 
 trait SpecificationTrait
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $message;
 
+    /**
+     * @var bool
+     */
     protected $required;
 
     public function __construct($name, $required = false)

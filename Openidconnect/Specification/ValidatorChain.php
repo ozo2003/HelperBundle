@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Openidconnect\Validator;
+namespace Sludio\HelperBundle\Openidconnect\Specification;
 
 use Lcobucci\JWT\Token;
 
@@ -17,7 +17,7 @@ class ValidatorChain
     protected $messages = [];
 
     /**
-     * @param ValidInterface[] $validators
+     * @param SpecificationInterface[] $validators
      *
      * @return $this
      */
@@ -33,12 +33,12 @@ class ValidatorChain
     }
 
     /**
-     * @param string         $claim
-     * @param ValidInterface $validator
+     * @param string                 $claim
+     * @param SpecificationInterface $validator
      *
      * @return $this
      */
-    public function addValidator(ValidInterface $validator)
+    public function addValidator(SpecificationInterface $validator)
     {
         $this->validators[$validator->getName()] = $validator;
 
@@ -63,7 +63,7 @@ class ValidatorChain
                 continue;
             }
 
-            if (!$validator->isValid($data[$claim], $token->getClaim($claim))) {
+            if (!$validator->isSatisfiedBy($data[$claim], $token->getClaim($claim))) {
                 $valid = false;
                 $this->messages[$claim] = $validator->getMessage();
             }
