@@ -2,13 +2,9 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Specification;
 
-use Sludio\HelperBundle\Script\Specification\CompositeSpecification;
-
-class LesserOrEqualsTo extends CompositeSpecification
+class LesserOrEqualsTo extends BaseSpecification
 {
-    use SpecificationTrait;
-
-    public function isSatisfiedBy($expectedValue, $actualValue)
+    public function isSatisfiedBy($expectedValue, $actualValue = null)
     {
         if ($actualValue <= $expectedValue) {
             return true;

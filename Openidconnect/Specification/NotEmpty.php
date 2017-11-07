@@ -2,13 +2,9 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Specification;
 
-use Sludio\HelperBundle\Script\Specification\CompositeSpecification;
-
-class NotEmpty extends CompositeSpecification
+class NotEmpty extends BaseSpecification
 {
-    use SpecificationTrait;
-
-    public function isSatisfiedBy($expectedValue, $actualValue)
+    public function isSatisfiedBy($expectedValue, $actualValue = null)
     {
         $valid = !empty($actualValue);
         if (!$valid) {

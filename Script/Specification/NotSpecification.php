@@ -25,8 +25,8 @@ class NotSpecification extends CompositeSpecification
     /**
      * {@inheritdoc}
      */
-    public function isSatisfiedBy($object)
+    public function isSatisfiedBy($expectedValue, $actualValue = null)
     {
-        return !$this->specification->isSatisfiedBy($object);
+        return !$this->specification->isSatisfiedBy($expectedValue);
     }
 }

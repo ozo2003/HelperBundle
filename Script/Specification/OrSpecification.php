@@ -32,8 +32,8 @@ class OrSpecification extends CompositeSpecification
     /**
      * {@inheritdoc}
      */
-    public function isSatisfiedBy($object)
+    public function isSatisfiedBy($expectedValue, $actualValue = null)
     {
-        return $this->one->isSatisfiedBy($object) || $this->other->isSatisfiedBy($object);
+        return $this->one->isSatisfiedBy($expectedValue) || $this->other->isSatisfiedBy($expectedValue);
     }
 }

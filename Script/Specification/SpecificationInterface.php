@@ -11,7 +11,7 @@ interface SpecificationInterface
      *
      * @return boolean
      */
-    public function isSatisfiedBy($expectedValue, $actualValue);
+    public function isSatisfiedBy($expectedValue, $actualValue = null);
 
     /**
      * And
