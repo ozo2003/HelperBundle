@@ -1,13 +1,22 @@
 <?php
 
-namespace Sludio\HelperBundle\Openidconnect\Validator;
+namespace Sludio\HelperBundle\Openidconnect\Specification;
 
-trait ValidatorTrait
+trait SpecificationTrait
 {
+    /**
+     * @var string
+     */
     protected $name;
 
+    /**
+     * @var string
+     */
     protected $message;
 
+    /**
+     * @var bool
+     */
     protected $required;
 
     public function __construct($name, $required = false)

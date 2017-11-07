@@ -4,14 +4,14 @@ namespace Sludio\HelperBundle\Script\Specification;
 
 interface SpecificationInterface
 {
+
     /**
-     * Process specification satisfaction
-     *
-     * @param object $object
+     * @param $expectedValue
+     * @param $actualValue
      *
      * @return boolean
      */
-    public function isSatisfiedBy($object);
+    public function isSatisfiedBy($expectedValue, $actualValue);
 
     /**
      * And
