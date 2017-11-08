@@ -22,6 +22,7 @@ services:
             - "@sludio_helper.sitemap.sitemap_simple_formatter"
             - "%sludio_helper.sitemap.base_host%"
             - "%sludio_helper.sitemap.limit%"
+            - "@request_stack"
 
     sludio_helper.sitemap.simple.gz:
         parent: sludio_helper.sitemap.simple.simple

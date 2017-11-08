@@ -9,7 +9,8 @@ use Sludio\HelperBundle\Sitemap\Entity\SitemapIndex;
 use Sludio\HelperBundle\Sitemap\Formatter\FormatterInterface;
 use Sludio\HelperBundle\Sitemap\Formatter\SitemapIndexFormatterInterface;
 use Sludio\HelperBundle\Sitemap\Provider\ProviderInterface;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 
 class Sitemap
 {
@@ -21,13 +22,13 @@ class Sitemap
     protected $sitemapIndexes = [];
     protected $originalFilename = null;
 
-    public function __construct(DumperInterface $dumper, FormatterInterface $formatter, $baseHost = null, $limit = 0)
+    public function __construct(DumperInterface $dumper, FormatterInterface $formatter, $baseHost = null, $limit = 0, RequestStack $requestStack)
     {
         $this->dumper = $dumper;
         $this->formatter = $formatter;
         $this->baseHost = $baseHost;
         if ($this->baseHost === null && php_sapi_name() !== 'cli') {
-            $request = Request::createFromGlobals();
+            $request = $requestStack->getCurrentRequest();
             $useHttps = $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') == 'https');
             $this->baseHost = ($useHttps ? 'https' : 'http').'://'.$request->server->get('HTTP_HOST');
         }
