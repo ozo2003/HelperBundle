@@ -48,7 +48,6 @@
         "mobiledetect/mobiledetectlib": "*",
         "namshi/cuzzle": "^2.0",
         "ocramius/proxy-manager": "*",
-        "roave/security-advisories": "dev-master#43f7f8243b81e3fd843b150a30a6d0a91167d4f5",
         "predis/predis": "*",
         "psr/cache": "^1.0",
         "snc/redis-bundle": "*",
