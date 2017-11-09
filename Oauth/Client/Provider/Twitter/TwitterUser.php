@@ -44,7 +44,7 @@ class TwitterUser implements ResourceOwnerInterface, SocialUserInterface
     {
         $this->response = $response;
 
-        $this->id = intval($this->response['user_id']);
+        $this->id = (int)$this->response['user_id'];
 
         if (isset($this->response['email'])) {
             $this->email = $this->response['email'];

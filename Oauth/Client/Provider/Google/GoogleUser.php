@@ -44,7 +44,7 @@ class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
     {
         $this->response = $response;
 
-        $this->id = intval($this->response['id']);
+        $this->id = (int)$this->response['id'];
 
         if (!empty($this->response['emails'])) {
             $this->email = $this->response['emails'][0]['value'];

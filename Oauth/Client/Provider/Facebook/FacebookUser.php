@@ -56,7 +56,7 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
             $this->response['cover_photo_url'] = $response['cover']['source'];
         }
 
-        $this->id = intval($this->getField('id'));
+        $this->id = (int)$this->getField('id');
 
         $this->email = $this->getField('email');
 

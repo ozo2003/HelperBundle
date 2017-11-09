@@ -172,7 +172,7 @@ class SludioExtension extends \Twig_Extension
             2 => self::SUCCESS,
             1 => self::INFO,
         ];
-        $code = (int)floor(intval($statusCode) / 100);
+        $code = (int)floor((int)$statusCode) / 100;
 
         return isset($codes[$code]) ? $codes[$code] : 'unknown';
     }

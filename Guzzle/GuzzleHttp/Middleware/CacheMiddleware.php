@@ -38,7 +38,7 @@ class CacheMiddleware
     protected function handleSave(callable $handler, RequestInterface $request, array $options)
     {
         return $handler($request, $options)->then(function(ResponseInterface $response) use ($request) {
-            $code = (int)floor(intval($response->getStatusCode()) / 100);
+            $code = (int)floor((int)$response->getStatusCode() / 100);
             if($code === 2) {
                 $this->adapter->save($request, $response);
             }

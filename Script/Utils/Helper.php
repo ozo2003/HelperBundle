@@ -63,21 +63,28 @@ class Helper
             $value = "'".addslashes(trim($value))."'";
         }
 
-        if (trim($value) === '' || trim($value) === "''") {
+        $trim = trim($value);
+        if ($trim === '' || $trim === "''") {
             $value = null;
         }
     }
 
     public static function getUniqueId($length = 20)
     {
-        return bin2hex(openssl_random_pseudo_bytes($length));
+        try {
+            $output = bin2hex(random_bytes($length));
+        } catch (\Exception $exception) {
+            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+        }
+
+        return $output;
     }
 
     public static function validateDate($date)
     {
         $date = str_replace('-', '', $date);
-        $day = intval(substr($date, 0, 2));
-        $month = intval(substr($date, 2, 2));
+        $day = (int)substr($date, 0, 2);
+        $month = (int)substr($date, 2, 2);
 
         if ($month < 0 || $month > 12) {
             return false;
@@ -85,7 +92,7 @@ class Helper
         // @formatter:off
         $months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         // @formatter:on
-        if (intval(substr($date, 4, 2)) % 4 === 0) {
+        if ((int)substr($date, 4, 2) % 4 === 0) {
             $months[1] = 29;
         }
 
@@ -95,27 +102,23 @@ class Helper
     public static function newPKValidate($personCode)
     {
         $personCode = str_replace('-', '', $personCode);
+
         // @formatter:off
-        $sum =
-            (substr($personCode, 0, 1) * 1) +
-            (substr($personCode, 1, 1) * 6) +
-            (substr($personCode, 2, 1) * 3) +
-            (substr($personCode, 3, 1) * 7) +
-            (substr($personCode, 4, 1) * 9) +
-            (substr($personCode, 5, 1) * 10) +
-            (substr($personCode, 6, 1) * 5) +
-            (substr($personCode, 7, 1) * 8) +
-            (substr($personCode, 8, 1) * 4) +
-            (substr($personCode, 9, 1) * 2);
+        $calculations = [1, 6, 3, 7, 9, 10, 5, 8, 4, 2];
         // @formatter:on
+
+        $sum = 0;
+        foreach($calculations as $key => $calculation){
+            $sum += ($personCode[$key] * $calculation);
+        }
 
         $remainder = $sum % 11;
 
         if (1 - $remainder < -1) {
-            return substr($personCode, 10, 1) == (1 - $remainder + 11);
-        } else {
-            return substr($personCode, 10, 1) == (1 - $remainder);
+            return $personCode[10] === (1 - $remainder + 11);
         }
+
+        return $personCode[10] === (1 - $remainder);
     }
 
     public static function validatePersonCode($personCode = null)
@@ -129,12 +132,12 @@ class Helper
             if (preg_match("/^[0-9]+$/", $personCode) === null) {
                 return 'error_symbols';
             }
-            if (intval(substr($personCode, 0, 2)) < 32) {
+            if ((int)substr($personCode, 0, 2) < 32) {
                 if (!self::validateDate($personCode)) {
                     return 'error_invalid';
                 }
             }
-            if (intval(substr($personCode, 0, 2)) > 32 || (intval(substr($personCode, 0, 2)) === 32 && !self::newPKValidate($personCode))) {
+            if ((int)substr($personCode, 0, 2) > 32 || ((int)substr($personCode, 0, 2) === 32 && !self::newPKValidate($personCode))) {
                 return 'error_invalid';
             }
 

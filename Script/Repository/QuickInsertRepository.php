@@ -155,7 +155,7 @@ class QuickInsertRepository extends QuickInsertFunctions
                     'longint',
                 ];
                 if (in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes)) {
-                    $value = intval($value);
+                    $value = (int)$value;
                 } else {
                     $value = "'".addslashes(trim($value))."'";
                 }

@@ -33,6 +33,7 @@ class MiddlewarePass implements CompilerPassInterface
      * @param ContainerBuilder $container
      *
      * @return array
+     * @throws \LogicException
      */
     private function findAvailableMiddleware(ContainerBuilder $container)
     {
@@ -62,7 +63,7 @@ class MiddlewarePass implements CompilerPassInterface
 
         krsort($middleware);
 
-        return call_user_func_array('array_merge', $middleware);
+        return array_merge(...$middleware);
     }
 
     /**
@@ -70,6 +71,8 @@ class MiddlewarePass implements CompilerPassInterface
      *
      * @param ContainerBuilder $container
      * @param array            $middlewareBag
+     *
+     * @throws \LogicException
      */
     private function registerMiddleware(ContainerBuilder $container, array $middlewareBag)
     {
@@ -84,7 +87,11 @@ class MiddlewarePass implements CompilerPassInterface
                 throw new \LogicException(sprintf('Clients should use a single \'%s\' tag', self::CLIENT_TAG));
             }
 
-            $clientMiddleware = $this->filterClientMiddleware($middlewareBag, $tags);
+            try {
+                $clientMiddleware = $this->filterClientMiddleware($middlewareBag, $tags);
+            } catch (LogicException $e) {
+                continue;
+            }
 
             if (empty($clientMiddleware)) {
                 continue;
@@ -94,10 +101,9 @@ class MiddlewarePass implements CompilerPassInterface
 
             $arguments = $clientDefinition->getArguments();
 
+            $options = [];
             if (!empty($arguments)) {
                 $options = array_shift($arguments);
-            } else {
-                $options = [];
             }
 
             if (!isset($options['handler'])) {
@@ -120,7 +126,7 @@ class MiddlewarePass implements CompilerPassInterface
     }
 
     /**
-     * @param Reference|Definition|callable $handler The configured Guzzle handler
+     * @param Reference|Definition|callable $handler   The configured Guzzle handler
      * @param ContainerBuilder              $container The container builder
      *
      * @return Definition
@@ -184,13 +190,13 @@ class MiddlewarePass implements CompilerPassInterface
         }
 
         if ($whiteList) {
-            return array_filter($middlewareBag, function($value) use ($whiteList) {
+            return array_filter($middlewareBag, function ($value) use ($whiteList) {
                 return in_array($value['alias'], $whiteList, true);
             });
-        } else {
-            return array_filter($middlewareBag, function($value) use ($blackList) {
-                return !in_array($value['alias'], $blackList, true);
-            });
         }
+
+        return array_filter($middlewareBag, function ($value) use ($blackList) {
+            return !in_array($value['alias'], $blackList, true);
+        });
     }
 }

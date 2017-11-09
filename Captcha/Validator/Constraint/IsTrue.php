@@ -13,7 +13,7 @@ class IsTrue extends Constraint
     /**
      * The reCAPTCHA validation message
      */
-    public $message = "sludio_helper.captcha.recaptcha.validator.message";
+    public $message = 'sludio_helper.captcha.recaptcha.validator.message';
 
     /**
      * {@inheritdoc}

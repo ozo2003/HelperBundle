@@ -47,7 +47,7 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
         $this->response = $response;
         $this->userData = reset($this->response['users']);
 
-        $this->id = intval($this->response['uid']);
+        $this->id = (int)$this->response['uid'];
 
         $this->firstName = $this->getField('name');
 

@@ -13,7 +13,7 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * The reCAPTCHA server URL's
      */
-    const RECAPTCHA_VERIFY_SERVER = "https://www.google.com";
+    const RECAPTCHA_VERIFY_SERVER = 'https://www.google.com';
 
     /**
      * Recaptcha Private Key
@@ -46,7 +46,7 @@ class IsTrueValidator extends ConstraintValidator
      * Construct.
      *
      * @param String  $secretKey
-     * @param Array   $httpProxy
+     * @param array   $httpProxy
      * @param Boolean $verifyHost
      */
     public function __construct($secretKey, array $httpProxy, $verifyHost, RequestStack $requestStack)
@@ -64,14 +64,14 @@ class IsTrueValidator extends ConstraintValidator
     {
         // define variable for recaptcha check answer.
         $remoteip = $this->request->getClientIp();
-        $response = $this->request->get("g-recaptcha-response");
+        $response = $this->request->get('g-recaptcha-response');
 
         $isValid = $this->checkAnswer($this->secretKey, $remoteip, $response);
 
-        if ($isValid["success"] !== true) {
+        if ($isValid['success'] !== true) {
             $this->context->addViolation($constraint->message);
             // Perform server side hostname check
-        } elseif ($this->verifyHost && $isValid["hostname"] !== $this->request->getHost()) {
+        } elseif ($this->verifyHost && $isValid['hostname'] !== $this->request->getHost()) {
             $this->context->addViolation($constraint->invalidHostMessage);
         }
     }
@@ -89,21 +89,21 @@ class IsTrueValidator extends ConstraintValidator
      */
     private function checkAnswer($secretKey, $remoteip, $response)
     {
-        if ($remoteip === null || $remoteip === "") {
-            throw new ValidatorException("sludio_helper.captcha.recaptcha.validator.remote_ip");
+        if ($remoteip === null || $remoteip === '') {
+            throw new ValidatorException('sludio_helper.captcha.recaptcha.validator.remote_ip');
         }
 
         // discard spam submissions
-        if ($response === null || strlen($response) === 0) {
+        if ($response === null || '' === $response) {
             return false;
         }
 
         $input = [
-            "secret" => $secretKey,
-            "remoteip" => $remoteip,
-            "response" => $response,
+            'secret' => $secretKey,
+            'remoteip' => $remoteip,
+            'response' => $response,
         ];
-        $response = (string)$this->httpGet(self::RECAPTCHA_VERIFY_SERVER, "/recaptcha/api/siteverify", $input);
+        $response = (string)$this->httpGet(self::RECAPTCHA_VERIFY_SERVER, '/recaptcha/api/siteverify', $input);
 
         return json_decode($response, true);
     }
@@ -113,13 +113,13 @@ class IsTrueValidator extends ConstraintValidator
      *
      * @param String $host
      * @param String $path
-     * @param Array  $data
+     * @param array  $data
      *
-     * @return Array response
+     * @return array response
      */
     private function httpGet($host, $path, $data)
     {
-        $host = sprintf("%s%s?%s", $host, $path, http_build_query($data, null, "&"));
+        $host = sprintf('%s%s?%s', $host, $path, http_build_query($data, null, '&'));
 
         $context = $this->getResourceContext();
 
@@ -133,24 +133,24 @@ class IsTrueValidator extends ConstraintValidator
      */
     private function getResourceContext()
     {
-        if (null === $this->httpProxy["host"] || null === $this->httpProxy["port"]) {
+        if (null === $this->httpProxy['host'] || null === $this->httpProxy['port']) {
             return null;
         }
 
         $options = [];
         $protocols = [
-            "http",
-            "https",
+            'http',
+            'https',
         ];
         foreach ($protocols as $protocol) {
             $options[$protocol] = [
-                "method" => "GET",
-                "proxy" => sprintf("tcp://%s:%s", $this->httpProxy["host"], $this->httpProxy["port"]),
-                "request_fulluri" => true,
+                'method' => 'GET',
+                'proxy' => sprintf('tcp://%s:%s', $this->httpProxy['host'], $this->httpProxy['port']),
+                'request_fulluri' => true,
             ];
 
-            if (null !== $this->httpProxy["auth"]) {
-                $options[$protocol]["header"] = sprintf("Proxy-Authorization: Basic %s", base64_encode($this->httpProxy["auth"]));
+            if (null !== $this->httpProxy['auth']) {
+                $options[$protocol]['header'] = sprintf('Proxy-Authorization: Basic %s', base64_encode($this->httpProxy['auth']));
             }
         }
 

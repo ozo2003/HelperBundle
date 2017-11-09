@@ -98,7 +98,7 @@ class Video
 
     public function setViewCount($count)
     {
-        if (intval($count) < 0) {
+        if ((int)$count < 0) {
             throw new \DomainException('The view count must be positive');
         }
 

@@ -26,7 +26,7 @@ class PositionHandler
         $result = $query->getResult();
 
         if (array_key_exists(0, $result)) {
-            return intval($result[0][1]);
+            return (int)$result[0][1];
         }
 
         return 0;
