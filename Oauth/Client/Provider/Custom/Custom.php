@@ -43,7 +43,7 @@ class Custom extends AbstractProvider
         return $this->domain.$this->authorize;
     }
 
-    public function getBaseAccessTokenUrl(array $params = [])
+    public function getBaseAccessTokenUrl()
     {
         return $this->domain.$this->token.'?client_id='.$this->options['client_id'].'&client_secret='.$this->options['client_secret'];
     }
@@ -59,7 +59,7 @@ class Custom extends AbstractProvider
         return $data;
     }
 
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl()
     {
         return $this->domain.$this->api;
     }
@@ -78,7 +78,7 @@ class Custom extends AbstractProvider
         }
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response)
     {
         $user = new CustomResourceOwner($response);
 

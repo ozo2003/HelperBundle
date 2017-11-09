@@ -17,7 +17,6 @@ class TranslatorType extends AbstractType
     protected $manager;
     private $locales;
     private $userLocale;
-    private $translator;
     protected $container;
 
     const DEFAULT_CLASS = '';
@@ -26,15 +25,14 @@ class TranslatorType extends AbstractType
     public function __construct($locales, Manager $manager, TranslatorInterface $translator, $container)
     {
         $this->manager = $manager;
-        $this->translator = $translator;
         $this->locales = $locales;
-        $this->userLocale = $this->translator->getLocale();
+        $this->userLocale = $translator->getLocale();
         $this->container = $container;
     }
 
     private function checkOptions(array $object, $field)
     {
-        if (!isset($object['fields']) || !isset($object['fields'][$field])) {
+        if (!isset($object['fields'][$field])) {
             return false;
         }
 
@@ -128,7 +126,7 @@ class TranslatorType extends AbstractType
      */
     public function getBlockPrefix()
     {
-        return "translations";
+        return 'translations';
     }
 
     /**

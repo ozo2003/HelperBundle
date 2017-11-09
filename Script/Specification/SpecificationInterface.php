@@ -33,10 +33,9 @@ interface SpecificationInterface
 
     /**
      * Not
-     *
-     * @param SpecificationInterface $specification
-     *
      * @return SpecificationInterface
+     * @internal param SpecificationInterface $specification
+     *
      */
     public function not();
 }

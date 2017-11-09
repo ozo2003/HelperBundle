@@ -91,7 +91,7 @@ class Openidconnect implements ExtensionInterface
             $service = [
                 'key' => $clientServiceKey,
             ];
-            if (isset($config['options']) && isset($config['options']['name'])) {
+            if (isset($config['options']['name'])) {
                 $service['name'] = $config['options']['name'];
             } else {
                 $service['name'] = ucfirst($key);

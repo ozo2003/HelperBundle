@@ -12,10 +12,10 @@ class Url
     const CHANGEFREQ_YEARLY = 'yearly';
     const CHANGEFREQ_NEVER = 'never';
 
-    protected $loc = null;
-    protected $lastmod = null;
-    protected $changefreq = null;
-    protected $priority = null;
+    protected $loc;
+    protected $lastmod;
+    protected $changefreq;
+    protected $priority;
     protected $videos = [];
     protected $images = [];
 

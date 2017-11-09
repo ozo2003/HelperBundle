@@ -10,8 +10,6 @@ class DraugiemOAuth2Client extends OAuth2Client
 {
     const METHOD = 'POST';
 
-    protected $isStateless = true;
-
     public function redirect(array $scopes = [], array $options = [], $token = null)
     {
         $data = [
@@ -36,7 +34,7 @@ class DraugiemOAuth2Client extends OAuth2Client
         return new DraugiemUser($user);
     }
 
-    public function returnRedirect(array $scopes = [], array $options = [])
+    public function returnRedirect()
     {
         $data = [
             'app' => $this->provider->getClientSecret(),

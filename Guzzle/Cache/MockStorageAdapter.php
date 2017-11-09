@@ -47,6 +47,8 @@ class MockStorageAdapter implements StorageAdapterInterface
                 return Psr7\parse_response(file_get_contents($filename));
             }
         }
+
+        return null;
     }
 
     /**
@@ -58,7 +60,7 @@ class MockStorageAdapter implements StorageAdapterInterface
             $response = $response->withoutHeader($header);
         }
 
-        list($strategy) = $this->namingStrategies;
+        [$strategy] = $this->namingStrategies;
 
         $filename = $this->getFilename($strategy->filename($request));
 

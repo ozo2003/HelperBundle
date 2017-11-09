@@ -40,7 +40,7 @@ class Draugiem extends AbstractProvider
         return static::LOGIN_URL;
     }
 
-    public function getBaseAccessTokenUrl(array $params = [])
+    public function getBaseAccessTokenUrl()
     {
         return static::API_URL;
     }
@@ -50,7 +50,7 @@ class Draugiem extends AbstractProvider
         return [];
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token = null)
+    protected function createResourceOwner(array $response)
     {
         return new DraugiemUser($response);
     }

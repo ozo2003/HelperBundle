@@ -43,8 +43,6 @@ trait ControllerTrait
             return $this->result();
         }
 
-        $content = $output->fetch();
-
-        return $content;
+        return $output->fetch();
     }
 }

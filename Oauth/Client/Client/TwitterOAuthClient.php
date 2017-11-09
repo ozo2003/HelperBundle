@@ -14,9 +14,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class TwitterOAuthClient extends OAuth2Client
 {
-    protected $isStateless = true;
     protected $session;
-    protected $logger;
 
     const URL_REQUEST_TOKEN = 'oauth/request_token';
     const URL_AUTHORIZE = 'oauth/authorize';
@@ -24,10 +22,7 @@ class TwitterOAuthClient extends OAuth2Client
 
     public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
     {
-        $this->provider = $provider;
-        $this->requestStack = $requestStack;
-        $this->logger = $logger;
-
+        parent::__construct($provider, $requestStack, $logger);
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
     }
 
@@ -57,7 +52,7 @@ class TwitterOAuthClient extends OAuth2Client
         return new RedirectResponse($url);
     }
 
-    public function getAccessToken()
+    public function getAccessToken(array $attributes = [])
     {
         if (!$this->isStateless) {
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
@@ -83,7 +78,7 @@ class TwitterOAuthClient extends OAuth2Client
         ]);
     }
 
-    public function fetchUser($request = null)
+    public function fetchUser(array $attributes = [])
     {
         $code = $this->getCurrentRequest()->get('oauth_verifier');
         $this->provider->twitter = new TwitterOAuth($this->provider->getClientId(), $this->provider->getClientSecret(), $this->session->get('oauth_token'), $this->session->get('oauth_token_secret'));

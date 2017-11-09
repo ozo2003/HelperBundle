@@ -35,6 +35,8 @@ class PsrAdapter implements StorageAdapterInterface
 
             return new Response($data['status'], $data['headers'], $data['body'], $data['version'], $data['reason']);
         }
+
+        return null;
     }
 
     /**

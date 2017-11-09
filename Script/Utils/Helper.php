@@ -32,7 +32,7 @@ class Helper
 
     public static function toCamelCase($string)
     {
-        return preg_replace('~\s+~', '', lcfirst(ucwords(strtr($string, '_', ' '))));
+        return preg_replace('~\s+~', '', lcfirst(ucwords(str_replace('_', ' ', $string))));
     }
 
     public static function fromCamelCase($string, $separator = '_')
@@ -129,7 +129,7 @@ class Helper
             if (strlen($personCode) !== 11) {
                 return 'error_length';
             }
-            if (preg_match("/^[0-9]+$/", $personCode) === null) {
+            if (preg_match('/^[0-9]+$/', $personCode) === null) {
                 return 'error_symbols';
             }
             if ((int)substr($personCode, 0, 2) < 32) {
@@ -161,7 +161,7 @@ class Helper
 
     public static function cleanText($text)
     {
-        return html_entity_decode(self::oneSpace(str_replace(' ?', '', mb_convert_encoding(strip_tags($text), "UTF-8", "UTF-8"))));
+        return html_entity_decode(self::oneSpace(str_replace(' ?', '', mb_convert_encoding(strip_tags($text), 'UTF-8', 'UTF-8'))));
     }
 
     public static function oneSpace($text)

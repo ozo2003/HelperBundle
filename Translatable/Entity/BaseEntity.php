@@ -52,7 +52,7 @@ abstract class BaseEntity
 
     protected function check($locale)
     {
-        return in_array($locale, array_keys($this->localeArr));
+        return array_key_exists($locale, $this->localeArr);
     }
 
     protected function notExist($method, $pos)

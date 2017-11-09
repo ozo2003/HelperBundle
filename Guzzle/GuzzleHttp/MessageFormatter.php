@@ -130,7 +130,15 @@ class MessageFormatter extends BaseMessageFormatter
 
     protected function sludioError()
     {
-        return $this->error ? $this->error instanceof \Exception ? $this->error->getMessage() : (string)$this->error : 'NULL';
+        if ($this->error) {
+            if ($this->error instanceof \Exception) {
+                return $this->error->getMessage();
+            }
+
+            return (string)$this->error;
+        }
+        
+        return 'NULL';
     }
 
     /**

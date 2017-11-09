@@ -15,19 +15,19 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class Sitemap
 {
     protected $providers = [];
-    protected $dumper = null;
-    protected $formatter = null;
-    protected $baseHost = null;
+    protected $dumper;
+    protected $formatter;
+    protected $baseHost;
     protected $limit = 0;
     protected $sitemapIndexes = [];
-    protected $originalFilename = null;
+    protected $originalFilename;
 
     public function __construct(DumperInterface $dumper, FormatterInterface $formatter, $baseHost = null, $limit = 0, RequestStack $requestStack)
     {
         $this->dumper = $dumper;
         $this->formatter = $formatter;
         $this->baseHost = $baseHost;
-        if ($this->baseHost === null && php_sapi_name() !== 'cli') {
+        if ($this->baseHost === null && PHP_SAPI !== 'cli') {
             $request = $requestStack->getCurrentRequest();
             $useHttps = $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') == 'https');
             $this->baseHost = ($useHttps ? 'https' : 'http').'://'.$request->server->get('HTTP_HOST');
@@ -80,6 +80,8 @@ class Sitemap
 
             $this->dumper->dump($this->formatter->getSitemapIndexEnd());
         }
+
+        return null;
     }
 
     public function add(Url $url)
@@ -144,7 +146,7 @@ class Sitemap
             return false;
         }
 
-        return substr($url, 0, 4) !== 'http';
+        return 0 !== strpos($url, 'http');
     }
 
     protected function isSitemapIndexable()
@@ -155,7 +157,7 @@ class Sitemap
     protected function createSitemapIndex()
     {
         $sitemapIndex = new SitemapIndex();
-        $sitemapIndex->setLastMod(new \DateTime());
+        $sitemapIndex->setLastmod(new \DateTime());
 
         return $sitemapIndex;
     }
@@ -185,7 +187,7 @@ class Sitemap
     {
         $sitemapIndexFilename = basename($filename);
         $index = count($this->sitemapIndexes) + 1;
-        $extPosition = strrpos($sitemapIndexFilename, ".");
+        $extPosition = strrpos($sitemapIndexFilename, '.');
         if ($extPosition !== false) {
             $sitemapIndexFilename = substr($sitemapIndexFilename, 0, $extPosition).'-'.$index.substr($sitemapIndexFilename, $extPosition);
         } else {

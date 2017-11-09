@@ -20,7 +20,7 @@ class FileDumper implements DumperFileInterface
 
     protected function openFile()
     {
-        $this->handle = fopen($this->filename, 'w');
+        $this->handle = fopen($this->filename, 'w+b');
 
         if ($this->handle === false) {
             throw new \RuntimeException(sprintf('Impossible to open the file %s in write mode', $this->filename));

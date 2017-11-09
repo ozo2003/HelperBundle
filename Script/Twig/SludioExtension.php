@@ -119,10 +119,12 @@ class SludioExtension extends \Twig_Extension
 
     public function stripDescr($body, $fallback = null, $type = null, $lengthIn = 300)
     {
+        $length = null;
+
         if ($type && $fallback) {
             $length = isset($fallback[$type]) ? $fallback[$type] : null;
         }
-        if (!isset($length)) {
+        if ($length === null) {
             $length = $lengthIn;
         }
 
@@ -155,9 +157,9 @@ class SludioExtension extends \Twig_Extension
                 $xml = new \DomDocument('1.0');
                 $xml->preserveWhiteSpace = false;
                 $xml->formatOutput = true;
-                $xml->loadXml($code);
+                $xml->loadXML($code);
 
-                return $xml->saveXml();
+                return $xml->saveXML();
             default:
                 return $code;
         }
@@ -166,11 +168,11 @@ class SludioExtension extends \Twig_Extension
     public function statusCodeClass($statusCode)
     {
         $codes = [
-            5 => self::SERVER,
-            4 => self::CLIENT,
-            3 => self::REDIRECT,
-            2 => self::SUCCESS,
             1 => self::INFO,
+            2 => self::SUCCESS,
+            3 => self::REDIRECT,
+            4 => self::CLIENT,
+            5 => self::SERVER,
         ];
         $code = (int)floor((int)$statusCode) / 100;
 

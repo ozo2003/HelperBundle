@@ -10,6 +10,7 @@ use Psr\Http\Message\StreamInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
+use Namshi\Cuzzle\Formatter\CurlFormatter;
 
 class GuzzleCollector extends DataCollector
 {
@@ -17,20 +18,21 @@ class GuzzleCollector extends DataCollector
 
     private $maxBodySize;
     private $history;
-    private $curlFormatter = null;
+    private $curlFormatter;
 
     /**
      * Constructor.
      *
-     * @param int $maxBodySize The max body size to store in the profiler storage
+     * @param int          $maxBodySize The max body size to store in the profiler storage
+     * @param History|null $history
      */
     public function __construct($maxBodySize = self::MAX_BODY_SIZE, History $history = null)
     {
         $this->maxBodySize = $maxBodySize;
         $this->history = $history ?: new History();
 
-        if (class_exists(\Namshi\Cuzzle\Formatter\CurlFormatter::class)) {
-            $this->curlFormatter = new \Namshi\Cuzzle\Formatter\CurlFormatter();
+        if (class_exists(CurlFormatter::class)) {
+            $this->curlFormatter = new CurlFormatter();
         }
 
         $this->data = [];

@@ -23,8 +23,9 @@ final class LocaleResolver
     private $request;
 
     /**
-     * @param String  $defaultLocale
-     * @param Boolean $useLocaleFromRequest
+     * @param String       $defaultLocale
+     * @param Boolean      $useLocaleFromRequest
+     * @param RequestStack $requestStack
      */
     public function __construct($defaultLocale, $useLocaleFromRequest, RequestStack $requestStack)
     {

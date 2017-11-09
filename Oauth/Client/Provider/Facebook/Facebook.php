@@ -43,7 +43,7 @@ class Facebook extends BaseProvider
      * @param array $options
      * @param array $collaborators
      *
-     * @throws \InvalidArgumentException
+     * @param null  $generator
      */
     public function __construct($options = [], array $collaborators = [], $generator = null)
     {
@@ -63,7 +63,7 @@ class Facebook extends BaseProvider
         return $this->getBaseFacebookUrl().$this->graphApiVersion.'/dialog/oauth';
     }
 
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl()
     {
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/oauth/access_token';
     }
@@ -122,7 +122,7 @@ class Facebook extends BaseProvider
         return $this->getAccessToken('fb_exchange_token', $params);
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response)
     {
         return new FacebookUser($response);
     }

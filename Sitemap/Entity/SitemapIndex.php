@@ -4,8 +4,8 @@ namespace Sludio\HelperBundle\Sitemap\Entity;
 
 class SitemapIndex
 {
-    protected $loc = null;
-    protected $lastmod = null;
+    protected $loc;
+    protected $lastmod;
     protected $urlCount = 0;
 
     public function setLoc($loc)

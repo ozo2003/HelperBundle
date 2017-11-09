@@ -80,12 +80,15 @@ class Login implements Loginable
      *
      * @param string $return A custom return to URL
      *
+     * @param null   $altRealm
+     *
      * @return string
+     * @throws Exception
      */
     public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
         $useHttps = $this->request->server->get('HTTPS') || ($this->request->server->get('HTTP_X_FORWARDED_PROTO') && $this->request->server->get('HTTP_X_FORWARDED_PROTO') == 'https');
-        if (!is_null($return)) {
+        if (null !== $return) {
             if (!$this->validateUrl($return)) {
                 throw new Exception('error_oauth_invalid_return_url');
             }
@@ -116,6 +119,8 @@ class Login implements Loginable
 
     /**
      * Validates a OpenID login request and returns the users OpenID.
+     *
+     * @param int $timeout
      *
      * @return string
      */

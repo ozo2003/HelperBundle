@@ -134,7 +134,7 @@ class Guzzle implements ConfigureInterface
                     $addDebugMiddleware = true;
 
                     foreach ($options['middleware'] as $middleware) {
-                        if ('!' === ($middleware[0])) {
+                        if ('!' === $middleware[0]) {
                             $addDebugMiddleware = false;
                             break;
                         }

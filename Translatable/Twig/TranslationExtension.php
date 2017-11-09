@@ -42,11 +42,9 @@ class TranslationExtension extends \Twig_Extension
                 $new_locale = $this->request ? $this->request->get('_locale') : $lang;
             }
 
-            $trans = $object->getVariableByLocale($type, $new_locale, $original);
-
-            return $trans;
-        } else {
-            return $type;
+            return $object->getVariableByLocale($type, $new_locale, $original);
         }
+
+        return $type;
     }
 }

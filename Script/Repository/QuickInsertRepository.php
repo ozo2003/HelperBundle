@@ -20,7 +20,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         return self::get(['table_name' => 'information_schema.tables'], true, [
             'table_name' => $tableName,
             ['table_schema = DATABASE()'],
-        ], ['AUTO_INCREMENT'], null, []) ?: 1;
+        ], ['AUTO_INCREMENT']) ?: 1;
     }
 
     public static function setFK($fkCheck = 0, $noFkCheck = false)
@@ -44,9 +44,11 @@ class QuickInsertRepository extends QuickInsertFunctions
         if (!$skip) {
             self::setFK(1, $noFkCheck);
         }
-        if (substr($sql, 0, 6) === "SELECT") {
+        if (0 === strpos($sql, "SELECT")) {
             return $sth->fetchAll();
         }
+
+        return true;
     }
 
     public static function get($object, $one = false, $where = [], $fields = [], $manager = null, $extra = [])
@@ -55,7 +57,7 @@ class QuickInsertRepository extends QuickInsertFunctions
 
         $select = sprintf('SELECT %s ', isset($extra['MODE']) ? $extra['MODE'] : '');
         $fields = $fields ?: ['id'];
-        $sql = $select.(implode(', ', $fields)).' FROM '.$tableName.self::buildWhere($tableName, $where).self::buildExtra($extra);
+        $sql = $select.implode(', ', $fields).' FROM '.$tableName.self::buildWhere($tableName, $where).self::buildExtra($extra);
 
         $result = self::runSQL($sql) ?: null;
 
@@ -110,7 +112,7 @@ class QuickInsertRepository extends QuickInsertFunctions
             $id = $idd;
         }
 
-        if (Helper::isEmpty($data) && $id !== null) {
+        if ($id !== null && Helper::isEmpty($data)) {
             return null;
         }
 
@@ -136,13 +138,15 @@ class QuickInsertRepository extends QuickInsertFunctions
         $data = [];
 
         $flip = array_flip($columns);
-        foreach ($result as $key => $value) {
-            $content = self::value($object, $key, $type, false);
-            if ($content !== $value) {
-                $data[$key] = $content;
-            }
-            if (!$id && $content === null) {
-                unset($data[$key]);
+        if(!empty($result)) {
+            foreach ($result as $key => $value) {
+                $content = self::value($object, $key, $type, false);
+                if ($content !== $value) {
+                    $data[$key] = $content;
+                }
+                if (!$id && $content === null) {
+                    unset($data[$key]);
+                }
             }
         }
 
@@ -159,7 +163,7 @@ class QuickInsertRepository extends QuickInsertFunctions
                 } else {
                     $value = "'".addslashes(trim($value))."'";
                 }
-                $sql .= ' '.$key." = ".$value.",";
+                $sql .= ' '.$key.' = '.$value.',';
             }
             $sql = substr($sql, 0, -1).' WHERE id = '.$id;
 

@@ -93,6 +93,6 @@ class Twitter extends AbstractProvider
             $collaborators['httpClient'] = new HttpClient(array_intersect_key($options, array_flip($client_options)));
         }
         $this->setHttpClient($collaborators['httpClient']);
-        $this->twitter = new TwitterOAuth($this->getCLientId(), $this->getClientSecret());
+        $this->twitter = new TwitterOAuth($this->getClientId(), $this->getClientSecret());
     }
 }

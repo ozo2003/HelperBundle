@@ -48,12 +48,12 @@ class Google extends AbstractProvider
         return 'https://accounts.google.com/o/oauth2/auth';
     }
 
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl()
     {
         return 'https://accounts.google.com/o/oauth2/token';
     }
 
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    public function getResourceOwnerDetailsUrl()
     {
         $fields = array_merge($this->defaultUserFields, $this->userFields);
 
@@ -106,7 +106,7 @@ class Google extends AbstractProvider
         }
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token)
+    protected function createResourceOwner(array $response)
     {
         return new GoogleUser($response);
     }

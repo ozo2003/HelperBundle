@@ -10,28 +10,27 @@ use Sludio\HelperBundle\Sitemap\Sitemap;
 
 class DoctrineProvider extends AbstractProvider
 {
-    protected $router;
     protected $entityManager;
-
-    protected $options = [
-        'entity' => null,
-        'loc' => [],
-        'query_method' => null,
-        'lastmod' => null,
-        'priority' => null,
-        'changefreq' => null,
-    ];
 
     /**
      * Constructor
      *
-     * @param Entitymanager   $entityManager      Doctrine entity manager.
-     * @param RouterInterface $router  The application router.
-     * @param array           $options The options (see the class comment).
+     * @param Entitymanager   $entityManager Doctrine entity manager.
+     * @param RouterInterface $router        The application router.
+     * @param array           $options       The options (see the class comment).
      */
     public function __construct(EntityManager $entityManager, RouterInterface $router, array $options)
     {
         parent::__construct($router, $options);
+
+        $this->options = [
+            'entity' => null,
+            'loc' => [],
+            'query_method' => null,
+            'lastmod' => null,
+            'priority' => null,
+            'changefreq' => null,
+        ];
 
         $this->entityManager = $entityManager;
     }

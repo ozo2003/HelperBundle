@@ -19,11 +19,9 @@ class TranslationCRUDController extends CRUDController
      *
      * @param int|string|null $id
      *
-     * @return Response|RedirectResponse
-     * @throws NotFoundHttpException If the object does not exist
-     * @throws NotFoundHttpException If the object does not exist
-     * @throws AccessDeniedException If access is not granted
-     * @throws AccessDeniedException If access is not granted
+     * @param Request|null    $request
+     *
+     * @return RedirectResponse|Response
      */
     public function editAction($id = null, Request $request = null)
     {

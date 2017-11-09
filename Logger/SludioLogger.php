@@ -13,6 +13,8 @@ class SludioLogger
      * Constructor.
      *
      * @param LoggerInterface $logger
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($logger = null)
     {

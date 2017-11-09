@@ -37,6 +37,8 @@ final class FixedLength extends AbstractBehaviour
 
     /**
      * @param int $maximumVisible
+     *
+     * @throws \InvalidArgumentException
      */
     private function setMaximumVisible($maximumVisible)
     {
@@ -71,6 +73,7 @@ final class FixedLength extends AbstractBehaviour
 
     /**
      * {@inheritdoc}
+     * @throws \InvalidArgumentException
      */
     public function getPaginationData($totalPages, $currentPage, $omittedPagesIndicator = -1)
     {

@@ -4,25 +4,25 @@ namespace Sludio\HelperBundle\Sitemap\Entity;
 
 trait VideoTrait
 {
-    protected $thumbnailLoc = null;
-    protected $title = null;
-    protected $description = null;
-    protected $contentLoc = null;
-    protected $playerLoc = null;
-    protected $duration = null;
-    protected $expirationDate = null;
-    protected $rating = null;
-    protected $viewCount = null;
-    protected $publicationDate = null;
-    protected $familyFriendly = null;
+    protected $thumbnailLoc;
+    protected $title;
+    protected $description;
+    protected $contentLoc;
+    protected $playerLoc;
+    protected $duration;
+    protected $expirationDate;
+    protected $rating;
+    protected $viewCount;
+    protected $publicationDate;
+    protected $familyFriendly;
     protected $tags = [];
-    protected $category = null;
-    protected $restrictions = null;
-    protected $galleryLoc = null;
-    protected $requiresSubscription = null;
-    protected $uploader = null;
-    protected $platforms = null;
-    protected $live = null;
+    protected $category;
+    protected $restrictions;
+    protected $galleryLoc;
+    protected $requiresSubscription;
+    protected $uploader;
+    protected $platforms;
+    protected $live;
 
     public function getTitle()
     {

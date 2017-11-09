@@ -92,6 +92,7 @@ class ORMTranslationAdmin extends TranslationAdmin
     /**
      * @param ProxyQuery $queryBuilder
      * @param String     $alias
+     * @param array|null $locales
      */
     private function joinTranslations(ProxyQuery $queryBuilder, $alias, array $locales = null)
     {
@@ -116,6 +117,8 @@ class ORMTranslationAdmin extends TranslationAdmin
     }
 
     /**
+     * @param array $locales
+     *
      * @return array
      */
     private function formatLocales(array $locales)

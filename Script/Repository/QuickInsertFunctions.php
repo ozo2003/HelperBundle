@@ -92,17 +92,15 @@ abstract class QuickInsertFunctions
             }
         }
 
-        if (isset($extra['LIMIT'])) {
-            if (is_array($extra['LIMIT'])) {
-                if (isset($extra['LIMIT'][1])) {
-                    $offset = $extra['LIMIT'][0];
-                    $limit = $extra['LIMIT'][1];
-                } else {
-                    $offset = 0;
-                    $limit = $extra['LIMIT'][0];
-                }
-                $sql = sprintf('%sLIMIT %s, %s', $sql, $offset, $limit);
+        if (isset($extra['LIMIT']) && is_array($extra['LIMIT'])) {
+            if (isset($extra['LIMIT'][1])) {
+                $offset = $extra['LIMIT'][0];
+                $limit = $extra['LIMIT'][1];
+            } else {
+                $offset = 0;
+                $limit = $extra['LIMIT'][0];
             }
+            $sql = sprintf('%sLIMIT %s, %s', $sql, $offset, $limit);
         }
 
         return Helper::oneSpace($sql);
@@ -117,11 +115,11 @@ abstract class QuickInsertFunctions
             $path = ' WHERE ';
             foreach ($where as $key => $value) {
                 if (!is_array($value) && isset(self::$mock[$tableName][$key])) {
-                    $whereSql .= $path.self::$mock[$tableName][$key]." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
+                    $whereSql .= $path.self::$mock[$tableName][$key].' = '.(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
                 } elseif (is_array($value)) {
                     $whereSql .= $path.$value[0];
                 } else {
-                    $whereSql .= $path.$key." = ".(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
+                    $whereSql .= $path.$key.' = '.(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
                 }
                 if ($key === $first) {
                     $path = ' AND ';

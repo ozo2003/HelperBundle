@@ -57,8 +57,8 @@ class TranslatableRepository
     private static function getFromRedis($key, &$result, &$checked)
     {
         if (self::$redis !== null) {
-            $result = unserialize(self::$redis->get(self::tKey($key)));
-            $checked = unserialize(self::$redis->get(self::cKey($key)));
+            $result = unserialize(self::$redis->get(self::tKey($key)), ['allowed_classes' => false]);
+            $checked = unserialize(self::$redis->get(self::cKey($key)), ['allowed_classes' => false]);
         }
     }
 
@@ -102,7 +102,7 @@ class TranslatableRepository
             self::delFromRedis($key);
         }
 
-        if ((empty($result) && !$checked)) {
+        if (empty($result) && !$checked) {
             $data = Quick::get(new Translation(), false, [
                 'object_class' => $class,
                 'foreign_key' => $id,
@@ -138,9 +138,7 @@ class TranslatableRepository
             $where['content'] = $content;
         }
 
-        $result = Quick::get(new Translation(), false, $where, ['foreign_key']);
-
-        return $result;
+        return Quick::get(new Translation(), false, $where, ['foreign_key']);
     }
 
     public static function updateTranslations($class, $locale, $field, $content, $id = 0)
@@ -162,7 +160,8 @@ class TranslatableRepository
             ->setForeignKey($id)
             ->setLocale($locale)
             ->setObjectClass($class)
-            ->setContent($content);
+            ->setContent($content)
+        ;
 
         if ($update === 0) {
             Quick::persist($translation);

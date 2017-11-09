@@ -4,8 +4,8 @@ namespace Sludio\HelperBundle\Sitemap\Dumper;
 
 trait FileDumperTrait
 {
-    protected $filename = null;
-    protected $handle = null;
+    protected $filename;
+    protected $handle;
 
     /**
      * Constructor.

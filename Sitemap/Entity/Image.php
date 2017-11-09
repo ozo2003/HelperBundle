@@ -7,27 +7,27 @@ class Image
     /**
      * @var string|null
      */
-    protected $loc = null;
+    protected $loc;
 
     /**
      * @var string|null
      */
-    protected $caption = null;
+    protected $caption;
 
     /**
      * @var string|null
      */
-    protected $geoLocation = null;
+    protected $geoLocation;
 
     /**
      * @var string|null
      */
-    protected $title = null;
+    protected $title;
     /**
      * @var string|null
      */
 
-    protected $license = null;
+    protected $license;
 
     /**
      * @return null|string

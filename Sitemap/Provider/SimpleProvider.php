@@ -4,16 +4,10 @@ namespace Sludio\HelperBundle\Sitemap\Provider;
 
 use Sludio\HelperBundle\Sitemap\Sitemap;
 use Sludio\HelperBundle\Sitemap\Entity\Url;
+use Symfony\Component\Routing\RouterInterface;
 
 class SimpleProvider extends AbstractProvider
 {
-    protected $options = [
-        'routes' => [],
-        'lastmod' => null,
-        'priority' => null,
-        'changefreq' => null,
-    ];
-
     protected $defaultRoute = [
         'params' => [],
         'priority' => null,
@@ -33,5 +27,17 @@ class SimpleProvider extends AbstractProvider
             $url->setPriority($route['priority'] ?: $this->options['priority']);
             $sitemap->add($url);
         }
+    }
+
+    public function __construct(RouterInterface $router, array $options)
+    {
+        parent::__construct($router, $options);
+
+        $this->options = [
+            'routes' => [],
+            'lastmod' => null,
+            'priority' => null,
+            'changefreq' => null,
+        ];
     }
 }

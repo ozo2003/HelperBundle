@@ -79,6 +79,8 @@ class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
         if (!empty($this->response['image']['url'])) {
             return $this->response['image']['url'];
         }
+
+        return '';
     }
 
     /**

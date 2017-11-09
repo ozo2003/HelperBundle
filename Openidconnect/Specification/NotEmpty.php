@@ -8,7 +8,7 @@ class NotEmpty extends BaseSpecification
     {
         $valid = !empty($actualValue);
         if (!$valid) {
-            $this->message = sprintf("%s is required and cannot be empty", $this->getName());
+            $this->message = sprintf('%s is required and cannot be empty', $this->getName());
         }
 
         return $valid;

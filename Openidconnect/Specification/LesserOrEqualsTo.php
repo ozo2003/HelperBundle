@@ -10,7 +10,7 @@ class LesserOrEqualsTo extends BaseSpecification
             return true;
         }
 
-        $this->message = sprintf("%s is invalid as it is not less than %s", $actualValue, $expectedValue);
+        $this->message = sprintf('%s is invalid as it is not less than %s', $actualValue, $expectedValue);
 
         return false;
 

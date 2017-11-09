@@ -56,17 +56,17 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     /**
      * @var string
      */
-    protected $clientSecret;
+    private $clientSecret;
 
     /**
      * @var string
      */
-    protected $state;
+    private $state;
 
     /**
      * @var string
      */
-    protected $baseUri;
+    private $baseUri;
 
     /**
      * @param array  $options
@@ -152,6 +152,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * @param  array $options
      *
      * @return AccessToken
+     * @throws InvalidTokenException
      */
     public function getAccessToken($grant, array $options = [])
     {
@@ -234,7 +235,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     }
 
     /**
-     * @return Specification\ValidatorChain|void
+     * @return Specification\ValidatorChain
      */
     public function getValidatorChain()
     {
@@ -267,7 +268,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      *
      * @return AccessToken
      */
-    protected function createAccessToken(array $response, AbstractGrant $grant)
+    protected function createAccessToken(array $response)
     {
         if ($this->check()) {
             return new AccessToken($response);
@@ -281,7 +282,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return '';
     }
 
-    public function getBaseAccessTokenUrl(array $params = [])
+    public function getBaseAccessTokenUrl()
     {
         return '';
     }
@@ -291,7 +292,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return [];
     }
 
-    protected function createResourceOwner(array $response, BaseAccessToken $token = null)
+    protected function createResourceOwner()
     {
         return [];
     }

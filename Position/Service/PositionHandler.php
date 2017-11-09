@@ -52,9 +52,9 @@ class PositionHandler
         }
         if (isset($this->positionField['entities'][$entity])) {
             return $this->positionField['entities'][$entity];
-        } else {
-            return $this->positionField['default'];
         }
+
+        return $this->positionField['default'];
     }
 
     protected function sludioUp($actual)
@@ -62,6 +62,8 @@ class PositionHandler
         if ($actual > 0) {
             return $actual - 1;
         }
+
+        return $actual;
     }
 
     protected function sludioDown($actual, $last)
@@ -69,6 +71,8 @@ class PositionHandler
         if ($actual < $last) {
             return $actual + 1;
         }
+
+        return $actual;
     }
 
     protected function sludioTop($actual)
@@ -76,6 +80,8 @@ class PositionHandler
         if ($actual > 0) {
             return 0;
         }
+
+        return $actual;
     }
 
     protected function sludioBottom($actual, $last)
@@ -83,6 +89,8 @@ class PositionHandler
         if ($actual < $last) {
             return $last;
         }
+
+        return $actual;
     }
 
     /**

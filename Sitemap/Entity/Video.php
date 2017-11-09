@@ -37,13 +37,12 @@ class Video
 
     public function setPlayerLoc($loc, $allowEmbed = true, $autoplay = null)
     {
-        if ($loc === null) {
-            $this->playerLoc = null;
-        } else {
+        $this->playerLoc = null;
+        if ($loc !== null) {
             $this->playerLoc = [
                 'loc' => $loc,
                 'allow_embed' => $allowEmbed,
-                'autoplay' => $autoplay !== null ? $autoplay : null,
+                'autoplay' => $autoplay,
             ];
         }
 
@@ -173,9 +172,8 @@ class Video
 
     public function setGalleryLoc($loc, $title = null)
     {
-        if ($loc === null) {
-            $this->galleryLoc = null;
-        } else {
+        $this->galleryLoc = null;
+        if ($loc !== null) {
             $this->galleryLoc = [
                 'loc' => $loc,
                 'title' => $title,
@@ -187,9 +185,8 @@ class Video
 
     public function setUploader($uploader, $info = null)
     {
-        if ($uploader === null) {
-            $this->uploader = null;
-        } else {
+        $this->uploader = null;
+        if ($uploader !== null) {
             $this->uploader = [
                 'name' => $uploader,
                 'info' => $info,

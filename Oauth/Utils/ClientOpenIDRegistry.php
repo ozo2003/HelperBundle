@@ -24,7 +24,7 @@ class ClientOpenIDRegistry
             throw new Exception(sprintf('Multiple clients with same key is not allowed! Key'.(count($checkExists) > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
         }
 
-        $this->serviceMap = $openIDServiceMap + $oAuthServiceMap;
+        $this->serviceMap = array_merge($openIDServiceMap, $oAuthServiceMap);
     }
 
     public function getClient($key)

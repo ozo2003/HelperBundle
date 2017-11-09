@@ -45,9 +45,10 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * Construct.
      *
-     * @param String  $secretKey
-     * @param array   $httpProxy
-     * @param Boolean $verifyHost
+     * @param String       $secretKey
+     * @param array        $httpProxy
+     * @param Boolean      $verifyHost
+     * @param RequestStack $requestStack
      */
     public function __construct($secretKey, array $httpProxy, $verifyHost, RequestStack $requestStack)
     {

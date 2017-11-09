@@ -33,10 +33,10 @@ class ValidatorChain
     }
 
     /**
-     * @param string                 $claim
      * @param SpecificationInterface $validator
      *
      * @return $this
+     * @internal param string $claim
      */
     public function addValidator(SpecificationInterface $validator)
     {
@@ -55,12 +55,14 @@ class ValidatorChain
     {
         $valid = true;
         foreach ($this->validators as $claim => $validator) {
-            if ($validator->isRequired() && false === $token->hasClaim($claim)) {
-                $valid = false;
-                $this->messages[$claim] = sprintf("Missing required value for claim %s", $claim);
-                continue;
-            } elseif (empty($data[$claim]) || false === $token->hasClaim($claim)) {
-                continue;
+            if ($token->hasClaim($claim) === false) {
+                if ($validator->isRequired()) {
+                    $valid = false;
+                    $this->messages[$claim] = sprintf('Missing required value for claim %s', $claim);
+                    continue;
+                } elseif (empty($data[$claim])) {
+                    continue;
+                }
             }
 
             if (!$validator->isSatisfiedBy($data[$claim], $token->getClaim($claim))) {

@@ -27,7 +27,7 @@ class ClearCacheCommand extends ContainerAwareCommand
     public function execute(InputInterface $input, OutputInterface $output)
     {
         $locales = $this->getManagedLocales();
-        $output->writeln('Remove cache for translations in: '.implode(", ", $locales));
+        $output->writeln('Remove cache for translations in: '.implode(', ', $locales));
         $this->getContainer()->get('translator')->removeLocalesCacheFiles($locales);
     }
 

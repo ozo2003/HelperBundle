@@ -22,7 +22,7 @@ class RedisFlushCommand extends ContainerAwareCommand
     {
         $clients = [];
         foreach ($this->getContainer()->getServiceIds() as $id) {
-            if (substr($id, 0, 9) === 'snc_redis' && $this->getContainer()->get($id) instanceof Client) {
+            if (0 === strpos($id, 'snc_redis') && $this->getContainer()->get($id) instanceof Client) {
                 $clients[] = $id;
             }
         }
@@ -34,6 +34,7 @@ class RedisFlushCommand extends ContainerAwareCommand
                 foreach ($clientsInput as &$client) {
                     $client = 'snc_redis.'.$client;
                 }
+                unset($client);
                 $allowed = array_intersect($clients, $clientsInput);
             }
             foreach ($clients as $snc) {

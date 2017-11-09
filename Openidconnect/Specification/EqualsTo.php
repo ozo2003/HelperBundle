@@ -10,7 +10,7 @@ class EqualsTo extends BaseSpecification
             return true;
         }
 
-        $this->message = sprintf("%s is invalid as it does not equal expected %s", $actualValue, $expectedValue);
+        $this->message = sprintf('%s is invalid as it does not equal expected %s', $actualValue, $expectedValue);
 
         return false;
     }

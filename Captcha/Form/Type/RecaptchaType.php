@@ -42,9 +42,9 @@ class RecaptchaType extends AbstractType
     /**
      * Construct.
      *
-     * @param String  $publicKey      Recaptcha site key
-     * @param Boolean $ajax           Ajax status
-     * @param String  $localeResolver Language or locale code
+     * @param String                $publicKey      Recaptcha site key
+     * @param Boolean               $ajax           Ajax status
+     * @param LocaleResolver|String $localeResolver Language or locale code
      */
     public function __construct($publicKey, $ajax, LocaleResolver $localeResolver)
     {

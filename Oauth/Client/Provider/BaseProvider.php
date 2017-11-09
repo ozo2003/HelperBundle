@@ -28,6 +28,8 @@ abstract class BaseProvider extends AbstractProvider
      * @param  mixed $grant
      * @param  array $options
      *
+     * @param array  $attributes
+     *
      * @return AccessToken
      */
     public function getAccessToken($grant, array $options = [], array $attributes = [])
@@ -49,9 +51,7 @@ abstract class BaseProvider extends AbstractProvider
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
-        $token = $this->createAccessToken($prepared, $grant);
-
-        return $token;
+        return $this->createAccessToken($prepared, $grant);
     }
 
     public function setState($state = null)

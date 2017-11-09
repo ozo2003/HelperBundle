@@ -19,7 +19,7 @@ class RemoveLocaleCacheEvent extends Event
     /**
      * @var array
      */
-    private $managedLocales = [];
+    private $managedLocales;
 
     public function __construct(array $managedLocales)
     {

@@ -155,7 +155,7 @@ class Oauth implements ExtensionInterface
             $service = [
                 'key' => $clientServiceKey,
             ];
-            if (isset($config['provider_options']) && isset($config['provider_options']['name'])) {
+            if (isset($config['provider_options']['name'])) {
                 $service['name'] = $config['provider_options']['name'];
             } else {
                 $service['name'] = ucfirst($key);
