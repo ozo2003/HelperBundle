@@ -43,7 +43,7 @@ class InboxUser implements SocialUserInterface
 
     /**
      * @param  array $response
-     * @param null   $id
+     * @param integer|null   $id
      */
     public function __construct(array $response, $id = null)
     {

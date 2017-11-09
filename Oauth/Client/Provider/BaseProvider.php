@@ -10,7 +10,7 @@ abstract class BaseProvider extends AbstractProvider
 {
     public $generator;
 
-    public function __construct(array $options = [], array $collaborators = [], $generator = null)
+    public function __construct(array $options = [], array $collaborators = [], UrlGeneratorInterface $generator = null)
     {
         $this->generator = $generator;
 

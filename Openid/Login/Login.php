@@ -80,7 +80,7 @@ class Login implements Loginable
      *
      * @param string $return A custom return to URL
      *
-     * @param null   $altRealm
+     * @param string|null   $altRealm
      *
      * @return string
      * @throws Exception

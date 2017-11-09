@@ -8,6 +8,7 @@ use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Oauth\Client\Provider\BaseProvider;
 use Sludio\HelperBundle\Oauth\Exception\FacebookProviderException;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Facebook extends BaseProvider
 {
@@ -40,12 +41,11 @@ class Facebook extends BaseProvider
     protected $graphApiVersion;
 
     /**
-     * @param array $options
-     * @param array $collaborators
-     *
-     * @param null  $generator
+     * @param array                      $options
+     * @param array                      $collaborators
+     * @param UrlGeneratorInterface|null $generator
      */
-    public function __construct($options = [], array $collaborators = [], $generator = null)
+    public function __construct($options = [], array $collaborators = [], UrlGeneratorInterface $generator = null)
     {
         parent::__construct($options, $collaborators, $generator);
 

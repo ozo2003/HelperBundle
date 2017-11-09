@@ -138,7 +138,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         $data = [];
 
         $flip = array_flip($columns);
-        if(!empty($result)) {
+        if (!empty($result)) {
             foreach ($result as $key => $value) {
                 $content = self::value($object, $key, $type, false);
                 if ($content !== $value) {
