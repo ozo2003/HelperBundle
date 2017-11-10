@@ -74,7 +74,7 @@ class Helper
         try {
             $output = bin2hex(random_bytes($length));
         } catch (\Exception $exception) {
-            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil((int)($length / strlen($x))))), 1, $length);
+            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', (int)ceil((int)($length / strlen($x))))), 1, $length);
         }
 
         return $output;

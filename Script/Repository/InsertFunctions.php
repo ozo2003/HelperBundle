@@ -9,9 +9,6 @@ class InsertFunctions
 {
     protected $connection;
 
-    /**
-     * @var object
-     */
     protected $object;
 
     /**
@@ -21,16 +18,13 @@ class InsertFunctions
 
     public $entityManager;
 
-    public function __construct($entityManager, object $object = null)
+    public function __construct($entityManager, $object = null)
     {
         $this->entityManager = $entityManager;
         $this->connection = $this->entityManager->getConnection();
         $this->setObject($object);
     }
 
-    /**
-     * @return object
-     */
     public function getObject()
     {
         return $this->object;
