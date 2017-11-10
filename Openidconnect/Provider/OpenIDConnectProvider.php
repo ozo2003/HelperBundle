@@ -263,8 +263,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * The grant that was used to fetch the response can be used to provide
      * additional context.
      *
-     * @param  array         $response
-     * @param  AbstractGrant $grant
+     * @param  array $response
      *
      * @return AccessToken
      */

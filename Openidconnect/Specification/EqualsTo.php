@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Specification;
 
-class EqualsTo extends BaseSpecification
+class EqualsTo extends AbstractSpecification
 {
     public function isSatisfiedBy($expectedValue, $actualValue = null)
     {

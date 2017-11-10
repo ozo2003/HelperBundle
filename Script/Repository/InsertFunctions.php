@@ -10,7 +10,7 @@ class InsertFunctions
     protected $connection;
 
     /**
-     * @var \stdClass
+     * @var object
      */
     protected $object;
 
@@ -21,7 +21,7 @@ class InsertFunctions
 
     public $entityManager;
 
-    public function __construct($entityManager, \stdClass $object = null)
+    public function __construct($entityManager, object $object = null)
     {
         $this->entityManager = $entityManager;
         $this->connection = $this->entityManager->getConnection();
@@ -29,7 +29,7 @@ class InsertFunctions
     }
 
     /**
-     * @return null
+     * @return object
      */
     public function getObject()
     {

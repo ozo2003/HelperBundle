@@ -83,7 +83,7 @@ abstract class TranslationAdmin extends AbstractAdmin
     }
 
     /**
-     * @return array
+     * @return bool
      */
     public function getNonTranslatedOnly()
     {

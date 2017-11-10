@@ -74,7 +74,7 @@ class Helper
         try {
             $output = bin2hex(random_bytes($length));
         } catch (\Exception $exception) {
-            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length / strlen($x)))), 1, $length);
+            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil((int)($length / strlen($x))))), 1, $length);
         }
 
         return $output;
@@ -129,7 +129,7 @@ class Helper
             if (strlen($personCode) !== 11) {
                 return 'error_length';
             }
-            if (preg_match('/^[0-9]+$/', $personCode) === null) {
+            if (preg_match('/^\d+$/', $personCode) === null) {
                 return 'error_symbols';
             }
             if ((int)substr($personCode, 0, 2) < 32) {

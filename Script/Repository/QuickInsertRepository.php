@@ -134,11 +134,15 @@ class QuickInsertRepository extends QuickInsertFunctions
         self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
         $result = self::get(['table_name' => $tableName], true, ['id' => $id], ['*']);
-        unset($result['id']);
+        if($result !== null) {
+            unset($result['id']);
+        } else {
+            $result = [];
+        }
         $data = [];
 
         $flip = array_flip($columns);
-        if (!empty($result)) {
+        if(!empty($result)) {
             foreach ($result as $key => $value) {
                 $content = self::value($object, $key, $type, false);
                 if ($content !== $value) {

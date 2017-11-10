@@ -57,10 +57,6 @@ class MiddlewarePass implements CompilerPassInterface
             ];
         }
 
-        if (empty($middleware)) {
-            return [];
-        }
-
         krsort($middleware);
 
         return array_merge(...$middleware);

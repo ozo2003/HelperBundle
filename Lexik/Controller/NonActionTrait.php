@@ -22,9 +22,8 @@ trait NonActionTrait
      *
      * @param ProxyQueryInterface $queryProxy
      *
-     * @return RedirectResponse
+     * @return StreamedResponse
      * @internal param ProxyQueryInterface $query
-     *
      */
     public function batchActionDownload(ProxyQueryInterface $queryProxy)
     {

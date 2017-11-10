@@ -2,15 +2,16 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Specification;
 
-class NotEmpty extends BaseSpecification
+class NotEmpty extends AbstractSpecification
 {
     public function isSatisfiedBy($expectedValue, $actualValue = null)
     {
-        $valid = !empty($actualValue);
-        if (!$valid) {
-            $this->message = sprintf('%s is required and cannot be empty', $this->getName());
+        if (!empty($actualValue)) {
+            return true;
         }
 
-        return $valid;
+        $this->message = sprintf('%s is required and cannot be empty', $this->getName());
+
+        return false;
     }
 }

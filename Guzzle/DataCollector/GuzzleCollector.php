@@ -45,11 +45,11 @@ class GuzzleCollector extends DataCollector
     {
         $data = [];
 
-        foreach ($this->history as $request) {
-            /* @var \Psr\Http\Message\RequestInterface $request */
-            $transaction = $this->history[$request];
-            /* @var \Psr\Http\Message\ResponseInterface $response */
-            $response = $transaction['response'];
+        foreach ($this->history as $historyRequest) {
+            /* @var \Psr\Http\Message\RequestInterface $historyRequest */
+            $transaction = $this->history[$historyRequest];
+            /* @var \Psr\Http\Message\ResponseInterface $historyResponse */
+            $historyResponse = $transaction['response'];
             /* @var \Exception $error */
             $error = $transaction['error'];
             /* @var array $info */
@@ -57,36 +57,36 @@ class GuzzleCollector extends DataCollector
 
             $req = [
                 'request' => [
-                    'method' => $request->getMethod(),
-                    'version' => $request->getProtocolVersion(),
-                    'headers' => $request->getHeaders(),
-                    'body' => $this->cropContent($request->getBody()),
+                    'method' => $historyRequest->getMethod(),
+                    'version' => $historyRequest->getProtocolVersion(),
+                    'headers' => $historyRequest->getHeaders(),
+                    'body' => $this->cropContent($historyRequest->getBody()),
                 ],
                 'info' => $info,
-                'uri' => urldecode($request->getUri()),
+                'uri' => urldecode($historyRequest->getUri()),
                 'httpCode' => 0,
                 'error' => null,
             ];
 
-            if ($this->curlFormatter && $request->getBody()->getSize() <= $this->maxBodySize) {
-                $req['curl'] = $this->curlFormatter->format($request);
+            if ($this->curlFormatter && $historyRequest->getBody()->getSize() <= $this->maxBodySize) {
+                $req['curl'] = $this->curlFormatter->format($historyRequest);
             }
 
-            if ($response) {
+            if ($historyResponse) {
                 $req['response'] = [
-                    'reasonPhrase' => $response->getReasonPhrase(),
-                    'headers' => $response->getHeaders(),
-                    'body' => $this->cropContent($response->getBody()),
+                    'reasonPhrase' => $historyResponse->getReasonPhrase(),
+                    'headers' => $historyResponse->getHeaders(),
+                    'body' => $this->cropContent($historyResponse->getBody()),
                 ];
 
-                $req['httpCode'] = $response->getStatusCode();
+                $req['httpCode'] = $historyResponse->getStatusCode();
 
-                if ($response->hasHeader(CacheMiddleware::DEBUG_HEADER)) {
-                    $req['cache'] = $response->getHeaderLine(CacheMiddleware::DEBUG_HEADER);
+                if ($historyResponse->hasHeader(CacheMiddleware::DEBUG_HEADER)) {
+                    $req['cache'] = $historyResponse->getHeaderLine(CacheMiddleware::DEBUG_HEADER);
                 }
 
-                if ($response->hasHeader(MockMiddleware::DEBUG_HEADER)) {
-                    $req['mock'] = $response->getHeaderLine(MockMiddleware::DEBUG_HEADER);
+                if ($historyResponse->hasHeader(MockMiddleware::DEBUG_HEADER)) {
+                    $req['mock'] = $historyResponse->getHeaderLine(MockMiddleware::DEBUG_HEADER);
                 }
             }
 
