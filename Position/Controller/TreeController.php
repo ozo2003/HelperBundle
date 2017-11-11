@@ -19,7 +19,7 @@ class TreeController extends Controller
         }
         $class = $map[$class];
         $repo = $entityManager->getRepository($class);
-        $object = $repo->findOneById($id);
+        $object = $repo->find($id);
         if ($object->getParent()) {
             $repo->{'move'.ucfirst($position)}($object);
         }
