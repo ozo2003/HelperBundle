@@ -47,7 +47,7 @@ class PositionHandler
      */
     public function getPositionFieldByEntity($entity)
     {
-        if (is_object($entity)) {
+        if (\is_object($entity)) {
             $entity = ClassUtils::getClass($entity);
         }
         if (isset($this->positionField['entities'][$entity])) {

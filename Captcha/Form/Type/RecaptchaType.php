@@ -13,8 +13,8 @@ class RecaptchaType extends AbstractType
     /**
      * The reCAPTCHA Server URL's
      */
-    const RECAPTCHA_API_SERVER = 'https://www.google.com/recaptcha/api';
-    const RECAPTCHA_API_JS_SERVER = 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js';
+    public const RECAPTCHA_API_SERVER = 'https://www.google.com/recaptcha/api';
+    public const RECAPTCHA_API_JS_SERVER = 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js';
 
     /**
      * The public key
@@ -81,6 +81,7 @@ class RecaptchaType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @throws \Symfony\Component\OptionsResolver\Exception\AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
     {

@@ -43,7 +43,7 @@ class Custom extends AbstractProvider
         return $this->domain.$this->authorize;
     }
 
-    public function getBaseAccessTokenUrl()
+    public function getBaseAccessTokenUrl(array $params)
     {
         return $this->domain.$this->token.'?client_id='.$this->options['client_id'].'&client_secret='.$this->options['client_secret'];
     }
@@ -59,7 +59,7 @@ class Custom extends AbstractProvider
         return $data;
     }
 
-    public function getResourceOwnerDetailsUrl()
+    public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
         return $this->domain.$this->api;
     }
@@ -73,14 +73,16 @@ class Custom extends AbstractProvider
     {
         if ($response->getStatusCode() >= 400) {
             throw CustomIdentityProviderException::clientException($response, $data);
-        } elseif (isset($data['error'])) {
+        }
+
+        if (isset($data['error'])) {
             throw CustomIdentityProviderException::oauthException($response, $data);
         }
     }
 
-    protected function createResourceOwner(array $response)
+    protected function createResourceOwner(array $response, AccessToken $token)
     {
-        $user = new CustomResourceOwner($response);
+        $user = new CustomResourceOwner($response,  0);
 
         return $user->setDomain($this->domain);
     }

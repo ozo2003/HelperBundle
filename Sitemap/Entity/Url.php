@@ -4,13 +4,13 @@ namespace Sludio\HelperBundle\Sitemap\Entity;
 
 class Url
 {
-    const CHANGEFREQ_ALWAYS = 'always';
-    const CHANGEFREQ_HOURLY = 'hourly';
-    const CHANGEFREQ_DAILY = 'daily';
-    const CHANGEFREQ_WEEKLY = 'weekly';
-    const CHANGEFREQ_MONTHLY = 'monthly';
-    const CHANGEFREQ_YEARLY = 'yearly';
-    const CHANGEFREQ_NEVER = 'never';
+    public const CHANGEFREQ_ALWAYS = 'always';
+    public const CHANGEFREQ_HOURLY = 'hourly';
+    public const CHANGEFREQ_DAILY = 'daily';
+    public const CHANGEFREQ_WEEKLY = 'weekly';
+    public const CHANGEFREQ_MONTHLY = 'monthly';
+    public const CHANGEFREQ_YEARLY = 'yearly';
+    public const CHANGEFREQ_NEVER = 'never';
 
     protected $loc;
     protected $lastmod;
@@ -21,7 +21,7 @@ class Url
 
     public function setLoc($loc)
     {
-        if (strlen($loc) > 2048) {
+        if (\strlen($loc) > 2048) {
             throw new \DomainException('The loc value must be less than 2,048 characters');
         }
 
@@ -52,10 +52,10 @@ class Url
             return null;
         }
 
-        if ($this->getChangefreq() === null || in_array($this->getChangefreq(), [
+        if ($this->getChangefreq() === null || \in_array($this->getChangefreq(), [
                 self::CHANGEFREQ_ALWAYS,
                 self::CHANGEFREQ_HOURLY,
-            ])) {
+            ], true)) {
             return $this->lastmod->format(\DateTime::W3C);
         }
 
@@ -75,7 +75,7 @@ class Url
             null,
         ];
 
-        if (!in_array($changefreq, $validFreqs)) {
+        if (!\in_array($changefreq, $validFreqs, true)) {
             throw new \DomainException(sprintf('Invalid changefreq given. Valid values are: %s', implode(', ', $validFreqs)));
         }
 

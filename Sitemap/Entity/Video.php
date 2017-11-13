@@ -6,16 +6,16 @@ class Video
 {
     use VideoTrait;
 
-    const RESTRICTION_DENY = 'deny';
-    const RESTRICTION_ALLOW = 'allow';
+    public const RESTRICTION_DENY = 'deny';
+    public const RESTRICTION_ALLOW = 'allow';
 
-    const PLATFORM_TV = 'tv';
-    const PLATFORM_MOBILE = 'mobile';
-    const PLATFORM_WEB = 'web';
+    public const PLATFORM_TV = 'tv';
+    public const PLATFORM_MOBILE = 'mobile';
+    public const PLATFORM_WEB = 'web';
 
     public function setTitle($title)
     {
-        if (strlen($title) > 100) {
+        if (\strlen($title) > 100) {
             throw new \DomainException('The title value must be less than 100 characters');
         }
 
@@ -26,7 +26,7 @@ class Video
 
     public function setDescription($description)
     {
-        if (strlen($description) > 2048) {
+        if (\strlen($description) > 2048) {
             throw new \DomainException('The description value must be less than 2,048 characters');
         }
 
@@ -131,7 +131,7 @@ class Video
         if ($tags === null) {
             $this->tags = null;
         } else {
-            if (count($tags) > 32) {
+            if (\count($tags) > 32) {
                 throw new \DomainException('A maximum of 32 tags is allowed.');
             }
 
@@ -143,7 +143,7 @@ class Video
 
     public function setCategory($category)
     {
-        if (strlen($category) > 256) {
+        if (\strlen($category) > 256) {
             throw new \DomainException('The category value must be less than 256 characters');
         }
 
@@ -206,8 +206,9 @@ class Video
                 self::PLATFORM_WEB,
                 self::PLATFORM_MOBILE,
             ];
+            /** @var $platforms array */
             foreach ($platforms as $platform => $relationship) {
-                if (!in_array($platform, $valid_platforms)) {
+                if (!\in_array($platform, $valid_platforms, true)) {
                     throw new \DomainException(sprintf('Invalid platform given. Valid values are: %s', implode(', ', $valid_platforms)));
                 }
 

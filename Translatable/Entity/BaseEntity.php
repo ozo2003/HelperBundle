@@ -24,7 +24,7 @@ abstract class BaseEntity
 
     protected function getTranslations($skip = false)
     {
-        return $this->getId() ? Sludio::getTranslations(get_class($this), $this->getId(), $skip) : null;
+        return $this->getId() ? Sludio::getTranslations(\get_class($this), $this->getId(), $skip) : null;
     }
 
     abstract public function getId();
@@ -32,7 +32,7 @@ abstract class BaseEntity
     public function getClassName()
     {
         if (!$this->className) {
-            $className = explode('\\', get_called_class());
+            $className = explode('\\', \get_called_class());
             $this->className = strtolower(end($className));
         }
 
@@ -44,7 +44,7 @@ abstract class BaseEntity
         $pos = strpos($name, '_');
         if ($pos !== false) {
             $locale = strtolower(substr($name, $pos + 1));
-            if (count($arguments) === 0 && $this->check($locale) === true) {
+            if (\count($arguments) === 0 && $this->check($locale) === true) {
                 return $this->__get($name);
             }
         }
@@ -87,7 +87,7 @@ abstract class BaseEntity
             $property = substr($property, 0, -3);
 
             if ($this->check($locale)) {
-                Sludio::updateTranslations(get_class($this), $this->getLocaleVar($locale), $property, $value, $this->getId());
+                Sludio::updateTranslations(\get_class($this), $this->getLocaleVar($locale), $property, $value, $this->getId());
                 $this->getTranslations();
             }
         }

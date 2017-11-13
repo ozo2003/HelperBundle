@@ -45,7 +45,7 @@ class Login implements Loginable
 
         if ($container->hasParameter($clientName.'.option.sreg_fields')) {
             $fields = $container->getParameter($clientName.'.option.sreg_fields');
-            if ($fields && is_array($fields)) {
+            if ($fields && \is_array($fields)) {
                 $this->sregFields = implode(',', $fields);
             }
         }
@@ -87,7 +87,7 @@ class Login implements Loginable
      */
     public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
-        $useHttps = $this->request->server->get('HTTPS') || ($this->request->server->get('HTTP_X_FORWARDED_PROTO') && $this->request->server->get('HTTP_X_FORWARDED_PROTO') == 'https');
+        $useHttps = $this->request->server->get('HTTPS') || ($this->request->server->get('HTTP_X_FORWARDED_PROTO') && $this->request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
         if (null !== $return) {
             if (!$this->validateUrl($return)) {
                 throw new Exception('error_oauth_invalid_return_url');
@@ -151,7 +151,7 @@ class Login implements Loginable
             $context = stream_context_create([
                 'http' => [
                     'method' => 'POST',
-                    'header' => "Accept-language: en\r\n"."Content-type: application/x-www-form-urlencoded\r\n".'Content-Length: '.strlen($data)."\r\n",
+                    'header' => "Accept-language: en\r\n"."Content-type: application/x-www-form-urlencoded\r\n".'Content-Length: '.\strlen($data)."\r\n",
                     'content' => $data,
                     'timeout' => $timeout,
                 ],
@@ -161,9 +161,9 @@ class Login implements Loginable
 
             preg_match($this->pregCheck, urldecode($get['openid_claimed_id']), $matches);
 
-            $openID = (is_array($matches) && isset($matches[1])) ? $matches[1] : null;
+            $openID = (\is_array($matches) && isset($matches[1])) ? $matches[1] : null;
 
-            $response = preg_match("#is_valid\s*:\s*true#i", $result) == 1 ? $openID : null;
+            $response = preg_match("#is_valid\s*:\s*true#i", $result) === 1 ? $openID : null;
         } catch (Exception $e) {
             $response = null;
         }

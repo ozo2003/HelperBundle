@@ -39,6 +39,7 @@ class DoctrineAdapter implements StorageAdapterInterface
 
     /**
      * {@inheritdoc}
+     * @throws \RuntimeException
      */
     public function save(RequestInterface $request, ResponseInterface $response)
     {

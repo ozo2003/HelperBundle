@@ -71,7 +71,7 @@ abstract class AbstractBehaviour implements BehaviourInterface
      */
     private function guardOmittedPagesIndicatorType($indicator)
     {
-        if (!is_int($indicator) && !is_string($indicator)) {
+        if (!\is_int($indicator) && !\is_string($indicator)) {
             throw new InvalidArgumentException('Omitted pages indicator should either be a string or an int.');
         }
     }
@@ -86,7 +86,7 @@ abstract class AbstractBehaviour implements BehaviourInterface
      */
     private function guardOmittedPagesIndicatorIntValue($totalPages, $indicator)
     {
-        if (is_int($indicator) && $indicator >= 1 && $indicator <= $totalPages) {
+        if (\is_int($indicator) && $indicator >= 1 && $indicator <= $totalPages) {
             throw new InvalidArgumentException(sprintf('Omitted pages indicator (%d) should not be between 1 and total number of pages (%d).', $indicator, $totalPages));
         }
     }

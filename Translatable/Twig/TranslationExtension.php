@@ -34,7 +34,7 @@ class TranslationExtension extends \Twig_Extension
 
     public function getVar($type, $object, $original = false, $locale = null)
     {
-        if ($object && is_object($object)) {
+        if ($object && \is_object($object)) {
             $lang = $this->request ? $this->request->cookies->get('hl') : $this->defaultLocale;
 
             $new_locale = $locale;

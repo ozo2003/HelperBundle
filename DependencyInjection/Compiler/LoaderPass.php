@@ -8,13 +8,13 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class LoaderPass implements CompilerPassInterface
 {
-    const NAME = 'sludio_helper.guzzle';
+    public const NAME = 'sludio_helper.guzzle';
 
     public function process(ContainerBuilder $container)
     {
         $ids = $container->findTaggedServiceIds(self::NAME.'.description_loader');
 
-        if (!count($ids)) {
+        if (!\count($ids)) {
             return;
         }
 

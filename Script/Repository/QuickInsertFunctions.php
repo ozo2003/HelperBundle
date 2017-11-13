@@ -22,7 +22,7 @@ abstract class QuickInsertFunctions
         }
         global $kernel;
 
-        if ('AppCache' === get_class($kernel)) {
+        if ('AppCache' === \get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();
@@ -35,7 +35,7 @@ abstract class QuickInsertFunctions
     protected static function extract($object)
     {
         self::init(false);
-        $data = self::extractExt(self::$entityManager->getMetadataFactory()->getMetadataFor(get_class($object)));
+        $data = self::extractExt(self::$entityManager->getMetadataFactory()->getMetadataFor(\get_class($object)));
 
         self::$mock = $data['mock'];
         self::$tableName = $data['table'];
@@ -52,6 +52,7 @@ abstract class QuickInsertFunctions
 
         $result = [];
         foreach ($fields as $key => $field) {
+            /** @var $columns array */
             foreach ($columns as $key2 => $column) {
                 if ($key === $key2) {
                     $result[$table][$field] = $column;
@@ -84,7 +85,7 @@ abstract class QuickInsertFunctions
         foreach ($methods as $method) {
             if (isset($extra[$method])) {
                 $sql .= ' '.$method.' ';
-                if (is_array($extra[$method])) {
+                if (\is_array($extra[$method])) {
                     $sql .= implode(' ', $extra[$method]).' ';
                 } else {
                     $sql .= $extra[$method].' ';
@@ -92,10 +93,9 @@ abstract class QuickInsertFunctions
             }
         }
 
-        if (isset($extra['LIMIT']) && is_array($extra['LIMIT'])) {
+        if (isset($extra['LIMIT']) && \is_array($extra['LIMIT'])) {
             if (isset($extra['LIMIT'][1])) {
-                $offset = $extra['LIMIT'][0];
-                $limit = $extra['LIMIT'][1];
+                list($offset, $limit) = $extra['LIMIT'];
             } else {
                 $offset = 0;
                 $limit = $extra['LIMIT'][0];
@@ -114,9 +114,9 @@ abstract class QuickInsertFunctions
             $first = key($where);
             $path = ' WHERE ';
             foreach ($where as $key => $value) {
-                if (!is_array($value) && isset(self::$mock[$tableName][$key])) {
+                if (!\is_array($value) && isset(self::$mock[$tableName][$key])) {
                     $whereSql .= $path.self::$mock[$tableName][$key].' = '.(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
-                } elseif (is_array($value)) {
+                } elseif (\is_array($value)) {
                     $whereSql .= $path.$value[0];
                 } else {
                     $whereSql .= $path.$key.' = '.(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
@@ -130,10 +130,10 @@ abstract class QuickInsertFunctions
         return $whereSql;
     }
 
-    protected static function getTable(&$object, &$tableName, &$columns, &$type, $manager = null, $extraFields = [])
+    protected static function getTable(&$object, &$tableName, &$columns, &$type, $manager = null, array $extraFields = [])
     {
         self::init($manager);
-        if (is_object($object)) {
+        if (\is_object($object)) {
             self::extract($object);
             $tableName = self::$tableName;
             $columns = self::$mock[$tableName] ?: [];

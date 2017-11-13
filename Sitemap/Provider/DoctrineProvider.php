@@ -39,6 +39,8 @@ class DoctrineProvider extends AbstractProvider
      * Populate a sitemap using a Doctrine entity.
      *
      * @param Sitemap $sitemap The current sitemap.
+     *
+     * @throws \Doctrine\ORM\ORMInvalidArgumentException
      */
     public function populate(Sitemap $sitemap)
     {
@@ -68,7 +70,7 @@ class DoctrineProvider extends AbstractProvider
         }
 
         if (!$query instanceof Query) {
-            throw new \RuntimeException(sprintf('Expected instance of Query, got %s (see method %s:%s)', get_class($query), $entity, $method));
+            throw new \RuntimeException(sprintf('Expected instance of Query, got %s (see method %s:%s)', \get_class($query), $entity, $method));
         }
 
         return $query;

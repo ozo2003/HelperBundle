@@ -9,9 +9,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class CacheMiddleware
 {
-    const DEBUG_HEADER = 'X-Guzzle-Cache';
-    const DEBUG_HEADER_HIT = 'HIT';
-    const DEBUG_HEADER_MISS = 'MISS';
+    public const DEBUG_HEADER = 'X-Guzzle-Cache';
+    public const DEBUG_HEADER_HIT = 'HIT';
+    public const DEBUG_HEADER_MISS = 'MISS';
 
     protected $adapter;
     protected $debug;

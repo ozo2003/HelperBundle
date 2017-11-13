@@ -44,7 +44,7 @@ class Helper
     {
         $result = true;
 
-        if (is_array($variable) && count($variable) > 0) {
+        if (\is_array($variable) && \count($variable) > 0) {
             foreach ($variable as $value) {
                 $result = $result && self::isEmpty($value);
             }
@@ -74,7 +74,7 @@ class Helper
         try {
             $output = bin2hex(random_bytes($length));
         } catch (\Exception $exception) {
-            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', (int)ceil((int)($length / strlen($x))))), 1, $length);
+            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', (int)ceil((int)($length / \strlen($x))))), 1, $length);
         }
 
         return $output;
@@ -126,7 +126,7 @@ class Helper
         if ($personCode !== null) {
             $personCode = str_replace('-', '', $personCode);
 
-            if (strlen($personCode) !== 11) {
+            if (\strlen($personCode) !== 11) {
                 return 'error_length';
             }
             if (preg_match('/^\d+$/', $personCode) === null) {
@@ -196,7 +196,7 @@ class Helper
     public static function multiple(array $keys)
     {
         foreach ($keys as $key) {
-            if (!is_array($key)) {
+            if (!\is_array($key)) {
                 return false;
             }
         }

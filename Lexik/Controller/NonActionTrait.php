@@ -6,7 +6,6 @@ use Doctrine\DBAL\DBALException;
 use Lexik\Bundle\TranslationBundle\Entity\TransUnit;
 use Lexik\Bundle\TranslationBundle\Manager\TranslationInterface;
 use Sonata\AdminBundle\Datagrid\ProxyQueryInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\Yaml\Dumper;
@@ -24,6 +23,7 @@ trait NonActionTrait
      *
      * @return StreamedResponse
      * @internal param ProxyQueryInterface $query
+     * @throws \InvalidArgumentException
      */
     public function batchActionDownload(ProxyQueryInterface $queryProxy)
     {
@@ -36,7 +36,10 @@ trait NonActionTrait
                 /**
                  * @var TransUnit $transUnit
                  */
-                foreach ($queryProxy->getQuery()->iterate() as $pos => $object) {
+                $iterates = $queryProxy->getQuery()->iterate();
+                /** @var $iterates array */
+                foreach ($iterates as $pos => $object) {
+                    /** @var $object array */
                     foreach ($object as $transUnit) {
                         $chunkPrefix = $transUnit->getDomain().'__'.$transUnit->getKey().'__'.$transUnit->getId().'__';
                         $chunk = [];

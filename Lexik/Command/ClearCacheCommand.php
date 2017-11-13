@@ -23,6 +23,9 @@ class ClearCacheCommand extends ContainerAwareCommand
      * @param OutputInterface $output
      *
      * @return int|null|void
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
+     * @throws \LogicException
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
@@ -33,6 +36,8 @@ class ClearCacheCommand extends ContainerAwareCommand
 
     /**
      * @return array
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
+     * @throws \LogicException
      */
     protected function getManagedLocales()
     {

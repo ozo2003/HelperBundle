@@ -15,12 +15,15 @@ use Symfony\Component\Translation\TranslatorInterface;
 class TranslatorType extends AbstractType
 {
     protected $manager;
+    /**
+     * @var array
+     */
     private $locales;
     private $userLocale;
     protected $container;
 
-    const DEFAULT_CLASS = '';
-    const DEFAULT_TYPE = 'text';
+    public const DEFAULT_CLASS = '';
+    public const DEFAULT_TYPE = 'text';
 
     public function __construct($locales, Manager $manager, TranslatorInterface $translator, $container)
     {
@@ -42,7 +45,7 @@ class TranslatorType extends AbstractType
         ];
         foreach ($fields as $type) {
             if (!isset($object['fields'][$field][$type])) {
-                $object['ields'][$field][$type] = constant('self::DEFAULT_'.strtoupper($type));
+                $object['ields'][$field][$type] = \constant('self::DEFAULT_'.strtoupper($type));
             }
         }
 
@@ -56,6 +59,7 @@ class TranslatorType extends AbstractType
         $entities = $this->container->getParameter('sludio_helper.translatable.entities');
         $entity = null;
         $className = $admin->getClass();
+        /** @var $entities array */
         foreach ($entities as $key => &$entity) {
             $entity['name'] = $key;
             if ($entity['entity'] === $className) {
@@ -86,7 +90,7 @@ class TranslatorType extends AbstractType
         }
 
         // 'populate' fields by *hook on form generation
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
             $form = $event->getForm();
             foreach ($this->locales as $locale) {
                 $data = (array_key_exists($locale, $translations) && array_key_exists($fieldName, $translations[$locale])) ? $translations[$locale][$fieldName] : null;
@@ -107,7 +111,7 @@ class TranslatorType extends AbstractType
             $form->add('currentFieldName', 'hidden', ['data' => $fieldName]);
         });
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id) {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id) {
             $form = $event->getForm();
             $this->manager->persistTranslations($form, $className, $fieldName, $id, $this->locales);
         });
@@ -154,6 +158,7 @@ class TranslatorType extends AbstractType
 
     /**
      * {@inheritdoc}
+     * @throws \Symfony\Component\OptionsResolver\Exception\AccessException
      */
     public function configureOptions(OptionsResolver $resolver)
     {

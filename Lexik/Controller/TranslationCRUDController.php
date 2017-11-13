@@ -5,7 +5,6 @@ namespace Sludio\HelperBundle\Lexik\Controller;
 use Sludio\HelperBundle\Lexik\Event\RemoveLocaleCacheEvent;
 use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Controller\CRUDController;
-use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -22,6 +21,7 @@ class TranslationCRUDController extends CRUDController
      * @param Request|null    $request
      *
      * @return RedirectResponse|Response
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
     public function editAction($id = null, Request $request = null)
     {

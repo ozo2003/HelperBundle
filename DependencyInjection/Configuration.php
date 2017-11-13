@@ -23,6 +23,7 @@ class Configuration implements ConfigurationInterface
 
     /**
      * {@inheritdoc}
+     * @throws \RuntimeException
      */
     public function getConfigTreeBuilder()
     {
@@ -66,7 +67,7 @@ class Configuration implements ConfigurationInterface
                                             ->beforeNormalization()
                                                 ->ifInArray(['clf', 'debug', 'short'])
                                                 ->then(function($v) {
-                                                    return constant('GuzzleHttp\MessageFormatter::'.strtoupper($v));
+                                                    return \constant('GuzzleHttp\MessageFormatter::'.strtoupper($v));
                                                 })
                                             ->end()
                                             ->defaultValue(MessageFormatter::CLF)
@@ -78,7 +79,7 @@ class Configuration implements ConfigurationInterface
                                                     'warning', 'notice', 'info', 'debug',
                                                 ])
                                                 ->then(function($v) {
-                                                    return constant('Psr\Log\LogLevel::'.strtoupper($v));
+                                                    return \constant('Psr\Log\LogLevel::'.strtoupper($v));
                                                 })
                                             ->end()
                                             ->defaultValue('debug')

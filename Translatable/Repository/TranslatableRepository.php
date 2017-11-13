@@ -43,7 +43,7 @@ class TranslatableRepository
         }
         global $kernel;
 
-        if ('AppCache' === get_class($kernel)) {
+        if ('AppCache' === \get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();
@@ -108,6 +108,7 @@ class TranslatableRepository
                 'foreign_key' => $id,
             ], ['*']);
             if ($data !== null) {
+                /** @var $data array */
                 foreach ($data as $row) {
                     $result[$row['locale']][$row['field']] = $row['content'];
                 }
@@ -181,7 +182,7 @@ class TranslatableRepository
 
     public static function removeTranslations(BaseEntity $object)
     {
-        $class = get_class($object);
+        $class = \get_class($object);
         self::init($class, $className);
         $id = $object->getId();
 
@@ -198,10 +199,16 @@ class TranslatableRepository
     {
         self::init();
         $classes = Quick::get(new Translation(), false, [], ['object_class'], null, ['MODE' => 'DISTINCT']);
-        foreach ($classes as $class) {
-            $ids = Quick::get(new Translation(), false, ['object_class' => $class], ['foreign_key'], null, ['MODE' => 'DISTINCT']);
-            foreach ($ids as $id) {
-                self::getTranslations($class, $id, true);
+        if (!empty($classes)) {
+            /** @var $classes array */
+            foreach ($classes as $class) {
+                $ids = Quick::get(new Translation(), false, ['object_class' => $class], ['foreign_key'], null, ['MODE' => 'DISTINCT']);
+                if (!empty($ids)) {
+                    /** @var $ids array */
+                    foreach ($ids as $id) {
+                        self::getTranslations($class, $id, true);
+                    }
+                }
             }
         }
     }

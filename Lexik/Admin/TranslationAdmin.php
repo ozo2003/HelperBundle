@@ -4,7 +4,6 @@ namespace Sludio\HelperBundle\Lexik\Admin;
 
 use Sonata\AdminBundle\Route\RouteCollection;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
-use Sonata\AdminBundle\Model\ModelManagerInterface;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
@@ -127,7 +126,7 @@ abstract class TranslationAdmin extends AbstractAdmin
     /**
      * @param string $name
      *
-     * @return array|NULL
+     * @return array|NULL|string
      */
     public function getTemplate($name)
     {
@@ -158,6 +157,8 @@ abstract class TranslationAdmin extends AbstractAdmin
 
     /**
      * @param ListMapper $list
+     *
+     * @throws \RuntimeException
      */
     protected function configureListFields(ListMapper $list)
     {
@@ -166,7 +167,7 @@ abstract class TranslationAdmin extends AbstractAdmin
             ->add('domain', Type\TextType::class)
         ;
 
-        $localesToShow = count($this->filterLocales) > 0 ? $this->filterLocales : $this->managedLocales;
+        $localesToShow = \count($this->filterLocales) > 0 ? $this->filterLocales : $this->managedLocales;
 
         foreach ($localesToShow as $locale) {
             $fieldDescription = $this->modelManager->getNewFieldDescriptionInstance($this->getClass(), $locale);
@@ -189,7 +190,7 @@ abstract class TranslationAdmin extends AbstractAdmin
         $filterParameters = $this->getFilterParameters();
 
         // transform _sort_by from a string to a FieldDescriptionInterface for the datagrid.
-        if (isset($filterParameters['locale']) && is_array($filterParameters['locale'])) {
+        if (isset($filterParameters['locale']) && \is_array($filterParameters['locale'])) {
             $this->filterLocales = array_key_exists('value', $filterParameters['locale']) ? $filterParameters['locale']['value'] : $this->managedLocales;
         }
 
@@ -220,6 +221,7 @@ abstract class TranslationAdmin extends AbstractAdmin
 
     /**
      * @return string
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      */
     protected function getDefaultDomain()
     {

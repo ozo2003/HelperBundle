@@ -17,6 +17,7 @@ class Openid implements ExtensionInterface
         $this->alias = $alias.'.openid';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');
         $clientServiceKeys = [];
+        /** @var $clientConfigurations array */
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $node = $tree->root('sludio_helper_openid_client/clients/'.$key);
@@ -36,7 +37,7 @@ class Openid implements ExtensionInterface
             $clientServiceKeys[$key] = $service;
             foreach ($config as $ckey => $cvalue) {
                 if ($ckey === 'provider_options') {
-                    if (is_array($cvalue)) {
+                    if (\is_array($cvalue)) {
                         foreach ($cvalue as $pkey => $pvalue) {
                             $container->setParameter($clientServiceKey.'.option.'.$pkey, $pvalue);
                         }

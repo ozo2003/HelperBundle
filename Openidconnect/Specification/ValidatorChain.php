@@ -50,6 +50,7 @@ class ValidatorChain
      * @param Token $token
      *
      * @return bool
+     * @throws \OutOfBoundsException
      */
     public function validate(array $data, Token $token)
     {
@@ -60,7 +61,9 @@ class ValidatorChain
                     $valid = false;
                     $this->messages[$claim] = sprintf('Missing required value for claim %s', $claim);
                     continue;
-                } elseif (empty($data[$claim])) {
+                }
+
+                if (empty($data[$claim])) {
                     continue;
                 }
             }

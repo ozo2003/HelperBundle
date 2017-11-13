@@ -42,6 +42,7 @@ class Captcha implements ExtensionInterface
     {
         $this->alias = $alias.'.captcha';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');
+        /** @var $clientConfigurations array */
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $processor = new Processor();
@@ -58,7 +59,7 @@ class Captcha implements ExtensionInterface
                 throw new InvalidConfigurationException(sprintf('sludio_helper_captcha_client.clients config "type" key "%s" is not supported. Supported: %s', $this->type, implode(', ', $supportedKeys)));
             }
 
-            if (!in_array($this->type, $this->usedTypes)) {
+            if (!\in_array($this->type, $this->usedTypes, true)) {
                 $this->usedTypes[] = $this->type;
             } else {
                 throw new InvalidConfigurationException(sprintf('sludio_helper_captcha_client.clients config "type" key "%s" is already in use. Only one occurence by type is allowed', $this->type));

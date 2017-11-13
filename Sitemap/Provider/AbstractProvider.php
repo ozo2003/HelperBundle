@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Sitemap\Provider;
 
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\Routing\RouterInterface;
 use Sludio\HelperBundle\Sitemap\Entity\Url;
 
@@ -13,6 +12,7 @@ abstract class AbstractProvider implements ProviderInterface
 {
     protected $router;
 
+    /** @var array */
     protected $options = [
         'loc' => [],
         'lastmod' => null,
@@ -73,7 +73,7 @@ abstract class AbstractProvider implements ProviderInterface
         $method = 'get'.ucfirst($column);
 
         if (!method_exists($result, $method)) {
-            throw new \RuntimeException(sprintf('"%s" method not found in "%s"', $method, get_class($result)));
+            throw new \RuntimeException(sprintf('"%s" method not found in "%s"', $method, \get_class($result)));
         }
 
         return $result->$method();

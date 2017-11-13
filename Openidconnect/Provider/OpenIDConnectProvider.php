@@ -6,9 +6,8 @@ use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use League\OAuth2\Client\Grant\AbstractGrant;
-use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
@@ -47,21 +46,6 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * @var Uri[]
      */
     protected $uris = [];
-
-    /**
-     * @var string
-     */
-    protected $clientId;
-
-    /**
-     * @var string
-     */
-    private $clientSecret;
-
-    /**
-     * @var string
-     */
-    private $state;
 
     /**
      * @var string
@@ -117,6 +101,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
             }
             $this->redirectUri = $url;
 
+            /** @var $options array[] */
             foreach ($options['uris'] as $name => $uri) {
                 $opt = [
                     'client_id' => $this->clientId,
@@ -152,6 +137,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * @param  array $options
      *
      * @return AccessToken
+     * @throws \BadMethodCallException
      * @throws InvalidTokenException
      */
     public function getAccessToken($grant, array $options = [])
@@ -281,7 +267,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return '';
     }
 
-    public function getBaseAccessTokenUrl()
+    public function getBaseAccessTokenUrl(array $params)
     {
         return '';
     }
@@ -291,7 +277,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return [];
     }
 
-    protected function createResourceOwner()
+    protected function createResourceOwner(array $response, BaseAccessToken $token)
     {
         return [];
     }

@@ -44,14 +44,14 @@ class QuickInsertRepository extends QuickInsertFunctions
         if (!$skip) {
             self::setFK(1, $noFkCheck);
         }
-        if (0 === strpos($sql, "SELECT")) {
+        if (0 === strpos($sql, 'SELECT')) {
             return $sth->fetchAll();
         }
 
         return true;
     }
 
-    public static function get($object, $one = false, $where = [], $fields = [], $manager = null, $extra = [])
+    public static function get($object, $one = false, array $where = [], array $fields = [], $manager = null, array $extra = [])
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
 
@@ -63,11 +63,12 @@ class QuickInsertRepository extends QuickInsertFunctions
 
         if ($result) {
             $field = null;
-            if (count($fields) === 1 && $fields[0] !== '*') {
+            if (\count($fields) === 1 && $fields[0] !== '*') {
                 $field = $fields[0];
             }
             if ($field) {
                 if (!$one) {
+                    /** @var $result array */
                     foreach ($result as &$res) {
                         $res = $res[$field];
                     }
@@ -82,7 +83,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         return $result;
     }
 
-    public static function persist($object, $full = false, $extraFields = [], $noFkCheck = false, $manager = null)
+    public static function persist($object, $full = false, array $extraFields = [], $noFkCheck = false, $manager = null)
     {
         self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
@@ -90,6 +91,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         $data = [];
 
         $idd = null;
+        /** @var $columns array */
         foreach ($columns as $value => $key) {
             $keys = [
                 $key,
@@ -129,7 +131,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         return $id;
     }
 
-    public static function update($id, $object, $extraFields = [], $noFkCheck = false, $manager = null)
+    public static function update($id, $object, array $extraFields = [], $noFkCheck = false, $manager = null)
     {
         self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
@@ -162,7 +164,7 @@ class QuickInsertRepository extends QuickInsertFunctions
                     'integer',
                     'longint',
                 ];
-                if (in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes)) {
+                if (\in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes, false)) {
                     $value = (int)$value;
                 } else {
                     $value = "'".addslashes(trim($value))."'";
@@ -175,7 +177,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         }
     }
 
-    public static function delete($object, $where = [], $noFkCheck = false, $manager = null)
+    public static function delete($object, array $where = [], $noFkCheck = false, $manager = null)
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
 

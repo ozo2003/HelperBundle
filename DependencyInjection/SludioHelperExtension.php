@@ -36,6 +36,7 @@ class SludioHelperExtension extends Extension
 
     /**
      * {@inheritdoc}
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -67,7 +68,6 @@ class SludioHelperExtension extends Extension
 
         foreach ($config['extensions'] as $key => $extension) {
             if (!isset($extension['enabled']) || $extension['enabled'] !== true) {
-                $container->setParameter($this->getAlias().'.'.$key.'.enabled', false);
                 continue;
             }
             $iterator = 0;

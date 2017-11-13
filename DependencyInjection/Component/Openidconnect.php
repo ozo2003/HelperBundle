@@ -80,6 +80,7 @@ class Openidconnect implements ExtensionInterface
         $this->alias = $alias.'.openidconnect';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');
         $clientServiceKeys = [];
+        /** @var $clientConfigurations array */
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $processor = new Processor();
@@ -100,7 +101,7 @@ class Openidconnect implements ExtensionInterface
             $clientServiceKeys[$key] = $service;
             foreach ($config as $configKey => $configValue) {
                 if ('options' === $configKey) {
-                    if (is_array($configValue)) {
+                    if (\is_array($configValue)) {
                         foreach ($configValue as $parameterKey => $parameterValue) {
                             $container->setParameter($clientServiceKey.'.option.'.$parameterKey, $parameterValue);
                         }
@@ -110,6 +111,7 @@ class Openidconnect implements ExtensionInterface
                 }
             }
             $uriConfigurations = $container->getParameter($this->alias.'.client.'.$key.'.uris');
+            /** @var $uriConfigurations array */
             foreach ($uriConfigurations as $subKey => $uriConfig) {
                 $tree = new TreeBuilder();
                 $processor = new Processor();
@@ -119,7 +121,7 @@ class Openidconnect implements ExtensionInterface
                 $params = [];
                 foreach ($config as $subConfigKey => $subConfigValue) {
                     if ($subConfigKey === 'params') {
-                        if (is_array($subConfigValue)) {
+                        if (\is_array($subConfigValue)) {
                             foreach ($subConfigValue as $subParameterKey => $subParameterValue) {
                                 $params[$subParameterKey] = $subParameterValue;
                             }

@@ -121,6 +121,7 @@ class Oauth implements ExtensionInterface
         $this->alias = $alias.'.oauth';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');
         $clientServiceKeys = [];
+        /** @var $clientConfigurations array */
         foreach ($clientConfigurations as $key => $clientConfig) {
             $tree = new TreeBuilder();
             $processor = new Processor();

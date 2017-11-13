@@ -29,7 +29,7 @@ class Sitemap
         $this->baseHost = $baseHost;
         if ($this->baseHost === null && PHP_SAPI !== 'cli') {
             $request = $requestStack->getCurrentRequest();
-            $useHttps = $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') == 'https');
+            $useHttps = $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
             $this->baseHost = ($useHttps ? 'https' : 'http').'://'.$request->server->get('HTTP_HOST');
         }
         $this->limit = $limit;
@@ -70,7 +70,7 @@ class Sitemap
             return $sitemapContent;
         }
 
-        if (count($this->sitemapIndexes)) {
+        if (\count($this->sitemapIndexes)) {
             $this->dumper->setFilename($this->originalFilename);
 
             $this->dumper->dump($this->formatter->getSitemapIndexStart());
@@ -164,7 +164,7 @@ class Sitemap
 
     protected function addSitemapIndex(SitemapIndex $sitemapIndex)
     {
-        $nbSitemapIndexs = count($this->sitemapIndexes);
+        $nbSitemapIndexs = \count($this->sitemapIndexes);
 
         if ($nbSitemapIndexs > 0) {
             $this->dumper->dump($this->formatter->getSitemapEnd());
@@ -186,7 +186,7 @@ class Sitemap
     protected function getSitemapIndexFilename($filename)
     {
         $sitemapIndexFilename = basename($filename);
-        $index = count($this->sitemapIndexes) + 1;
+        $index = \count($this->sitemapIndexes) + 1;
         $extPosition = strrpos($sitemapIndexFilename, '.');
         if ($extPosition !== false) {
             $sitemapIndexFilename = substr($sitemapIndexFilename, 0, $extPosition).'-'.$index.substr($sitemapIndexFilename, $extPosition);
@@ -194,7 +194,7 @@ class Sitemap
             $sitemapIndexFilename .= '-'.$index;
         }
 
-        $sitemapIndexFilename = dirname($filename).DIRECTORY_SEPARATOR.$sitemapIndexFilename;
+        $sitemapIndexFilename = \dirname($filename).DIRECTORY_SEPARATOR.$sitemapIndexFilename;
 
         return $sitemapIndexFilename;
     }

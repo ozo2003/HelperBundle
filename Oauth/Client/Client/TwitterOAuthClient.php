@@ -16,9 +16,9 @@ class TwitterOAuthClient extends OAuth2Client
 {
     protected $session;
 
-    const URL_REQUEST_TOKEN = 'oauth/request_token';
-    const URL_AUTHORIZE = 'oauth/authorize';
-    const URL_ACCESS_TOKEN = 'oauth/access_token';
+    public const URL_REQUEST_TOKEN = 'oauth/request_token';
+    public const URL_AUTHORIZE = 'oauth/authorize';
+    public const URL_ACCESS_TOKEN = 'oauth/access_token';
 
     public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
     {
@@ -30,7 +30,7 @@ class TwitterOAuthClient extends OAuth2Client
     {
         $request_token = $this->provider->twitter->oauth(static::URL_REQUEST_TOKEN, ['oauth_callback' => $this->provider->getRedirectUri()]);
 
-        if ($this->provider->twitter->getLastHttpCode() != 200) {
+        if ($this->provider->twitter->getLastHttpCode() !== 200) {
             $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There was a problem performing this request', $this->provider->twitter->getLastHttpCode());
             throw new Exception('error_twitter_bad_response');
         }

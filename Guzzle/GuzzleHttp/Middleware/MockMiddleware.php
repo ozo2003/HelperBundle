@@ -9,9 +9,9 @@ use Psr\Http\Message\RequestInterface;
 
 class MockMiddleware extends CacheMiddleware
 {
-    const DEBUG_HEADER = 'X-Guzzle-Mock';
-    const DEBUG_HEADER_HIT = 'REPLAY';
-    const DEBUG_HEADER_MISS = 'RECORD';
+    public const DEBUG_HEADER = 'X-Guzzle-Mock';
+    public const DEBUG_HEADER_HIT = 'REPLAY';
+    public const DEBUG_HEADER_MISS = 'RECORD';
 
     private $mode;
 

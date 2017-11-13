@@ -6,7 +6,7 @@ trait TwigTrait
 {
     protected $shortFunctions;
 
-    private function makeInput($input, &$output)
+    private function makeInput(array $input, &$output)
     {
         $output = [];
         foreach ($input as $call => $function) {
@@ -24,7 +24,7 @@ trait TwigTrait
         $this->makeInput($input, $input);
 
         foreach ($input as $call => $function) {
-            if (is_array($function)) {
+            if (\is_array($function)) {
                 $output[] = new $class($call, $function);
             } else {
                 $output[] = new $class($call, [

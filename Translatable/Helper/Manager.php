@@ -24,6 +24,7 @@ class Manager
         $entity = $this->entityManager->getRepository($class)->find($identifier);
 
         $translated = [];
+        /** @var $locales array */
         foreach ($locales as $locale) {
             $translated[$locale][$field] = $this->getField($entity, $field, $locale);
         }
@@ -39,6 +40,7 @@ class Manager
     public function getNewTranslatedFields($field, $locales)
     {
         $translated = [];
+        /** @var $locales array */
         foreach ($locales as $locale) {
             $translated[$locale][$field] = '';
         }
@@ -58,6 +60,7 @@ class Manager
             $entity = $repository->find($identifier);
         }
 
+        /** @var $locales array */
         foreach ($locales as $locale) {
             if (array_key_exists($locale, $translations) && ($translations[$locale] !== null)) {
                 $postedValue = $translations[$locale];

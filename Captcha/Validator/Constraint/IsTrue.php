@@ -22,12 +22,4 @@ class IsTrue extends Constraint
     {
         return Constraint::PROPERTY_CONSTRAINT;
     }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function validatedBy()
-    {
-        return get_class($this).'Validator';
-    }
 }

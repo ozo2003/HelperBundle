@@ -53,6 +53,8 @@ class MockStorageAdapter implements StorageAdapterInterface
 
     /**
      * {@inheritdoc}
+     * @throws \Symfony\Component\Filesystem\Exception\IOException
+     * @throws \RuntimeException
      */
     public function save(RequestInterface $request, ResponseInterface $response)
     {
@@ -65,7 +67,7 @@ class MockStorageAdapter implements StorageAdapterInterface
         $filename = $this->getFilename($strategy->filename($request));
 
         $fileSys = new Filesystem();
-        $fileSys->mkdir(dirname($filename));
+        $fileSys->mkdir(\dirname($filename));
 
         file_put_contents($filename, Psr7\str($response));
         $response->getBody()->rewind();

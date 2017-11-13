@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StreamResponse extends Response
 {
-    const BUFFER_SIZE = 4096;
+    public const BUFFER_SIZE = 4096;
 
     private $bufferSize;
 
@@ -28,7 +28,7 @@ class StreamResponse extends Response
             $chunk = $this->content->read($this->bufferSize);
 
             if ($chunked) {
-                echo sprintf("%x\r\n", strlen($chunk));
+                echo sprintf("%x\r\n", \strlen($chunk));
             }
 
             echo $chunk;

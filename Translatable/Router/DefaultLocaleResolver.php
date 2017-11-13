@@ -31,6 +31,7 @@ class DefaultLocaleResolver implements LocaleResolverInterface
 
     /**
      * {@inheritdoc}
+     * @throws \Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException
      */
     public function resolveLocale(Request $request, array $availableLocales)
     {
@@ -66,7 +67,7 @@ class DefaultLocaleResolver implements LocaleResolverInterface
 
         $languages = [];
         foreach ($request->getLanguages() as $language) {
-            if (strlen($language) != 2) {
+            if (\strlen($language) !== 2) {
                 $newLang = explode('_', $language, 2);
                 $languages[] = reset($newLang);
             } else {
@@ -76,7 +77,7 @@ class DefaultLocaleResolver implements LocaleResolverInterface
         $languages = array_unique($languages);
         if (!empty($languages)) {
             foreach ($languages as $lang) {
-                if (in_array($lang, $availableLocales, true)) {
+                if (\in_array($lang, $availableLocales, true)) {
                     return $lang;
                 }
             }

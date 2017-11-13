@@ -17,8 +17,8 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class MiddlewarePass implements CompilerPassInterface
 {
-    const MIDDLEWARE_TAG = 'sludio_helper.guzzle.middleware';
-    const CLIENT_TAG = 'sludio_helper.guzzle.client';
+    public const MIDDLEWARE_TAG = 'sludio_helper.guzzle.middleware';
+    public const CLIENT_TAG = 'sludio_helper.guzzle.client';
 
     public function process(ContainerBuilder $container)
     {
@@ -41,7 +41,7 @@ class MiddlewarePass implements CompilerPassInterface
         $middleware = [];
 
         foreach ($services as $id => $tags) {
-            if (count($tags) > 1) {
+            if (\count($tags) > 1) {
                 throw new \LogicException(sprintf('Middleware should only use a single \'%s\' tag', self::MIDDLEWARE_TAG));
             }
 
@@ -79,7 +79,7 @@ class MiddlewarePass implements CompilerPassInterface
         $clients = $container->findTaggedServiceIds(self::CLIENT_TAG);
 
         foreach ($clients as $clientId => $tags) {
-            if (count($tags) > 1) {
+            if (\count($tags) > 1) {
                 throw new \LogicException(sprintf('Clients should use a single \'%s\' tag', self::CLIENT_TAG));
             }
 
@@ -126,6 +126,7 @@ class MiddlewarePass implements CompilerPassInterface
      * @param ContainerBuilder              $container The container builder
      *
      * @return Definition
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
      */
     private function wrapHandlerInHandlerStack($handler, ContainerBuilder $container)
     {
@@ -187,12 +188,12 @@ class MiddlewarePass implements CompilerPassInterface
 
         if ($whiteList) {
             return array_filter($middlewareBag, function ($value) use ($whiteList) {
-                return in_array($value['alias'], $whiteList, true);
+                return \in_array($value['alias'], $whiteList, true);
             });
         }
 
         return array_filter($middlewareBag, function ($value) use ($blackList) {
-            return !in_array($value['alias'], $blackList, true);
+            return !\in_array($value['alias'], $blackList, true);
         });
     }
 }

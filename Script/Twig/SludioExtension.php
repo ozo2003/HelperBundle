@@ -2,18 +2,17 @@
 
 namespace Sludio\HelperBundle\Script\Twig;
 
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class SludioExtension extends \Twig_Extension
 {
     use TwigTrait;
 
-    const INFO = 'info';
-    const SUCCESS = 'success';
-    const REDIRECT = 'redirect';
-    const CLIENT = 'client_error';
-    const SERVER = 'server_error';
+    public const INFO = 'info';
+    public const SUCCESS = 'success';
+    public const REDIRECT = 'redirect';
+    public const CLIENT = 'client_error';
+    public const SERVER = 'server_error';
 
     protected $appDir;
     private $paths = [];
@@ -128,7 +127,7 @@ class SludioExtension extends \Twig_Extension
             $length = $lengthIn;
         }
 
-        if (strlen($body) > $length) {
+        if (\strlen($body) > $length) {
             $body = substr($body, 0, strpos($body, ' ', $length)).'...';
         }
 
@@ -217,7 +216,7 @@ class SludioExtension extends \Twig_Extension
 
     public function getAssetVersion($filename)
     {
-        if (count($this->paths) === 0) {
+        if (\count($this->paths) === 0) {
             $manifestPath = $this->appDir.'/Resources/assets/rev-manifest.json';
             if (!file_exists($manifestPath)) {
                 return $filename;
@@ -248,7 +247,7 @@ class SludioExtension extends \Twig_Extension
         $this->param = $parameter;
         $this->order = strtolower($order);
 
-        if (is_object($objects)) {
+        if (\is_object($objects)) {
             $objects = $objects->toArray();
         }
         usort($objects, [

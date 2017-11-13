@@ -14,9 +14,9 @@ class Twitter extends AbstractProvider
 {
     public $twitter;
 
-    const URL_REQUEST_TOKEN = 'oauth/request_token';
-    const URL_AUTHORIZE = 'oauth/authorize';
-    const URL_ACCESS_TOKEN = 'oauth/access_token';
+    public const URL_REQUEST_TOKEN = 'oauth/request_token';
+    public const URL_AUTHORIZE = 'oauth/authorize';
+    public const URL_ACCESS_TOKEN = 'oauth/access_token';
 
     public function getBaseAuthorizationUrl()
     {
@@ -71,6 +71,7 @@ class Twitter extends AbstractProvider
      */
     public function __construct(array $options = [], array $collaborators = [])
     {
+        parent::__construct($options, $collaborators);
         foreach ($options as $option => $value) {
             if (property_exists($this, $option)) {
                 $this->{$option} = $value;

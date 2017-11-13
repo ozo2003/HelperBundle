@@ -12,7 +12,7 @@ class Google extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
-    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
+    public const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
     /**
      * @var string If set, this will be sent to google as the "access_type" parameter.
@@ -48,12 +48,12 @@ class Google extends AbstractProvider
         return 'https://accounts.google.com/o/oauth2/auth';
     }
 
-    public function getBaseAccessTokenUrl()
+    public function getBaseAccessTokenUrl(array $params)
     {
         return 'https://accounts.google.com/o/oauth2/token';
     }
 
-    public function getResourceOwnerDetailsUrl()
+    public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
         $fields = array_merge($this->defaultUserFields, $this->userFields);
 
@@ -98,7 +98,7 @@ class Google extends AbstractProvider
             $code = 0;
             $error = $data['error'];
 
-            if (is_array($error)) {
+            if (\is_array($error)) {
                 $code = $error['code'];
             }
 
@@ -106,7 +106,7 @@ class Google extends AbstractProvider
         }
     }
 
-    protected function createResourceOwner(array $response)
+    protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new GoogleUser($response);
     }

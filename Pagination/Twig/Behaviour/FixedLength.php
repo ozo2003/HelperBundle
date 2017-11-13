@@ -16,6 +16,8 @@ final class FixedLength extends AbstractBehaviour
      *                            Maximum number of visible pages. Should never be lower than 3.
      *                            1 on each edge, 1 omitted chunk on each side, and 1 in the middle.
      *                            For example: [1][...][11][12][13][...][20]
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($maximumVisible)
     {
@@ -26,6 +28,7 @@ final class FixedLength extends AbstractBehaviour
      * @param int $maximumVisible
      *
      * @return static
+     * @throws \InvalidArgumentException
      */
     public function withMaximumVisible($maximumVisible)
     {

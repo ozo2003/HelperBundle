@@ -14,7 +14,7 @@ use Namshi\Cuzzle\Formatter\CurlFormatter;
 
 class GuzzleCollector extends DataCollector
 {
-    const MAX_BODY_SIZE = 0x10000;
+    public const MAX_BODY_SIZE = 0x10000;
 
     private $maxBodySize;
     private $history;

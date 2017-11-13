@@ -23,6 +23,7 @@ class PsrAdapter implements StorageAdapterInterface
 
     /**
      * {@inheritdoc}
+     * @throws \Psr\Cache\InvalidArgumentException
      */
     public function fetch(RequestInterface $request)
     {
@@ -41,6 +42,8 @@ class PsrAdapter implements StorageAdapterInterface
 
     /**
      * {@inheritdoc}
+     * @throws \Psr\Cache\InvalidArgumentException
+     * @throws \RuntimeException
      */
     public function save(RequestInterface $request, ResponseInterface $response)
     {

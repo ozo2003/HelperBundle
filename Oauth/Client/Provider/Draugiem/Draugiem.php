@@ -12,17 +12,17 @@ class Draugiem extends AbstractProvider
     /**
      * Draugiem.lv API URL
      */
-    const API_URL = 'http://api.draugiem.lv/json/';
+    public const API_URL = 'http://api.draugiem.lv/json/';
 
     /**
      * Draugiem.lv passport login URL
      */
-    const LOGIN_URL = 'https://api.draugiem.lv/authorize/';
+    public const LOGIN_URL = 'https://api.draugiem.lv/authorize/';
 
     /**
      * Timeout in seconds for session_check requests
      */
-    const SESSION_CHECK_TIMEOUT = 180;
+    public const SESSION_CHECK_TIMEOUT = 180;
 
     /**
      * @param array $options
@@ -40,7 +40,7 @@ class Draugiem extends AbstractProvider
         return static::LOGIN_URL;
     }
 
-    public function getBaseAccessTokenUrl()
+    public function getBaseAccessTokenUrl(array $params)
     {
         return static::API_URL;
     }
@@ -50,7 +50,7 @@ class Draugiem extends AbstractProvider
         return [];
     }
 
-    protected function createResourceOwner(array $response)
+    protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new DraugiemUser($response);
     }

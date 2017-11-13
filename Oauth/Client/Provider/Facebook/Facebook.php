@@ -17,21 +17,21 @@ class Facebook extends BaseProvider
      *
      * @const string
      */
-    const BASE_FACEBOOK_URL = 'https://www.facebook.com/';
+    public const BASE_FACEBOOK_URL = 'https://www.facebook.com/';
 
     /**
      * Production Graph API URL.
      *
      * @const string
      */
-    const BASE_GRAPH_URL = 'https://graph.facebook.com/';
+    public const BASE_GRAPH_URL = 'https://graph.facebook.com/';
 
     /**
      * Regular expression used to check for graph API version format
      *
      * @const string
      */
-    const GRAPH_API_VERSION_REGEX = '~^v\d+\.\d+$~';
+    public const GRAPH_API_VERSION_REGEX = '~^v\d+\.\d+$~';
 
     /**
      * The Graph API version to use for requests.
@@ -44,6 +44,8 @@ class Facebook extends BaseProvider
      * @param array                      $options
      * @param array                      $collaborators
      * @param UrlGeneratorInterface|null $generator
+     *
+     * @throws \InvalidArgumentException
      */
     public function __construct($options = [], array $collaborators = [], UrlGeneratorInterface $generator = null)
     {
@@ -51,7 +53,9 @@ class Facebook extends BaseProvider
 
         if (empty($options['graphApiVersion'])) {
             throw new InvalidArgumentException('error_facebook_graph_api_version_not_set');
-        } elseif (!preg_match(self::GRAPH_API_VERSION_REGEX, $options['graphApiVersion'])) {
+        }
+
+        if (!preg_match(self::GRAPH_API_VERSION_REGEX, $options['graphApiVersion'])) {
             throw new InvalidArgumentException('error_facebook_wrong_graph_api_version');
         }
 
@@ -63,7 +67,7 @@ class Facebook extends BaseProvider
         return $this->getBaseFacebookUrl().$this->graphApiVersion.'/dialog/oauth';
     }
 
-    public function getBaseAccessTokenUrl()
+    public function getBaseAccessTokenUrl(array $params)
     {
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/oauth/access_token';
     }
@@ -122,7 +126,7 @@ class Facebook extends BaseProvider
         return $this->getAccessToken('fb_exchange_token', $params);
     }
 
-    protected function createResourceOwner(array $response)
+    protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new FacebookUser($response);
     }

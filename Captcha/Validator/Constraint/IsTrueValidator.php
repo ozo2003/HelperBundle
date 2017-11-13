@@ -13,7 +13,7 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * The reCAPTCHA server URL's
      */
-    const RECAPTCHA_VERIFY_SERVER = 'https://www.google.com';
+    public const RECAPTCHA_VERIFY_SERVER = 'https://www.google.com';
 
     /**
      * Recaptcha Private Key
@@ -60,6 +60,8 @@ class IsTrueValidator extends ConstraintValidator
 
     /**
      * {@inheritdoc}
+     * @throws \Symfony\Component\Validator\Exception\ValidatorException
+     * @throws \Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException
      */
     public function validate($value, Constraint $constraint)
     {

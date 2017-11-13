@@ -24,7 +24,7 @@ trait ControllerTrait
         ]);
     }
 
-    private function runApp($command, $params = [], $return = true)
+    private function runApp($command, array $params = [], $return = true)
     {
         $data = [
             'command' => $command,

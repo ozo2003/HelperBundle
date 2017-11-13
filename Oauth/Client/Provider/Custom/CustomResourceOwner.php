@@ -9,17 +9,12 @@ class CustomResourceOwner extends GenericResourceOwner
 {
     use ArrayAccessorTrait;
 
-    protected $response;
     protected $domain;
 
-    public function __construct(array $response = [])
+    public function __construct(array $response, $resourceOwnerId)
     {
+        parent::__construct($response, $resourceOwnerId);
         $this->response = $response;
-    }
-
-    public function toArray()
-    {
-        return $this->response;
     }
 
     public function setDomain($domain)

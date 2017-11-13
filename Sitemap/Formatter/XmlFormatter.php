@@ -89,7 +89,9 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
     protected function checkVideoTags($video)
     {
         $text = '';
-        foreach ($video->getTags() as $tag) {
+        $tags = $video->getTags();
+        /** @var $tags array */
+        foreach ($tags as $tag) {
             $text .= "\t\t".'<video:tag>'.$this->escape($tag).'</video:tag>'."\n";
         }
 
@@ -123,7 +125,9 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
     protected function checkVideoPlatforms($video)
     {
         $text = '';
-        foreach ($video->getPlatforms() as $platform => $relationship) {
+        $platforms = $video->getPlatforms();
+        /** @var $platforms array */
+        foreach ($platforms as $platform => $relationship) {
             $text .= "\t\t".'<video:platform relationship="'.$this->escape($relationship).'">'.$this->escape($platform).'</video:platform>'."\n";
         }
 

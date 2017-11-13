@@ -31,8 +31,8 @@ class MissingExtension extends \Twig_Extension
 
     public function getObjects($class, $variable, $order = null, $one = false)
     {
-        $variable = is_array($variable) ? $variable : [$variable];
-        $order = is_array($order) ? $order : [$order];
+        $variable = \is_array($variable) ? $variable : [$variable];
+        $order = \is_array($order) ? $order : [$order];
 
         if ($one) {
             $objects = $this->entityManager->getRepository($class)->findOneBy($variable, $order);

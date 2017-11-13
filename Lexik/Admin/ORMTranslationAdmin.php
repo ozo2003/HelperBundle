@@ -100,6 +100,7 @@ class ORMTranslationAdmin extends TranslationAdmin
         $joins = $queryBuilder->getDQLPart('join');
         if (array_key_exists($alias, $joins)) {
             $joins = $joins[$alias];
+            /** @var $joins array */
             foreach ($joins as $join) {
                 if (strpos($join->__toString(), "$alias.translations ")) {
                     $alreadyJoined = true;

@@ -31,6 +31,9 @@ abstract class BaseProvider extends AbstractProvider
      * @param array  $attributes
      *
      * @return AccessToken
+     * @throws \Symfony\Component\Routing\Exception\RouteNotFoundException
+     * @throws \Symfony\Component\Routing\Exception\MissingMandatoryParametersException
+     * @throws \Symfony\Component\Routing\Exception\InvalidParameterException
      */
     public function getAccessToken($grant, array $options = [], array $attributes = [])
     {

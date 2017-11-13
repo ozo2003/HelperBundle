@@ -19,7 +19,7 @@ class SludioLogger
     public function __construct($logger = null)
     {
         if (!$logger instanceof LoggerInterface && null !== $logger) {
-            throw new InvalidArgumentException(sprintf('SludioLogger needs PSR-3 LoggerInterface, "%s" was injected instead.', is_object($logger) ? get_class($logger) : gettype($logger)));
+            throw new InvalidArgumentException(sprintf('SludioLogger needs PSR-3 LoggerInterface, "%s" was injected instead.', \is_object($logger) ? \get_class($logger) : \gettype($logger)));
         }
 
         $this->logger = $logger;

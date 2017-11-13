@@ -88,7 +88,8 @@ class Guzzle implements ConfigureInterface
 
         $container->getDefinition($this->alias.'.middleware.cache')->addArgument($debug);
         $container->getDefinition($this->alias.'.redis_cache')
-            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
+            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')))
+        ;
 
         $container->setAlias($this->alias.'.cache_adapter', $config['adapter']);
     }
@@ -121,8 +122,8 @@ class Guzzle implements ConfigureInterface
             }
 
             if (isset($options['config'])) {
-                if (!is_array($options['config'])) {
-                    throw new InvalidArgumentException(sprintf('Config for "'.$this->alias.'.client.%s" should be an array, but got %s', $name, gettype($options['config'])));
+                if (!\is_array($options['config'])) {
+                    throw new InvalidArgumentException(sprintf('Config for "'.$this->alias.'.client.%s" should be an array, but got %s', $name, \gettype($options['config'])));
                 }
                 $client->addArgument($this->buildGuzzleConfig($options['config'], $debug));
             }
@@ -133,6 +134,7 @@ class Guzzle implements ConfigureInterface
                 if ($debug) {
                     $addDebugMiddleware = true;
 
+                    /** @var $options array[] */
                     foreach ($options['middleware'] as $middleware) {
                         if ('!' === $middleware[0]) {
                             $addDebugMiddleware = false;
@@ -141,11 +143,12 @@ class Guzzle implements ConfigureInterface
                     }
 
                     if ($addDebugMiddleware) {
-                        $options['middleware'] = array_merge($options['middleware'], [
+                        $middleware = [
                             'stopwatch',
                             'history',
                             'logger',
-                        ]);
+                        ];
+                        $options['middleware'] = array_merge($options['middleware'], $middleware);
                     }
                 }
 
@@ -157,6 +160,7 @@ class Guzzle implements ConfigureInterface
             $clientServiceId = sprintf($this->alias.'.client.%s', $name);
             $container->setDefinition($clientServiceId, $client);
 
+            /** @var $options array */
             if (isset($options['alias'])) {
                 $container->setAlias($options['alias'], $clientServiceId);
             }
@@ -169,7 +173,7 @@ class Guzzle implements ConfigureInterface
             $config['handler'] = new Reference($config['handler']);
         }
 
-        if ($debug && function_exists('curl_init')) {
+        if ($debug && \function_exists('curl_init')) {
             $config['on_stats'] = [
                 new Reference($this->alias.'.data_collector.history_bag'),
                 'addStats',
