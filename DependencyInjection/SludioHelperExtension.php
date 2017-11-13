@@ -40,6 +40,7 @@ class SludioHelperExtension extends Extension
     public function load(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration($this->getAlias());
+        /** @var $config array[] */
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
@@ -55,7 +56,7 @@ class SludioHelperExtension extends Extension
         }
 
         foreach ($config['other'] as $key => $other) {
-            if (is_array($other)) {
+            if (\is_array($other)) {
                 foreach ($other as $variable => $value) {
                     $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['other'][$key][$variable]);
                 }
@@ -66,9 +67,11 @@ class SludioHelperExtension extends Extension
 
         foreach ($config['extensions'] as $key => $extension) {
             if (!isset($extension['enabled']) || $extension['enabled'] !== true) {
+                $container->setParameter($this->getAlias().'.'.$key.'.enabled', false);
                 continue;
             }
             $iterator = 0;
+            /** @var $extension array */
             foreach ($extension as $variable => $value) {
                 $iterator++;
                 if ($iterator === 1) {
@@ -87,6 +90,7 @@ class SludioHelperExtension extends Extension
                 $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
             }
             if ($component = $this->checkComponent($key)) {
+                /** @var $component ConfigureInterface */
                 $component->configure($container, $this->getAlias());
             }
         }
