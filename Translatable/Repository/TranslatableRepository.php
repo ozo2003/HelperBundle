@@ -158,7 +158,7 @@ class TranslatableRepository
 
         $translation = new Translation();
         $translation->setField($field)
-            ->setForeignKey($id)
+            ->setForeignKey((int)$id)
             ->setLocale($locale)
             ->setObjectClass($class)
             ->setContent($content)
