@@ -2,15 +2,15 @@
 
 namespace Sludio\HelperBundle\Guzzle\DataCollector;
 
+use GuzzleHttp\Exception\RequestException;
+use Namshi\Cuzzle\Formatter\CurlFormatter;
+use Psr\Http\Message\StreamInterface;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\History\History;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\CacheMiddleware;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\MockMiddleware;
-use GuzzleHttp\Exception\RequestException;
-use Psr\Http\Message\StreamInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\DataCollector\DataCollector;
-use Namshi\Cuzzle\Formatter\CurlFormatter;
 
 class GuzzleCollector extends DataCollector
 {

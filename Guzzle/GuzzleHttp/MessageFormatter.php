@@ -3,11 +3,11 @@
 namespace Sludio\HelperBundle\Guzzle\GuzzleHttp;
 
 use GuzzleHttp\MessageFormatter as BaseMessageFormatter;
+use GuzzleHttp\Psr7;
 use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Script\Utils\Helper;
-use GuzzleHttp\Psr7;
 
 class MessageFormatter extends BaseMessageFormatter
 {

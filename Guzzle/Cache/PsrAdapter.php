@@ -2,11 +2,11 @@
 
 namespace Sludio\HelperBundle\Guzzle\Cache;
 
-use Sludio\HelperBundle\Guzzle\Cache\NamingStrategy\HashNamingStrategy;
 use GuzzleHttp\Psr7\Response;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Sludio\HelperBundle\Guzzle\Cache\NamingStrategy\HashNamingStrategy;
 
 class PsrAdapter implements StorageAdapterInterface
 {

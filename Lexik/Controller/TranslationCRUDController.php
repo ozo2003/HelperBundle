@@ -3,10 +3,10 @@
 namespace Sludio\HelperBundle\Lexik\Controller;
 
 use Sludio\HelperBundle\Lexik\Event\RemoveLocaleCacheEvent;
-use Symfony\Component\HttpFoundation\Response;
 use Sonata\AdminBundle\Controller\CRUDController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class TranslationCRUDController extends CRUDController

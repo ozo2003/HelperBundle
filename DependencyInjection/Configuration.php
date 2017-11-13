@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\DependencyInjection;
 
+use GuzzleHttp\MessageFormatter;
+use Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector;
-use GuzzleHttp\MessageFormatter;
 
 class Configuration implements ConfigurationInterface
 {

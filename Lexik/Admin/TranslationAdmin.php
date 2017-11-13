@@ -2,11 +2,11 @@
 
 namespace Sludio\HelperBundle\Lexik\Admin;
 
-use Sonata\AdminBundle\Route\RouteCollection;
 use Lexik\Bundle\TranslationBundle\Manager\TransUnitManagerInterface;
+use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
-use Sonata\AdminBundle\Admin\AbstractAdmin;
+use Sonata\AdminBundle\Route\RouteCollection;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 

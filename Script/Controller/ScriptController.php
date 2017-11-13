@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sludio\HelperBundle\Sitemap\Dumper\MemoryDumper;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class ScriptController extends Controller
 {

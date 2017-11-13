@@ -2,11 +2,11 @@
 
 namespace Sludio\HelperBundle\Guzzle\Cache;
 
-use Sludio\HelperBundle\Guzzle\Cache\NamingStrategy\HashNamingStrategy;
 use Doctrine\Common\Cache\Cache;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Sludio\HelperBundle\Guzzle\Cache\NamingStrategy\HashNamingStrategy;
 
 class DoctrineAdapter implements StorageAdapterInterface
 {

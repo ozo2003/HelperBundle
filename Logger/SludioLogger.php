@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Logger;
 
-use Psr\Log\LoggerInterface;
 use InvalidArgumentException;
+use Psr\Log\LoggerInterface;
 
 class SludioLogger
 {

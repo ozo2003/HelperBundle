@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Repository;
 
-use Sludio\HelperBundle\Script\Utils\Helper;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Sludio\HelperBundle\Script\Utils\Helper;
 
 class QuickInsertRepository extends QuickInsertFunctions
 {

@@ -2,13 +2,13 @@
 
 namespace Sludio\HelperBundle\Guzzle\Cache;
 
+use GuzzleHttp\Psr7;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Guzzle\Cache\NamingStrategy\NamingStrategyInterface;
 use Sludio\HelperBundle\Guzzle\Cache\NamingStrategy\SubfolderNamingStrategy;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\CacheMiddleware;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\MockMiddleware;
-use GuzzleHttp\Psr7;
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Filesystem\Filesystem;
 
 class MockStorageAdapter implements StorageAdapterInterface

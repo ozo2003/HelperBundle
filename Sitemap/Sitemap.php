@@ -2,15 +2,14 @@
 
 namespace Sludio\HelperBundle\Sitemap;
 
-use Sludio\HelperBundle\Sitemap\Dumper\DumperInterface;
 use Sludio\HelperBundle\Sitemap\Dumper\DumperFileInterface;
-use Sludio\HelperBundle\Sitemap\Entity\Url;
+use Sludio\HelperBundle\Sitemap\Dumper\DumperInterface;
 use Sludio\HelperBundle\Sitemap\Entity\SitemapIndex;
+use Sludio\HelperBundle\Sitemap\Entity\Url;
 use Sludio\HelperBundle\Sitemap\Formatter\FormatterInterface;
 use Sludio\HelperBundle\Sitemap\Formatter\SitemapIndexFormatterInterface;
 use Sludio\HelperBundle\Sitemap\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
-
 
 class Sitemap
 {

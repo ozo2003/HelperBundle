@@ -2,11 +2,11 @@
 
 namespace Sludio\HelperBundle\DependencyInjection;
 
+use Sludio\HelperBundle\DependencyInjection\Component\ConfigureInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
-use Sludio\HelperBundle\DependencyInjection\Component\ConfigureInterface;
 
 /**
  * This is the class that loads and manages your bundle configuration.
