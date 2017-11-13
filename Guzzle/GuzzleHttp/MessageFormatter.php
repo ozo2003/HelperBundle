@@ -137,7 +137,7 @@ class MessageFormatter extends BaseMessageFormatter
 
             return (string)$this->error;
         }
-        
+
         return 'NULL';
     }
 

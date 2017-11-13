@@ -131,8 +131,8 @@ class GuzzleCollector extends DataCollector
     public function getTotalTime()
     {
         return array_sum(array_map(function($call) {
-                return isset($call['info']['total_time']) ? $call['info']['total_time'] : 0;
-            }, $this->data));
+            return isset($call['info']['total_time']) ? $call['info']['total_time'] : 0;
+        }, $this->data));
     }
 
     public function getCalls()

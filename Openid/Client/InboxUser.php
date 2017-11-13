@@ -42,8 +42,8 @@ class InboxUser implements SocialUserInterface
     protected $username;
 
     /**
-     * @param  array $response
-     * @param integer|null   $id
+     * @param  array       $response
+     * @param integer|null $id
      */
     public function __construct(array $response, $id = null)
     {

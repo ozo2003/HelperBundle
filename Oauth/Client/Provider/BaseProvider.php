@@ -54,6 +54,7 @@ abstract class BaseProvider extends AbstractProvider
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getParsedResponse($request);
         $prepared = $this->prepareAccessTokenResponse($response);
+
         return $this->createAccessToken($prepared, $grant);
     }
 

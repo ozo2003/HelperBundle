@@ -39,7 +39,7 @@ class CacheMiddleware
     {
         return $handler($request, $options)->then(function(ResponseInterface $response) use ($request) {
             $code = (int)floor((int)$response->getStatusCode() / 100);
-            if($code === 2) {
+            if ($code === 2) {
                 $this->adapter->save($request, $response);
             }
 

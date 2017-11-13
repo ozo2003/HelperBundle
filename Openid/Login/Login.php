@@ -78,9 +78,9 @@ class Login implements Loginable
     /**
      * Build the OpenID login URL.
      *
-     * @param string $return A custom return to URL
+     * @param string      $return A custom return to URL
      *
-     * @param string|null   $altRealm
+     * @param string|null $altRealm
      *
      * @return string
      * @throws Exception

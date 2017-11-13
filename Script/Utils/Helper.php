@@ -108,7 +108,7 @@ class Helper
         // @formatter:on
 
         $sum = 0;
-        foreach($calculations as $key => $calculation){
+        foreach ($calculations as $key => $calculation) {
             $sum += ($personCode[$key] * $calculation);
         }
 
