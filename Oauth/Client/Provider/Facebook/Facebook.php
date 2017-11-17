@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Facebook;
 
-use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
@@ -17,21 +17,21 @@ class Facebook extends BaseProvider
      *
      * @const string
      */
-    public const BASE_FACEBOOK_URL = 'https://www.facebook.com/';
+    const BASE_FACEBOOK_URL = 'https://www.facebook.com/';
 
     /**
      * Production Graph API URL.
      *
      * @const string
      */
-    public const BASE_GRAPH_URL = 'https://graph.facebook.com/';
+    const BASE_GRAPH_URL = 'https://graph.facebook.com/';
 
     /**
      * Regular expression used to check for graph API version format
      *
      * @const string
      */
-    public const GRAPH_API_VERSION_REGEX = '~^v\d+\.\d+$~';
+    const GRAPH_API_VERSION_REGEX = '~^v\d+\.\d+$~';
 
     /**
      * The Graph API version to use for requests.
@@ -45,7 +45,7 @@ class Facebook extends BaseProvider
      * @param array                      $collaborators
      * @param UrlGeneratorInterface|null $generator
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct($options = [], array $collaborators = [], UrlGeneratorInterface $generator = null)
     {

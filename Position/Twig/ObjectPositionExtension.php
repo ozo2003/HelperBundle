@@ -9,7 +9,7 @@ class ObjectPositionExtension extends \Twig_Extension
 {
     use TwigTrait;
 
-    public const NAME = 'position_object';
+    const NAME = 'position_object';
 
     /**
      * PositionHandler.

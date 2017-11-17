@@ -6,12 +6,12 @@ class Video
 {
     use VideoTrait;
 
-    public const RESTRICTION_DENY = 'deny';
-    public const RESTRICTION_ALLOW = 'allow';
+    const RESTRICTION_DENY = 'deny';
+    const RESTRICTION_ALLOW = 'allow';
 
-    public const PLATFORM_TV = 'tv';
-    public const PLATFORM_MOBILE = 'mobile';
-    public const PLATFORM_WEB = 'web';
+    const PLATFORM_TV = 'tv';
+    const PLATFORM_MOBILE = 'mobile';
+    const PLATFORM_WEB = 'web';
 
     public function setTitle($title)
     {

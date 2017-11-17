@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class StreamResponse extends Response
 {
-    public const BUFFER_SIZE = 4096;
+    const BUFFER_SIZE = 4096;
 
     private $bufferSize;
 

@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class OAuth2Client
 {
-    public const OAUTH2_SESSION_STATE_KEY = 'sludio_helper.oauth_client_state';
+    const OAUTH2_SESSION_STATE_KEY = 'sludio_helper.oauth_client_state';
 
     protected $provider;
     protected $requestStack;

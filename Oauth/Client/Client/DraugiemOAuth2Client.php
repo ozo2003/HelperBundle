@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class DraugiemOAuth2Client extends OAuth2Client
 {
-    public const METHOD = 'POST';
+    const METHOD = 'POST';
 
     public function redirect(array $scopes = [], array $options = [], $token = null)
     {

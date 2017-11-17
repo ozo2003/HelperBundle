@@ -107,6 +107,7 @@ abstract class TranslationAdmin extends AbstractAdmin
 
     /**
      * @return array
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      */
     public function getFilterParameters()
     {
@@ -199,6 +200,8 @@ abstract class TranslationAdmin extends AbstractAdmin
 
     /**
      * @param FormMapper $form
+     *
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      */
     protected function configureFormFields(FormMapper $form)
     {

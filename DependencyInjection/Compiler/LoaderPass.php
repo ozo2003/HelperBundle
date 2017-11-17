@@ -8,7 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class LoaderPass implements CompilerPassInterface
 {
-    public const NAME = 'sludio_helper.guzzle';
+    const NAME = 'sludio_helper.guzzle';
 
     public function process(ContainerBuilder $container)
     {

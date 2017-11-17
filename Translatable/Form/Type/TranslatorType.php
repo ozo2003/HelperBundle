@@ -22,8 +22,8 @@ class TranslatorType extends AbstractType
     private $userLocale;
     protected $container;
 
-    public const DEFAULT_CLASS = '';
-    public const DEFAULT_TYPE = 'text';
+    const DEFAULT_CLASS = '';
+    const DEFAULT_TYPE = 'text';
 
     public function __construct($locales, Manager $manager, TranslatorInterface $translator, $container)
     {

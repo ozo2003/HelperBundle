@@ -62,7 +62,7 @@ class MockStorageAdapter implements StorageAdapterInterface
             $response = $response->withoutHeader($header);
         }
 
-        [$strategy] = $this->namingStrategies;
+        list($strategy) = $this->namingStrategies;
 
         $filename = $this->getFilename($strategy->filename($request));
 

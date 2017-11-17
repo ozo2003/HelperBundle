@@ -23,9 +23,7 @@ class ClearCacheCommand extends ContainerAwareCommand
      * @param OutputInterface $output
      *
      * @return int|null|void
-     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
-     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceCircularReferenceException
-     * @throws \LogicException
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {

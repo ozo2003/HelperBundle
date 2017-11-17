@@ -12,7 +12,7 @@ class Google extends AbstractProvider
 {
     use BearerAuthorizationTrait;
 
-    public const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
+    const ACCESS_TOKEN_RESOURCE_OWNER_ID = 'id';
 
     /**
      * @var string If set, this will be sent to google as the "access_type" parameter.

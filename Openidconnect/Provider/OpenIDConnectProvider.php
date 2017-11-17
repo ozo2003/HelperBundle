@@ -137,8 +137,8 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * @param  array $options
      *
      * @return AccessToken
-     * @throws \BadMethodCallException
      * @throws InvalidTokenException
+     * @throws \BadMethodCallException
      */
     public function getAccessToken($grant, array $options = [])
     {

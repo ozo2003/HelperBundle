@@ -17,8 +17,8 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class MiddlewarePass implements CompilerPassInterface
 {
-    public const MIDDLEWARE_TAG = 'sludio_helper.guzzle.middleware';
-    public const CLIENT_TAG = 'sludio_helper.guzzle.client';
+    const MIDDLEWARE_TAG = 'sludio_helper.guzzle.middleware';
+    const CLIENT_TAG = 'sludio_helper.guzzle.client';
 
     public function process(ContainerBuilder $container)
     {
@@ -33,7 +33,7 @@ class MiddlewarePass implements CompilerPassInterface
      * @param ContainerBuilder $container
      *
      * @return array
-     * @throws \LogicException
+     * @throws LogicException
      */
     private function findAvailableMiddleware(ContainerBuilder $container)
     {
@@ -42,11 +42,11 @@ class MiddlewarePass implements CompilerPassInterface
 
         foreach ($services as $id => $tags) {
             if (\count($tags) > 1) {
-                throw new \LogicException(sprintf('Middleware should only use a single \'%s\' tag', self::MIDDLEWARE_TAG));
+                throw new LogicException(sprintf('Middleware should only use a single \'%s\' tag', self::MIDDLEWARE_TAG));
             }
 
             if (!isset($tags[0]['alias'])) {
-                throw new \LogicException(sprintf('The \'alias\' attribute is mandatory for the \'%s\' tag', self::MIDDLEWARE_TAG));
+                throw new LogicException(sprintf('The \'alias\' attribute is mandatory for the \'%s\' tag', self::MIDDLEWARE_TAG));
             }
 
             $priority = isset($tags[0]['priority']) ? $tags[0]['priority'] : 0;
@@ -68,7 +68,7 @@ class MiddlewarePass implements CompilerPassInterface
      * @param ContainerBuilder $container
      * @param array            $middlewareBag
      *
-     * @throws \LogicException
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
      */
     private function registerMiddleware(ContainerBuilder $container, array $middlewareBag)
     {
@@ -80,7 +80,7 @@ class MiddlewarePass implements CompilerPassInterface
 
         foreach ($clients as $clientId => $tags) {
             if (\count($tags) > 1) {
-                throw new \LogicException(sprintf('Clients should use a single \'%s\' tag', self::CLIENT_TAG));
+                throw new LogicException(sprintf('Clients should use a single \'%s\' tag', self::CLIENT_TAG));
             }
 
             try {

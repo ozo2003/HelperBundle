@@ -12,17 +12,17 @@ class Draugiem extends AbstractProvider
     /**
      * Draugiem.lv API URL
      */
-    public const API_URL = 'http://api.draugiem.lv/json/';
+    const API_URL = 'http://api.draugiem.lv/json/';
 
     /**
      * Draugiem.lv passport login URL
      */
-    public const LOGIN_URL = 'https://api.draugiem.lv/authorize/';
+    const LOGIN_URL = 'https://api.draugiem.lv/authorize/';
 
     /**
      * Timeout in seconds for session_check requests
      */
-    public const SESSION_CHECK_TIMEOUT = 180;
+    const SESSION_CHECK_TIMEOUT = 180;
 
     /**
      * @param array $options
@@ -30,7 +30,7 @@ class Draugiem extends AbstractProvider
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct($options = [], array $collaborators = [])
+    public function __construct(array $options = [], array $collaborators = [])
     {
         parent::__construct($options, $collaborators);
     }

@@ -82,6 +82,7 @@ class TranslationCRUDController extends CRUDController
 
     /**
      * @return RedirectResponse|Response
+     * @throws NotFoundHttpException
      */
     public function createTransUnitAction()
     {

@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\DataCollector\DataCollector;
 
 class GuzzleCollector extends DataCollector
 {
-    public const MAX_BODY_SIZE = 0x10000;
+    const MAX_BODY_SIZE = 0x10000;
 
     private $maxBodySize;
     private $history;

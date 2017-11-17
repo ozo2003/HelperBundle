@@ -14,9 +14,9 @@ class Twitter extends AbstractProvider
 {
     public $twitter;
 
-    public const URL_REQUEST_TOKEN = 'oauth/request_token';
-    public const URL_AUTHORIZE = 'oauth/authorize';
-    public const URL_ACCESS_TOKEN = 'oauth/access_token';
+    const URL_REQUEST_TOKEN = 'oauth/request_token';
+    const URL_AUTHORIZE = 'oauth/authorize';
+    const URL_ACCESS_TOKEN = 'oauth/access_token';
 
     public function getBaseAuthorizationUrl()
     {

@@ -9,7 +9,7 @@ class AccessToken extends BaseAccessToken
 {
     protected $idToken;
 
-    public function __construct($options = [])
+    public function __construct(array $options = [])
     {
         parent::__construct($options);
 

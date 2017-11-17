@@ -13,7 +13,7 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * The reCAPTCHA server URL's
      */
-    public const RECAPTCHA_VERIFY_SERVER = 'https://www.google.com';
+    const RECAPTCHA_VERIFY_SERVER = 'https://www.google.com';
 
     /**
      * Recaptcha Private Key

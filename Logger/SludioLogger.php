@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Logger;
 
-use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 
 class SludioLogger
@@ -14,7 +14,7 @@ class SludioLogger
      *
      * @param LoggerInterface $logger
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct($logger = null)
     {

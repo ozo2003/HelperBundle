@@ -9,12 +9,12 @@ class RemoveLocaleCacheEvent extends Event
     /**
      * @const String
      */
-    public const PRE_REMOVE_LOCAL_CACHE = 'pre_remove_local_cache.event';
+    const PRE_REMOVE_LOCAL_CACHE = 'pre_remove_local_cache.event';
 
     /**
      * @const String
      */
-    public const POST_REMOVE_LOCAL_CACHE = 'post_remove_local_cache.event';
+    const POST_REMOVE_LOCAL_CACHE = 'post_remove_local_cache.event';
 
     /**
      * @var array

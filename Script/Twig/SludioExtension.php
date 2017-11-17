@@ -8,11 +8,11 @@ class SludioExtension extends \Twig_Extension
 {
     use TwigTrait;
 
-    public const INFO = 'info';
-    public const SUCCESS = 'success';
-    public const REDIRECT = 'redirect';
-    public const CLIENT = 'client_error';
-    public const SERVER = 'server_error';
+    const INFO = 'info';
+    const SUCCESS = 'success';
+    const REDIRECT = 'redirect';
+    const CLIENT = 'client_error';
+    const SERVER = 'server_error';
 
     protected $appDir;
     private $paths = [];

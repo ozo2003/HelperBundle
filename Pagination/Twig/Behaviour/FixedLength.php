@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Pagination\Twig\Behaviour;
 
-use InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 final class FixedLength extends AbstractBehaviour
 {
