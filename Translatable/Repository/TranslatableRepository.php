@@ -57,8 +57,8 @@ class TranslatableRepository
     private static function getFromRedis($key, &$result, &$checked)
     {
         if (self::$redis !== null) {
-            $result = unserialize(self::$redis->get(self::tKey($key)), ['allowed_classes' => false]);
-            $checked = unserialize(self::$redis->get(self::cKey($key)), ['allowed_classes' => false]);
+            $result = unserialize(self::$redis->get(self::tKey($key)));
+            $checked = unserialize(self::$redis->get(self::cKey($key)));
         }
     }
 
