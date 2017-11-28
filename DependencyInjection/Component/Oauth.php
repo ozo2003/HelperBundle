@@ -54,7 +54,7 @@ class Oauth implements ExtensionInterface
         return $this->configurators[$type];
     }
 
-    public function buildClientConfiguration(NodeDefinition &$node)
+    public function buildClientConfiguration(NodeDefinition $node)
     {
         $optionsNode = $node->children();
 
@@ -116,7 +116,7 @@ class Oauth implements ExtensionInterface
         return $clientServiceKey;
     }
 
-    public function configure(ContainerBuilder &$container, $alias)
+    public function configure(ContainerBuilder $container, $alias)
     {
         $this->alias = $alias.'.oauth';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');

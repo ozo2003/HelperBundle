@@ -13,7 +13,7 @@ class Guzzle implements ConfigureInterface
 {
     protected $alias;
 
-    public function configure(ContainerBuilder &$container, $alias)
+    public function configure(ContainerBuilder $container, $alias)
     {
         $this->alias = $alias.'.guzzle';
         $dataCollector = $container->getDefinition($this->alias.'.data_collector.guzzle');

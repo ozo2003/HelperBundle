@@ -12,7 +12,7 @@ class Openid implements ExtensionInterface
 {
     protected $alias;
 
-    public function configure(ContainerBuilder &$container, $alias)
+    public function configure(ContainerBuilder $container, $alias)
     {
         $this->alias = $alias.'.openid';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');
@@ -54,7 +54,7 @@ class Openid implements ExtensionInterface
         }
     }
 
-    public function buildClientConfiguration(NodeDefinition &$node)
+    public function buildClientConfiguration(NodeDefinition $node)
     {
         $optionsNode = $node->children();
 

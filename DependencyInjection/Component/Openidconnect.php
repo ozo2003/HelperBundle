@@ -12,7 +12,7 @@ class Openidconnect implements ExtensionInterface
 {
     protected $alias;
 
-    public function buildClientConfiguration(NodeDefinition &$node)
+    public function buildClientConfiguration(NodeDefinition $node)
     {
         $optionsNode = $node->children();
 
@@ -47,7 +47,7 @@ class Openidconnect implements ExtensionInterface
         $optionsNode->end();
     }
 
-    private function buildUri(NodeDefinition &$node)
+    private function buildUri(NodeDefinition $node)
     {
         $optionsNode = $node->children();
 
@@ -75,7 +75,7 @@ class Openidconnect implements ExtensionInterface
         ]);
     }
 
-    public function configure(ContainerBuilder &$container, $alias)
+    public function configure(ContainerBuilder $container, $alias)
     {
         $this->alias = $alias.'.openidconnect';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');

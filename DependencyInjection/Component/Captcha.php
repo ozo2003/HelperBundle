@@ -38,7 +38,7 @@ class Captcha implements ExtensionInterface
         return $this->configurators[$type];
     }
 
-    public function configure(ContainerBuilder &$container, $alias)
+    public function configure(ContainerBuilder $container, $alias)
     {
         $this->alias = $alias.'.captcha';
         $clientConfigurations = $container->getParameter($this->alias.'.clients');
@@ -76,7 +76,7 @@ class Captcha implements ExtensionInterface
         }
     }
 
-    public function buildClientConfiguration(NodeDefinition &$node)
+    public function buildClientConfiguration(NodeDefinition $node)
     {
         $optionsNode = $node->children();
         $this->getConfigurator($this->getType())->buildConfiguration($optionsNode);

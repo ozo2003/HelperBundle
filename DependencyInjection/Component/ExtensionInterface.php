@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 interface ExtensionInterface extends ConfigureInterface
 {
-    public function buildClientConfiguration(NodeDefinition &$node);
+    public function buildClientConfiguration(NodeDefinition $node);
 
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = []);
 }
