@@ -59,7 +59,7 @@ class Oci8 extends PDO
      */
     public function prepare($statement, array $options = [])
     {
-        $sth = @oci_parse($this->dbh, $statement);
+        $sth = oci_parse($this->dbh, $statement);
 
         if (!$sth) {
             $e = oci_error($this->dbh);
@@ -353,7 +353,6 @@ class Oci8 extends PDO
      *
      * @return string Returns a quoted string that is theoretically safe to pass
      *   into an SQL statement.
-     * @todo Implement support for $paramType.
      */
     public function quote($string, $paramType = PDO::PARAM_STR)
     {
@@ -420,9 +419,9 @@ class Oci8 extends PDO
         $dbName = '(DESCRIPTION = (ADDRESS = (PROTOCOL = TCP)(Host = '.$host.') (Port = '.$port.')) (CONNECT_DATA = (SID = '.$dbName.')))';
 
         if (array_key_exists(PDO::ATTR_PERSISTENT, $options) && $options[PDO::ATTR_PERSISTENT]) {
-            $this->dbh = @oci_pconnect($username, $password, $dbName, $charset);
+            $this->dbh = oci_pconnect($username, $password, $dbName, $charset);
         } else {
-            $this->dbh = @oci_connect($username, $password, $dbName, $charset);
+            $this->dbh = oci_connect($username, $password, $dbName, $charset);
         }
 
         if (!$this->dbh) {

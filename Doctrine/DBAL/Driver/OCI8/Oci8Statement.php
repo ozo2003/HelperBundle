@@ -20,7 +20,7 @@ class Oci8Statement extends PDOStatement
     /**
      * @var array Statement options
      */
-    private $options = [];
+    private $options;
 
     /**
      * @var int Fetch mode selected via setFetchMode()
@@ -43,7 +43,7 @@ class Oci8Statement extends PDOStatement
     private $fetchCtorargs = [];
 
     /**
-     * @var object Object reference for PDO::FETCH_INTO fetch mode
+     * @var object|array|null Object reference for PDO::FETCH_INTO fetch mode
      */
     private $fetchIntoObject;
 
@@ -119,7 +119,7 @@ class Oci8Statement extends PDOStatement
             }
         }
 
-        $result = @oci_execute($this->sth, $mode);
+        $result = oci_execute($this->sth, $mode);
 
         if ($result && count($this->saveLobs) > 0) {
             foreach ($this->saveLobs as $lobName => $object) {
@@ -127,7 +127,7 @@ class Oci8Statement extends PDOStatement
             }
         }
 
-        if ($result != true) {
+        if ($result !== true) {
             $e = oci_error($this->sth);
             throw new Oci8Exception($e['message'], $e['code']);
         }
@@ -157,7 +157,6 @@ class Oci8Statement extends PDOStatement
      *
      * @return mixed The return value of this function on success depends on the
      *   fetch type. In all cases, FALSE is returned on failure.
-     * @todo Implement cursorOrientation and cursorOffset
      */
     public function fetch($fetchStyle = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
     {
@@ -176,20 +175,20 @@ class Oci8Statement extends PDOStatement
                 return $this->fetchArray(OCI_NUM + OCI_RETURN_NULLS, false);
 
             case PDO::FETCH_COLUMN:
-                return $this->fetchColumn((int)$this->fetchColno);
+                return $this->fetchColumn($this->fetchColno);
 
             case PDO::FETCH_INTO:
                 $rs = $this->fetchArray(OCI_ASSOC + OCI_RETURN_NULLS, $toLowercase);
                 if (is_object($this->fetchIntoObject)) {
                     return $this->populateObject($this->fetchIntoObject, $rs);
-                } else {
-                    return false;
                 }
+
+                return false;
 
             case PDO::FETCH_OBJ:
             case PDO::FETCH_CLASS:
             case PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE:
-                $className = ($fetchStyle === PDO::FETCH_OBJ) ? '\stdClass' : $this->fetchClassName;
+                $className = ($fetchStyle === PDO::FETCH_OBJ) ? \stdClass::class : $this->fetchClassName;
                 $ctorargs = ($fetchStyle === PDO::FETCH_OBJ) ? [] : $this->fetchCtorargs;
 
                 return $this->fetchObject($className, $ctorargs);
@@ -212,7 +211,7 @@ class Oci8Statement extends PDOStatement
     public function setFetchMode($mode, $modeArg = null, array $ctorArgs = [])
     {
         $this->fetchStyle = $mode;
-        $this->fetchClassName = '\stdClass';
+        $this->fetchClassName = \stdClass::class;
         $this->fetchCtorargs = [];
         $this->fetchColno = 0;
         $this->fetchIntoObject = null;
@@ -270,8 +269,9 @@ class Oci8Statement extends PDOStatement
      * @return array Array containing all of the remaining rows in the result
      *   set. The array represents each row as either an array of column values
      *   or an object with properties corresponding to each column name.
+     * @throws \Sludio\HelperBundle\Doctrine\DBAL\Driver\OCI8\Oci8Exception
      */
-    public function fetchAll($fetchMode = null, $fetchArgument = null, $ctorArgs = null)
+    public function fetchAll($fetchMode = null, $fetchArgument = null, array $ctorArgs = [])
     {
         if ($fetchMode !== null) {
             $this->setFetchMode($fetchMode, $fetchArgument, $ctorArgs ?: []);
@@ -292,8 +292,9 @@ class Oci8Statement extends PDOStatement
      * @param array  $ctorArgs
      *
      * @return mixed
+     * @throws \ReflectionException
      */
-    public function fetchObject($className = "stdClass", $ctorArgs = null)
+    public function fetchObject($className = 'stdClass', array $ctorArgs = [])
     {
         $className = $className ?: $this->fetchClassName;
 
@@ -326,13 +327,13 @@ class Oci8Statement extends PDOStatement
      * @param array  $options   [optional]
      *
      * @return bool TRUE on success or FALSE on failure.
-     * @todo Map PDO datatypes to oci8 datatypes and implement support for
      *   datatypes and length.
+     * @throws \Sludio\HelperBundle\Doctrine\DBAL\Driver\OCI8\Oci8Exception
      */
     public function bindParam($parameter, &$variable, $dataType = PDO::PARAM_STR, $maxLength = -1, $options = [Oci8::LOB_SQL])
     {
         if (is_numeric($parameter)) {
-            throw new Oci8Exception("bind numerical params has not been implemented");
+            throw new Oci8Exception('bind numerical params has not been implemented');
         }
 
         if ($dataType === PDO::PARAM_LOB) {
@@ -361,11 +362,11 @@ class Oci8Statement extends PDOStatement
                 $oci_type = $dataType;
 
                 $this->lobsValue[$parameter] = $variable;
-                $variable = $this->connection->getNewDescriptor(OCI_D_LOB);
+                $variable = $this->connection->getNewDescriptor();
 
-                if (in_array(Oci8::LOB_SQL, $options)) {
+                if (in_array(Oci8::LOB_SQL, $options, true)) {
                     $this->saveLobs[$parameter] = &$variable;
-                } elseif (in_array(Oci8::LOB_PL_SQL, $options)) {
+                } elseif (in_array(Oci8::LOB_PL_SQL, $options, true)) {
                     $this->writeLobs[$parameter] = [
                         'type' => $oci_type,
                         'object' => $variable,
@@ -393,7 +394,7 @@ class Oci8Statement extends PDOStatement
                 break;
         }
 
-        return @oci_bind_by_name($this->sth, $parameter, $variable, $maxLength, $oci_type);
+        return oci_bind_by_name($this->sth, $parameter, $variable, $maxLength, $oci_type);
     }
 
     /**
@@ -614,11 +615,10 @@ class Oci8Statement extends PDOStatement
      *
      * @throws Oci8Exception
      * @return bool TRUE on success or FALSE on failure.
-     * @todo Implement method
      */
     public function nextRowset()
     {
-        throw new Oci8Exception("nextRowset has not been implemented");
+        throw new Oci8Exception('nextRowset has not been implemented');
     }
 
     /**
@@ -626,7 +626,6 @@ class Oci8Statement extends PDOStatement
      *
      * @throws Oci8Exception
      * @return bool TRUE on success or FALSE on failure.
-     * @todo Implement method
      */
     public function closeCursor()
     {
@@ -638,11 +637,10 @@ class Oci8Statement extends PDOStatement
      *
      * @throws Oci8Exception
      * @return bool TRUE on success or FALSE on failure.
-     * @todo Implement method
      */
     public function debugDumpParams()
     {
-        throw new Oci8Exception("debugDumpParams has not been implemented");
+        throw new Oci8Exception('debugDumpParams has not been implemented');
     }
 
     /**
@@ -659,13 +657,9 @@ class Oci8Statement extends PDOStatement
      *
      * @throws Oci8Exception
      * @return bool TRUE on success or FALSE on failure.
-     * @todo Implement this functionality by creating a table map of the
-     *       variables passed in here, and, when iterating over the values
-     *       of the query or fetching rows, assign data from each column
-     *       to their respective variable in the map.
      */
     public function bindColumn($column, &$variable, $dataType = null, $maxLength = -1, $options = null)
     {
-        throw new Oci8Exception("bindColumn has not been implemented");
+        throw new Oci8Exception('bindColumn has not been implemented');
     }
 }
