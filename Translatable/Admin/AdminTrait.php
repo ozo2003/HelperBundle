@@ -2,13 +2,13 @@
 
 namespace Sludio\HelperBundle\Translatable\Admin;
 
-use Doctrine\ORM\QueryBuilder;
+use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 trait AdminTrait
 {
     abstract public function getClass();
 
-    public function getTranslationFilter(QueryBuilder $queryBuilder, $alias, $field, $value)
+    public function getTranslationFilter(ProxyQuery $queryBuilder, $alias, $field, $value)
     {
         if (!isset($value['value'])) {
             return false;
