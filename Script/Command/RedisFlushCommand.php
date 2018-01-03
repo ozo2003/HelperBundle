@@ -15,20 +15,25 @@ class RedisFlushCommand extends ContainerAwareCommand
     {
         $this->setName('sludio:redis:flush')->setDefinition(new InputDefinition([
             new InputArgument('clients', InputArgument::IS_ARRAY | InputArgument::OPTIONAL),
-        ]))
-        ;
+        ]));
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    private function getClients($services)
     {
         $clients = [];
-        $ids = $this->getContainer()->getServiceIds();
-        /** @var $ids array */
-        foreach ($ids as $id) {
+        /** @var array $services */
+        foreach ($services as $id) {
             if (0 === strpos($id, 'snc_redis') && $this->getContainer()->get($id) instanceof Client) {
                 $clients[] = $id;
             }
         }
+
+        return $clients;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $clients = $this->getClients($this->getContainer()->getServiceIds());
 
         if (!empty($clients)) {
             $allowed = $clients;

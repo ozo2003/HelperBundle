@@ -106,7 +106,7 @@ abstract class QuickInsertFunctions
         return Helper::oneSpace($sql);
     }
 
-    private static function numeric($tableName, $key, $value)
+    protected static function numeric($tableName, $key, $value)
     {
         $intTypes = [
             'boolean',

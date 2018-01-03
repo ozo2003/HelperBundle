@@ -135,36 +135,28 @@ class QuickInsertRepository extends QuickInsertFunctions
     {
         self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
-        $result = self::get(['table_name' => $tableName], true, ['id' => $id], ['*']);
-        if ($result !== null) {
+        $result = self::get(['table_name' => $tableName], true, ['id' => $id], ['*']) ?: [];
+        if (isset($result['id'])) {
             unset($result['id']);
-        } else {
-            $result = [];
         }
         $data = [];
 
-        $flip = array_flip($columns);
         if (!empty($result)) {
             foreach ($result as $key => $value) {
                 $content = self::value($object, $key, $type, false);
-                if ($content !== $value) {
+                if ($id && !\in_array($content, [
+                        null,
+                        $value,
+                    ], true)) {
                     $data[$key] = $content;
-                }
-                if (!$id && $content === null) {
-                    unset($data[$key]);
                 }
             }
         }
 
-        if ($data) {
+        if (!empty($data)) {
             $sql = sprintf('UPDATE %s SET ', $tableName);
             foreach ($data as $key => $value) {
-                $intTypes = [
-                    'boolean',
-                    'integer',
-                    'longint',
-                ];
-                if (\in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes, false)) {
+                if (self::numeric($tableName, $key, $value)) {
                     $value = (int)$value;
                 } else {
                     $value = "'".addslashes(trim($value))."'";

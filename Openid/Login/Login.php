@@ -75,6 +75,25 @@ class Login implements Loginable
         return true;
     }
 
+    private function getParams($return, $realm)
+    {
+        $params = [
+            'openid.ns' => 'http://specs.openid.net/auth/2.0',
+            'openid.mode' => 'checkid_setup',
+            'openid.return_to' => $return,
+            'openid.realm' => $realm,
+            'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
+            'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
+        ];
+
+        if ($this->nsMode === 'sreg') {
+            $params['openid.ns.sreg'] = 'http://openid.net/extensions/sreg/1.1';
+            $params['openid.sreg.required'] = $this->sregFields;
+        }
+
+        return $params;
+    }
+
     /**
      * Build the OpenID login URL.
      *
@@ -88,33 +107,17 @@ class Login implements Loginable
     public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
         $useHttps = $this->request->server->get('HTTPS') || ($this->request->server->get('HTTP_X_FORWARDED_PROTO') && $this->request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
+        $realm = $altRealm ?: ($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST');
+
         if (null !== $return) {
             if (!$this->validateUrl($return)) {
                 throw new Exception('error_oauth_invalid_return_url');
             }
         } else {
-            if ($altRealm === null) {
-                $return = ($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST').$this->request->server->get('SCRIPT_NAME');
-            } else {
-                $return = $altRealm.$this->request->server->get('SCRIPT_NAME');
-            }
+            $return = $realm.$this->request->server->get('SCRIPT_NAME');
         }
 
-        $params = [
-            'openid.ns' => 'http://specs.openid.net/auth/2.0',
-            'openid.mode' => 'checkid_setup',
-            'openid.return_to' => $return,
-            'openid.realm' => $altRealm !== null ? $altRealm : (($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST')),
-            'openid.identity' => 'http://specs.openid.net/auth/2.0/identifier_select',
-            'openid.claimed_id' => 'http://specs.openid.net/auth/2.0/identifier_select',
-        ];
-
-        if ($this->nsMode === 'sreg') {
-            $params['openid.ns.sreg'] = 'http://openid.net/extensions/sreg/1.1';
-            $params['openid.sreg.required'] = $this->sregFields;
-        }
-
-        return $this->openidUrl.'/'.$this->apiKey.'/?'.http_build_query($params);
+        return $this->openidUrl.'/'.$this->apiKey.'/?'.http_build_query($this->getParams($return, $realm));
     }
 
     /**
