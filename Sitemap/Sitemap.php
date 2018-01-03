@@ -33,7 +33,7 @@ class Sitemap
         }
         $this->limit = $limit;
         if ($this->isSitemapIndexable()) {
-            if($dumper instanceof DumperFileInterface) {
+            if ($dumper instanceof DumperFileInterface) {
                 $this->originalFilename = $dumper->getFilename();
             }
         }
