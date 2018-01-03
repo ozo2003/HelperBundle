@@ -11,6 +11,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class TranslatorType extends AbstractType
 {
@@ -45,13 +46,19 @@ class TranslatorType extends AbstractType
         ];
         foreach ($fields as $type) {
             if (!isset($object['fields'][$field][$type])) {
-                $object['ields'][$field][$type] = \constant('self::DEFAULT_'.strtoupper($type));
+                $object['fields'][$field][$type] = \constant('self::DEFAULT_'.strtoupper($type));
             }
         }
 
         return true;
     }
 
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     *
+     * @throws InvalidConfigurationException
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $admin = $options['sonata_field_description']->getAdmin();
@@ -69,14 +76,14 @@ class TranslatorType extends AbstractType
 
         $under = 'sludio_helper.extensions.translatable.entities';
         if ($entity === null || $entity['entity'] !== $className) {
-            throw new \Exception('Entity '.$className.' not defined under '.$under);
+            throw new InvalidConfigurationException('Entity '.$className.' not defined under '.$under);
         }
 
         $id = $admin->getSubject()->getId();
         $fieldName = $builder->getName();
 
         if (!$this->checkOptions($entity, $fieldName)) {
-            throw new \Exception('No fields defined for '.$className.' under '.$under.'.'.$entity['name']);
+            throw new InvalidConfigurationException('No fields defined or fields missing for '.$className.' under '.$under.'.'.$entity['name']);
         }
 
         $fieldType = $entity['fields'][$fieldName]['type'];

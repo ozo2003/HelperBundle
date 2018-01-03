@@ -128,7 +128,8 @@ class SludioExtension extends \Twig_Extension
         }
 
         if (\strlen($body) > $length) {
-            $body = substr($body, 0, strpos($body, ' ', $length)).'...';
+            $spacePosition = strpos($body, ' ', $length) ?: $length;
+            $body = substr($body, 0, $spacePosition).'...';
         }
 
         return $body;
@@ -153,7 +154,7 @@ class SludioExtension extends \Twig_Extension
             case 'json':
                 return json_encode(json_decode($code), JSON_PRETTY_PRINT);
             case 'xml':
-                $xml = new \DomDocument('1.0');
+                $xml = new \DomDocument('1.0', 'UTF-8');
                 $xml->preserveWhiteSpace = false;
                 $xml->formatOutput = true;
                 $xml->loadXML($code);

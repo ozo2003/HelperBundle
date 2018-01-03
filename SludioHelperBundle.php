@@ -24,10 +24,10 @@ class SludioHelperBundle extends Bundle
     {
         parent::build($container);
         $passes = [
-            'Sludio\HelperBundle\DependencyInjection\Compiler\TemplatingPass',
-            'Sludio\HelperBundle\DependencyInjection\Compiler\LoaderPass',
-            'Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass',
-            'Sludio\HelperBundle\DependencyInjection\Compiler\UrlProviderPass',
+            DependencyInjection\Compiler\TemplatingPass::class,
+            DependencyInjection\Compiler\LoaderPass::class,
+            DependencyInjection\Compiler\MiddlewarePass::class,
+            DependencyInjection\Compiler\UrlProviderPass::class,
         ];
         foreach ($passes as $pass) {
             $container->addCompilerPass(new $pass());

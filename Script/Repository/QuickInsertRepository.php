@@ -66,7 +66,7 @@ class QuickInsertRepository extends QuickInsertFunctions
             if (\count($fields) === 1 && $fields[0] !== '*') {
                 $field = $fields[0];
             }
-            if ($field) {
+            if ($field !== null) {
                 if (!$one) {
                     /** @var $result array */
                     foreach ($result as &$res) {

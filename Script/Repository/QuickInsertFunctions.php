@@ -106,6 +106,26 @@ abstract class QuickInsertFunctions
         return Helper::oneSpace($sql);
     }
 
+    private static function numeric($tableName, $key, $value)
+    {
+        $intTypes = [
+            'boolean',
+            'integer',
+            'longint',
+        ];
+        $flip = array_flip(self::$mock[$tableName]);
+
+        if (isset(self::$metadata[$tableName], $flip[$key])) {
+            if (\in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes, false)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        return is_numeric($value);
+    }
+
     protected static function buildWhere($tableName, array $where)
     {
         $whereSql = '';
@@ -115,11 +135,11 @@ abstract class QuickInsertFunctions
             $path = ' WHERE ';
             foreach ($where as $key => $value) {
                 if (!\is_array($value) && isset(self::$mock[$tableName][$key])) {
-                    $whereSql .= $path.self::$mock[$tableName][$key].' = '.(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
+                    $whereSql .= $path.self::$mock[$tableName][$key].' = '.(self::numeric($tableName, $key, $value) ? $value : "'".addslashes(trim($value))."'");
                 } elseif (\is_array($value)) {
                     $whereSql .= $path.$value[0];
                 } else {
-                    $whereSql .= $path.$key.' = '.(is_numeric($value) ? $value : "'".addslashes(trim($value))."'");
+                    $whereSql .= $path.$key.' = '.(self::numeric($tableName, $key, $value) ? $value : "'".addslashes(trim($value))."'");
                 }
                 if ($key === $first) {
                     $path = ' AND ';

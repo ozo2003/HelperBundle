@@ -30,7 +30,7 @@ class InsertFunctions
     }
 
     /**
-     * @param null $object
+     * @param null|object $object
      *
      * @return InsertFunctions
      */
