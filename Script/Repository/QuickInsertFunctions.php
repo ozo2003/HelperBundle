@@ -113,7 +113,10 @@ abstract class QuickInsertFunctions
             'integer',
             'longint',
         ];
-        $flip = array_flip(self::$mock[$tableName]);
+        $flip = [];
+        if(isset(self::$mock[$tableName])) {
+            $flip = array_flip(self::$mock[$tableName]);
+        }
 
         if (isset(self::$metadata[$tableName], $flip[$key])) {
             if (\in_array(self::$metadata[$tableName]->getFieldMapping($flip[$key])['type'], $intTypes, false)) {
