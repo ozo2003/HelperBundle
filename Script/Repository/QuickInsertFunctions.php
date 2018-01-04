@@ -28,7 +28,11 @@ abstract class QuickInsertFunctions
         $container = $kernel->getContainer();
 
         $manager = $manager ?: $container->getParameter('sludio_helper.entity.manager');
-        self::$entityManager = $container->get('doctrine')->getManager($manager);
+        if(\is_object($manager)){
+            self::$entityManager = $manager;
+        } else {
+            self::$entityManager = $container->get('doctrine')->getManager($manager);
+        }
         self::$connection = self::$entityManager->getConnection();
     }
 
