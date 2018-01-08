@@ -77,6 +77,13 @@ abstract class BaseEntity
         return $this->{$getter}();
     }
 
+    public function __isset($name)
+    {
+        $getter = 'get'.ucfirst($name);
+
+        return method_exists($this, $getter) && $this->$getter() !== null;
+    }
+
     public function __set($property, $value)
     {
         $pos = strpos($property, '_');

@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Translatable\Form\Type;
 
 use Sludio\HelperBundle\Translatable\Helper\Manager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -12,6 +13,7 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use Sonata\AdminBundle\Admin\AdminInterface;
 
 class TranslatorType extends AbstractType
 {
@@ -61,6 +63,7 @@ class TranslatorType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var AdminInterface $admin */
         $admin = $options['sonata_field_description']->getAdmin();
 
         $entities = $this->container->getParameter('sludio_helper.translatable.entities');

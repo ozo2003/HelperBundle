@@ -13,6 +13,31 @@ class Translation
     private $id;
 
     /**
+     * @var string
+     */
+    private $locale;
+
+    /**
+     * @var string
+     */
+    private $objectClass;
+
+    /**
+     * @var string
+     */
+    private $field;
+
+    /**
+     * @var int
+     */
+    private $foreignKey;
+
+    /**
+     * @var string
+     */
+    private $content;
+
+    /**
      * Get id.
      *
      * @return int
@@ -20,25 +45,6 @@ class Translation
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * @var string
-     */
-    private $locale;
-
-    /**
-     * Set locale.
-     *
-     * @param string $locale
-     *
-     * @return Translation
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-
-        return $this;
     }
 
     /**
@@ -52,20 +58,15 @@ class Translation
     }
 
     /**
-     * @var string
-     */
-    private $objectClass;
-
-    /**
-     * Set objectClass.
+     * Set locale.
      *
-     * @param string $objectClass
+     * @param string $locale
      *
-     * @return Translation
+     * @return $this
      */
-    public function setObjectClass($objectClass)
+    public function setLocale($locale)
     {
-        $this->objectClass = $objectClass;
+        $this->locale = $locale;
 
         return $this;
     }
@@ -81,20 +82,15 @@ class Translation
     }
 
     /**
-     * @var string
-     */
-    private $field;
-
-    /**
-     * Set field.
+     * Set objectClass.
      *
-     * @param string $field
+     * @param string $objectClass
      *
-     * @return Translation
+     * @return $this
      */
-    public function setField($field)
+    public function setObjectClass($objectClass)
     {
-        $this->field = $field;
+        $this->objectClass = $objectClass;
 
         return $this;
     }
@@ -110,25 +106,15 @@ class Translation
     }
 
     /**
-     * @var int
-     */
-    private $foreignKey;
-
-    /**
-     * @var string
-     */
-    private $content;
-
-    /**
-     * Set foreignKey.
+     * Set field.
      *
-     * @param int $foreignKey
+     * @param string $field
      *
-     * @return Translation
+     * @return $this
      */
-    public function setForeignKey($foreignKey)
+    public function setField($field)
     {
-        $this->foreignKey = $foreignKey;
+        $this->field = $field;
 
         return $this;
     }
@@ -144,15 +130,15 @@ class Translation
     }
 
     /**
-     * Set content.
+     * Set foreignKey.
      *
-     * @param string $content
+     * @param int $foreignKey
      *
-     * @return Translation
+     * @return $this
      */
-    public function setContent($content)
+    public function setForeignKey($foreignKey)
     {
-        $this->content = $content;
+        $this->foreignKey = $foreignKey;
 
         return $this;
     }
@@ -165,5 +151,19 @@ class Translation
     public function getContent()
     {
         return $this->content;
+    }
+
+    /**
+     * Set content.
+     *
+     * @param string $content
+     *
+     * @return $this
+     */
+    public function setContent($content)
+    {
+        $this->content = $content;
+
+        return $this;
     }
 }
