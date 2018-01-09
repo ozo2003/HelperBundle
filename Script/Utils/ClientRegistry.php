@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Script\Utils;
 
 use InvalidArgumentException;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ClientRegistry
 {
@@ -11,7 +11,7 @@ class ClientRegistry
 
     private $serviceMap;
 
-    public function __construct(ContainerBuilder $container, array $serviceMap)
+    public function __construct(ContainerInterface $container, array $serviceMap)
     {
         $this->container = $container;
         $this->serviceMap = $serviceMap;
