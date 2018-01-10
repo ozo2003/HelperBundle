@@ -17,7 +17,7 @@ class ValidatorChain
     protected $messages = [];
 
     /**
-     * @param SpecificationInterface[] $validators
+     * @param AbstractSpecification[] $validators
      *
      * @return $this
      */
@@ -33,12 +33,12 @@ class ValidatorChain
     }
 
     /**
-     * @param SpecificationInterface $validator
+     * @param AbstractSpecification $validator
      *
      * @return $this
      * @internal param string $claim
      */
-    public function addValidator(SpecificationInterface $validator)
+    public function addValidator(AbstractSpecification $validator)
     {
         $this->validators[$validator->getName()] = $validator;
 
@@ -66,11 +66,11 @@ class ValidatorChain
                 if (empty($data[$claim])) {
                     continue;
                 }
-            }
-
-            if (!$validator->isSatisfiedBy($data[$claim], $token->getClaim($claim))) {
-                $valid = false;
-                $this->messages[$claim] = $validator->getMessage();
+            } else {
+                if (isset($data[$claim]) && !$validator->isSatisfiedBy($data[$claim], $token->getClaim($claim))) {
+                    $valid = false;
+                    $this->messages[$claim] = $validator->getMessage();
+                }
             }
         }
 

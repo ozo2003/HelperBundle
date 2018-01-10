@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Sludio\HelperBundle\Openidconnect\Component\Uriable;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class Uri implements Uriable
 {
@@ -19,6 +20,11 @@ class Uri implements Uriable
         unset($additional['base_uri']);
 
         $this->params = !empty($options['params']) ? $options['params'] : [];
+        if(isset($options['url_params']['post_logout_redirect_uri'])){
+            $options['url_params']['post_logout_redirect_uri'] = $additional['redirect_uri'];
+            unset($additional['redirect_uri']);
+        }
+
         $this->urlParams = !empty($options['url_params']) ? array_merge($options['url_params'], $additional) : $additional;
     }
 

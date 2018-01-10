@@ -6,8 +6,9 @@ use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
-use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
+use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Provider\AbstractProvider;
+use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
@@ -36,17 +37,19 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      * @var string
      */
     protected $idTokenIssuer;
-
-    /**
-     * @var Router
-     */
-    private $router;
-
     /**
      * @var Uri[]
      */
     protected $uris = [];
 
+    /**
+     * @var bool
+     */
+    protected $useSession;
+    /**
+     * @var Router
+     */
+    private $router;
     /**
      * @var string
      */
@@ -89,6 +92,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
             $this->publicKey = 'file://'.$options['public_key'];
             $this->state = $this->getRandomState();
             $this->baseUri = $options['base_uri'];
+            $this->useSession = $options['use_session'];
             $url = null;
             switch ($options['redirect']['type']) {
                 case 'uri':
@@ -105,7 +109,6 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
             foreach ($options['uris'] as $name => $uri) {
                 $opt = [
                     'client_id' => $this->clientId,
-                    'client_secret' => $this->clientSecret,
                     'redirect_uri' => $this->redirectUri,
                     'state' => $this->state,
                     'base_uri' => $this->baseUri,
@@ -116,27 +119,12 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     }
 
     /**
-     * Returns all options that are required.
-     *
-     * @return array
-     */
-    protected function getRequiredOptions()
-    {
-        return [];
-    }
-
-    public function getPublicKey()
-    {
-        return new Key($this->publicKey);
-    }
-
-    /**
      * Requests an access token using a specified grant and option set.
      *
      * @param  mixed $grant
      * @param  array $options
      *
-     * @return AccessToken
+     * @return BaseAccessToken
      * @throws InvalidTokenException
      * @throws \BadMethodCallException
      */
@@ -207,25 +195,18 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
             throw new InvalidTokenException('The id_token did not pass validation.');
         }
 
+        if ($this->useSession) {
+            $_SESSION['access_token'] = $accessToken->getToken();
+            $_SESSION['refresh_token'] = $accessToken->getRefreshToken();
+            $_SESSION['id_token'] = $accessToken->getIdTokenHint();
+        }
+
         return $accessToken;
     }
 
-    /**
-     * Overload parent as OpenID Connect specification states scopes shall be separated by spaces
-     *
-     * @return string
-     */
-    protected function getScopeSeparator()
+    public function getPublicKey()
     {
-        return ' ';
-    }
-
-    /**
-     * @return Specification\ValidatorChain
-     */
-    public function getValidatorChain()
-    {
-        return $this->validatorChain;
+        return new Key($this->publicKey);
     }
 
     /**
@@ -238,28 +219,12 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return $this->idTokenIssuer;
     }
 
-    public function check()
-    {
-        return true;
-    }
-
     /**
-     * Creates an access token from a response.
-     *
-     * The grant that was used to fetch the response can be used to provide
-     * additional context.
-     *
-     * @param  array $response
-     *
-     * @return AccessToken
+     * @return Specification\ValidatorChain
      */
-    protected function createAccessToken(array $response)
+    public function getValidatorChain()
     {
-        if ($this->check()) {
-            return new AccessToken($response);
-        }
-
-        return null;
+        return $this->validatorChain;
     }
 
     public function getBaseAuthorizationUrl()
@@ -277,15 +242,6 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         return [];
     }
 
-    protected function createResourceOwner(array $response, BaseAccessToken $token)
-    {
-        return [];
-    }
-
-    protected function checkResponse(ResponseInterface $response, $data)
-    {
-    }
-
     public function getResourceOwnerDetailsUrl(BaseAccessToken $token)
     {
     }
@@ -293,5 +249,60 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
     public function getUri($name)
     {
         return $this->uris[$name];
+    }
+
+    /**
+     * Returns all options that are required.
+     *
+     * @return array
+     */
+    protected function getRequiredOptions()
+    {
+        return [];
+    }
+
+    /**
+     * Overload parent as OpenID Connect specification states scopes shall be separated by spaces
+     *
+     * @return string
+     */
+    protected function getScopeSeparator()
+    {
+        return ' ';
+    }
+
+    /**
+     * Creates an access token from a response.
+     *
+     * The grant that was used to fetch the response can be used to provide
+     * additional context.
+     *
+     * @param  array             $response
+     *
+     * @param AbstractGrant|null $grant
+     *
+     * @return AccessToken
+     */
+    protected function createAccessToken(array $response, AbstractGrant $grant = null)
+    {
+        if ($this->check()) {
+            return new AccessToken($response);
+        }
+
+        return null;
+    }
+
+    public function check()
+    {
+        return true;
+    }
+
+    protected function createResourceOwner(array $response, BaseAccessToken $token)
+    {
+        return [];
+    }
+
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
     }
 }

@@ -9,12 +9,15 @@ class AccessToken extends BaseAccessToken
 {
     protected $idToken;
 
+    protected $idTokenHint;
+
     public function __construct(array $options = [])
     {
         parent::__construct($options);
 
         if (!empty($this->values['id_token'])) {
             $this->idToken = (new Parser())->parse($this->values['id_token']);
+            $this->idTokenHint = $this->values['id_token'];
             unset($this->values['id_token']);
         }
     }
@@ -32,5 +35,13 @@ class AccessToken extends BaseAccessToken
         }
 
         return $parameters;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getIdTokenHint()
+    {
+        return $this->idTokenHint;
     }
 }

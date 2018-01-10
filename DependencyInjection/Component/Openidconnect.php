@@ -24,6 +24,7 @@ class Openidconnect implements ExtensionInterface
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('base_uri')->isRequired()->end()
             ->scalarNode('user_provider')->defaultValue('Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider')->end()
+            ->scalarNode('use_session')->defaultFalse()->end()
             ->arrayNode('redirect')
                 ->addDefaultsIfNotSet()
                 ->children()
