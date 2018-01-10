@@ -20,7 +20,7 @@ class Uri implements Uriable
         unset($additional['base_uri']);
 
         $this->params = !empty($options['params']) ? $options['params'] : [];
-        if(isset($options['url_params']['post_logout_redirect_uri'])){
+        if (isset($options['url_params']['post_logout_redirect_uri'])) {
             $options['url_params']['post_logout_redirect_uri'] = $additional['redirect_uri'];
             unset($additional['redirect_uri']);
         }
