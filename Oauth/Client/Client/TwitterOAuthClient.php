@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Exception;
-use Sludio\HelperBundle\Logger\SludioLogger;
+use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
 use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;

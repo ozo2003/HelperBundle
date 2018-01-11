@@ -7,6 +7,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider;
 
 class Openidconnect implements ExtensionInterface
 {
@@ -23,7 +24,7 @@ class Openidconnect implements ExtensionInterface
             ->scalarNode('id_token_issuer')->isRequired()->defaultNull()->end()
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('base_uri')->isRequired()->end()
-            ->scalarNode('user_provider')->defaultValue('Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider')->end()
+            ->scalarNode('user_provider')->defaultValue(OpenIDConnectProvider::class)->end()
             ->scalarNode('use_session')->defaultFalse()->end()
             ->arrayNode('redirect')
                 ->addDefaultsIfNotSet()
@@ -60,6 +61,7 @@ class Openidconnect implements ExtensionInterface
             ->arrayNode('url_params')
                 ->prototype('variable')->end()
             ->end()
+            ->enumNode('method')->values(array(OpenIDConnectProvider::METHOD_GET, OpenIDConnectProvider::METHOD_POST))->cannotBeEmpty()->end()
         ;
         // @formatter:on
 

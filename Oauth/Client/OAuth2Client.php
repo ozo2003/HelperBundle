@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Oauth\Client;
 
 use League\OAuth2\Client\Token\AccessToken;
 use LogicException;
-use Sludio\HelperBundle\Logger\SludioLogger;
+use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
 use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
 use Symfony\Component\HttpFoundation\RedirectResponse;

@@ -7,7 +7,6 @@ use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use Lcobucci\JWT\Token;
 use League\OAuth2\Client\Grant\AbstractGrant;
-use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
@@ -16,8 +15,11 @@ use Sludio\HelperBundle\Openidconnect\Specification;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class OpenIDConnectProvider extends AbstractProvider implements Providerable
+class OpenIDConnectProvider extends BaseProvider implements Providerable
 {
+    const METHOD_POST = 'POST';
+    const METHOD_GET = 'GET';
+
     /**
      * @var string
      */
@@ -88,6 +90,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
         if (!empty($options)) {
             $this->clientId = $options['client_key'];
             $this->clientSecret = $options['client_secret'];
+            unset($options['client_secret'], $options['client_key']);
             $this->idTokenIssuer = $options['id_token_issuer'];
             $this->publicKey = 'file://'.$options['public_key'];
             $this->state = $this->getRandomState();
@@ -113,7 +116,8 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
                     'state' => $this->state,
                     'base_uri' => $this->baseUri,
                 ];
-                $this->uris[$name] = new Uri($uri, $opt);
+                $method = isset($uri['method']) ? $uri['method'] : self::METHOD_POST;
+                $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method);
             }
         }
     }
@@ -130,7 +134,7 @@ class OpenIDConnectProvider extends AbstractProvider implements Providerable
      */
     public function getAccessToken($grant, array $options = [])
     {
-        /** @var Token $token */
+        /** @var BaseAccessToken $token */
         $accessToken = parent::getAccessToken($grant, $options);
 
         if (null === $accessToken) {

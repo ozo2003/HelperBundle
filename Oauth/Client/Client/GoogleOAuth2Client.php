@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
-use Sludio\HelperBundle\Logger\SludioLogger;
+use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;

@@ -330,7 +330,7 @@ class Configuration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('class')
-                                    ->defaultValue('Sludio\HelperBundle\Logger\SludioLogger')
+                                    ->defaultValue('Sludio\HelperBundle\Script\Logger\SludioLogger')
                                 ->end()
                             ->end()
                         ->end()

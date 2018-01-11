@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\DependencyInjection;
 
 use Sludio\HelperBundle\DependencyInjection\Component\ConfigureInterface;
+use Sludio\HelperBundle\DependencyInjection\Requirement\AbstractRequirement;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -32,6 +33,18 @@ class SludioHelperExtension extends Extension
         }
 
         return null;
+    }
+
+    private function checkRequirements($key)
+    {
+        $className = 'Sludio\\HelperBundle\\DependencyInjection\\Requirement\\'.ucfirst($key);
+        if (class_exists($className) && method_exists($className, 'check')) {
+            /** @var AbstractRequirement $class */
+            $class = new $className();
+            $class->check();
+        }
+
+        return true;
     }
 
     /**
@@ -70,28 +83,30 @@ class SludioHelperExtension extends Extension
             if (!isset($extension['enabled']) || $extension['enabled'] !== true) {
                 continue;
             }
-            $iterator = 0;
-            /** @var $extension array */
-            foreach ($extension as $variable => $value) {
-                $iterator++;
-                if ($iterator === 1) {
-                    $files = [
-                        'components.yml',
-                        'parameters.yml',
-                        'services.yml',
-                    ];
-                    $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
-                    foreach ($files as $file) {
-                        if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
-                            $loader->load($file);
+            if ($this->checkRequirements($key)) {
+                $iterator = 0;
+                /** @var $extension array */
+                foreach ($extension as $variable => $value) {
+                    $iterator++;
+                    if ($iterator === 1) {
+                        $files = [
+                            'components.yml',
+                            'parameters.yml',
+                            'services.yml',
+                        ];
+                        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
+                        foreach ($files as $file) {
+                            if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
+                                $loader->load($file);
+                            }
                         }
                     }
+                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
                 }
-                $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
-            }
-            if ($component = $this->checkComponent($key)) {
-                /** @var $component ConfigureInterface */
-                $component->configure($container, $this->getAlias());
+                if ($component = $this->checkComponent($key)) {
+                    /** @var $component ConfigureInterface */
+                    $component->configure($container, $this->getAlias());
+                }
             }
         }
     }

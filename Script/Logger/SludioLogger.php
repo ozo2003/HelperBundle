@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Logger;
+namespace Sludio\HelperBundle\Script\Logger;
 
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
@@ -18,7 +18,7 @@ class SludioLogger
      */
     public function __construct($logger = null)
     {
-        if (!$logger instanceof LoggerInterface && null !== $logger) {
+        if (null !== $logger && !$logger instanceof LoggerInterface) {
             throw new InvalidArgumentException(sprintf('SludioLogger needs PSR-3 LoggerInterface, "%s" was injected instead.', \is_object($logger) ? \get_class($logger) : \gettype($logger)));
         }
 

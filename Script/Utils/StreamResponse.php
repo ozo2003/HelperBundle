@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Http;
+namespace Sludio\HelperBundle\Script\Utils;
 
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\Response;

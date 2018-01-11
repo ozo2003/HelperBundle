@@ -109,7 +109,7 @@ sludio_helper:
             manager: default
     other:
         logger:
-            class: Sludio\HelperBundle\Logger\SludioLogger
+            class: Sludio\HelperBundle\Script\Logger\SludioLogger
         redis:
             translation: session
             guzzle: session
