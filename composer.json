@@ -41,8 +41,6 @@
         "lcobucci/jwt": "*",
         "league/oauth1-client": "*",
         "league/oauth2-client": "*",
-        "mobiledetect/mobiledetectlib": "*",
-        "ocramius/proxy-manager": "*",
         "predis/predis": "*",
         "snc/redis-bundle": "*",
         "symfony/symfony": "*",
