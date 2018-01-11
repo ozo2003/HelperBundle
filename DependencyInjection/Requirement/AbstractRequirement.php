@@ -10,10 +10,19 @@ abstract class AbstractRequirement
     {
         foreach ($this->getRequirements() as $class => $requirement) {
             if (!class_exists($class) && !interface_exists($class)) {
-                throw new InvalidConfigurationException($requirement);
+                throw new InvalidConfigurationException($this->throwException());
             }
         }
     }
 
     abstract public function getRequirements();
+
+    public function throwException(){
+        $string = '';
+        foreach($this->getRequirements() as $requirement){
+            $string .= $requirement.'\n';
+        }
+
+        return $string;
+    }
 }
