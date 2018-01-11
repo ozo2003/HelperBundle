@@ -34,13 +34,9 @@
     "license": "MIT",
     "require": {
         "php": ">=5.5.9",
-        "abraham/twitteroauth": "*",
         "doctrine/dbal": "*",
         "doctrine/common": "*",
         "doctrine/orm": "*",
-        "lcobucci/jwt": "*",
-        "league/oauth1-client": "*",
-        "league/oauth2-client": "*",
         "predis/predis": "*",
         "snc/redis-bundle": "*",
         "symfony/symfony": "*",

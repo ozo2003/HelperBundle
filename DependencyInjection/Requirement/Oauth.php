@@ -2,7 +2,24 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Requirement;
 
-class Oauth
-{
+use Abraham\TwitterOAuth\TwitterOAuth;
+use Psr\Http\Message\ResponseInterface;
+use League\OAuth2\Client\Provider\AbstractProvider;
+use GuzzleHttp\ClientInterface;
+use League\OAuth1\Client\Server\Twitter;
 
+class Oauth extends AbstractRequirement
+{
+    protected $requirements = [
+        TwitterOAuth::class => 'abraham/twitteroauth',
+        ResponseInterface::class => 'psr/http-message',
+        AbstractProvider::class => 'league/oauth2-client',
+        ClientInterface::class => 'guzzlehttp/guzzle~6.0',
+        Twitter::class => 'league/oauth1-client'
+    ];
+
+    public function getRequirements()
+    {
+        return $this->requirements;
+    }
 }
