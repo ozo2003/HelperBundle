@@ -11,10 +11,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class Captcha implements ExtensionInterface
 {
-    protected $type;
-
-    protected $alias;
-
     /**
      * List of available Oauth providers
      * @var array
@@ -23,20 +19,10 @@ class Captcha implements ExtensionInterface
         'recaptcha_v2' => Configurator\ReCaptchaConfigurator::class,
         'custom' => Configurator\CustomCaptchaConfigurator::class,
     ];
-
-    protected $usedTypes = [];
     public $configurators = [];
-
-    public function getConfigurator($type)
-    {
-        if (!isset($this->configurators[$type])) {
-            $class = self::$supportedTypes[$type];
-
-            $this->configurators[$type] = new $class();
-        }
-
-        return $this->configurators[$type];
-    }
+    protected $type;
+    protected $alias;
+    protected $usedTypes = [];
 
     public function configure(ContainerBuilder $container, $alias)
     {
@@ -83,9 +69,15 @@ class Captcha implements ExtensionInterface
         $optionsNode->end();
     }
 
-    public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
+    public function getConfigurator($type)
     {
-        $this->getConfigurator($this->getType())->configureClient($container, $clientServiceKey, $options);
+        if (!isset($this->configurators[$type])) {
+            $class = self::$supportedTypes[$type];
+
+            $this->configurators[$type] = new $class();
+        }
+
+        return $this->configurators[$type];
     }
 
     /**
@@ -106,6 +98,11 @@ class Captcha implements ExtensionInterface
         $this->type = $type;
 
         return $this;
+    }
+
+    public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
+    {
+        $this->getConfigurator($this->getType())->configureClient($container, $clientServiceKey, $options);
     }
 
 }

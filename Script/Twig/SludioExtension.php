@@ -13,14 +13,12 @@ class SludioExtension extends \Twig_Extension
     const REDIRECT = 'redirect';
     const CLIENT = 'client_error';
     const SERVER = 'server_error';
-
+    public $detector;
     protected $appDir;
-    private $paths = [];
     protected $param;
     protected $order;
-
-    public $detector;
     protected $request;
+    private $paths = [];
 
     public function __construct($shortFunctions, $appDir, RequestStack $requestStack)
     {

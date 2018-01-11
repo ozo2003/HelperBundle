@@ -16,37 +16,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SludioHelperExtension extends Extension
 {
-
-    public function getAlias()
-    {
-        return 'sludio_helper';
-    }
-
-    private function checkComponent($key)
-    {
-        $className = 'Sludio\\HelperBundle\\DependencyInjection\\Component\\'.ucfirst($key);
-        if (class_exists($className)) {
-            $class = new $className();
-            if ($class instanceof ConfigureInterface) {
-                return $class;
-            }
-        }
-
-        return null;
-    }
-
-    private function checkRequirements($key)
-    {
-        $className = 'Sludio\\HelperBundle\\DependencyInjection\\Requirement\\'.ucfirst($key);
-        if (class_exists($className) && method_exists($className, 'check')) {
-            /** @var AbstractRequirement $class */
-            $class = new $className();
-            $class->check();
-        }
-
-        return true;
-    }
-
     /**
      * {@inheritdoc}
      * @throws \Exception
@@ -109,5 +78,35 @@ class SludioHelperExtension extends Extension
                 }
             }
         }
+    }
+
+    public function getAlias()
+    {
+        return 'sludio_helper';
+    }
+
+    private function checkRequirements($key)
+    {
+        $className = 'Sludio\\HelperBundle\\DependencyInjection\\Requirement\\'.ucfirst($key);
+        if (class_exists($className) && method_exists($className, 'check')) {
+            /** @var AbstractRequirement $class */
+            $class = new $className();
+            $class->check($key);
+        }
+
+        return true;
+    }
+
+    private function checkComponent($key)
+    {
+        $className = 'Sludio\\HelperBundle\\DependencyInjection\\Component\\'.ucfirst($key);
+        if (class_exists($className)) {
+            $class = new $className();
+            if ($class instanceof ConfigureInterface) {
+                return $class;
+            }
+        }
+
+        return null;
     }
 }

@@ -4,9 +4,9 @@ namespace Sludio\HelperBundle\Oauth\Client;
 
 use League\OAuth2\Client\Token\AccessToken;
 use LogicException;
-use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
 use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
+use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -50,6 +50,37 @@ class OAuth2Client
         return new RedirectResponse($url);
     }
 
+    protected function getSession()
+    {
+        $session = $this->getCurrentRequest()->getSession();
+
+        if (!$session) {
+            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid stat$e', 400);
+            throw new LogicException('error_oauth_session_not_found');
+        }
+
+        return $session;
+    }
+
+    protected function getCurrentRequest()
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if (!$request) {
+            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There is no "current request", and it is needed to perform this action', 400);
+            throw new LogicException('error_oauth_current_request_not_found');
+        }
+
+        return $request;
+    }
+
+    public function fetchUser(array $attributes = [])
+    {
+        $token = $this->getAccessToken($attributes);
+
+        return $this->fetchUserFromToken($token);
+    }
+
     public function getAccessToken(array $attributes = [])
     {
         if (!$this->isStateless) {
@@ -78,39 +109,8 @@ class OAuth2Client
         return $this->provider->getResourceOwner($accessToken);
     }
 
-    public function fetchUser(array $attributes = [])
-    {
-        $token = $this->getAccessToken($attributes);
-
-        return $this->fetchUserFromToken($token);
-    }
-
     public function getOAuth2Provider()
     {
         return $this->provider;
-    }
-
-    protected function getCurrentRequest()
-    {
-        $request = $this->requestStack->getCurrentRequest();
-
-        if (!$request) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There is no "current request", and it is needed to perform this action', 400);
-            throw new LogicException('error_oauth_current_request_not_found');
-        }
-
-        return $request;
-    }
-
-    protected function getSession()
-    {
-        $session = $this->getCurrentRequest()->getSession();
-
-        if (!$session) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid stat$e', 400);
-            throw new LogicException('error_oauth_session_not_found');
-        }
-
-        return $session;
     }
 }

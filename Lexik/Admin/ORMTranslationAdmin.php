@@ -13,16 +13,14 @@ class ORMTranslationAdmin extends TranslationAdmin
         /** @var \Doctrine\ORM\EntityManager $entityManager */
         $entityManager = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File')
-        ;
+            ->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File');
 
         $domains = [];
         $domainsQueryResult = $entityManager->createQueryBuilder()
             ->select('DISTINCT t.domain')
             ->from('\Lexik\Bundle\TranslationBundle\Entity\File', 't')
             ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY)
-        ;
+            ->getResult(Query::HYDRATE_ARRAY);
 
         array_walk_recursive($domainsQueryResult, function($domain) use (&$domains) {
             $domains[$domain] = $domain;
@@ -56,8 +54,7 @@ class ORMTranslationAdmin extends TranslationAdmin
                         $queryBuilder->orWhere('translations.content IS NULL');
                     } else {
                         $queryBuilder->orWhere('translations.content LIKE :content')
-                            ->setParameter('content', $prefix.'%')
-                        ;
+                            ->setParameter('content', $prefix.'%');
                     }
 
                 }
@@ -83,13 +80,11 @@ class ORMTranslationAdmin extends TranslationAdmin
                 }
                 $this->joinTranslations($queryBuilder, $alias);
                 $queryBuilder->andWhere('translations.content LIKE :content')
-                    ->setParameter('content', '%'.$options['value'].'%')
-                ;
+                    ->setParameter('content', '%'.$options['value'].'%');
             },
             'field_type' => 'text',
             'label' => 'content',
-        ])
-        ;
+        ]);
     }
 
     /**

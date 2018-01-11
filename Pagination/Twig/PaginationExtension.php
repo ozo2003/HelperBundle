@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Pagination\Twig;
 
-use Sludio\HelperBundle\Pagination\Twig\Behaviour\FixedLength;
 use Sludio\HelperBundle\Pagination\Twig\Behaviour\BehaviourInterface;
+use Sludio\HelperBundle\Pagination\Twig\Behaviour\FixedLength;
 
 class PaginationExtension extends \Twig_Extension
 {
@@ -27,14 +27,6 @@ class PaginationExtension extends \Twig_Extension
         }
     }
 
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'sludio_helper.twig.pagination_extension';
-    }
-
     public function withFunction($functionName, $behaviour)
     {
         $functionName = $this->suffixFunctionName($functionName);
@@ -50,16 +42,6 @@ class PaginationExtension extends \Twig_Extension
         return $clone->functions[$functionName];
     }
 
-    public function withoutFunction($functionName)
-    {
-        $functionName = $this->suffixFunctionName($functionName);
-
-        $clone = clone $this;
-        unset($clone->functions[$functionName]);
-
-        return $clone;
-    }
-
     /**
      * @param string $functionName
      *
@@ -71,6 +53,24 @@ class PaginationExtension extends \Twig_Extension
         $functionName = preg_replace('/(_pagination)$/', '', (string)$functionName);
 
         return $functionName.'_pagination';
+    }
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
+        return 'sludio_helper.twig.pagination_extension';
+    }
+
+    public function withoutFunction($functionName)
+    {
+        $functionName = $this->suffixFunctionName($functionName);
+
+        $clone = clone $this;
+        unset($clone->functions[$functionName]);
+
+        return $clone;
     }
 
     /**

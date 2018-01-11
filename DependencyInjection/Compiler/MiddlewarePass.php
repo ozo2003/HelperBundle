@@ -122,41 +122,6 @@ class MiddlewarePass implements CompilerPassInterface
     }
 
     /**
-     * @param Reference|Definition|callable $handler   The configured Guzzle handler
-     * @param ContainerBuilder              $container The container builder
-     *
-     * @return Definition
-     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
-     */
-    private function wrapHandlerInHandlerStack($handler, ContainerBuilder $container)
-    {
-        if ($handler instanceof Reference) {
-            $handler = $container->getDefinition((string)$handler);
-        }
-
-        if ($handler instanceof Definition && HandlerStack::class === $handler->getClass()) {
-            // no need to wrap the Guzzle handler if it already resolves to a HandlerStack
-            return $handler;
-        }
-
-        $handlerDefinition = new Definition(HandlerStack::class);
-        $handlerDefinition->setArguments([$handler]);
-        $handlerDefinition->setPublic(false);
-
-        return $handlerDefinition;
-    }
-
-    private function addMiddlewareToHandlerStack(Definition $handlerStack, array $middlewareBag)
-    {
-        foreach ($middlewareBag as $middleware) {
-            $handlerStack->addMethodCall('push', [
-                new Reference($middleware['id']),
-                $middleware['alias'],
-            ]);
-        }
-    }
-
-    /**
      * @param array $middlewareBag The list of availables middleware
      * @param array $tags          The tags containing middleware configuration
      *
@@ -195,5 +160,40 @@ class MiddlewarePass implements CompilerPassInterface
         return array_filter($middlewareBag, function($value) use ($blackList) {
             return !\in_array($value['alias'], $blackList, true);
         });
+    }
+
+    /**
+     * @param Reference|Definition|callable $handler   The configured Guzzle handler
+     * @param ContainerBuilder              $container The container builder
+     *
+     * @return Definition
+     * @throws \Symfony\Component\DependencyInjection\Exception\ServiceNotFoundException
+     */
+    private function wrapHandlerInHandlerStack($handler, ContainerBuilder $container)
+    {
+        if ($handler instanceof Reference) {
+            $handler = $container->getDefinition((string)$handler);
+        }
+
+        if ($handler instanceof Definition && HandlerStack::class === $handler->getClass()) {
+            // no need to wrap the Guzzle handler if it already resolves to a HandlerStack
+            return $handler;
+        }
+
+        $handlerDefinition = new Definition(HandlerStack::class);
+        $handlerDefinition->setArguments([$handler]);
+        $handlerDefinition->setPublic(false);
+
+        return $handlerDefinition;
+    }
+
+    private function addMiddlewareToHandlerStack(Definition $handlerStack, array $middlewareBag)
+    {
+        foreach ($middlewareBag as $middleware) {
+            $handlerStack->addMethodCall('push', [
+                new Reference($middleware['id']),
+                $middleware['alias'],
+            ]);
+        }
     }
 }

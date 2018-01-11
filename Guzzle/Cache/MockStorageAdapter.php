@@ -52,6 +52,18 @@ class MockStorageAdapter implements StorageAdapterInterface
     }
 
     /**
+     * Prefixes the generated file path with the adapter's storage path.
+     *
+     * @param string $name
+     *
+     * @return string The path to the mock file
+     */
+    private function getFilename($name)
+    {
+        return $this->storagePath.'/'.$name.'.txt';
+    }
+
+    /**
      * {@inheritdoc}
      * @throws \Symfony\Component\Filesystem\Exception\IOException
      * @throws \RuntimeException
@@ -71,17 +83,5 @@ class MockStorageAdapter implements StorageAdapterInterface
 
         file_put_contents($filename, Psr7\str($response));
         $response->getBody()->rewind();
-    }
-
-    /**
-     * Prefixes the generated file path with the adapter's storage path.
-     *
-     * @param string $name
-     *
-     * @return string The path to the mock file
-     */
-    private function getFilename($name)
-    {
-        return $this->storagePath.'/'.$name.'.txt';
     }
 }

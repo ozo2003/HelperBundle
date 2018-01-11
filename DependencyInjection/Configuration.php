@@ -6,6 +6,7 @@ use GuzzleHttp\MessageFormatter;
 use Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Sludio\HelperBundle\Script\Logger\SludioLogger;
 
 class Configuration implements ConfigurationInterface
 {
@@ -330,7 +331,7 @@ class Configuration implements ConfigurationInterface
                             ->addDefaultsIfNotSet()
                             ->children()
                                 ->scalarNode('class')
-                                    ->defaultValue('Sludio\HelperBundle\Script\Logger\SludioLogger')
+                                    ->defaultValue(SludioLogger::class)
                                 ->end()
                             ->end()
                         ->end()

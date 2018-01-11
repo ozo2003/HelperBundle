@@ -23,34 +23,6 @@ class QuickInsertRepository extends QuickInsertFunctions
         ], ['AUTO_INCREMENT']) ?: 1;
     }
 
-    public static function setFK($fkCheck = 0, $noFkCheck = false)
-    {
-        if (!$noFkCheck) {
-            self::runSQL("SET FOREIGN_KEY_CHECKS = $fkCheck", false, null, true);
-        }
-    }
-
-    public static function runSQL($sql, $noFkCheck = true, $manager = null, $skip = false)
-    {
-        $sql = trim(preg_replace('/\s+/', ' ', $sql));
-        self::init($manager);
-        if (!$skip) {
-            self::setFK(0, $noFkCheck);
-        }
-
-        $sth = self::$connection->prepare($sql);
-        $sth->execute();
-
-        if (!$skip) {
-            self::setFK(1, $noFkCheck);
-        }
-        if (0 === strpos($sql, 'SELECT')) {
-            return $sth->fetchAll();
-        }
-
-        return true;
-    }
-
     public static function get($object, $one = false, array $where = [], array $fields = [], $manager = null, array $extra = [])
     {
         self::getTable($object, $tableName, $columns, $type, $manager);
@@ -83,52 +55,32 @@ class QuickInsertRepository extends QuickInsertFunctions
         return $result;
     }
 
-    public static function persist($object, $full = false, array $extraFields = [], $noFkCheck = false, $manager = null)
+    public static function runSQL($sql, $noFkCheck = true, $manager = null, $skip = false)
     {
-        self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
-
-        $id = self::findNextId($tableName);
-        $data = [];
-
-        $idd = null;
-        /** @var $columns array */
-        foreach ($columns as $value => $key) {
-            $keys = [
-                $key,
-                $value,
-            ];
-            if (!Helper::multiple($keys)) {
-                $value = self::value($object, $value, $type);
-                if ($value !== null) {
-                    $data[$key] = $value;
-                    if ($key === self::$identifier) {
-                        $idd = $value;
-                    }
-                }
-            }
+        $sql = trim(preg_replace('/\s+/', ' ', $sql));
+        self::init($manager);
+        if (!$skip) {
+            self::setFK(0, $noFkCheck);
         }
 
-        if (!$full) {
-            $data[self::$identifier] = $id;
-        } else {
-            $id = $idd;
+        $sth = self::$connection->prepare($sql);
+        $sth->execute();
+
+        if (!$skip) {
+            self::setFK(1, $noFkCheck);
+        }
+        if (0 === strpos($sql, 'SELECT')) {
+            return $sth->fetchAll();
         }
 
-        if ($id !== null && Helper::isEmpty($data)) {
-            return null;
+        return true;
+    }
+
+    public static function setFK($fkCheck = 0, $noFkCheck = false)
+    {
+        if (!$noFkCheck) {
+            self::runSQL("SET FOREIGN_KEY_CHECKS = $fkCheck", false, null, true);
         }
-
-        $sql = '
-            INSERT INTO
-                '.$tableName.'
-                    ('.implode(',', array_keys($data)).')
-            VALUES
-                ('.implode(',', array_values($data)).')
-        ';
-
-        self::runSQL($sql, $noFkCheck);
-
-        return $id;
     }
 
     public static function update($id, $object, array $extraFields = [], $noFkCheck = false, $manager = null)
@@ -183,5 +135,53 @@ class QuickInsertRepository extends QuickInsertFunctions
 
         $data['table_name'] = $tableName;
         self::persist($data, true, [], $noFkCheck, $manager);
+    }
+
+    public static function persist($object, $full = false, array $extraFields = [], $noFkCheck = false, $manager = null)
+    {
+        self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
+
+        $id = self::findNextId($tableName);
+        $data = [];
+
+        $idd = null;
+        /** @var $columns array */
+        foreach ($columns as $value => $key) {
+            $keys = [
+                $key,
+                $value,
+            ];
+            if (!Helper::multiple($keys)) {
+                $value = self::value($object, $value, $type);
+                if ($value !== null) {
+                    $data[$key] = $value;
+                    if ($key === self::$identifier) {
+                        $idd = $value;
+                    }
+                }
+            }
+        }
+
+        if (!$full) {
+            $data[self::$identifier] = $id;
+        } else {
+            $id = $idd;
+        }
+
+        if ($id !== null && Helper::isEmpty($data)) {
+            return null;
+        }
+
+        $sql = '
+            INSERT INTO
+                '.$tableName.'
+                    ('.implode(',', array_keys($data)).')
+            VALUES
+                ('.implode(',', array_values($data)).')
+        ';
+
+        self::runSQL($sql, $noFkCheck);
+
+        return $id;
     }
 }

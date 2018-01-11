@@ -32,7 +32,7 @@ abstract class BaseEntity
     public function getClassName()
     {
         if (!$this->className) {
-            $className = explode('\\', \get_called_class());
+            $className = explode('\\', static::class);
             $this->className = strtolower(end($className));
         }
 
@@ -55,11 +55,6 @@ abstract class BaseEntity
         return array_key_exists($locale, $this->localeArr);
     }
 
-    protected function notExist($method, $pos)
-    {
-        return !method_exists($this, $method) && $pos !== false;
-    }
-
     public function __get($property)
     {
         $getter = 'get'.ucfirst($property);
@@ -75,13 +70,6 @@ abstract class BaseEntity
         }
 
         return $this->{$getter}();
-    }
-
-    public function __isset($name)
-    {
-        $getter = 'get'.ucfirst($name);
-
-        return method_exists($this, $getter) && $this->$getter() !== null;
     }
 
     public function __set($property, $value)
@@ -101,6 +89,11 @@ abstract class BaseEntity
         $this->{$property} = $value;
 
         return $this;
+    }
+
+    protected function notExist($method, $pos)
+    {
+        return !method_exists($this, $method) && $pos !== false;
     }
 
     public function getVariableByLocale($variable, $locale = null, $returnOriginal = false)
@@ -125,6 +118,13 @@ abstract class BaseEntity
     public function getLocaleVar($locale)
     {
         return $this->check($locale) ? $this->localeArr[$locale] : $locale;
+    }
+
+    public function __isset($name)
+    {
+        $getter = 'get'.ucfirst($name);
+
+        return method_exists($this, $getter) && $this->$getter() !== null;
     }
 
     public function cleanText($text)

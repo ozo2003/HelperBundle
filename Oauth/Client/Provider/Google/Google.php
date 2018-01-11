@@ -65,6 +65,11 @@ class Google extends AbstractProvider
         return 'https://www.googleapis.com/plus/v1/people/me?'.http_build_query($input);
     }
 
+    public function setState($state = null)
+    {
+        $this->state = $state;
+    }
+
     protected function getAuthorizationParameters(array $options)
     {
         $input = [
@@ -109,10 +114,5 @@ class Google extends AbstractProvider
     protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new GoogleUser($response);
-    }
-
-    public function setState($state = null)
-    {
-        $this->state = $state;
     }
 }

@@ -6,24 +6,29 @@ use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 
 class InsertFunctions
 {
+    public $doctrine;
+    public $entityManager;
     protected $connection;
-
     protected $object;
-
     /**
      * @var ClassMetadata
      */
     protected $metadata;
-
-    public $doctrine;
-
-    public $entityManager;
 
     public function __construct($doctrine, $defaultManager)
     {
         $this->doctrine = $doctrine;
         $this->connection = $this->doctrine->getManager('default')->getConnection();
         $this->setManager($defaultManager);
+    }
+
+    public function setManager($manager)
+    {
+        if (\is_object($manager)) {
+            $this->entityManager = $manager;
+        } else {
+            $this->entityManager = $this->doctrine->getManager($manager);
+        }
     }
 
     public function getObject()
@@ -38,14 +43,5 @@ class InsertFunctions
     {
         $this->object = $object;
         $this->metadata = $this->entityManager->getMetadataFactory()->getMetadataFor(\get_class($object));
-    }
-
-    public function setManager($manager)
-    {
-        if (\is_object($manager)) {
-            $this->entityManager = $manager;
-        } else {
-            $this->entityManager = $this->doctrine->getManager($manager);
-        }
     }
 }

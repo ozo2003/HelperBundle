@@ -7,6 +7,7 @@ use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use Sludio\HelperBundle\Openid\Login\Login;
 
 class Openid implements ExtensionInterface
 {
@@ -65,7 +66,7 @@ class Openid implements ExtensionInterface
             ->scalarNode('preg_check')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('ns_mode')->defaultValue('sreg')->end()
             ->scalarNode('user_class')->isRequired()->end()
-            ->scalarNode('user_provider')->defaultValue('Sludio\HelperBundle\Openid\Login\Login')->end()
+            ->scalarNode('user_provider')->defaultValue(Login::class)->end()
             ->scalarNode('redirect_route')->isRequired()->cannotBeEmpty()->end()
             ->arrayNode('provider_options')->prototype('variable')->end()->end()
         ;

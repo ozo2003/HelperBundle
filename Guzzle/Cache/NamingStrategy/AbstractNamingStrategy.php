@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Guzzle\Cache\NamingStrategy;
 
-use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\CacheMiddleware;
 use Psr\Http\Message\RequestInterface;
+use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\CacheMiddleware;
 
 abstract class AbstractNamingStrategy implements NamingStrategyInterface
 {

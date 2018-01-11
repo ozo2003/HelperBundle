@@ -57,16 +57,6 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
     }
 
     /**
-     * Returns all the data obtained about the user.
-     *
-     * @return array
-     */
-    public function toArray()
-    {
-        return $this->response;
-    }
-
-    /**
      * Returns a field from the Graph node data.
      *
      * @param string $key
@@ -76,6 +66,16 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
     private function getField($key)
     {
         return isset($this->userData[$key]) ? $this->userData[$key] : null;
+    }
+
+    /**
+     * Returns all the data obtained about the user.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->response;
     }
 
     /**

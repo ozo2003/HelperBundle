@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Sitemap\Formatter;
 
-use Sludio\HelperBundle\Sitemap\Entity\Url;
 use Sludio\HelperBundle\Sitemap\Entity\SitemapIndex;
+use Sludio\HelperBundle\Sitemap\Entity\Url;
 
 class SpacelessFormatter implements SitemapIndexFormatterInterface
 {
@@ -17,6 +17,15 @@ class SpacelessFormatter implements SitemapIndexFormatterInterface
     public function getSitemapStart()
     {
         return $this->stripSpaces($this->formatter->getSitemapStart());
+    }
+
+    protected function stripSpaces($string)
+    {
+        return str_replace([
+            "\t",
+            "\r",
+            "\n",
+        ], '', $string);
     }
 
     public function getSitemapEnd()
@@ -54,14 +63,5 @@ class SpacelessFormatter implements SitemapIndexFormatterInterface
         }
 
         return $this->stripSpaces($this->formatter->formatSitemapIndex($sitemapIndex));
-    }
-
-    protected function stripSpaces($string)
-    {
-        return str_replace([
-            "\t",
-            "\r",
-            "\n",
-        ], '', $string);
     }
 }

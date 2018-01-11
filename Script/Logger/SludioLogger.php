@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Logger;
 
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
 class SludioLogger
 {
@@ -25,6 +25,11 @@ class SludioLogger
         $this->logger = $logger;
     }
 
+    public function error($command, $error)
+    {
+        $this->log($command, $error, 'error');
+    }
+
     /**
      * Logs a command
      *
@@ -35,10 +40,5 @@ class SludioLogger
     public function log($command, $error = null, $type = 'info')
     {
         $this->logger->{(string)$type}($command.': '.strtoupper((string)$type).($error !== null ? ': '.(string)$error : ''));
-    }
-
-    public function error($command, $error)
-    {
-        $this->log($command, $error, 'error');
     }
 }

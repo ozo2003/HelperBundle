@@ -18,19 +18,6 @@ class RedisFlushCommand extends ContainerAwareCommand
         ]));
     }
 
-    private function getClients($services)
-    {
-        $clients = [];
-        /** @var array $services */
-        foreach ($services as $id) {
-            if (0 === strpos($id, 'snc_redis') && $this->getContainer()->get($id) instanceof Client) {
-                $clients[] = $id;
-            }
-        }
-
-        return $clients;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $clients = $this->getClients($this->getContainer()->getServiceIds());
@@ -53,5 +40,18 @@ class RedisFlushCommand extends ContainerAwareCommand
                 }
             }
         }
+    }
+
+    private function getClients($services)
+    {
+        $clients = [];
+        /** @var array $services */
+        foreach ($services as $id) {
+            if (0 === strpos($id, 'snc_redis') && $this->getContainer()->get($id) instanceof Client) {
+                $clients[] = $id;
+            }
+        }
+
+        return $clients;
     }
 }

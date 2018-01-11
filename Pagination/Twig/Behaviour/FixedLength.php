@@ -17,25 +17,11 @@ final class FixedLength extends AbstractBehaviour
      *                            1 on each edge, 1 omitted chunk on each side, and 1 in the middle.
      *                            For example: [1][...][11][12][13][...][20]
      *
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function __construct($maximumVisible)
     {
         $this->setMaximumVisible($maximumVisible);
-    }
-
-    /**
-     * @param int $maximumVisible
-     *
-     * @return static
-     * @throws \InvalidArgumentException
-     */
-    public function withMaximumVisible($maximumVisible)
-    {
-        $clone = clone $this;
-        $clone->setMaximumVisible($maximumVisible);
-
-        return $clone;
     }
 
     /**
@@ -48,14 +34,6 @@ final class FixedLength extends AbstractBehaviour
         $maximumVisible = (int)$maximumVisible;
         $this->guardMaximumVisibleMinimumValue($maximumVisible);
         $this->maximumVisible = $maximumVisible;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaximumVisible()
-    {
-        return $this->maximumVisible;
     }
 
     /**
@@ -72,6 +50,28 @@ final class FixedLength extends AbstractBehaviour
         if ($maximumVisible < 3) {
             throw new InvalidArgumentException(sprintf('Maximum of number of visible pages (%d) should be at least 3.', $maximumVisible));
         }
+    }
+
+    /**
+     * @param int $maximumVisible
+     *
+     * @return static
+     * @throws InvalidArgumentException
+     */
+    public function withMaximumVisible($maximumVisible)
+    {
+        $clone = clone $this;
+        $clone->setMaximumVisible($maximumVisible);
+
+        return $clone;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaximumVisible()
+    {
+        return $this->maximumVisible;
     }
 
     /**
@@ -110,14 +110,6 @@ final class FixedLength extends AbstractBehaviour
     }
 
     /**
-     * @return int
-     */
-    private function getSingleOmissionBreakpoint()
-    {
-        return (int)floor($this->maximumVisible / 2) + 1;
-    }
-
-    /**
      * @param int $totalPages
      * @param int $currentPage
      *
@@ -136,6 +128,14 @@ final class FixedLength extends AbstractBehaviour
     private function hasSingleOmittedChunkNearLastPage($currentPage)
     {
         return $currentPage <= $this->getSingleOmissionBreakpoint();
+    }
+
+    /**
+     * @return int
+     */
+    private function getSingleOmissionBreakpoint()
+    {
+        return (int)floor($this->maximumVisible / 2) + 1;
     }
 
     /**

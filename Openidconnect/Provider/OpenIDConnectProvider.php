@@ -224,6 +224,32 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
     }
 
     /**
+     * Creates an access token from a response.
+     *
+     * The grant that was used to fetch the response can be used to provide
+     * additional context.
+     *
+     * @param  array             $response
+     *
+     * @param AbstractGrant|null $grant
+     *
+     * @return AccessToken
+     */
+    protected function createAccessToken(array $response, AbstractGrant $grant = null)
+    {
+        if ($this->check()) {
+            return new AccessToken($response);
+        }
+
+        return null;
+    }
+
+    public function check()
+    {
+        return true;
+    }
+
+    /**
      * @return Specification\ValidatorChain
      */
     public function getValidatorChain()
@@ -273,32 +299,6 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
     protected function getScopeSeparator()
     {
         return ' ';
-    }
-
-    /**
-     * Creates an access token from a response.
-     *
-     * The grant that was used to fetch the response can be used to provide
-     * additional context.
-     *
-     * @param  array             $response
-     *
-     * @param AbstractGrant|null $grant
-     *
-     * @return AccessToken
-     */
-    protected function createAccessToken(array $response, AbstractGrant $grant = null)
-    {
-        if ($this->check()) {
-            return new AccessToken($response);
-        }
-
-        return null;
-    }
-
-    public function check()
-    {
-        return true;
     }
 
     protected function createResourceOwner(array $response, BaseAccessToken $token)

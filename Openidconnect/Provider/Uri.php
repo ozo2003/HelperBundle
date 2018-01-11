@@ -3,16 +3,15 @@
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Sludio\HelperBundle\Openidconnect\Component\Uriable;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class Uri implements Uriable
 {
-    private $url;
-    private $base;
-
     protected $params;
     protected $urlParams;
+    private $url;
+    private $base;
 
     public function __construct(array $options, array $additional = [], $useSession = false, $method = OpenIDConnectProvider::METHOD_POST)
     {
@@ -27,14 +26,12 @@ class Uri implements Uriable
                 unset($additional['redirect_uri']);
             }
 
-            if (isset($options['url_params']['id_token_hint'])) {
-                if (isset($_SESSION['id_token'])) {
-                    if ($useSession === false) {
-                        throw new \InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
-                    }
-                    $additional['id_token_hint'] = $_SESSION['id_token'];
-                    unset($options['url_params']['id_token_hint']);
+            if (isset($options['url_params']['id_token_hint'], $_SESSION['id_token'])) {
+                if ($useSession === false) {
+                    throw new \InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
                 }
+                $additional['id_token_hint'] = $_SESSION['id_token'];
+                unset($options['url_params']['id_token_hint']);
             }
             $this->urlParams = !empty($options['url_params']) ? array_merge($options['url_params'], $additional) : $additional;
         }
@@ -43,20 +40,6 @@ class Uri implements Uriable
     public function redirect()
     {
         return new RedirectResponse($this->getUrl());
-    }
-
-    private function buildUrl()
-    {
-        $url = $this->base;
-        if (!empty($this->params)) {
-            $url .= implode('/', $this->params);
-        }
-        if (!empty($this->urlParams)) {
-            $params = http_build_query($this->urlParams);
-            $url .= '?'.$params;
-        }
-        $url = urldecode($url);
-        $this->setUrl($url);
     }
 
     /**
@@ -83,6 +66,20 @@ class Uri implements Uriable
         $this->url = $url;
 
         return $this;
+    }
+
+    private function buildUrl()
+    {
+        $url = $this->base;
+        if (!empty($this->params)) {
+            $url .= implode('/', $this->params);
+        }
+        if (!empty($this->urlParams)) {
+            $params = http_build_query($this->urlParams);
+            $url .= '?'.$params;
+        }
+        $url = urldecode($url);
+        $this->setUrl($url);
     }
 
     public function addParam($value)

@@ -15,6 +15,7 @@ class RecaptchaType extends AbstractType
      */
     const RECAPTCHA_API_SERVER = 'https://www.google.com/recaptcha/api';
     const RECAPTCHA_API_JS_SERVER = 'https://www.google.com/recaptcha/api/js/recaptcha_ajax.js';
+    public $scripts = [];
 
     /**
      * The public key
@@ -36,8 +37,6 @@ class RecaptchaType extends AbstractType
      * @var LocaleResolver
      */
     protected $localeResolver;
-
-    public $scripts = [];
 
     /**
      * Construct.
@@ -108,17 +107,17 @@ class RecaptchaType extends AbstractType
     /**
      * {@inheritdoc}
      */
-    public function getBlockPrefix()
+    public function getName()
     {
-        return 'sludio_helper_captcha_recaptcha';
+        return $this->getBlockPrefix();
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getBlockPrefix()
     {
-        return $this->getBlockPrefix();
+        return 'sludio_helper_captcha_recaptcha';
     }
 
     /**

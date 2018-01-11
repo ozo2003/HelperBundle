@@ -4,26 +4,36 @@ namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Exception;
-use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
 use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
 use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
+use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class TwitterOAuthClient extends OAuth2Client
 {
-    protected $session;
-
     const URL_REQUEST_TOKEN = 'oauth/request_token';
     const URL_AUTHORIZE = 'oauth/authorize';
     const URL_ACCESS_TOKEN = 'oauth/access_token';
+    protected $session;
 
     public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
     {
         parent::__construct($provider, $requestStack, $logger);
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
+    }
+
+    public function redirect(array $scopes = [], array $options = [], $token = null)
+    {
+        $url = $this->provider->twitter->url(static::URL_AUTHORIZE, ['oauth_token' => $this->getRequestToken()]);
+
+        if (!$this->isStateless) {
+            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $this->provider->getState());
+        }
+
+        return new RedirectResponse($url);
     }
 
     public function getRequestToken()
@@ -39,17 +49,6 @@ class TwitterOAuthClient extends OAuth2Client
         $this->session->set('oauth_token_secret', $request_token['oauth_token_secret']);
 
         return $request_token['oauth_token'];
-    }
-
-    public function redirect(array $scopes = [], array $options = [], $token = null)
-    {
-        $url = $this->provider->twitter->url(static::URL_AUTHORIZE, ['oauth_token' => $this->getRequestToken()]);
-
-        if (!$this->isStateless) {
-            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $this->provider->getState());
-        }
-
-        return new RedirectResponse($url);
     }
 
     public function getAccessToken(array $attributes = [])

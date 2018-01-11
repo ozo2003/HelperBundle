@@ -12,10 +12,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Login implements Loginable
 {
-    protected $request;
-
     public $requestStack;
-
+    protected $request;
     protected $generator;
     protected $redirectRoute;
     protected $redirectRouteParams = [];

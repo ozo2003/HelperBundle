@@ -3,8 +3,8 @@
 namespace Sludio\HelperBundle\Translatable\Repository;
 
 use Sludio\HelperBundle\Script\Repository\QuickInsertRepository as Quick;
-use Sludio\HelperBundle\Translatable\Entity\Translation;
 use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
+use Sludio\HelperBundle\Translatable\Entity\Translation;
 
 class TranslatableRepository
 {
@@ -20,16 +20,44 @@ class TranslatableRepository
         'ru' => 'ru_RU',
     ];
 
-    public static function getLocaleVar($locale)
+    public static function updateTranslations($class, $locale, $field, $content, $id = 0)
     {
-        return isset(self::$localeArr[$locale]) ? self::$localeArr[$locale] : $locale;
-    }
+        self::init($class, $className);
+        $locale = self::getLocaleVar($locale);
 
-    public static function getDefaultLocale()
-    {
-        self::init();
+        if (\in_array($id, [
+            0,
+            null,
+        ], true)) {
+            $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
+            $update = 0;
+        } else {
+            $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
+        }
 
-        return self::$defaultLocale;
+        $content = trim($content) !== '' ? $content : null;
+
+        $translation = new Translation();
+        $translation->setField($field)
+            ->setForeignKey((int)$id)
+            ->setLocale($locale)
+            ->setObjectClass($class)
+            ->setContent($content);
+
+        if ($update === 0) {
+            Quick::persist($translation);
+        } else {
+            $where = [
+                'field' => $field,
+                'foreign_key' => $id,
+                'object_class' => $class,
+                'locale' => $locale,
+            ];
+            $tId = Quick::get(new Translation(), true, $where);
+            Quick::update($tId, $translation);
+        }
+
+        self::getTranslations($class, $id, true);
     }
 
     public static function init($class = null, &$className = null)
@@ -54,38 +82,38 @@ class TranslatableRepository
         self::$table = $container->getParameter('sludio_helper.translatable.table');
     }
 
-    private static function getFromRedis($key, &$result, &$checked)
+    public static function getLocaleVar($locale)
     {
-        if (self::$redis !== null) {
-            $result = unserialize(self::$redis->get(self::tKey($key)));
-            $checked = unserialize(self::$redis->get(self::cKey($key)));
+        return isset(self::$localeArr[$locale]) ? self::$localeArr[$locale] : $locale;
+    }
+
+    public static function findByLocale($class, $locale, $content, $field = 'slug', $notId = null, $isId = null)
+    {
+        self::init();
+        $locale = self::getLocaleVar($locale ?: self::getDefaultLocale());
+
+        $where = [
+            'object_class' => $class,
+            'locale' => $locale,
+            'field' => $field,
+        ];
+        if ($notId) {
+            $where[] = ['foreign_key <> '.$notId];
         }
-    }
-
-    private static function setToRedis($key, $result)
-    {
-        if (!empty($result) && self::$redis !== null) {
-            self::$redis->set(self::tKey($key), serialize($result));
-            self::$redis->set(self::cKey($key), serialize(true));
+        if ($isId) {
+            $where['foreign_key'] = $isId;
+        } else {
+            $where['content'] = $content;
         }
+
+        return Quick::get(new Translation(), false, $where, ['foreign_key']);
     }
 
-    private static function delFromRedis($key)
+    public static function getDefaultLocale()
     {
-        if (self::$redis !== null) {
-            self::$redis->del(self::tKey($key));
-            self::$redis->del(self::cKey($key));
-        }
-    }
+        self::init();
 
-    private static function tKey(&$key)
-    {
-        return $key.':translations';
-    }
-
-    private static function cKey(&$key)
-    {
-        return $key.':checked';
+        return self::$defaultLocale;
     }
 
     public static function getTranslations($class, $id, $skip = false)
@@ -120,64 +148,38 @@ class TranslatableRepository
         return $result;
     }
 
-    public static function findByLocale($class, $locale, $content, $field = 'slug', $notId = null, $isId = null)
+    private static function getFromRedis($key, &$result, &$checked)
     {
-        self::init();
-        $locale = self::getLocaleVar($locale ?: self::getDefaultLocale());
-
-        $where = [
-            'object_class' => $class,
-            'locale' => $locale,
-            'field' => $field,
-        ];
-        if ($notId) {
-            $where[] = ['foreign_key <> '.$notId];
+        if (self::$redis !== null) {
+            $result = unserialize(self::$redis->get(self::tKey($key)));
+            $checked = unserialize(self::$redis->get(self::cKey($key)));
         }
-        if ($isId) {
-            $where['foreign_key'] = $isId;
-        } else {
-            $where['content'] = $content;
-        }
-
-        return Quick::get(new Translation(), false, $where, ['foreign_key']);
     }
 
-    public static function updateTranslations($class, $locale, $field, $content, $id = 0)
+    private static function tKey(&$key)
     {
-        self::init($class, $className);
-        $locale = self::getLocaleVar($locale);
+        return $key.':translations';
+    }
 
-        if (\in_array($id, [0, null], true)) {
-            $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
-            $update = 0;
-        } else {
-            $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
+    private static function cKey(&$key)
+    {
+        return $key.':checked';
+    }
+
+    private static function delFromRedis($key)
+    {
+        if (self::$redis !== null) {
+            self::$redis->del(self::tKey($key));
+            self::$redis->del(self::cKey($key));
         }
+    }
 
-        $content = trim($content) !== '' ? $content : null;
-
-        $translation = new Translation();
-        $translation->setField($field)
-            ->setForeignKey((int)$id)
-            ->setLocale($locale)
-            ->setObjectClass($class)
-            ->setContent($content)
-        ;
-
-        if ($update === 0) {
-            Quick::persist($translation);
-        } else {
-            $where = [
-                'field' => $field,
-                'foreign_key' => $id,
-                'object_class' => $class,
-                'locale' => $locale,
-            ];
-            $tId = Quick::get(new Translation(), true, $where);
-            Quick::update($tId, $translation);
+    private static function setToRedis($key, $result)
+    {
+        if (!empty($result) && self::$redis !== null) {
+            self::$redis->set(self::tKey($key), serialize($result));
+            self::$redis->set(self::cKey($key), serialize(true));
         }
-
-        self::getTranslations($class, $id, true);
     }
 
     public static function removeTranslations(BaseEntity $object)

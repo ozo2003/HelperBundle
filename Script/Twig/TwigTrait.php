@@ -6,17 +6,6 @@ trait TwigTrait
 {
     protected $shortFunctions;
 
-    private function makeInput(array $input, &$output)
-    {
-        $output = [];
-        foreach ($input as $call => $function) {
-            if ($this->shortFunctions) {
-                $output[$call] = $function;
-            }
-            $output['sludio_'.$call] = $function;
-        }
-    }
-
     public function makeArray(array $input, $type = 'filter')
     {
         $output = [];
@@ -35,5 +24,16 @@ trait TwigTrait
         }
 
         return $output;
+    }
+
+    private function makeInput(array $input, &$output)
+    {
+        $output = [];
+        foreach ($input as $call => $function) {
+            if ($this->shortFunctions) {
+                $output[$call] = $function;
+            }
+            $output['sludio_'.$call] = $function;
+        }
     }
 }

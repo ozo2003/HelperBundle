@@ -28,6 +28,39 @@ class MessageFormatter extends BaseMessageFormatter
      */
     protected $error;
 
+    /**
+     * {@inheritdoc}
+     */
+    public function format(RequestInterface $request, ResponseInterface $response = null, \Exception $error = null)
+    {
+        $cache = [];
+
+        return preg_replace_callback('/{\s*([A-Za-z_\-\.0-9]+)\s*}/', function(array $matches) use ($request, $response, $error, &$cache) {
+            if (isset($cache[$matches[1]])) {
+                return $cache[$matches[1]];
+            }
+
+            $cache[$matches[1]] = '';
+
+            $method = Helper::toCamelCase('sludio_'.$matches[1]);
+            if (method_exists($this, $method)) {
+                $this->request = $request;
+                $this->response = $response;
+                $this->error = $error;
+
+                $cache[$matches[1]] = $this->{$method}();
+            } else {
+                if (strpos($matches[1], 'req_header_') === 0) {
+                    $cache[$matches[1]] = $request->getHeaderLine(substr($matches[1], 11));
+                } elseif (strpos($matches[1], 'res_header_') === 0) {
+                    $cache[$matches[1]] = $response ? $response->getHeaderLine(substr($matches[1], 11)) : 'NULL';
+                }
+            }
+
+            return $cache[$matches[1]];
+        }, $this->template);
+    }
+
     protected function sludioRequest()
     {
         return Psr7\str($this->request);
@@ -41,6 +74,16 @@ class MessageFormatter extends BaseMessageFormatter
     protected function sludioReqHeaders()
     {
         return trim($this->request->getMethod().' '.(string)$this->request).' HTTP/'.$this->request->getProtocolVersion()."\r\n".$this->headers($this->request);
+    }
+
+    private function headers(MessageInterface $message)
+    {
+        $result = '';
+        foreach ($message->getHeaders() as $name => $values) {
+            $result .= $name.': '.implode(', ', $values)."\r\n";
+        }
+
+        return trim($result);
     }
 
     protected function sludioResHeaders()
@@ -58,14 +101,14 @@ class MessageFormatter extends BaseMessageFormatter
         return $this->response ? $this->response->getBody() : 'NULL';
     }
 
-    protected function sludioTs()
-    {
-        return gmdate('c');
-    }
-
     protected function sludioDateIso8601()
     {
         return $this->sludioTs();
+    }
+
+    protected function sludioTs()
+    {
+        return gmdate('c');
     }
 
     protected function sludioDateCommonLog()
@@ -83,14 +126,14 @@ class MessageFormatter extends BaseMessageFormatter
         return $this->request->getProtocolVersion();
     }
 
-    protected function sludioUri()
-    {
-        return $this->request->getUri();
-    }
-
     protected function sludioUrl()
     {
         return $this->sludioUri();
+    }
+
+    protected function sludioUri()
+    {
+        return $this->request->getUri();
     }
 
     protected function sludioTarget()
@@ -139,48 +182,5 @@ class MessageFormatter extends BaseMessageFormatter
         }
 
         return 'NULL';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function format(RequestInterface $request, ResponseInterface $response = null, \Exception $error = null)
-    {
-        $cache = [];
-
-        return preg_replace_callback('/{\s*([A-Za-z_\-\.0-9]+)\s*}/', function(array $matches) use ($request, $response, $error, &$cache) {
-            if (isset($cache[$matches[1]])) {
-                return $cache[$matches[1]];
-            }
-
-            $cache[$matches[1]] = '';
-
-            $method = Helper::toCamelCase('sludio_'.$matches[1]);
-            if (method_exists($this, $method)) {
-                $this->request = $request;
-                $this->response = $response;
-                $this->error = $error;
-
-                $cache[$matches[1]] = $this->{$method}();
-            } else {
-                if (strpos($matches[1], 'req_header_') === 0) {
-                    $cache[$matches[1]] = $request->getHeaderLine(substr($matches[1], 11));
-                } elseif (strpos($matches[1], 'res_header_') === 0) {
-                    $cache[$matches[1]] = $response ? $response->getHeaderLine(substr($matches[1], 11)) : 'NULL';
-                }
-            }
-
-            return $cache[$matches[1]];
-        }, $this->template);
-    }
-
-    private function headers(MessageInterface $message)
-    {
-        $result = '';
-        foreach ($message->getHeaders() as $name => $values) {
-            $result .= $name.': '.implode(', ', $values)."\r\n";
-        }
-
-        return trim($result);
     }
 }

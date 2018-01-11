@@ -5,6 +5,9 @@ namespace Sludio\HelperBundle\Captcha\Configurator;
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
+use Sludio\HelperBundle\Captcha\Validator\Constraint\IsTrueValidator;
+use Sludio\HelperBundle\Captcha\Form\Type\RecaptchaType;
+use Sludio\HelperBundle\Captcha\Router\LocaleResolver;
 
 class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
 {
@@ -20,9 +23,9 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             ->scalarNode('locale_key')->defaultValue('en')->end()
             ->booleanNode('locale_from_request')->defaultValue(false)->end()
             ->scalarNode('template')->defaultValue('SludioHelperBundle:Captcha:sludio_helper_captcha_recaptcha_widget.html.twig')->end()
-            ->scalarNode('resolver_class')->defaultValue('Sludio\HelperBundle\Captcha\Router\LocaleResolver')->end()
-            ->scalarNode('type_class')->defaultValue('Sludio\HelperBundle\Captcha\Form\Type\RecaptchaType')->end()
-            ->scalarNode('validator_class')->defaultValue('Sludio\HelperBundle\Captcha\Validator\Constraint\IsTrueValidator')->end()
+            ->scalarNode('resolver_class')->defaultValue(LocaleResolver::class)->end()
+            ->scalarNode('type_class')->defaultValue(RecaptchaType::class)->end()
+            ->scalarNode('validator_class')->defaultValue(IsTrueValidator::class)->end()
             ->arrayNode('http_proxy')
                 ->addDefaultsIfNotSet()
                 ->children()

@@ -2,12 +2,12 @@
 
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Facebook;
 
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Oauth\Client\Provider\BaseProvider;
 use Sludio\HelperBundle\Oauth\Exception\FacebookProviderException;
+use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Facebook extends BaseProvider
@@ -67,9 +67,29 @@ class Facebook extends BaseProvider
         return $this->getBaseFacebookUrl().$this->graphApiVersion.'/dialog/oauth';
     }
 
+    /**
+     * Get the base Facebook URL.
+     *
+     * @return string
+     */
+    private function getBaseFacebookUrl()
+    {
+        return static::BASE_FACEBOOK_URL;
+    }
+
     public function getBaseAccessTokenUrl(array $params)
     {
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/oauth/access_token';
+    }
+
+    /**
+     * Get the base Graph API URL.
+     *
+     * @return string
+     */
+    private function getBaseGraphUrl()
+    {
+        return static::BASE_GRAPH_URL;
     }
 
     public function getDefaultScopes()
@@ -108,15 +128,6 @@ class Facebook extends BaseProvider
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/me?fields='.implode(',', $fields).'&access_token='.$token.'&appsecret_proof='.$appSecretProof;
     }
 
-    public function getAccessToken($grant = 'authorization_code', array $params = [], array $attributes = [])
-    {
-        if (isset($params['refresh_token'])) {
-            throw new FacebookProviderException('error_facebook_token_refresh_not_supported');
-        }
-
-        return parent::getAccessToken($grant, $params, $attributes);
-    }
-
     public function getLongLivedAccessToken($accessToken)
     {
         $params = [
@@ -124,6 +135,15 @@ class Facebook extends BaseProvider
         ];
 
         return $this->getAccessToken('fb_exchange_token', $params);
+    }
+
+    public function getAccessToken($grant = 'authorization_code', array $params = [], array $attributes = [])
+    {
+        if (isset($params['refresh_token'])) {
+            throw new FacebookProviderException('error_facebook_token_refresh_not_supported');
+        }
+
+        return parent::getAccessToken($grant, $params, $attributes);
     }
 
     protected function createResourceOwner(array $response, AccessToken $token)
@@ -156,25 +176,5 @@ class Facebook extends BaseProvider
         }
 
         return $type;
-    }
-
-    /**
-     * Get the base Facebook URL.
-     *
-     * @return string
-     */
-    private function getBaseFacebookUrl()
-    {
-        return static::BASE_FACEBOOK_URL;
-    }
-
-    /**
-     * Get the base Graph API URL.
-     *
-     * @return string
-     */
-    private function getBaseGraphUrl()
-    {
-        return static::BASE_GRAPH_URL;
     }
 }

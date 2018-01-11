@@ -5,8 +5,8 @@ namespace Sludio\HelperBundle\Sitemap\Provider;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\QueryBuilder;
-use Symfony\Component\Routing\RouterInterface;
 use Sludio\HelperBundle\Sitemap\Sitemap;
+use Symfony\Component\Routing\RouterInterface;
 
 class DoctrineProvider extends AbstractProvider
 {

@@ -3,6 +3,8 @@
 namespace Sludio\HelperBundle\Oauth\Configurator;
 
 use Symfony\Component\Config\Definition\Builder\NodeBuilder;
+use Sludio\HelperBundle\Oauth\Client\Client\DraugiemOAuth2Client;
+use Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\Draugiem;
 
 class DraugiemProviderConfigurator implements ProviderConfiguratorInterface
 {
@@ -12,7 +14,7 @@ class DraugiemProviderConfigurator implements ProviderConfiguratorInterface
         $node
             ->scalarNode('client_class')
                 ->info('If you have a sub-class of OAuth2Client you want to use, add it here')
-                ->defaultValue('Sludio\HelperBundle\Oauth\Client\Client\DraugiemOAuth2Client')
+                ->defaultValue(DraugiemOAuth2Client::class)
             ->end()
             ->scalarNode('redirect_route')
                 ->isRequired()
@@ -28,7 +30,7 @@ class DraugiemProviderConfigurator implements ProviderConfiguratorInterface
 
     public function getProviderClass(array $config)
     {
-        return 'Sludio\HelperBundle\Oauth\Client\Provider\Draugiem\Draugiem';
+        return Draugiem::class;
     }
 
     public function getProviderOptions(array $config)

@@ -80,6 +80,32 @@ class Helper
         return $output;
     }
 
+    public static function validatePersonCode($personCode = null)
+    {
+        if ($personCode !== null) {
+            $personCode = str_replace('-', '', $personCode);
+
+            if (\strlen($personCode) !== 11) {
+                return 'error_length';
+            }
+            if (preg_match('/^\d+$/', $personCode) === null) {
+                return 'error_symbols';
+            }
+            if ((int)substr($personCode, 0, 2) < 32) {
+                if (!self::validateDate($personCode)) {
+                    return 'error_invalid';
+                }
+            }
+            if ((int)substr($personCode, 0, 2) > 32 || ((int)substr($personCode, 0, 2) === 32 && !self::newPKValidate($personCode))) {
+                return 'error_invalid';
+            }
+
+            return true;
+        }
+
+        return 'error_empty';
+    }
+
     public static function validateDate($date)
     {
         $date = str_replace('-', '', $date);
@@ -119,32 +145,6 @@ class Helper
         }
 
         return $personCode[10] === (1 - $remainder);
-    }
-
-    public static function validatePersonCode($personCode = null)
-    {
-        if ($personCode !== null) {
-            $personCode = str_replace('-', '', $personCode);
-
-            if (\strlen($personCode) !== 11) {
-                return 'error_length';
-            }
-            if (preg_match('/^\d+$/', $personCode) === null) {
-                return 'error_symbols';
-            }
-            if ((int)substr($personCode, 0, 2) < 32) {
-                if (!self::validateDate($personCode)) {
-                    return 'error_invalid';
-                }
-            }
-            if ((int)substr($personCode, 0, 2) > 32 || ((int)substr($personCode, 0, 2) === 32 && !self::newPKValidate($personCode))) {
-                return 'error_invalid';
-            }
-
-            return true;
-        }
-
-        return 'error_empty';
     }
 
     public static function swap(&$foo, &$bar)

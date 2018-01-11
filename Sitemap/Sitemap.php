@@ -39,6 +39,11 @@ class Sitemap
         }
     }
 
+    protected function isSitemapIndexable()
+    {
+        return ($this->limit > 0 && $this->dumper instanceof DumperFileInterface && $this->formatter instanceof SitemapIndexFormatterInterface);
+    }
+
     public function addProvider(ProviderInterface $provider)
     {
         $this->providers[] = $provider;
@@ -83,6 +88,46 @@ class Sitemap
         }
 
         return null;
+    }
+
+    protected function addSitemapIndex(SitemapIndex $sitemapIndex)
+    {
+        $nbSitemapIndexs = \count($this->sitemapIndexes);
+
+        if ($nbSitemapIndexs > 0) {
+            $this->dumper->dump($this->formatter->getSitemapEnd());
+        }
+        $sitemapIndexFilename = $this->getSitemapIndexFilename($this->originalFilename);
+        $this->dumper->setFilename($sitemapIndexFilename);
+
+        $this->sitemapIndexes[] = $sitemapIndex;
+        if ($nbSitemapIndexs > 0) {
+            $this->dumper->dump($this->formatter->getSitemapStart());
+        }
+    }
+
+    protected function getSitemapIndexFilename($filename)
+    {
+        $sitemapIndexFilename = basename($filename);
+        $index = \count($this->sitemapIndexes) + 1;
+        $extPosition = strrpos($sitemapIndexFilename, '.');
+        if ($extPosition !== false) {
+            $sitemapIndexFilename = substr($sitemapIndexFilename, 0, $extPosition).'-'.$index.substr($sitemapIndexFilename, $extPosition);
+        } else {
+            $sitemapIndexFilename .= '-'.$index;
+        }
+
+        $sitemapIndexFilename = \dirname($filename).DIRECTORY_SEPARATOR.$sitemapIndexFilename;
+
+        return $sitemapIndexFilename;
+    }
+
+    protected function createSitemapIndex()
+    {
+        $sitemapIndex = new SitemapIndex();
+        $sitemapIndex->setLastmod(new \DateTime());
+
+        return $sitemapIndex;
     }
 
     public function add(Url $url)
@@ -141,6 +186,11 @@ class Sitemap
         return $this;
     }
 
+    protected function getCurrentSitemapIndex()
+    {
+        return end($this->sitemapIndexes);
+    }
+
     protected function needHost($url)
     {
         if ($url === null) {
@@ -148,55 +198,5 @@ class Sitemap
         }
 
         return 0 !== strpos($url, 'http');
-    }
-
-    protected function isSitemapIndexable()
-    {
-        return ($this->limit > 0 && $this->dumper instanceof DumperFileInterface && $this->formatter instanceof SitemapIndexFormatterInterface);
-    }
-
-    protected function createSitemapIndex()
-    {
-        $sitemapIndex = new SitemapIndex();
-        $sitemapIndex->setLastmod(new \DateTime());
-
-        return $sitemapIndex;
-    }
-
-    protected function addSitemapIndex(SitemapIndex $sitemapIndex)
-    {
-        $nbSitemapIndexs = \count($this->sitemapIndexes);
-
-        if ($nbSitemapIndexs > 0) {
-            $this->dumper->dump($this->formatter->getSitemapEnd());
-        }
-        $sitemapIndexFilename = $this->getSitemapIndexFilename($this->originalFilename);
-        $this->dumper->setFilename($sitemapIndexFilename);
-
-        $this->sitemapIndexes[] = $sitemapIndex;
-        if ($nbSitemapIndexs > 0) {
-            $this->dumper->dump($this->formatter->getSitemapStart());
-        }
-    }
-
-    protected function getCurrentSitemapIndex()
-    {
-        return end($this->sitemapIndexes);
-    }
-
-    protected function getSitemapIndexFilename($filename)
-    {
-        $sitemapIndexFilename = basename($filename);
-        $index = \count($this->sitemapIndexes) + 1;
-        $extPosition = strrpos($sitemapIndexFilename, '.');
-        if ($extPosition !== false) {
-            $sitemapIndexFilename = substr($sitemapIndexFilename, 0, $extPosition).'-'.$index.substr($sitemapIndexFilename, $extPosition);
-        } else {
-            $sitemapIndexFilename .= '-'.$index;
-        }
-
-        $sitemapIndexFilename = \dirname($filename).DIRECTORY_SEPARATOR.$sitemapIndexFilename;
-
-        return $sitemapIndexFilename;
     }
 }

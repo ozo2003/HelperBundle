@@ -19,6 +19,11 @@ class Url
     protected $videos = [];
     protected $images = [];
 
+    public function getLoc()
+    {
+        return $this->loc;
+    }
+
     public function setLoc($loc)
     {
         if (\strlen($loc) > 2048) {
@@ -26,22 +31,6 @@ class Url
         }
 
         $this->loc = $loc;
-
-        return $this;
-    }
-
-    public function getLoc()
-    {
-        return $this->loc;
-    }
-
-    public function setLastmod($lastmod)
-    {
-        if ($lastmod !== null && !$lastmod instanceof \DateTime) {
-            $lastmod = new \DateTime($lastmod);
-        }
-
-        $this->lastmod = $lastmod;
 
         return $this;
     }
@@ -60,6 +49,22 @@ class Url
         }
 
         return $this->lastmod->format('Y-m-d');
+    }
+
+    public function setLastmod($lastmod)
+    {
+        if ($lastmod !== null && !$lastmod instanceof \DateTime) {
+            $lastmod = new \DateTime($lastmod);
+        }
+
+        $this->lastmod = $lastmod;
+
+        return $this;
+    }
+
+    public function getChangefreq()
+    {
+        return $this->changefreq;
     }
 
     public function setChangefreq($changefreq)
@@ -84,9 +89,9 @@ class Url
         return $this;
     }
 
-    public function getChangefreq()
+    public function getPriority()
     {
-        return $this->changefreq;
+        return $this->priority;
     }
 
     public function setPriority($priority)
@@ -102,21 +107,9 @@ class Url
         return $this;
     }
 
-    public function getPriority()
-    {
-        return $this->priority;
-    }
-
     public function addVideo(Video $video)
     {
         $this->videos[] = $video;
-
-        return $this;
-    }
-
-    public function setVideos($videos)
-    {
-        $this->videos = $videos;
 
         return $this;
     }
@@ -126,6 +119,13 @@ class Url
         return $this->videos;
     }
 
+    public function setVideos($videos)
+    {
+        $this->videos = $videos;
+
+        return $this;
+    }
+
     public function addImage(Image $image)
     {
         $this->images[] = $image;
@@ -133,15 +133,15 @@ class Url
         return $this;
     }
 
+    public function getImages()
+    {
+        return $this->images;
+    }
+
     public function setImages($images)
     {
         $this->images = $images;
 
         return $this;
-    }
-
-    public function getImages()
-    {
-        return $this->images;
     }
 }

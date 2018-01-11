@@ -11,8 +11,7 @@ class TreeController extends Controller
     public function moveAction(Request $request, $class, $id, $position)
     {
         $entityManager = $this->getDoctrine()
-            ->getManager($this->container->getParameter('sludio_helper.entity.manager'))
-        ;
+            ->getManager($this->container->getParameter('sludio_helper.entity.manager'));
         $map = $this->container->getParameter('sludio_helper.position.field')['entities'];
         if (empty($map)) {
             throw new InvalidConfigurationException('Please configure sludio_helper.position.field.enties to use move functionality');

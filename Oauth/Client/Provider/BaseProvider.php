@@ -3,8 +3,8 @@
 namespace Sludio\HelperBundle\Oauth\Client\Provider;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use League\OAuth2\Client\Token\AccessToken;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class BaseProvider extends AbstractProvider
 {

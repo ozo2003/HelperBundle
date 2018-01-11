@@ -12,51 +12,10 @@ use Psr\Http\Message\ResponseInterface;
 
 class Twitter extends AbstractProvider
 {
-    public $twitter;
-
     const URL_REQUEST_TOKEN = 'oauth/request_token';
     const URL_AUTHORIZE = 'oauth/authorize';
     const URL_ACCESS_TOKEN = 'oauth/access_token';
-
-    public function getBaseAuthorizationUrl()
-    {
-    }
-
-    public function getBaseAccessTokenUrl(array $params = null)
-    {
-    }
-
-    public function getDefaultScopes()
-    {
-        return [];
-    }
-
-    protected function createResourceOwner(array $response, AccessToken $token = null)
-    {
-    }
-
-    protected function checkResponse(ResponseInterface $response, $data)
-    {
-    }
-
-    public function getResourceOwnerDetailsUrl(AccessToken $token)
-    {
-    }
-
-    public function getClientSecret()
-    {
-        return $this->clientSecret;
-    }
-
-    public function getClientId()
-    {
-        return $this->clientId;
-    }
-
-    public function getRedirectUri()
-    {
-        return $this->redirectUri;
-    }
+    public $twitter;
 
     /**
      * Constructs an OAuth 2.0 service provider.
@@ -95,5 +54,45 @@ class Twitter extends AbstractProvider
         }
         $this->setHttpClient($collaborators['httpClient']);
         $this->twitter = new TwitterOAuth($this->getClientId(), $this->getClientSecret());
+    }
+
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    public function getClientSecret()
+    {
+        return $this->clientSecret;
+    }
+
+    public function getBaseAuthorizationUrl()
+    {
+    }
+
+    public function getBaseAccessTokenUrl(array $params = null)
+    {
+    }
+
+    public function getDefaultScopes()
+    {
+        return [];
+    }
+
+    public function getResourceOwnerDetailsUrl(AccessToken $token)
+    {
+    }
+
+    public function getRedirectUri()
+    {
+        return $this->redirectUri;
+    }
+
+    protected function createResourceOwner(array $response, AccessToken $token = null)
+    {
+    }
+
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
     }
 }

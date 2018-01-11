@@ -10,13 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait ControllerTrait
 {
-    private function result($success = 1, $code = 200)
-    {
-        return new JsonResponse(['success' => (int)$success], (int)$code, [
-            'Cache-Control' => 'no-cache',
-        ]);
-    }
-
     private function resultXml($data, $code = 200)
     {
         return new Response($data, (int)$code, [
@@ -44,5 +37,12 @@ trait ControllerTrait
         }
 
         return $output->fetch();
+    }
+
+    private function result($success = 1, $code = 200)
+    {
+        return new JsonResponse(['success' => (int)$success], (int)$code, [
+            'Cache-Control' => 'no-cache',
+        ]);
     }
 }

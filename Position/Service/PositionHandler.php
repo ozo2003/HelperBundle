@@ -32,14 +32,6 @@ class PositionHandler
     }
 
     /**
-     * @param mixed $positionField
-     */
-    public function setPositionField($positionField)
-    {
-        $this->positionField = $positionField;
-    }
-
-    /**
      * @param $entity
      *
      * @return string
@@ -54,6 +46,29 @@ class PositionHandler
         }
 
         return $this->positionField['default'];
+    }
+
+    /**
+     * @param mixed $positionField
+     */
+    public function setPositionField($positionField)
+    {
+        $this->positionField = $positionField;
+    }
+
+    /**
+     * @param $object
+     * @param $position
+     * @param $lastPosition
+     *
+     * @return int
+     */
+    public function getPosition($object, $position, $lastPosition)
+    {
+        $getter = sprintf('get%s', ucfirst($this->getPositionFieldByEntity($object)));
+        $result = $this->{'sludio'.ucfirst($position)}($object->{$getter}(), $lastPosition);
+
+        return $result === null ? 0 : $result;
     }
 
     protected function sludioUp($actual)
@@ -90,20 +105,5 @@ class PositionHandler
         }
 
         return $actual;
-    }
-
-    /**
-     * @param $object
-     * @param $position
-     * @param $lastPosition
-     *
-     * @return int
-     */
-    public function getPosition($object, $position, $lastPosition)
-    {
-        $getter = sprintf('get%s', ucfirst($this->getPositionFieldByEntity($object)));
-        $result = $this->{'sludio'.ucfirst($position)}($object->{$getter}(), $lastPosition);
-
-        return $result === null ? 0 : $result;
     }
 }

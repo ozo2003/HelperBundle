@@ -6,8 +6,6 @@ use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 trait AdminTrait
 {
-    abstract public function getClass();
-
     public function getTranslationFilter(ProxyQuery $queryBuilder, $alias, $field, $value)
     {
         if (!isset($value['value'])) {
@@ -21,4 +19,6 @@ trait AdminTrait
 
         return true;
     }
+
+    abstract public function getClass();
 }

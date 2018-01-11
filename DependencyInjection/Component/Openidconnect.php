@@ -2,12 +2,12 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
+use Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider;
 
 class Openidconnect implements ExtensionInterface
 {

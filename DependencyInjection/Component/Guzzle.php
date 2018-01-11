@@ -3,11 +3,11 @@
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
 use Sludio\HelperBundle\DependencyInjection\Compiler\MiddlewarePass;
+use Sludio\HelperBundle\Script\Utils\Helper;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\DependencyInjection\Reference;
-use Sludio\HelperBundle\Script\Utils\Helper;
 
 class Guzzle implements ConfigureInterface
 {
@@ -88,8 +88,7 @@ class Guzzle implements ConfigureInterface
 
         $container->getDefinition($this->alias.'.middleware.cache')->addArgument($debug);
         $container->getDefinition($this->alias.'.redis_cache')
-            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')))
-        ;
+            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
 
         $container->setAlias($this->alias.'.cache_adapter', $config['adapter']);
     }

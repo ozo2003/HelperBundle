@@ -8,6 +8,11 @@ class SitemapIndex
     protected $lastmod;
     protected $urlCount = 0;
 
+    public function getLoc()
+    {
+        return $this->loc;
+    }
+
     public function setLoc($loc)
     {
         if (\strlen($loc) > 2048) {
@@ -19,9 +24,13 @@ class SitemapIndex
         return $this;
     }
 
-    public function getLoc()
+    public function getLastmod()
     {
-        return $this->loc;
+        if ($this->lastmod === null) {
+            return null;
+        }
+
+        return $this->lastmod->format(\DateTime::W3C);
     }
 
     public function setLastmod($lastmod)
@@ -33,15 +42,6 @@ class SitemapIndex
         $this->lastmod = $lastmod;
 
         return $this;
-    }
-
-    public function getLastmod()
-    {
-        if ($this->lastmod === null) {
-            return null;
-        }
-
-        return $this->lastmod->format(\DateTime::W3C);
     }
 
     public function incrementUrl()

@@ -70,6 +70,18 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
     }
 
     /**
+     * Returns a field from the Graph node data.
+     *
+     * @param string $key
+     *
+     * @return mixed|null
+     */
+    private function getField($key)
+    {
+        return isset($this->response[$key]) ? $this->response[$key] : null;
+    }
+
+    /**
      * Returns the name for the user as a string if present.
      *
      * @return string|null
@@ -184,18 +196,6 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
     public function toArray()
     {
         return $this->response;
-    }
-
-    /**
-     * Returns a field from the Graph node data.
-     *
-     * @param string $key
-     *
-     * @return mixed|null
-     */
-    private function getField($key)
-    {
-        return isset($this->response[$key]) ? $this->response[$key] : null;
     }
 
     /**

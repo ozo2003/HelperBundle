@@ -2,8 +2,8 @@
 
 namespace Sludio\HelperBundle\Sitemap\Provider;
 
-use Symfony\Component\Routing\RouterInterface;
 use Sludio\HelperBundle\Sitemap\Entity\Url;
+use Symfony\Component\Routing\RouterInterface;
 
 /**
  * Abstract class containing common methods used by Propel and Doctrine providers.

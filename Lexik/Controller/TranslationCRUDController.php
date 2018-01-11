@@ -14,6 +14,40 @@ class TranslationCRUDController extends CRUDController
     use NonActionTrait;
 
     /**
+     * @return RedirectResponse|Response
+     * @throws NotFoundHttpException
+     */
+    public function createTransUnitAction()
+    {
+        $request = $this->getRequest();
+        $parameters = $this->getRequest()->request;
+        if (!$request->isMethod('POST')) {
+            return $this->renderJson([
+                'message' => 'method not allowed',
+            ], 403);
+        }
+        $admin = $this->admin;
+        if (false === $admin->isGranted('EDIT')) {
+            return $this->renderJson([
+                'message' => 'access denied',
+            ], 403);
+        }
+        $keyName = $parameters->get('key');
+        $domainName = $parameters->get('domain');
+        if (!$keyName || !$domainName) {
+            return $this->renderJson([
+                'message' => 'missing key or domain',
+            ], 422);
+        }
+
+        /* @var $transUnitManager \Lexik\Bundle\TranslationBundle\Manager\TransUnitManager */
+        $transUnitManager = $this->get('lexik_translation.trans_unit.manager');
+        $transUnit = $transUnitManager->create($keyName, $domainName, true);
+
+        return $this->editAction($transUnit->getId());
+    }
+
+    /**
      * Edit action
      *
      * @param int|string|null $id
@@ -81,51 +115,15 @@ class TranslationCRUDController extends CRUDController
     }
 
     /**
-     * @return RedirectResponse|Response
-     * @throws NotFoundHttpException
-     */
-    public function createTransUnitAction()
-    {
-        $request = $this->getRequest();
-        $parameters = $this->getRequest()->request;
-        if (!$request->isMethod('POST')) {
-            return $this->renderJson([
-                'message' => 'method not allowed',
-            ], 403);
-        }
-        $admin = $this->admin;
-        if (false === $admin->isGranted('EDIT')) {
-            return $this->renderJson([
-                'message' => 'access denied',
-            ], 403);
-        }
-        $keyName = $parameters->get('key');
-        $domainName = $parameters->get('domain');
-        if (!$keyName || !$domainName) {
-            return $this->renderJson([
-                'message' => 'missing key or domain',
-            ], 422);
-        }
-
-        /* @var $transUnitManager \Lexik\Bundle\TranslationBundle\Manager\TransUnitManager */
-        $transUnitManager = $this->get('lexik_translation.trans_unit.manager');
-        $transUnit = $transUnitManager->create($keyName, $domainName, true);
-
-        return $this->editAction($transUnit->getId());
-    }
-
-    /**
      * @return RedirectResponse
      */
     public function clearCacheAction()
     {
         $this->get('event_dispatcher')
-            ->dispatch(RemoveLocaleCacheEvent::PRE_REMOVE_LOCAL_CACHE, new RemoveLocaleCacheEvent($this->getManagedLocales()))
-        ;
+            ->dispatch(RemoveLocaleCacheEvent::PRE_REMOVE_LOCAL_CACHE, new RemoveLocaleCacheEvent($this->getManagedLocales()));
         $this->get('translator')->removeLocalesCacheFiles($this->getManagedLocales());
         $this->get('event_dispatcher')
-            ->dispatch(RemoveLocaleCacheEvent::POST_REMOVE_LOCAL_CACHE, new RemoveLocaleCacheEvent($this->getManagedLocales()))
-        ;
+            ->dispatch(RemoveLocaleCacheEvent::POST_REMOVE_LOCAL_CACHE, new RemoveLocaleCacheEvent($this->getManagedLocales()));
 
         /** @var $session Session */
         $session = $this->get('session');

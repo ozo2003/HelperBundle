@@ -13,14 +13,6 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class Oauth implements ExtensionInterface
 {
-    protected $checkClassExistence;
-
-    protected $configurators = [];
-
-    protected $type;
-
-    protected $alias;
-
     /**
      * List of available Oauth providers
      * @var array
@@ -32,6 +24,10 @@ class Oauth implements ExtensionInterface
         'twitter' => Configurator\TwitterProviderConfigurator::class,
         'draugiem' => Configurator\DraugiemProviderConfigurator::class,
     ];
+    protected $checkClassExistence;
+    protected $configurators = [];
+    protected $type;
+    protected $alias;
 
     public function __construct($checkClassExistence = true)
     {

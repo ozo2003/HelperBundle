@@ -2,9 +2,9 @@
 
 namespace Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware;
 
-use Sludio\HelperBundle\Guzzle\GuzzleHttp\History\History;
 use GuzzleHttp\Promise\RejectedPromise;
 use Psr\Http\Message\RequestInterface;
+use Sludio\HelperBundle\Guzzle\GuzzleHttp\History\History;
 
 class HistoryMiddleware
 {

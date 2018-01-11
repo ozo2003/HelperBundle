@@ -74,19 +74,19 @@ abstract class TranslationAdmin extends AbstractAdmin
     }
 
     /**
-     * @return array
-     */
-    public function getDefaultSelections()
-    {
-        return $this->defaultSelections;
-    }
-
-    /**
      * @return bool
      */
     public function getNonTranslatedOnly()
     {
         return array_key_exists('non_translated_only', $this->getDefaultSelections()) && (bool)$this->defaultSelections['nonTranslatedOnly'];
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultSelections()
+    {
+        return $this->defaultSelections;
     }
 
     /**
@@ -103,25 +103,6 @@ abstract class TranslationAdmin extends AbstractAdmin
     public function setEmptyPrefixes(array $prefixes)
     {
         $this->emptyFieldPrefixes = $prefixes;
-    }
-
-    /**
-     * @return array
-     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
-     */
-    public function getFilterParameters()
-    {
-        if ($this->getDefaultDomain()) {
-            $this->datagridValues = array_merge([
-                'domain' => [
-                    'value' => $this->getDefaultDomain(),
-                ],
-            ], $this->datagridValues
-
-            );
-        }
-
-        return parent::getFilterParameters();
     }
 
     /**
@@ -149,37 +130,6 @@ abstract class TranslationAdmin extends AbstractAdmin
     }
 
     /**
-     * @param RouteCollection $collection
-     */
-    protected function configureRoutes(RouteCollection $collection)
-    {
-        $collection->add('clear_cache')->add('create_trans_unit');
-    }
-
-    /**
-     * @param ListMapper $list
-     *
-     * @throws \RuntimeException
-     */
-    protected function configureListFields(ListMapper $list)
-    {
-        $list->add('id', Type\IntegerType::class)
-            ->add('key', Type\TextType::class)
-            ->add('domain', Type\TextType::class)
-        ;
-
-        $localesToShow = \count($this->filterLocales) > 0 ? $this->filterLocales : $this->managedLocales;
-
-        foreach ($localesToShow as $locale) {
-            $fieldDescription = $this->modelManager->getNewFieldDescriptionInstance($this->getClass(), $locale);
-            $fieldDescription->setTemplate('SludioHelperBundle:Lexik:CRUD/base_inline_translation_field.html.twig');
-            $fieldDescription->setOption('locale', $locale);
-            $fieldDescription->setOption('editable', $this->editableOptions);
-            $list->add($fieldDescription);
-        }
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function buildDatagrid()
@@ -199,27 +149,22 @@ abstract class TranslationAdmin extends AbstractAdmin
     }
 
     /**
-     * @param FormMapper $form
-     *
+     * @return array
      * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
      */
-    protected function configureFormFields(FormMapper $form)
+    public function getFilterParameters()
     {
-        $subject = $this->getSubject();
+        if ($this->getDefaultDomain()) {
+            $this->datagridValues = array_merge([
+                'domain' => [
+                    'value' => $this->getDefaultDomain(),
+                ],
+            ], $this->datagridValues
 
-        if (null === $subject->getId()) {
-            $subject->setDomain($this->getDefaultDomain());
+            );
         }
 
-        $form->add('key', Type\TextareaType::class)->add('domain', Type\TextareaType::class);
-    }
-
-    /**
-     * @return ContainerInterface
-     */
-    protected function getContainer()
-    {
-        return $this->getConfigurationPool()->getContainer();
+        return parent::getFilterParameters();
     }
 
     /**
@@ -229,6 +174,14 @@ abstract class TranslationAdmin extends AbstractAdmin
     protected function getDefaultDomain()
     {
         return $this->getContainer()->getParameter('sludio_helper.lexik.default_domain');
+    }
+
+    /**
+     * @return ContainerInterface
+     */
+    protected function getContainer()
+    {
+        return $this->getConfigurationPool()->getContainer();
     }
 
     /**
@@ -250,5 +203,51 @@ abstract class TranslationAdmin extends AbstractAdmin
     {
         parent::initialize();
         $this->managedLocales = $this->getContainer()->getParameter('lexik_translation.managed_locales');
+    }
+
+    /**
+     * @param RouteCollection $collection
+     */
+    protected function configureRoutes(RouteCollection $collection)
+    {
+        $collection->add('clear_cache')->add('create_trans_unit');
+    }
+
+    /**
+     * @param ListMapper $list
+     *
+     * @throws \RuntimeException
+     */
+    protected function configureListFields(ListMapper $list)
+    {
+        $list->add('id', Type\IntegerType::class)
+            ->add('key', Type\TextType::class)
+            ->add('domain', Type\TextType::class);
+
+        $localesToShow = \count($this->filterLocales) > 0 ? $this->filterLocales : $this->managedLocales;
+
+        foreach ($localesToShow as $locale) {
+            $fieldDescription = $this->modelManager->getNewFieldDescriptionInstance($this->getClass(), $locale);
+            $fieldDescription->setTemplate('SludioHelperBundle:Lexik:CRUD/base_inline_translation_field.html.twig');
+            $fieldDescription->setOption('locale', $locale);
+            $fieldDescription->setOption('editable', $this->editableOptions);
+            $list->add($fieldDescription);
+        }
+    }
+
+    /**
+     * @param FormMapper $form
+     *
+     * @throws \Symfony\Component\DependencyInjection\Exception\InvalidArgumentException
+     */
+    protected function configureFormFields(FormMapper $form)
+    {
+        $subject = $this->getSubject();
+
+        if (null === $subject->getId()) {
+            $subject->setDomain($this->getDefaultDomain());
+        }
+
+        $form->add('key', Type\TextareaType::class)->add('domain', Type\TextareaType::class);
     }
 }

@@ -29,6 +29,11 @@ trait VideoTrait
         return $this->title;
     }
 
+    public function getThumbnailLoc()
+    {
+        return $this->thumbnailLoc;
+    }
+
     public function setThumbnailLoc($loc)
     {
         $this->thumbnailLoc = $loc;
@@ -36,14 +41,14 @@ trait VideoTrait
         return $this;
     }
 
-    public function getThumbnailLoc()
-    {
-        return $this->thumbnailLoc;
-    }
-
     public function getDescription()
     {
         return $this->description;
+    }
+
+    public function getContentLoc()
+    {
+        return $this->contentLoc;
     }
 
     public function setContentLoc($loc)
@@ -51,11 +56,6 @@ trait VideoTrait
         $this->contentLoc = $loc;
 
         return $this;
-    }
-
-    public function getContentLoc()
-    {
-        return $this->contentLoc;
     }
 
     public function getPlayerLoc()
@@ -78,16 +78,16 @@ trait VideoTrait
         return $this->viewCount;
     }
 
+    public function getFamilyFriendly()
+    {
+        return $this->familyFriendly;
+    }
+
     public function setFamilyFriendly($friendly)
     {
         $this->familyFriendly = (bool)$friendly;
 
         return $this;
-    }
-
-    public function getFamilyFriendly()
-    {
-        return $this->familyFriendly;
     }
 
     public function getTags()
@@ -110,16 +110,16 @@ trait VideoTrait
         return $this->galleryLoc;
     }
 
+    public function getRequiresSubscription()
+    {
+        return $this->requiresSubscription;
+    }
+
     public function setRequiresSubscription($requiresSubscription)
     {
         $this->requiresSubscription = (bool)$requiresSubscription;
 
         return $this;
-    }
-
-    public function getRequiresSubscription()
-    {
-        return $this->requiresSubscription;
     }
 
     public function getUploader()
@@ -132,15 +132,15 @@ trait VideoTrait
         return $this->platforms;
     }
 
+    public function getLive()
+    {
+        return $this->live;
+    }
+
     public function setLive($live)
     {
         $this->live = (bool)$live;
 
         return $this;
-    }
-
-    public function getLive()
-    {
-        return $this->live;
     }
 }

@@ -50,18 +50,6 @@ class Draugiem extends AbstractProvider
         return [];
     }
 
-    protected function createResourceOwner(array $response, AccessToken $token)
-    {
-        return new DraugiemUser($response);
-    }
-
-    protected function checkResponse(ResponseInterface $response, $data)
-    {
-        if (!empty($data['error'])) {
-            throw new IdentityProviderException('error_draugiem_bad_response', $data['error']['code'], $response->getBody());
-        }
-    }
-
     public function getClientSecret()
     {
         return $this->clientSecret;
@@ -79,5 +67,17 @@ class Draugiem extends AbstractProvider
 
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
+    }
+
+    protected function createResourceOwner(array $response, AccessToken $token)
+    {
+        return new DraugiemUser($response);
+    }
+
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
+        if (!empty($data['error'])) {
+            throw new IdentityProviderException('error_draugiem_bad_response', $data['error']['code'], $response->getBody());
+        }
     }
 }

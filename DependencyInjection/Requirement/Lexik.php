@@ -14,7 +14,7 @@ class Lexik extends AbstractRequirement
         SonataAdminBundle::class => 'sonata-project/admin-bundle',
         SonataDoctrineORMAdminBundle::class => 'sonata-project/doctrine-orm-admin-bundle',
     ];
-    
+
     public function getRequirements()
     {
         return $this->requirements;

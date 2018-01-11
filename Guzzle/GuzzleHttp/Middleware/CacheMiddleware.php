@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware;
 
-use Sludio\HelperBundle\Guzzle\Cache\StorageAdapterInterface;
 use GuzzleHttp\Promise\FulfilledPromise;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Sludio\HelperBundle\Guzzle\Cache\StorageAdapterInterface;
 
 class CacheMiddleware
 {

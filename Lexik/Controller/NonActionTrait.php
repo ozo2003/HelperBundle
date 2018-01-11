@@ -14,8 +14,6 @@ trait NonActionTrait
 {
     protected $container;
 
-    abstract protected function addFlash($type, $message);
-
     /**
      * Execute a batch download
      *
@@ -72,13 +70,15 @@ trait NonActionTrait
         return $response;
     }
 
-    protected function getManagedLocales()
-    {
-        return $this->container->getParameter('lexik_translation.managed_locales');
-    }
+    abstract protected function addFlash($type, $message);
 
     public function __toString()
     {
         return 'sludio_helper.lexik.crud.controller';
+    }
+
+    protected function getManagedLocales()
+    {
+        return $this->container->getParameter('lexik_translation.managed_locales');
     }
 }

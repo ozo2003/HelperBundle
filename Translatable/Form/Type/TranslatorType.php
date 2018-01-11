@@ -3,6 +3,8 @@
 namespace Sludio\HelperBundle\Translatable\Form\Type;
 
 use Sludio\HelperBundle\Translatable\Helper\Manager;
+use Sonata\AdminBundle\Admin\AdminInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,21 +14,18 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Sonata\AdminBundle\Admin\AdminInterface;
 
 class TranslatorType extends AbstractType
 {
+    const DEFAULT_CLASS = '';
+    const DEFAULT_TYPE = 'text';
     protected $manager;
+    protected $container;
     /**
      * @var array
      */
     private $locales;
     private $userLocale;
-    protected $container;
-
-    const DEFAULT_CLASS = '';
-    const DEFAULT_TYPE = 'text';
 
     public function __construct($locales, Manager $manager, TranslatorInterface $translator, $container)
     {
@@ -34,25 +33,6 @@ class TranslatorType extends AbstractType
         $this->locales = $locales;
         $this->userLocale = $translator->getLocale();
         $this->container = $container;
-    }
-
-    private function checkOptions(array $object, $field)
-    {
-        if (!isset($object['fields'][$field])) {
-            return false;
-        }
-
-        $fields = [
-            'class',
-            'type',
-        ];
-        foreach ($fields as $type) {
-            if (!isset($object['fields'][$field][$type])) {
-                $object['fields'][$field][$type] = \constant('self::DEFAULT_'.strtoupper($type));
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -127,28 +107,31 @@ class TranslatorType extends AbstractType
         });
     }
 
+    private function checkOptions(array $object, $field)
+    {
+        if (!isset($object['fields'][$field])) {
+            return false;
+        }
+
+        $fields = [
+            'class',
+            'type',
+        ];
+        foreach ($fields as $type) {
+            if (!isset($object['fields'][$field][$type])) {
+                $object['fields'][$field][$type] = \constant('self::DEFAULT_'.strtoupper($type));
+            }
+        }
+
+        return true;
+    }
+
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         // pass some variables for field rendering
         $view->vars['locales'] = $this->locales;
         $view->vars['currentlocale'] = $this->userLocale;
         $view->vars['translatedtablocales'] = $this->getTabTranslations();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return 'translations';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
     }
 
     private function getTabTranslations()
@@ -164,6 +147,22 @@ class TranslatorType extends AbstractType
     private function getTranslatedLocalCode($locale)
     {
         return \Locale::getDisplayLanguage($locale, $this->userLocale);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getName()
+    {
+        return $this->getBlockPrefix();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return 'translations';
     }
 
     /**
