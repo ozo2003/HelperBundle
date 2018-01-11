@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Script\Repository;
 
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Sludio\HelperBundle\Script\Utils\Helper;
+use AppCache;
 
 abstract class QuickInsertFunctions
 {
@@ -22,13 +23,13 @@ abstract class QuickInsertFunctions
         }
         global $kernel;
 
-        if ('AppCache' === \get_class($kernel)) {
+        if (AppCache::class === \get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();
 
         $manager = $manager ?: $container->getParameter('sludio_helper.entity.manager');
-        if(\is_object($manager)){
+        if (\is_object($manager)) {
             self::$entityManager = $manager;
         } else {
             self::$entityManager = $container->get('doctrine')->getManager($manager);
@@ -118,7 +119,7 @@ abstract class QuickInsertFunctions
             'longint',
         ];
         $flip = [];
-        if(isset(self::$mock[$tableName])) {
+        if (isset(self::$mock[$tableName])) {
             $flip = array_flip(self::$mock[$tableName]);
         }
 

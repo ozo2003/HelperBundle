@@ -29,7 +29,7 @@ services:
 
     sludio_helper.repository.insert:
         class: Sludio\HelperBundle\Script\Repository\InsertRepository
-        public: false
+        public: true
         arguments:
-            - '@doctrine.orm.default_entity_manager'
-            - ~
+            - '@doctrine'
+            - '%sludio_helper.entity.manager%'

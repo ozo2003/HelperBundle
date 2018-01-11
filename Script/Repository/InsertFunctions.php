@@ -15,13 +15,15 @@ class InsertFunctions
      */
     protected $metadata;
 
+    public $doctrine;
+
     public $entityManager;
 
-    public function __construct($entityManager, $object = null)
+    public function __construct($doctrine, $defaultManager)
     {
-        $this->entityManager = $entityManager;
-        $this->connection = $this->entityManager->getConnection();
-        $this->setObject($object);
+        $this->doctrine = $doctrine;
+        $this->connection = $this->doctrine->getManager('default')->getConnection();
+        $this->setManager($defaultManager);
     }
 
     public function getObject()
@@ -30,17 +32,20 @@ class InsertFunctions
     }
 
     /**
-     * @param null|object $object
-     *
-     * @return InsertFunctions
+     * @param object $object
      */
     public function setObject($object)
     {
         $this->object = $object;
-        if ($object !== null) {
-            $this->metadata = $this->entityManager->getMetadataFactory()->getMetadataFor(\get_class($object));
-        }
+        $this->metadata = $this->entityManager->getMetadataFactory()->getMetadataFor(\get_class($object));
+    }
 
-        return $this;
+    public function setManager($manager)
+    {
+        if (\is_object($manager)) {
+            $this->entityManager = $manager;
+        } else {
+            $this->entityManager = $this->doctrine->getManager($manager);
+        }
     }
 }
