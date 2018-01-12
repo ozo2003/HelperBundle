@@ -3,7 +3,6 @@
 namespace Sludio\HelperBundle\Guzzle\DataCollector;
 
 use GuzzleHttp\Exception\RequestException;
-use Namshi\Cuzzle\Formatter\CurlFormatter;
 use Psr\Http\Message\StreamInterface;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\History\History;
 use Sludio\HelperBundle\Guzzle\GuzzleHttp\Middleware\CacheMiddleware;
@@ -18,7 +17,6 @@ class GuzzleCollector extends DataCollector
 
     private $maxBodySize;
     private $history;
-    private $curlFormatter;
 
     /**
      * Constructor.
@@ -30,10 +28,6 @@ class GuzzleCollector extends DataCollector
     {
         $this->maxBodySize = $maxBodySize;
         $this->history = $history ?: new History();
-
-        if (class_exists(CurlFormatter::class)) {
-            $this->curlFormatter = new CurlFormatter();
-        }
 
         $this->data = [];
     }
@@ -67,10 +61,6 @@ class GuzzleCollector extends DataCollector
                 'httpCode' => 0,
                 'error' => null,
             ];
-
-            if ($this->curlFormatter && $historyRequest->getBody()->getSize() <= $this->maxBodySize) {
-                $req['curl'] = $this->curlFormatter->format($historyRequest);
-            }
 
             if ($historyResponse) {
                 $req['response'] = [
