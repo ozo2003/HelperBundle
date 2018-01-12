@@ -128,13 +128,13 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
      * @param  mixed $grant
      * @param  array $options
      *
-     * @return BaseAccessToken
+     * @return AccessToken
      * @throws InvalidTokenException
      * @throws \BadMethodCallException
      */
     public function getAccessToken($grant, array $options = [])
     {
-        /** @var BaseAccessToken $token */
+        /** @var AccessToken $token */
         $accessToken = parent::getAccessToken($grant, $options);
 
         if (null === $accessToken) {
@@ -142,7 +142,6 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
         }
 
         $token = $accessToken->getIdToken();
-
         // id_token is empty.
         if (null === $token) {
             throw new InvalidTokenException('Expected an id_token but did not receive one from the authorization server.');

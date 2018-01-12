@@ -33,3 +33,6 @@ services:
         arguments:
             - '@doctrine'
             - '%sludio_helper.entity.manager%'
+
+    sludio_helper.service.mobile_detect:
+        class: Mobile_Detect

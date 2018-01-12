@@ -10,8 +10,8 @@ class Uri implements Uriable
 {
     protected $params;
     protected $urlParams;
-    private $url;
-    private $base;
+    protected $url;
+    protected $base;
 
     public function __construct(array $options, array $additional = [], $useSession = false, $method = OpenIDConnectProvider::METHOD_POST)
     {
@@ -90,5 +90,13 @@ class Uri implements Uriable
     public function addUrlParam($name, $value)
     {
         $this->urlParams[$name] = $value;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBase()
+    {
+        return $this->base;
     }
 }
