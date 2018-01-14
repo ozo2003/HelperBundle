@@ -15,6 +15,7 @@ class Openidconnect implements ExtensionInterface
 
     public function buildClientConfiguration(NodeDefinition $node)
     {
+        $node->addDefaultsIfNotSet();
         $optionsNode = $node->children();
 
         // @formatter:off
@@ -51,6 +52,7 @@ class Openidconnect implements ExtensionInterface
 
     private function buildUri(NodeDefinition $node)
     {
+        $node->addDefaultsIfNotSet();
         $optionsNode = $node->children();
 
         // @formatter:off

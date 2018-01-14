@@ -11,10 +11,26 @@ class ClientRegistry
 
     private $serviceMap;
 
-    public function __construct(ContainerInterface $container, array $serviceMap)
+    public function __construct(ContainerInterface $container, array $serviceMap = [], $_ = null)
     {
         $this->container = $container;
-        $this->serviceMap = $serviceMap;
+        $arguments = \func_get_args();
+        unset($arguments[0]);
+
+        $used = [];
+        foreach ($arguments as $argument) {
+            if (!\is_array($argument)) {
+                continue;
+            }
+            $checkExists = \array_intersect($used, array_keys($argument));
+            $count = \count($checkExists);
+            if ($count !== 0) {
+                throw new InvalidArgumentException(sprintf('Multiple clients with same key is not allowed! Key'.($count > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
+            }
+            $used = array_merge($used, array_keys($argument));
+        }
+
+        $this->serviceMap = $used;
     }
 
     public function getClient($key)
@@ -31,13 +47,13 @@ class ClientRegistry
         return isset($this->serviceMap[$key]);
     }
 
-    public function getNameByClient($key = null)
+    public function getNameByClient($key = '')
     {
-        if ($key && isset($this->serviceMap[$key])) {
+        if ($key !== '' && isset($this->serviceMap[$key])) {
             return $this->serviceMap[$key]['name'];
         }
 
-        return '';
+        return $key;
     }
 
     public function getClients()

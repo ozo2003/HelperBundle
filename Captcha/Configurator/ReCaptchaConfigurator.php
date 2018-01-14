@@ -34,6 +34,21 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
                     ->scalarNode('auth')->defaultValue(null)->end()
                 ->end()
             ->end()
+            ->arrayNode('options')
+                ->addDefaultsIfNotSet()
+                ->children()
+                    ->booleanNode('compound')->defaultValue(false)->end()
+                    ->scalarNode('url_challenge')->defaultValue(null)->end()
+                    ->scalarNode('url_noscript')->defaultValue(null)->end()
+                    ->scalarNode('theme')->defaultValue('light')->end()
+                    ->scalarNode('type')->defaultValue('image')->end()
+                    ->scalarNode('size')->defaultValue('normal')->end()
+                    ->scalarNode('callback')->defaultValue(null)->end()
+                    ->scalarNode('expiredDallback')->defaultValue(null)->end()
+                    ->booleanNode('defer')->defaultValue(false)->end()
+                    ->booleanNode('async')->defaultValue(false)->end()
+                ->end()
+            ->end()
         ;
         // @formatter:on
     }
@@ -59,6 +74,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             $container->getParameter($clientServiceKey.'.public_key'),
             $container->getParameter($clientServiceKey.'.ajax'),
             $container->getDefinition($resolver),
+            $container->getParameter($clientServiceKey.'.options'),
         ]);
         $typeDefinition->addTag('form.type');
         /* VALIDATOR */

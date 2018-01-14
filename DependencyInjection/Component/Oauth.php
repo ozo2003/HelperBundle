@@ -52,6 +52,7 @@ class Oauth implements ExtensionInterface
 
     public function buildClientConfiguration(NodeDefinition $node)
     {
+        $node->addDefaultsIfNotSet();
         $optionsNode = $node->children();
 
         // @formatter:off

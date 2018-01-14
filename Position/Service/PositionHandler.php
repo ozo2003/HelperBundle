@@ -57,18 +57,17 @@ class PositionHandler
     }
 
     /**
-     * @param $object
+     * @param $entity
      * @param $position
      * @param $lastPosition
      *
      * @return int
      */
-    public function getPosition($object, $position, $lastPosition)
+    public function getPosition($entity, $position, $lastPosition)
     {
-        $getter = sprintf('get%s', ucfirst($this->getPositionFieldByEntity($object)));
-        $result = $this->{'sludio'.ucfirst($position)}($object->{$getter}(), $lastPosition);
+        $getter = sprintf('get%s', ucfirst($this->getPositionFieldByEntity($entity)));
 
-        return $result === null ? 0 : $result;
+        return (int)$this->{'sludio'.ucfirst($position)}($entity->{$getter}(), $lastPosition);
     }
 
     protected function sludioUp($actual)

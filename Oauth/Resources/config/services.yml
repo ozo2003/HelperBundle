@@ -14,16 +14,16 @@ services:
             - "@service_container"
             - ~
 
-    oauth.registry:
-        alias: sludio_helper.oauth.registry
-
     sludio_helper.registry:
-        class: Sludio\HelperBundle\Oauth\Utils\ClientOpenIDRegistry
+        class: Sludio\HelperBundle\Script\Utils\ClientRegistry
         public: true
         arguments:
             - "@service_container"
             - ~
             - ~
+
+    oauth.registry:
+        alias: sludio_helper.oauth.registry
 
     openauth.registry:
         alias: sludio_helper.registry

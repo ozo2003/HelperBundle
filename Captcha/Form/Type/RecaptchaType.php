@@ -20,14 +20,14 @@ class RecaptchaType extends AbstractType
     /**
      * The public key
      *
-     * @var String
+     * @var string
      */
     protected $publicKey;
 
     /**
      * Use AJAX API
      *
-     * @var Boolean
+     * @var bool
      */
     protected $ajax;
 
@@ -39,17 +39,24 @@ class RecaptchaType extends AbstractType
     protected $localeResolver;
 
     /**
+     * @var array
+     */
+    protected $options = [];
+
+    /**
      * Construct.
      *
      * @param String                $publicKey      Recaptcha site key
      * @param Boolean               $ajax           Ajax status
      * @param LocaleResolver|String $localeResolver Language or locale code
+     * @param array                 $options
      */
-    public function __construct($publicKey, $ajax, LocaleResolver $localeResolver)
+    public function __construct($publicKey, $ajax, LocaleResolver $localeResolver, array $options = [])
     {
         $this->publicKey = $publicKey;
         $this->ajax = $ajax;
         $this->localeResolver = $localeResolver;
+        $this->options = $options;
     }
 
     /**
@@ -59,22 +66,46 @@ class RecaptchaType extends AbstractType
     {
         $view->vars = array_replace($view->vars, [
             'recaptcha_ajax' => $this->ajax,
+            'public_key' => $this->publicKey,
         ]);
-
-        if (!isset($options['language'])) {
-            $options['language'] = $this->localeResolver->resolve();
-        }
 
         if (!$this->ajax) {
             $view->vars = array_replace($view->vars, [
                 'url_challenge' => sprintf('%s.js?hl=%s', self::RECAPTCHA_API_SERVER, $options['language']),
-                'public_key' => $this->publicKey,
             ]);
         } else {
             $view->vars = array_replace($view->vars, [
                 'url_api' => self::RECAPTCHA_API_JS_SERVER,
-                'public_key' => $this->publicKey,
             ]);
+        }
+
+        $baseOptions = [
+            'compound',
+            'url_challenge',
+            'url_noscript',
+        ];
+
+        $attributes = [
+            'theme',
+            'type',
+            'size',
+            'callback',
+            'expiredCallback',
+            'defer',
+            'async',
+        ];
+
+        if (!empty($this->options)) {
+            foreach ($baseOptions as $option) {
+                if (isset($this->options[$option])) {
+                    $view->vars[$option] = $this->options[$option];
+                }
+            }
+            foreach ($attributes as $attribute) {
+                if (isset($this->options[$attribute])) {
+                    $view->vars['attr']['options'][$attribute] = $this->options[$attribute];
+                }
+            }
         }
     }
 

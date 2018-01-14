@@ -10,8 +10,8 @@ use Symfony\Component\Stopwatch\Stopwatch;
 class Guzzle extends AbstractRequirement
 {
     protected $requirements = [
-        ClientInterface::class => 'guzzlehttp/guzzle~6.0',
-        CacheItemInterface::class => 'psr/cache^1.0',
+        ClientInterface::class => 'guzzlehttp/guzzle:~6.0',
+        CacheItemInterface::class => 'psr/cache:^1.0',
         Stopwatch::class => 'symfony/stopwatch',
         Filesystem::class => 'symfony/filesystem',
     ];
