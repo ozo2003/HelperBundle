@@ -2,9 +2,9 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
-use Exception;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
+use Sludio\HelperBundle\Script\Exception\ErrorException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,6 +25,7 @@ class Login implements Loginable
     protected $nsMode = 'auth';
     protected $sregFields = 'email';
     protected $userClass;
+    protected $fields;
 
     public function __construct($clientName, RequestStack $requestStack, ContainerBuilder $container, UrlGeneratorInterface $generator)
     {
@@ -32,28 +33,34 @@ class Login implements Loginable
         $this->requestStack = $requestStack;
         $this->generator = $generator;
 
-        $this->apiKey = $container->getParameter($clientName.'.api_key');
-        $this->openidUrl = $container->getParameter($clientName.'.openid_url');
-        $this->pregCheck = $container->getParameter($clientName.'.preg_check');
-        $this->userClass = $container->getParameter($clientName.'.user_class');
-        if ($container->hasParameter($clientName.'.option.profile_url')) {
-            $this->profileUrl = $container->getParameter($clientName.'.option.profile_url');
+        $inputs = [
+            'apiKey' => $clientName.'.api_key',
+            'openidUrl' => $clientName.'.openid_url',
+            'pregCheck' => $clientName.'.preg_check',
+            'userClass' => $clientName.'.user_class',
+        ];
+
+        foreach ($inputs as $key => $input) {
+            $this->{$key} = $container->getParameter($input);
         }
+
         $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
 
-        if ($container->hasParameter($clientName.'.option.sreg_fields')) {
-            $fields = $container->getParameter($clientName.'.option.sreg_fields');
-            if ($fields && \is_array($fields)) {
-                $this->sregFields = implode(',', $fields);
+        $parameters = [
+            'profileUrl' => $clientName.'.option.profile_url',
+            'redirectRoute' => $clientName.'.redirect_route',
+            'redirectRouteParams' => $clientName.'.option.params',
+            'fields' => $clientName.'.option.sreg_fields',
+        ];
+
+        foreach ($parameters as $key => $param) {
+            if ($container->hasParameter($param)) {
+                $this->{$key} = $container->getParameter($param);
             }
         }
 
-        if ($container->hasParameter($clientName.'.redirect_route')) {
-            $this->redirectRoute = $container->getParameter($clientName.'.redirect_route');
-        }
-
-        if ($container->hasParameter($clientName.'.option.params')) {
-            $this->redirectRouteParams = $container->getParameter($clientName.'.option.params');
+        if ($this->fields !== null && \is_array($this->fields)) {
+            $this->sregFields = implode(',', $this->fields);
         }
     }
 
@@ -100,7 +107,7 @@ class Login implements Loginable
      * @param string|null $altRealm
      *
      * @return string
-     * @throws Exception
+     * @throws ErrorException
      */
     public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
@@ -109,7 +116,7 @@ class Login implements Loginable
 
         if (null !== $return) {
             if (!$this->validateUrl($return)) {
-                throw new Exception('error_oauth_invalid_return_url');
+                throw new ErrorException('error_oauth_invalid_return_url');
             }
         } else {
             $return = $realm.$this->request->server->get('SCRIPT_NAME');
@@ -165,7 +172,7 @@ class Login implements Loginable
             $openID = (\is_array($matches) && isset($matches[1])) ? $matches[1] : null;
 
             $response = preg_match("#is_valid\s*:\s*true#i", $result) === 1 ? $openID : null;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $response = null;
         }
 
@@ -196,7 +203,7 @@ class Login implements Loginable
         }
 
         if ($user === null) {
-            throw new Exception('error_oauth_login_invalid_or_timed_out');
+            throw new ErrorException('error_oauth_login_invalid_or_timed_out');
         }
 
         return $user;

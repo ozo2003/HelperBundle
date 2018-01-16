@@ -5,18 +5,25 @@ namespace Sludio\HelperBundle\Openidconnect\Provider;
 use Sludio\HelperBundle\Openidconnect\Component\Uriable;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class Uri implements Uriable
 {
-    protected $params;
-    protected $urlParams;
+    protected $params = [];
+    protected $urlParams = [];
     protected $url;
     protected $base;
+    protected $session;
+    protected $useSession;
+    protected $method;
 
-    public function __construct(array $options, array $additional = [], $useSession = false, $method = OpenIDConnectProvider::METHOD_POST)
+    public function __construct(array $options, array $additional = [], $useSession = false, $method = OpenIDConnectProvider::METHOD_POST, Session $session = null)
     {
         $this->base = rtrim($additional['base_uri'], '/').'/';
         unset($additional['base_uri']);
+        $this->session = $session;
+        $this->useSession = $useSession;
+        $this->method = $method;
 
         $this->params = !empty($options['params']) ? $options['params'] : [];
 
@@ -24,14 +31,6 @@ class Uri implements Uriable
             if (isset($options['url_params']['post_logout_redirect_uri'])) {
                 $options['url_params']['post_logout_redirect_uri'] = $additional['redirect_uri'];
                 unset($additional['redirect_uri']);
-            }
-
-            if (isset($options['url_params']['id_token_hint'], $_SESSION['id_token'])) {
-                if ($useSession === false) {
-                    throw new \InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
-                }
-                $additional['id_token_hint'] = $_SESSION['id_token'];
-                unset($options['url_params']['id_token_hint']);
             }
             $this->urlParams = !empty($options['url_params']) ? array_merge($options['url_params'], $additional) : $additional;
         }
@@ -70,6 +69,18 @@ class Uri implements Uriable
 
     private function buildUrl()
     {
+        if ($this->method === OpenIDConnectProvider::METHOD_GET) {
+            $additional = [];
+            if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
+                if ($this->useSession === false) {
+                    throw new InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
+                }
+                $additional['id_token_hint'] = $this->session->get('id_token');
+                unset($this->urlParams['id_token_hint']);
+            }
+            $this->urlParams = !empty($this->urlParams) ? array_merge($this->urlParams, $additional) : $additional;
+        }
+
         $url = $this->base;
         if (!empty($this->params)) {
             $url .= implode('/', $this->params);

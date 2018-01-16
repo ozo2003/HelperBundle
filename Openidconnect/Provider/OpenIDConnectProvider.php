@@ -5,7 +5,6 @@ namespace Sludio\HelperBundle\Openidconnect\Provider;
 use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
-use Lcobucci\JWT\Token;
 use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
 use Psr\Http\Message\ResponseInterface;
@@ -14,6 +13,8 @@ use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Specification;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sludio\HelperBundle\Script\Utils\Helper;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class OpenIDConnectProvider extends BaseProvider implements Providerable
 {
@@ -48,21 +49,25 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
      * @var bool
      */
     protected $useSession;
+
     /**
      * @var Router
      */
     private $router;
+
     /**
      * @var string
      */
     private $baseUri;
+
+    protected $session;
 
     /**
      * @param array  $options
      * @param array  $collaborators
      * @param Router $router
      */
-    public function __construct(array $options = [], array $collaborators = [], Router $router)
+    public function __construct(array $options = [], array $collaborators = [], Router $router, Session $session)
     {
         $this->signer = new Sha256();
 
@@ -80,9 +85,18 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
         ]);
 
         $this->router = $router;
+        $this->session = $session;
 
         parent::__construct($options, $collaborators);
         $this->buildParams($options);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    protected function getRandomState($length = 32)
+    {
+        return Helper::getUniqueId($length);
     }
 
     private function buildParams(array $options = [])
@@ -117,7 +131,7 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
                     'base_uri' => $this->baseUri,
                 ];
                 $method = isset($uri['method']) ? $uri['method'] : self::METHOD_POST;
-                $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method);
+                $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method, $this->session);
             }
         }
     }
@@ -199,9 +213,9 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
         }
 
         if ($this->useSession) {
-            $_SESSION['access_token'] = $accessToken->getToken();
-            $_SESSION['refresh_token'] = $accessToken->getRefreshToken();
-            $_SESSION['id_token'] = $accessToken->getIdTokenHint();
+            $this->session->set('access_token', $accessToken->getToken());
+            $this->session->set('refresh_token', $accessToken->getRefreshToken());
+            $this->session->set('id_token', $accessToken->getIdTokenHint());
         }
 
         return $accessToken;

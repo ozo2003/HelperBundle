@@ -77,6 +77,7 @@ class Openidconnect implements ExtensionInterface
             $container->getParameter($clientServiceKey),
             [],
             new Reference('router'),
+            new Reference('session')
         ]);
     }
 
@@ -91,6 +92,7 @@ class Openidconnect implements ExtensionInterface
             $processor = new Processor();
             $node = $tree->root('sludio_helper_openidconnect_client/clients/'.$key);
             $this->buildClientConfiguration($node);
+            /** @var array $config */
             $config = $processor->process($tree->buildTree(), [$clientConfig]);
             $clientServiceKey = $this->alias.'.client.'.$key;
             $container->setParameter($clientServiceKey, $clientConfig);

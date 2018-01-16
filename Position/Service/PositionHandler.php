@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Position\Service;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
+use Sludio\HelperBundle\Position\Component\PositionInterface;
 
 class PositionHandler
 {
@@ -63,7 +64,7 @@ class PositionHandler
      *
      * @return int
      */
-    public function getPosition($entity, $position, $lastPosition)
+    public function getPosition(PositionInterface $entity, $position, $lastPosition)
     {
         $getter = sprintf('get%s', ucfirst($this->getPositionFieldByEntity($entity)));
 

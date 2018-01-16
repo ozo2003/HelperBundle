@@ -11,7 +11,14 @@ class ClientRegistry
 
     private $serviceMap;
 
-    public function __construct(ContainerInterface $container, array $serviceMap = [], $_ = null)
+    /**
+     * ClientRegistry constructor.
+     *
+     * @param ContainerInterface $container
+     *
+     * @throws InvalidArgumentException
+     */
+    public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
         $arguments = \func_get_args();
@@ -22,17 +29,24 @@ class ClientRegistry
             if (!\is_array($argument)) {
                 continue;
             }
-            $checkExists = \array_intersect($used, array_keys($argument));
+            $checkExists = \array_intersect(array_keys($used), array_keys($argument));
             $count = \count($checkExists);
             if ($count !== 0) {
                 throw new InvalidArgumentException(sprintf('Multiple clients with same key is not allowed! Key'.($count > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
             }
-            $used = array_merge($used, array_keys($argument));
+            $used = array_merge($used, $argument);
         }
 
         $this->serviceMap = $used;
     }
 
+    /**
+     * @param $key
+     *
+     * @throws InvalidArgumentException
+     *
+     * @return mixed
+     */
     public function getClient($key)
     {
         if (!$this->hasClient($key)) {
@@ -49,7 +63,7 @@ class ClientRegistry
 
     public function getNameByClient($key = '')
     {
-        if ($key !== '' && isset($this->serviceMap[$key])) {
+        if ($key !== '' && $this->hasClient($key)) {
             return $this->serviceMap[$key]['name'];
         }
 

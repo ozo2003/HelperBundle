@@ -2,8 +2,6 @@
 
 namespace Sludio\HelperBundle\Oauth\Exception;
 
-use Exception;
-
-class FacebookProviderException extends Exception
+class FacebookProviderException extends \Exception
 {
 }

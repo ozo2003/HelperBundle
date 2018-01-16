@@ -5,19 +5,6 @@ namespace Sludio\HelperBundle\Translatable\Router;
 use JMS\I18nRoutingBundle\Router\LocaleResolverInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * Default Locale Resolver.
- *
- * These checks are performed by this method:
- *
- *     1. Check if the host is associated with a specific locale
- *     2. Check for a query parameter named "hl"
- *     3. Check for a locale in the session
- *     4. Check for a cookie named "hl"
- *     5. Check the Accept header for supported languages
- *
- * @author Johannes M. Schmitt <schmittjoh@gmail.com>
- */
 class DefaultLocaleResolver implements LocaleResolverInterface
 {
     private $cookieName;
@@ -39,7 +26,24 @@ class DefaultLocaleResolver implements LocaleResolverInterface
             return $this->hostMap[$host];
         }
 
-        // if a locale has been specifically set as a query parameter, use it
+        $functions = [
+            'returnByParameter',
+            'returnByPreviousSession',
+            'returnByCookie',
+            'returnByLang',
+        ];
+
+        foreach ($functions as $function) {
+            if ($result = $this->{$function}($request, $availableLocales)) {
+                return $result;
+            }
+        }
+
+        return null;
+    }
+
+    protected function returnByParameter(Request $request)
+    {
         if ($request->query->has('hl')) {
             $hostLanguage = $request->query->get('hl');
 
@@ -47,16 +51,20 @@ class DefaultLocaleResolver implements LocaleResolverInterface
                 return $hostLanguage;
             }
         }
+    }
 
-        // check if a session exists, and if it contains a locale
+    protected function returnByPreviousSession(Request $request)
+    {
         if ($request->hasPreviousSession()) {
             $session = $request->getSession();
             if ($session->has('_locale')) {
                 return $session->get('_locale');
             }
         }
+    }
 
-        // if user sends a cookie, use it
+    protected function returnByCookie(Request $request)
+    {
         if ($request->cookies->has($this->cookieName)) {
             $hostLanguage = $request->cookies->get($this->cookieName);
 
@@ -64,7 +72,10 @@ class DefaultLocaleResolver implements LocaleResolverInterface
                 return $hostLanguage;
             }
         }
+    }
 
+    protected function returnByLang(Request $request, array $availableLocales)
+    {
         $languages = [];
         foreach ($request->getLanguages() as $language) {
             if (\strlen($language) !== 2) {
@@ -82,7 +93,5 @@ class DefaultLocaleResolver implements LocaleResolverInterface
                 }
             }
         }
-
-        return null;
     }
 }

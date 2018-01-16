@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
-use Exception;
+use Sludio\HelperBundle\Script\Exception\ErrorException;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
 use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
 use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
@@ -42,7 +42,7 @@ class TwitterOAuthClient extends OAuth2Client
 
         if ($this->provider->twitter->getLastHttpCode() !== 200) {
             $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There was a problem performing this request', $this->provider->twitter->getLastHttpCode());
-            throw new Exception('error_twitter_bad_response');
+            throw new ErrorException('error_twitter_bad_response');
         }
 
         $this->session->set('oauth_token', $request_token['oauth_token']);
@@ -84,10 +84,10 @@ class TwitterOAuthClient extends OAuth2Client
 
         try {
             $user_token = $this->provider->twitter->oauth(static::URL_ACCESS_TOKEN, ['oauth_verifier' => $code]);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             if ($this->provider->twitter->getLastHttpCode() !== 200) {
                 $this->logger->error(__CLASS__.' ('.__LINE__.'): '.$e->getMessage(), $this->provider->twitter->getLastHttpCode());
-                throw new Exception('error_twitter_bad_response');
+                throw new ErrorException('error_twitter_bad_response');
             }
         }
 
