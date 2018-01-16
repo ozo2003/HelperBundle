@@ -16,37 +16,6 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SludioHelperExtension extends Extension
 {
-    private function loadConfig(array $configs, ContainerBuilder $container)
-    {
-        $configuration = new Configuration($this->getAlias());
-        /** @var $config array[] */
-        $config = $this->processConfiguration($configuration, $configs);
-
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $files = [
-            'components.yml',
-            'parameters.yml',
-            'services.yml',
-        ];
-        foreach ($files as $file) {
-            if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
-                $loader->load($file);
-            }
-        }
-
-        foreach ($config['other'] as $key => $other) {
-            if (\is_array($other)) {
-                foreach ($other as $variable => $value) {
-                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['other'][$key][$variable]);
-                }
-            } else {
-                $container->setParameter($this->getAlias().'.'.$key, $config['other'][$key]);
-            }
-        }
-
-        return $config;
-    }
-
     /**
      * {@inheritdoc}
      * @throws \Exception
@@ -85,6 +54,37 @@ class SludioHelperExtension extends Extension
                 }
             }
         }
+    }
+
+    private function loadConfig(array $configs, ContainerBuilder $container)
+    {
+        $configuration = new Configuration($this->getAlias());
+        /** @var $config array[] */
+        $config = $this->processConfiguration($configuration, $configs);
+
+        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
+        $files = [
+            'components.yml',
+            'parameters.yml',
+            'services.yml',
+        ];
+        foreach ($files as $file) {
+            if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
+                $loader->load($file);
+            }
+        }
+
+        foreach ($config['other'] as $key => $other) {
+            if (\is_array($other)) {
+                foreach ($other as $variable => $value) {
+                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['other'][$key][$variable]);
+                }
+            } else {
+                $container->setParameter($this->getAlias().'.'.$key, $config['other'][$key]);
+            }
+        }
+
+        return $config;
     }
 
     public function getAlias()
