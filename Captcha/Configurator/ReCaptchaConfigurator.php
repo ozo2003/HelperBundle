@@ -14,6 +14,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
 
     public function buildConfiguration(NodeBuilder $node)
     {
+        $node->addDefaultsIfNotset();
         // @formatter:off
         $node
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
@@ -26,6 +27,16 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             ->scalarNode('resolver_class')->defaultValue(LocaleResolver::class)->end()
             ->scalarNode('type_class')->defaultValue(RecaptchaType::class)->end()
             ->scalarNode('validator_class')->defaultValue(IsTrueValidator::class)->end()
+            ->arrayNode('locales')
+                ->cannotBeEmpty()
+                ->beforeNormalization()
+                    ->ifString()
+                        ->then(function($v) {
+                            return preg_split('/\s*,\s*/', $v);
+                        })
+                    ->end()
+                ->prototype('scalar')->end()
+            ->end()
             ->arrayNode('http_proxy')
                 ->addDefaultsIfNotSet()
                 ->children()
@@ -65,6 +76,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             $container->getParameter($clientServiceKey.'.locale_key'),
             $container->getParameter($clientServiceKey.'.locale_from_request'),
             new Reference('request_stack'),
+            $container->getParameter($clientServiceKey.'.locales'),
         ]);
         /* TYPE */
         $type = $clientServiceKey.'.form.type';

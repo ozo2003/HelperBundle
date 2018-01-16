@@ -25,20 +25,23 @@ final class LocaleResolver
      */
     protected $request;
 
+    protected $availableLocales;
+
     /**
      * @param String       $defaultLocale
      * @param Boolean      $useLocaleFromRequest
      * @param RequestStack $requestStack
      */
-    public function __construct($defaultLocale, $useLocaleFromRequest, RequestStack $requestStack)
+    public function __construct($defaultLocale, $useLocaleFromRequest, RequestStack $requestStack, $availableLocales)
     {
         $this->defaultLocale = $defaultLocale;
         $this->useLocaleFromRequest = $useLocaleFromRequest;
         $this->request = $requestStack->getCurrentRequest();
+        $this->availableLocales = $availableLocales;
     }
 
     public function resolve()
     {
-        return $this->resolveLocale($this->request, ['lv','ru']);
+        return $this->resolveLocale($this->request, $this->availableLocales);
     }
 }
