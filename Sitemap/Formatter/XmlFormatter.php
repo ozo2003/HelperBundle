@@ -65,10 +65,6 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
     {
         $buffer = $this->videoHeader($video);
 
-        if ($video->getFamilyFriendly() === false) {
-            $buffer .= "\t\t".'<video:family_friendly>no</video:family_friendly>'."\n";
-        }
-
         $checks = [
             'getContentLoc' => "\t\t".'<video:content_loc>'.$this->escape($video->getContentLoc()).'</video:content_loc>'."\n",
             'getDuration' => "\t\t".'<video:duration>'.$this->escape($video->getDuration()).'</video:duration>'."\n",
@@ -79,6 +75,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             'getCategory' => "\t\t".'<video:category>'.$this->escape($video->getCategory()).'</video:category>'."\n",
             'getRequiresSubscription' => "\t\t".'<video:requires_subscription>'.($video->getRequiresSubscription() ? 'yes' : 'no').'</video:requires_subscription>'."\n",
             'getLive' => "\t\t".'<video:live>'.($video->getLive() ? 'yes' : 'no').'</video:live>'."\n",
+            'getFamilyFriendly' => "\t\t".'<video:family_friendly>'.($video->getFamilyFriendly() ? 'yes' : 'no').'</video:family_friendly>'."\n"
         ];
 
         $extended = [

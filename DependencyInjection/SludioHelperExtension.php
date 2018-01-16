@@ -16,11 +16,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SludioHelperExtension extends Extension
 {
-    /**
-     * {@inheritdoc}
-     * @throws \Exception
-     */
-    public function load(array $configs, ContainerBuilder $container)
+    private function loadConfig(array $configs, ContainerBuilder $container)
     {
         $configuration = new Configuration($this->getAlias());
         /** @var $config array[] */
@@ -47,6 +43,17 @@ class SludioHelperExtension extends Extension
                 $container->setParameter($this->getAlias().'.'.$key, $config['other'][$key]);
             }
         }
+
+        return $config;
+    }
+
+    /**
+     * {@inheritdoc}
+     * @throws \Exception
+     */
+    public function load(array $configs, ContainerBuilder $container)
+    {
+        $config = $this->loadConfig($configs, $container);
 
         foreach ($config['extensions'] as $key => $extension) {
             if (!isset($extension['enabled']) || $extension['enabled'] !== true) {

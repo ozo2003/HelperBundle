@@ -11,24 +11,18 @@ class ORMTranslationAdmin extends TranslationAdmin
     protected function configureDatagridFilters(DatagridMapper $filter)
     {
         /** @var \Doctrine\ORM\EntityManager $entityManager */
-        $entityManager = $this->getContainer()
-            ->get('doctrine')
-            ->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File');
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File');
 
         $domains = [];
-        $domainsQueryResult = $entityManager->createQueryBuilder()
-            ->select('DISTINCT t.domain')
-            ->from('\Lexik\Bundle\TranslationBundle\Entity\File', 't')
-            ->getQuery()
-            ->getResult(Query::HYDRATE_ARRAY);
+        $domainsQueryResult = $entityManager->createQueryBuilder()->select('DISTINCT t.domain')->from('\Lexik\Bundle\TranslationBundle\Entity\File', 't')->getQuery()->getResult(Query::HYDRATE_ARRAY);
 
-        array_walk_recursive($domainsQueryResult, function($domain) use (&$domains) {
+        array_walk_recursive($domainsQueryResult, function ($domain) use (&$domains) {
             $domains[$domain] = $domain;
         });
         ksort($domains);
 
         $filter->add('locale', 'doctrine_orm_callback', [
-            'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $options) {
+            'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $options) {
                 if (!isset($options['value']) || empty($options['value'])) {
                     return;
                 }
@@ -43,7 +37,7 @@ class ORMTranslationAdmin extends TranslationAdmin
             ],
             'field_type' => 'choice',
         ])->add('show_non_translated_only', 'doctrine_orm_callback', [
-            'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $options) {
+            'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $options) {
                 if (!isset($options['value']) || empty($options['value']) || false === $options['value']) {
                     return;
                 }
@@ -53,8 +47,7 @@ class ORMTranslationAdmin extends TranslationAdmin
                     if (empty($prefix)) {
                         $queryBuilder->orWhere('translations.content IS NULL');
                     } else {
-                        $queryBuilder->orWhere('translations.content LIKE :content')
-                            ->setParameter('content', $prefix.'%');
+                        $queryBuilder->orWhere('translations.content LIKE :content')->setParameter('content', $prefix.'%');
                     }
 
                 }
@@ -74,13 +67,12 @@ class ORMTranslationAdmin extends TranslationAdmin
             ],
             'field_type' => 'choice',
         ])->add('content', 'doctrine_orm_callback', [
-            'callback' => function(ProxyQuery $queryBuilder, $alias, $field, $options) {
+            'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $options) {
                 if (!isset($options['value']) || empty($options['value'])) {
                     return;
                 }
                 $this->joinTranslations($queryBuilder, $alias);
-                $queryBuilder->andWhere('translations.content LIKE :content')
-                    ->setParameter('content', '%'.$options['value'].'%');
+                $queryBuilder->andWhere('translations.content LIKE :content')->setParameter('content', '%'.$options['value'].'%');
             },
             'field_type' => 'text',
             'label' => 'content',
@@ -123,7 +115,7 @@ class ORMTranslationAdmin extends TranslationAdmin
     private function formatLocales(array $locales)
     {
         $formattedLocales = [];
-        array_walk_recursive($locales, function($language) use (&$formattedLocales) {
+        array_walk_recursive($locales, function ($language) use (&$formattedLocales) {
             $formattedLocales[$language] = $language;
         });
 
