@@ -14,7 +14,6 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
 
     public function buildConfiguration(NodeBuilder $node)
     {
-        $node->addDefaultsIfNotset();
         // @formatter:off
         $node
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()

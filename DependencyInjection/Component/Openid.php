@@ -82,7 +82,7 @@ class Openid implements ExtensionInterface
         $clientDefinition->setArguments([
             $clientServiceKey,
             new Reference('request_stack'),
-            $container,
+            new Reference('service_container'),
             new Reference('router'),
         ]);
     }
