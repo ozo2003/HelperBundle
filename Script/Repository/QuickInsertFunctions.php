@@ -57,11 +57,11 @@ abstract class QuickInsertFunctions
             $path = ' WHERE ';
             foreach ($where as $key => $value) {
                 if (!\is_array($value) && isset(self::$mock[$tableName][$key])) {
-                    $whereSql .= $path.self::$mock[$tableName][$key].' = '.(self::numeric($tableName, $key, $value) ? $value : "'".addslashes(trim($value))."'");
+                    $whereSql .= $path.self::$mock[$tableName][$key].' = '.self::slashes($tableName, $key, $value);
                 } elseif (\is_array($value)) {
                     $whereSql .= $path.$value[0];
                 } else {
-                    $whereSql .= $path.$key.' = '.(self::numeric($tableName, $key, $value) ? $value : "'".addslashes(trim($value))."'");
+                    $whereSql .= $path.$key.' = '.self::slashes($tableName, $key, $value);
                 }
                 if ($key === $first) {
                     $path = ' AND ';
@@ -70,6 +70,22 @@ abstract class QuickInsertFunctions
         }
 
         return $whereSql;
+    }
+
+    protected static function slashes($tableName, $key, $value)
+    {
+        if ($value instanceof \DateTime) {
+            $result = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
+        } else {
+            $result = self::numeric($tableName, $key, $value) ? $value : "'".addslashes(trim($value))."'";
+        }
+
+        $trim = trim($result);
+        if ($trim === '' || $trim === "''") {
+            $result = null;
+        }
+
+        return $result;
     }
 
     protected static function numeric($tableName, $key, $value)
@@ -177,7 +193,25 @@ abstract class QuickInsertFunctions
         return $data;
     }
 
-    protected static function value($object, $variable, $type, $check = true)
+    protected static function parseUpdateResult($object, $type, $id, $tableName, array $result = null)
+    {
+        $data = [];
+        if (!empty($result)) {
+            foreach ($result as $key => $value) {
+                $content = self::value($object, $key, $type, $tableName, false);
+                if ($id && !\in_array($content, [
+                        null,
+                        $value,
+                    ], true)) {
+                    $data[$key] = $content;
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    protected static function value($object, $variable, $type, $tableName, $check = true)
     {
         $value = null;
         if ($type === 'object') {
@@ -189,7 +223,7 @@ abstract class QuickInsertFunctions
         }
 
         if ($check) {
-            Helper::variable($value);
+            self::slashes($tableName, $variable, $value);
         }
 
         return $value;

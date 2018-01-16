@@ -91,19 +91,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         if (isset($result['id'])) {
             unset($result['id']);
         }
-        $data = [];
-
-        if (!empty($result)) {
-            foreach ($result as $key => $value) {
-                $content = self::value($object, $key, $type, false);
-                if ($id && !\in_array($content, [
-                        null,
-                        $value,
-                    ], true)) {
-                    $data[$key] = $content;
-                }
-            }
-        }
+        $data = self::parseUpdateResult($object, $type, $id, $tableName, $result);
 
         if (!empty($data)) {
             $sql = sprintf('UPDATE %s SET ', $tableName);
@@ -152,7 +140,7 @@ class QuickInsertRepository extends QuickInsertFunctions
                 $value,
             ];
             if (!Helper::multiple($keys)) {
-                $value = self::value($object, $value, $type);
+                $value = self::value($object, $value, $type, $tableName);
                 if ($value !== null) {
                     $data[$key] = $value;
                     if ($key === self::$identifier) {

@@ -55,20 +55,6 @@ class Helper
         return $result;
     }
 
-    public static function variable(&$value)
-    {
-        if ($value instanceof \DateTime) {
-            $value = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
-        } elseif (!is_numeric($value)) {
-            $value = "'".addslashes(trim($value))."'";
-        }
-
-        $trim = trim($value);
-        if ($trim === '' || $trim === "''") {
-            $value = null;
-        }
-    }
-
     public static function getUniqueId($length = 20)
     {
         try {
