@@ -44,7 +44,7 @@ final class LocaleResolver
     {
         $locale = $this->resolveLocale($this->request, $this->availableLocales);
 
-        if(\in_array($locale, $this->availableLocales, true)){
+        if (\in_array($locale, $this->availableLocales, true)) {
             return $locale;
         }
 
