@@ -55,7 +55,8 @@ final class FixedLength extends AbstractBehaviour
     /**
      * @param int $maximumVisible
      *
-     * @return static
+     * @return $this
+     *
      * @throws InvalidArgumentException
      */
     public function withMaximumVisible($maximumVisible)

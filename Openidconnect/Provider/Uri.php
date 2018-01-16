@@ -58,7 +58,7 @@ class Uri implements Uriable
      *
      * @param mixed $url
      *
-     * @return self
+     * @return $this
      */
     public function setUrl($url)
     {
@@ -70,15 +70,12 @@ class Uri implements Uriable
     private function buildUrl()
     {
         if ($this->method === OpenIDConnectProvider::METHOD_GET) {
-            $additional = [];
             if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
                 if ($this->useSession === false) {
                     throw new InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
                 }
-                $additional['id_token_hint'] = $this->session->get('id_token');
-                unset($this->urlParams['id_token_hint']);
+                $this->urlParams['id_token_hint'] = $this->session->get('id_token');
             }
-            $this->urlParams = !empty($this->urlParams) ? array_merge($this->urlParams, $additional) : $additional;
         }
 
         $url = $this->base;

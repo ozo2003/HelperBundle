@@ -40,7 +40,7 @@ class Image
     /**
      * @param null|string $loc
      *
-     * @return Image
+     * @return $this
      */
     public function setLoc($loc)
     {
@@ -60,7 +60,7 @@ class Image
     /**
      * @param null|string $caption
      *
-     * @return Image
+     * @return $this
      */
     public function setCaption($caption)
     {
@@ -80,7 +80,7 @@ class Image
     /**
      * @param null|string $geoLocation
      *
-     * @return Image
+     * @return $this
      */
     public function setGeoLocation($geoLocation)
     {
@@ -100,7 +100,7 @@ class Image
     /**
      * @param null|string $title
      *
-     * @return Image
+     * @return $this
      */
     public function setTitle($title)
     {
@@ -120,7 +120,7 @@ class Image
     /**
      * @param null|string $license
      *
-     * @return Image
+     * @return $this
      */
     public function setLicense($license)
     {

@@ -4,23 +4,26 @@ namespace Sludio\HelperBundle\Captcha\Router;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Sludio\HelperBundle\Translatable\Router\LocaleResolverTrait;
 
 final class LocaleResolver
 {
+    use LocaleResolverTrait;
+
     /**
      * @var String
      */
-    private $defaultLocale;
+    protected $defaultLocale;
 
     /**
      * @var Boolean
      */
-    private $useLocaleFromRequest;
+    protected $useLocaleFromRequest;
 
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * @param String       $defaultLocale
@@ -34,11 +37,8 @@ final class LocaleResolver
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    /**
-     * @return String The resolved locale key, depending on configuration
-     */
     public function resolve()
     {
-        return $this->useLocaleFromRequest ? $this->request->getLocale() : $this->defaultLocale;
+        return $this->resolveLocale($this->request, ['lv','ru']);
     }
 }
