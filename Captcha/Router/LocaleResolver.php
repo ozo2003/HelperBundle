@@ -42,6 +42,12 @@ final class LocaleResolver
 
     public function resolve()
     {
-        return $this->resolveLocale($this->request, $this->availableLocales);
+        $locale = $this->resolveLocale($this->request, $this->availableLocales);
+
+        if(\in_array($locale, $this->availableLocales, true)){
+            return $locale;
+        }
+
+        return $this->defaultLocale;
     }
 }
