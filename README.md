@@ -26,6 +26,8 @@ public function registerBundles()
 
 ## Usage ##
 
+# WIP #
+
 Configure the `sludio_helper` client(s) in your `config.yml`:
 ``` yaml
 sludio_helper:
