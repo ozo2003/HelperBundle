@@ -26,6 +26,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             ->scalarNode('resolver_class')->defaultValue(LocaleResolver::class)->end()
             ->scalarNode('type_class')->defaultValue(RecaptchaType::class)->end()
             ->scalarNode('validator_class')->defaultValue(IsTrueValidator::class)->end()
+            ->scalarNode('validate')->defaultValue(true)->end()
             ->arrayNode('locales')
                 ->cannotBeEmpty()
                 ->beforeNormalization()
@@ -97,6 +98,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             $container->getParameter($clientServiceKey.'.http_proxy'),
             $container->getParameter($clientServiceKey.'.verify_host'),
             new Reference('request_stack'),
+            $container->getParameter($clientServiceKey.'.validate'),
         ]);
         $validatorDefinition->addTag('validator.constraint_validator');
     }

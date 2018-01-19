@@ -8,9 +8,6 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultLocaleResolver implements LocaleResolverInterface
 {
     use LocaleResolverTrait;
-    
-    private $cookieName;
-    private $hostMap;
 
     public function __construct($cookieName, array $hostMap = [])
     {

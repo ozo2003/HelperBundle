@@ -2,36 +2,20 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
-use League\OAuth2\Client\Grant\AbstractGrant;
-use League\OAuth2\Client\Provider\AbstractProvider;
-use Sludio\HelperBundle\Script\Exception\ErrorException;
-
-abstract class BaseProvider extends AbstractProvider
+class BaseProvider extends OpenIDConnectProvider
 {
-    /**
-     * @inheritdoc
-     */
-    public function getAccessToken($grant, array $options = [])
+    public function getValidateTokenUrl()
     {
-        $grant = $this->verifyGrant($grant);
-
-        $params = [
-            'redirect_uri' => $this->redirectUri,
-        ];
-
-        $params = $grant->prepareRequestParameters($params, $options);
-        $request = $this->getAccessTokenRequest($params);
-        $response = $this->getResponse($request);
-        if(!is_array($response)){
-            throw new ErrorException('error_invalid_request');
-        }
-        $prepared = $this->prepareAccessTokenResponse($response);
-
-        return $this->createAccessToken($prepared, $grant);
+        return '';
     }
 
-    protected function createAccessToken(array $response, AbstractGrant $grant)
+    public function getRefreshTokenUrl()
     {
-        return new AccessToken($response);
+        return '';
+    }
+
+    public function getRevokeTokenUrl()
+    {
+        return '';
     }
 }

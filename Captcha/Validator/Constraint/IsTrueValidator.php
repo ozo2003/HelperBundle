@@ -18,7 +18,7 @@ class IsTrueValidator extends ConstraintValidator
     /**
      * Recaptcha Private Key
      *
-     * @var String
+     * @var string
      */
     protected $secretKey;
 
@@ -31,7 +31,7 @@ class IsTrueValidator extends ConstraintValidator
 
     /**
      * HTTP Proxy informations
-     * @var Array
+     * @var array
      */
     protected $httpProxy;
 
@@ -42,6 +42,8 @@ class IsTrueValidator extends ConstraintValidator
      */
     protected $verifyHost;
 
+    protected $validate;
+
     /**
      * Construct.
      *
@@ -49,13 +51,15 @@ class IsTrueValidator extends ConstraintValidator
      * @param array        $httpProxy
      * @param Boolean      $verifyHost
      * @param RequestStack $requestStack
+     * @param bool         $validate
      */
-    public function __construct($secretKey, array $httpProxy, $verifyHost, RequestStack $requestStack)
+    public function __construct($secretKey, array $httpProxy, $verifyHost, RequestStack $requestStack, $validate = true)
     {
         $this->secretKey = $secretKey;
         $this->request = $requestStack->getCurrentRequest();
         $this->httpProxy = $httpProxy;
         $this->verifyHost = $verifyHost;
+        $this->validate = $validate;
     }
 
     /**
@@ -86,12 +90,15 @@ class IsTrueValidator extends ConstraintValidator
      * @param String $remoteip
      * @param String $response
      *
+     * @return array|bool|mixed
      * @throws ValidatorException When missing remote ip
-     *
-     * @return Boolean
      */
     private function checkAnswer($secretKey, $remoteip, $response)
     {
+        if ($this->validate === false) {
+            return ['success' => true];
+        }
+
         if ($remoteip === null || $remoteip === '') {
             throw new ValidatorException('sludio_helper.captcha.recaptcha.validator.remote_ip');
         }

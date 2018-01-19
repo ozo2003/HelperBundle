@@ -46,9 +46,9 @@ class Uri implements Uriable
      *
      * @return mixed
      */
-    public function getUrl()
+    public function getUrl($language = null)
     {
-        $this->buildUrl();
+        $this->buildUrl($language);
 
         return $this->url;
     }
@@ -67,7 +67,7 @@ class Uri implements Uriable
         return $this;
     }
 
-    private function buildUrl()
+    private function buildUrl($language = null)
     {
         if ($this->method === OpenIDConnectProvider::METHOD_GET) {
             if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
@@ -76,6 +76,10 @@ class Uri implements Uriable
                 }
                 $this->urlParams['id_token_hint'] = $this->session->get('id_token');
             }
+        }
+
+        if($language !== null){
+            $this->urlParams['lang'] = (string)$language;
         }
 
         $url = $this->base;

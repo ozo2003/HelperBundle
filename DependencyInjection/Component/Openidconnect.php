@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\DependencyInjection\Component;
 
 use Sludio\HelperBundle\Openidconnect\Provider\OpenIDConnectProvider;
+use Sludio\HelperBundle\Openidconnect\Provider\BaseProvider;
 use Symfony\Component\Config\Definition\Builder\NodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\Processor;
@@ -25,7 +26,7 @@ class Openidconnect implements ExtensionInterface
             ->scalarNode('id_token_issuer')->isRequired()->defaultNull()->end()
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('base_uri')->isRequired()->end()
-            ->scalarNode('user_provider')->defaultValue(OpenIDConnectProvider::class)->end()
+            ->scalarNode('user_provider')->defaultValue(BaseProvider::class)->end()
             ->scalarNode('use_session')->defaultFalse()->end()
             ->arrayNode('redirect')
                 ->addDefaultsIfNotSet()

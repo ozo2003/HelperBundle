@@ -6,17 +6,20 @@ use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Client\Grant\AbstractGrant;
+use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Specification;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sludio\HelperBundle\Script\Exception\ErrorException;
 use Sludio\HelperBundle\Script\Utils\Helper;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class OpenIDConnectProvider extends BaseProvider implements Providerable
+abstract class OpenIDConnectProvider extends AbstractProvider implements Providerable
 {
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
@@ -51,6 +54,15 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
     protected $useSession;
 
     /**
+     * @var Session
+     */
+    protected $session;
+
+    /**
+     * @var int
+     */
+    protected $statusCode;
+    /**
      * @var Router
      */
     private $router;
@@ -60,12 +72,11 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
      */
     private $baseUri;
 
-    protected $session;
-
     /**
-     * @param array  $options
-     * @param array  $collaborators
-     * @param Router $router
+     * @param array   $options
+     * @param array   $collaborators
+     * @param Router  $router
+     * @param Session $session
      */
     public function __construct(array $options = [], array $collaborators = [], Router $router, Session $session)
     {
@@ -89,14 +100,6 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
 
         parent::__construct($options, $collaborators);
         $this->buildParams($options);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    protected function getRandomState($length = 32)
-    {
-        return Helper::getUniqueId($length);
     }
 
     private function buildParams(array $options = [])
@@ -137,6 +140,14 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
     }
 
     /**
+     * @inheritdoc
+     */
+    protected function getRandomState($length = 32)
+    {
+        return Helper::getUniqueId($length);
+    }
+
+    /**
      * Requests an access token using a specified grant and option set.
      *
      * @param  mixed $grant
@@ -145,11 +156,12 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
      * @return AccessToken
      * @throws InvalidTokenException
      * @throws \BadMethodCallException
+     * @throws ErrorException
      */
     public function getAccessToken($grant, array $options = [])
     {
         /** @var AccessToken $token */
-        $accessToken = parent::getAccessToken($grant, $options);
+        $accessToken = $this->getAccessTokenFunction($grant, $options);
 
         if (null === $accessToken) {
             throw new InvalidTokenException('Invalid access token.');
@@ -189,7 +201,6 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
         // - If the auth_time Claim was requested, either through a specific request for this Claim or by using
         // the max_age parameter, the Client SHOULD check the auth_time Claim value and request re-authentication if it
         // determines too much time has elapsed since the last End-User authentication.
-        // TODO
         // If the acr Claim was requested, the Client SHOULD check that the asserted Claim Value is appropriate.
         // The meaning and processing of acr Claim Values is out of scope for this specification.
         $currentTime = time();
@@ -221,19 +232,40 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
         return $accessToken;
     }
 
-    public function getPublicKey()
+    /**
+     * @inheritdoc
+     */
+    public function getAccessTokenFunction($grant, array $options = [])
     {
-        return new Key($this->publicKey);
+        $grant = $this->verifyGrant($grant);
+
+        $params = [
+            'redirect_uri' => $this->redirectUri,
+        ];
+
+        $params = $grant->prepareRequestParameters($params, $options);
+        $request = $this->getAccessTokenRequest($params);
+        $response = $this->getResponse($request);
+        if (!is_array($response)) {
+            throw new ErrorException('error_invalid_request');
+        }
+        $prepared = $this->prepareAccessTokenResponse($response);
+
+        return $this->createAccessToken($prepared, $grant);
     }
 
-    /**
-     * Get the issuer of the OpenID Connect id_token
-     *
-     * @return string
-     */
-    protected function getIdTokenIssuer()
+    public function getResponse(RequestInterface $request)
     {
-        return $this->idTokenIssuer;
+        $response = $this->sendRequest($request);
+        $this->statusCode = $response->getStatusCode();
+        $parsed = $this->parseResponse($response);
+        $this->checkResponse($response, $parsed);
+
+        return $parsed;
+    }
+
+    protected function checkResponse(ResponseInterface $response, $data)
+    {
     }
 
     /**
@@ -250,24 +282,31 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
      */
     protected function createAccessToken(array $response, AbstractGrant $grant = null)
     {
-        if ($this->check()) {
+        if ($this->check($response)) {
             return new AccessToken($response);
         }
 
         return null;
     }
 
-    public function check()
+    public function check($response = null)
     {
         return true;
     }
 
-    /**
-     * @return Specification\ValidatorChain
-     */
-    public function getValidatorChain()
+    public function getPublicKey()
     {
-        return $this->validatorChain;
+        return new Key($this->publicKey);
+    }
+
+    /**
+     * Get the issuer of the OpenID Connect id_token
+     *
+     * @return string
+     */
+    protected function getIdTokenIssuer()
+    {
+        return $this->idTokenIssuer;
     }
 
     public function getBaseAuthorizationUrl()
@@ -289,21 +328,6 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
     {
     }
 
-    public function getUri($name)
-    {
-        return $this->uris[$name];
-    }
-
-    /**
-     * Returns all options that are required.
-     *
-     * @return array
-     */
-    protected function getRequiredOptions()
-    {
-        return [];
-    }
-
     /**
      * Overload parent as OpenID Connect specification states scopes shall be separated by spaces
      *
@@ -319,7 +343,142 @@ class OpenIDConnectProvider extends BaseProvider implements Providerable
         return [];
     }
 
-    protected function checkResponse(ResponseInterface $response, $data)
+    /**
+     * @return Specification\ValidatorChain
+     */
+    public function getValidatorChain()
     {
+        return $this->validatorChain;
     }
+
+    public function getUri($name)
+    {
+        return $this->uris[$name];
+    }
+
+    public function getRefreshToken($token, array $options = [])
+    {
+        $params = [
+            'token' => $token,
+            'grant_type' => 'refresh_token',
+        ];
+        $params = array_merge($params, $options);
+        $request = $this->getRefreshTokenRequest($params);
+
+        return $this->getResponse($request);
+    }
+
+    protected function getRefreshTokenRequest(array $params)
+    {
+        $method = $this->getAccessTokenMethod();
+        $url = $this->getRefreshTokenUrl();
+        $options = $this->getAccessTokenOptions($params);
+
+        return $this->getRequest($method, $url, $options);
+    }
+
+    /**
+     * Builds request options used for requesting an access token.
+     *
+     * @param  array $params
+     *
+     * @return array
+     */
+    protected function getAccessTokenOptions(array $params)
+    {
+        $options = $this->getBaseTokenOptions($params);
+        $options['headers']['authorization'] = 'Basic: '.base64_encode($this->clientId.':'.$this->clientSecret);
+
+        return $options;
+    }
+
+    protected function getBaseTokenOptions(array $params)
+    {
+        $options = [
+            'headers' => [
+                'content-type' => 'application/x-www-form-urlencoded',
+            ],
+        ];
+        if ($this->getAccessTokenMethod() === self::METHOD_POST) {
+            $options['body'] = $this->getAccessTokenBody($params);
+        }
+
+        return $options;
+    }
+
+    public function getValidateToken($token, array $options = [])
+    {
+        $params = [
+            'token' => $token,
+        ];
+        $params = array_merge($params, $options);
+        $request = $this->getValidateTokenRequest($params);
+
+        return $this->getResponse($request);
+    }
+
+    public function getRevokeToken($token, array $options = [])
+    {
+        $params = [
+            'token' => $token,
+        ];
+        $params = array_merge($params, $options);
+        $request = $this->getRevokeTokenRequest($params);
+
+        return $this->getResponse($request);
+    }
+
+    protected function getValidateTokenRequest(array $params)
+    {
+        $method = $this->getAccessTokenMethod();
+        $url = $this->getValidateTokenUrl();
+        $options = $this->getBaseTokenOptions($params);
+
+        return $this->getRequest($method, $url, $options);
+    }
+
+    protected function getRevokeTokenRequest(array $params)
+    {
+        $method = $this->getAccessTokenMethod();
+        $url = $this->getRevokeTokenUrl();
+        $options = $this->getAccessTokenOptions($params);
+
+        return $this->getRequest($method, $url, $options);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getStatusCode()
+    {
+        return $this->statusCode;
+    }
+
+    /**
+     * @param mixed $statusCode
+     *
+     * @return $this
+     */
+    public function setStatusCode($statusCode)
+    {
+        $this->statusCode = $statusCode;
+
+        return $this;
+    }
+
+    /**
+     * Returns all options that are required.
+     *
+     * @return array
+     */
+    protected function getRequiredOptions()
+    {
+        return [];
+    }
+
+    abstract public function getValidateTokenUrl();
+
+    abstract public function getRefreshTokenUrl();
+
+    abstract public function getRevokeTokenUrl();
 }

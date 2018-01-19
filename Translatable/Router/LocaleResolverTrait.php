@@ -6,6 +6,9 @@ use Symfony\Component\HttpFoundation\Request;
 
 trait LocaleResolverTrait
 {
+	protected $cookieName;
+    protected $hostMap;
+	
     public function resolveLocale(Request $request, array $availableLocales)
     {
         if (!empty($this->hostMap) && isset($this->hostMap[$host = $request->getHost()])) {
