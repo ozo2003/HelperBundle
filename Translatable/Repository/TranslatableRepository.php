@@ -25,14 +25,13 @@ class TranslatableRepository
         self::init($class, $className);
         $locale = self::getLocaleVar($locale);
 
-        if (\in_array($id, [
-            0,
-            null,
-        ], true)) {
+        if((int)$id === 0){
             $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
-            $update = 0;
-        } else {
-            $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
+        }
+
+        $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
+        if($update === 0){
+            $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
         }
 
         $content = trim($content) !== '' ? $content : null;
@@ -87,7 +86,7 @@ class TranslatableRepository
         return isset(self::$localeArr[$locale]) ? self::$localeArr[$locale] : $locale;
     }
 
-    public static function findByLocale($class, $locale, $content, $field = 'slug', $notId = null, $isId = null)
+    public static function findByLocale($class, $locale, $content = null, $field = 'slug', $notId = null, $isId = null)
     {
         self::init();
         $locale = self::getLocaleVar($locale ?: self::getDefaultLocale());
@@ -100,10 +99,13 @@ class TranslatableRepository
         if ($notId) {
             $where[] = ['foreign_key <> '.$notId];
         }
+
         if ($isId) {
             $where['foreign_key'] = $isId;
         } else {
-            $where['content'] = $content;
+            if($content !== null) {
+                $where['content'] = $content;
+            }
         }
 
         return Quick::get(new Translation(), false, $where, ['foreign_key']);

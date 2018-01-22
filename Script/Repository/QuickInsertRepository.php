@@ -96,12 +96,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         if (!empty($data)) {
             $sql = sprintf('UPDATE %s SET ', $tableName);
             foreach ($data as $key => $value) {
-                if (self::numeric($tableName, $key, $value)) {
-                    $value = (int)$value;
-                } else {
-                    $value = "'".addslashes(trim($value))."'";
-                }
-                $sql .= ' '.$key.' = '.$value.',';
+                $sql .= ' '.$key.' = '.self::slashes($tableName, $key, $value).',';
             }
             $sql = substr($sql, 0, -1).' WHERE id = '.$id;
 
@@ -165,7 +160,7 @@ class QuickInsertRepository extends QuickInsertFunctions
                 '.$tableName.'
                     ('.implode(',', array_keys($data)).')
             VALUES
-                ('.implode(',', array_values($data)).')
+                ('.self::makeValues($tableName, $data).')
         ';
 
         self::runSQL($sql, $noFkCheck);

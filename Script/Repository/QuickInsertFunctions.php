@@ -228,4 +228,14 @@ abstract class QuickInsertFunctions
 
         return $value;
     }
+
+    protected static function makeValues($tableName, $data)
+    {
+        $values = '';
+        foreach ($data as $key => $value) {
+            $values .= self::slashes($tableName, $key, $value).',';
+        }
+
+        return \substr($values, 0, -1);
+    }
 }

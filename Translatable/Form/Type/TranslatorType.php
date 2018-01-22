@@ -5,7 +5,6 @@ namespace Sludio\HelperBundle\Translatable\Form\Type;
 use Sludio\HelperBundle\Translatable\Helper\Manager;
 use Sonata\AdminBundle\Admin\AdminInterface;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
