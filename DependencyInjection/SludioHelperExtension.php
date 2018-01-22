@@ -16,6 +16,12 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
  */
 class SludioHelperExtension extends Extension
 {
+    private static $files = [
+        'components.yml',
+        'parameters.yml',
+        'services.yml',
+    ];
+
     /**
      * {@inheritdoc}
      * @throws \Exception
@@ -29,18 +35,13 @@ class SludioHelperExtension extends Extension
                 continue;
             }
             if ($this->checkRequirements($key)) {
-                $iterator = 0;
+                $checked = false;
                 /** @var $extension array */
                 foreach ($extension as $variable => $value) {
-                    $iterator++;
-                    if ($iterator === 1) {
-                        $files = [
-                            'components.yml',
-                            'parameters.yml',
-                            'services.yml',
-                        ];
+                    if ($checked === false) {
+                        $checked = true;
                         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
-                        foreach ($files as $file) {
+                        foreach (self::$files as $file) {
                             if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
                                 $loader->load($file);
                             }
@@ -48,10 +49,7 @@ class SludioHelperExtension extends Extension
                     }
                     $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
                 }
-                if ($component = $this->checkComponent($key)) {
-                    /** @var $component ConfigureInterface */
-                    $component->configure($container, $this->getAlias());
-                }
+                $this->checkComponent($key, $container, $this->getAlias());
             }
         }
     }
@@ -63,12 +61,7 @@ class SludioHelperExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $files = [
-            'components.yml',
-            'parameters.yml',
-            'services.yml',
-        ];
-        foreach ($files as $file) {
+        foreach (self::$files as $file) {
             if (file_exists(__DIR__.'/../Resources/config/'.$file)) {
                 $loader->load($file);
             }
@@ -104,16 +97,19 @@ class SludioHelperExtension extends Extension
         return true;
     }
 
-    private function checkComponent($key)
+    /**
+     * @param                  $key
+     * @param ContainerBuilder $container
+     * @param                  $alias
+     */
+    private function checkComponent($key, ContainerBuilder $container, $alias)
     {
         $className = 'Sludio\\HelperBundle\\DependencyInjection\\Component\\'.ucfirst($key);
-        if (class_exists($className)) {
+        if (class_exists($className) && method_exists($className, 'configure')) {
             $class = new $className();
             if ($class instanceof ConfigureInterface) {
-                return $class;
+                $class->configure($container, $alias);
             }
         }
-
-        return null;
     }
 }
