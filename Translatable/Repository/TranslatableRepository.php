@@ -25,23 +25,25 @@ class TranslatableRepository
         self::init($class, $className);
         $locale = self::getLocaleVar($locale);
 
-        if((int)$id === 0){
+        if ((int)$id === 0) {
             $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
         }
 
         $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
-        if($update === 0){
+        if ($update === 0) {
             $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
         }
 
         $content = trim($content) !== '' ? $content : null;
 
         $translation = new Translation();
+        // @formatter:off
         $translation->setField($field)
             ->setForeignKey((int)$id)
             ->setLocale($locale)
             ->setObjectClass($class)
             ->setContent($content);
+        // @formatter:on
 
         if ($update === 0) {
             Quick::persist($translation);
@@ -102,10 +104,8 @@ class TranslatableRepository
 
         if ($isId) {
             $where['foreign_key'] = $isId;
-        } else {
-            if($content !== null) {
-                $where['content'] = $content;
-            }
+        } elseif ($content !== null) {
+            $where['content'] = $content;
         }
 
         return Quick::get(new Translation(), false, $where, ['foreign_key']);
