@@ -9,6 +9,9 @@ use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 
 class Lexik extends AbstractRequirement
 {
+    /**
+     * @var array
+     */
     protected $requirements = [
         LexikTranslationBundle::class => 'lexik/translation-bundle',
         SonataAdminBundle::class => 'sonata-project/admin-bundle',

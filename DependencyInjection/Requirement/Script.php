@@ -8,6 +8,9 @@ use Psr\Log\LoggerInterface;
 
 class Script extends AbstractRequirement
 {
+    /**
+     * @var array
+     */
     protected $requirements = [
         ResponseInterface::class => 'psr/http-message',
         LoggerInterface::class => 'psr/log',

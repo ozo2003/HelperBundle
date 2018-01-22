@@ -13,29 +13,23 @@ final class LocaleResolver
     /**
      * @var String
      */
-    protected $defaultLocale;
-
-    /**
-     * @var Boolean
-     */
-    protected $useLocaleFromRequest;
+    private $defaultLocale;
 
     /**
      * @var Request
      */
-    protected $request;
+    private $request;
 
-    protected $availableLocales;
+    private $availableLocales;
 
     /**
      * @param String       $defaultLocale
-     * @param Boolean      $useLocaleFromRequest
      * @param RequestStack $requestStack
+     * @param              $availableLocales
      */
-    public function __construct($defaultLocale, $useLocaleFromRequest, RequestStack $requestStack, $availableLocales)
+    public function __construct($defaultLocale, RequestStack $requestStack, $availableLocales)
     {
         $this->defaultLocale = $defaultLocale;
-        $this->useLocaleFromRequest = $useLocaleFromRequest;
         $this->request = $requestStack->getCurrentRequest();
         $this->availableLocales = $availableLocales;
     }

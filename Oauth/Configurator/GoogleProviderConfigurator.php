@@ -13,11 +13,11 @@ class GoogleProviderConfigurator implements ProviderConfiguratorInterface
         // @formatter:off
         $node
             ->scalarNode('access_type')
-                ->defaultNull()
+                ->defaultValue(null)
                 ->info('Optional value for sending access_type parameter. More detail: https://developers.google.com/identity/protocols/OpenIDConnect#authenticationuriparameters')
             ->end()
             ->scalarNode('hosted_domain')
-                ->defaultNull()
+                ->defaultValue(null)
                 ->info('Optional value for sending hd parameter. More detail: https://developers.google.com/identity/protocols/OpenIDConnect#hd-param')
             ->end()
             ->arrayNode('user_fields')

@@ -14,11 +14,6 @@ class MissingExtension extends \Twig_Extension
         $this->shortFunctions = $shortFunctions;
     }
 
-    public function getName()
-    {
-        return 'sludio_helper.twig.missing_extension';
-    }
-
     public function getFilters()
     {
         $input = [

@@ -28,11 +28,6 @@ class SludioExtension extends \Twig_Extension
         $this->request = $requestStack->getCurrentRequest();
     }
 
-    public function getName()
-    {
-        return 'sludio_helper.twig.extension';
-    }
-
     public function getFilters()
     {
         $input = [

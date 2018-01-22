@@ -102,6 +102,20 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         $this->buildParams($options);
     }
 
+    private function buildUris($options = [])
+    {
+        foreach ($options['uris'] as $name => $uri) {
+            $opt = [
+                'client_id' => $this->clientId,
+                'redirect_uri' => $this->redirectUri,
+                'state' => $this->state,
+                'base_uri' => $this->baseUri,
+            ];
+            $method = isset($uri['method']) ? $uri['method'] : self::METHOD_POST;
+            $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method, $this->session);
+        }
+    }
+
     private function buildParams(array $options = [])
     {
         if (!empty($options)) {
@@ -125,17 +139,7 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
             }
             $this->redirectUri = $url;
 
-            /** @var $options array[] */
-            foreach ($options['uris'] as $name => $uri) {
-                $opt = [
-                    'client_id' => $this->clientId,
-                    'redirect_uri' => $this->redirectUri,
-                    'state' => $this->state,
-                    'base_uri' => $this->baseUri,
-                ];
-                $method = isset($uri['method']) ? $uri['method'] : self::METHOD_POST;
-                $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method, $this->session);
-            }
+            $this->buildUris($options);
         }
     }
 
@@ -246,7 +250,7 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         $params = $grant->prepareRequestParameters($params, $options);
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getResponse($request);
-        if (!is_array($response)) {
+        if (!\is_array($response)) {
             throw new ErrorException('error_invalid_request');
         }
         $prepared = $this->prepareAccessTokenResponse($response);

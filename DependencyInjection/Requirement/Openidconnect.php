@@ -8,6 +8,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class Openidconnect extends AbstractRequirement
 {
+    /**
+     * @var array
+     */
     protected $requirements = [
         Token::class => 'lcobucci/jwt',
         AbstractProvider::class => 'league/oauth2-client',

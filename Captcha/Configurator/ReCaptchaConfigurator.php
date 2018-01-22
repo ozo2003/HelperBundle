@@ -21,7 +21,6 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             ->booleanNode('verify_host')->defaultValue(false)->end()
             ->booleanNode('ajax')->defaultValue(false)->end()
             ->scalarNode('locale_key')->defaultValue('en')->end()
-            ->booleanNode('locale_from_request')->defaultValue(false)->end()
             ->scalarNode('template')->defaultValue('SludioHelperBundle:Captcha:sludio_helper_captcha_recaptcha_widget.html.twig')->end()
             ->scalarNode('resolver_class')->defaultValue(LocaleResolver::class)->end()
             ->scalarNode('type_class')->defaultValue(RecaptchaType::class)->end()
@@ -74,7 +73,6 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
         $resolverDefinition->setPublic(false);
         $resolverDefinition->setArguments([
             $container->getParameter($clientServiceKey.'.locale_key'),
-            $container->getParameter($clientServiceKey.'.locale_from_request'),
             new Reference('request_stack'),
             $container->getParameter($clientServiceKey.'.locales'),
         ]);

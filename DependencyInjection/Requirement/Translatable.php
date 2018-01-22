@@ -9,6 +9,9 @@ use Sonata\DoctrineORMAdminBundle\SonataDoctrineORMAdminBundle;
 
 class Translatable extends AbstractRequirement
 {
+    /**
+     * @var array
+     */
     protected $requirements = [
         LexikTranslationBundle::class => 'lexik/translation-bundle',
         SonataAdminBundle::class => 'sonata-project/admin-bundle',

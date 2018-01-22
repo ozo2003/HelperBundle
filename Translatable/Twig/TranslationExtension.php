@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Translatable\Twig;
 
 use Sludio\HelperBundle\Script\Twig\TwigTrait;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class TranslationExtension extends \Twig_Extension
 {
@@ -11,16 +12,11 @@ class TranslationExtension extends \Twig_Extension
     protected $request;
     protected $defaultLocale;
 
-    public function __construct($requestStack, $default, $shortFunctions)
+    public function __construct(RequestStack $requestStack, $default, $shortFunctions)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->defaultLocale = $default;
         $this->shortFunctions = $shortFunctions;
-    }
-
-    public function getName()
-    {
-        return 'sludio_helper.twig.translate_extension';
     }
 
     public function getFilters()

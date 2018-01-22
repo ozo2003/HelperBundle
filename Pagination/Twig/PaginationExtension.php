@@ -50,17 +50,9 @@ class PaginationExtension extends \Twig_Extension
     private function suffixFunctionName($functionName)
     {
         // Make sure the function name is not suffixed twice.
-        $functionName = preg_replace('/(_pagination)$/', '', (string)$functionName);
+        $functionName = (string)preg_replace('/(_pagination)$/', '', (string)$functionName);
 
         return $functionName.'_pagination';
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'sludio_helper.twig.pagination_extension';
     }
 
     public function withoutFunction($functionName)

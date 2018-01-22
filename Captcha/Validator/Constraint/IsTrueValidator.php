@@ -64,8 +64,8 @@ class IsTrueValidator extends ConstraintValidator
 
     /**
      * {@inheritdoc}
+     *
      * @throws \Symfony\Component\Validator\Exception\ValidatorException
-     * @throws \Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException
      */
     public function validate($value, Constraint $constraint)
     {

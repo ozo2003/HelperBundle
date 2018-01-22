@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Script\Twig;
 
 trait TwigTrait
 {
-    protected $shortFunctions;
+    private $shortFunctions;
 
     public function makeArray(array $input, $type = 'filter')
     {

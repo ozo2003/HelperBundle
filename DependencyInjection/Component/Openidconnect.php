@@ -21,13 +21,13 @@ class Openidconnect implements ExtensionInterface
 
         // @formatter:off
         $optionsNode
-            ->scalarNode('client_key')->isRequired()->defaultNull()->end()
-            ->scalarNode('client_secret')->defaultNull()->end()
-            ->scalarNode('id_token_issuer')->isRequired()->defaultNull()->end()
+            ->scalarNode('client_key')->isRequired()->defaultValue(null)->end()
+            ->scalarNode('client_secret')->defaultValue(null)->end()
+            ->scalarNode('id_token_issuer')->isRequired()->defaultValue(null)->end()
             ->scalarNode('public_key')->isRequired()->cannotBeEmpty()->end()
             ->scalarNode('base_uri')->isRequired()->end()
             ->scalarNode('user_provider')->defaultValue(BaseProvider::class)->end()
-            ->scalarNode('use_session')->defaultFalse()->end()
+            ->scalarNode('use_session')->defaultValue(false)->end()
             ->arrayNode('redirect')
                 ->addDefaultsIfNotSet()
                 ->children()
@@ -35,8 +35,8 @@ class Openidconnect implements ExtensionInterface
                         ->values(array('route', 'uri'))
                         ->defaultValue('route')
                     ->end()
-                    ->scalarNode('route')->defaultNull()->end()
-                    ->scalarNode('uri')->defaultNull()->end()
+                    ->scalarNode('route')->defaultValue(null)->end()
+                    ->scalarNode('uri')->defaultValue(null)->end()
                     ->arrayNode('params')->prototype('variable')->end()->end()
                 ->end()
             ->end()

@@ -9,6 +9,9 @@ use Psr\Http\Message\ResponseInterface;
 
 class Oauth extends AbstractRequirement
 {
+    /**
+     * @var array
+     */
     protected $requirements = [
         TwitterOAuth::class => 'abraham/twitteroauth',
         ResponseInterface::class => 'psr/http-message',

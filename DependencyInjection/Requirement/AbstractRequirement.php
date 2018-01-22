@@ -19,6 +19,9 @@ abstract class AbstractRequirement
         }
     }
 
+    /**
+     * @return array
+     */
     abstract public function getRequirements();
 
     public function throwException()

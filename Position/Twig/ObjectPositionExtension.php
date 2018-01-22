@@ -22,16 +22,6 @@ class ObjectPositionExtension extends \Twig_Extension
         $this->shortFunctions = $shortFunctions;
     }
 
-    /**
-     * Returns the name of the extension.
-     *
-     * @return string The extension name
-     */
-    public function getName()
-    {
-        return self::NAME;
-    }
-
     public function getFunctions()
     {
         $input = [

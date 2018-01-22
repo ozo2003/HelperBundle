@@ -27,7 +27,12 @@ class Uri implements Uriable
 
         $this->params = !empty($options['params']) ? $options['params'] : [];
 
-        if ($method === OpenIDConnectProvider::METHOD_GET) {
+        $this->setGetParams($options, $additional);
+    }
+
+    private function setGetParams($options, $additional)
+    {
+        if ($this->method === OpenIDConnectProvider::METHOD_GET) {
             if (isset($options['url_params']['post_logout_redirect_uri'])) {
                 $options['url_params']['post_logout_redirect_uri'] = $additional['redirect_uri'];
                 unset($additional['redirect_uri']);
@@ -43,6 +48,8 @@ class Uri implements Uriable
 
     /**
      * Get the value of Url
+     *
+     * @param null $language
      *
      * @return mixed
      */
@@ -69,16 +76,9 @@ class Uri implements Uriable
 
     private function buildUrl($language = null)
     {
-        if ($this->method === OpenIDConnectProvider::METHOD_GET) {
-            if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
-                if ($this->useSession === false) {
-                    throw new InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
-                }
-                $this->urlParams['id_token_hint'] = $this->session->get('id_token');
-            }
-        }
+        $this->setIdToken();
 
-        if($language !== null){
+        if ($language !== null) {
             $this->urlParams['lang'] = (string)$language;
         }
 
@@ -92,6 +92,18 @@ class Uri implements Uriable
         }
         $url = urldecode($url);
         $this->setUrl($url);
+    }
+
+    private function setIdToken()
+    {
+        if ($this->method === OpenIDConnectProvider::METHOD_GET) {
+            if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
+                if ($this->useSession === false) {
+                    throw new InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
+                }
+                $this->urlParams['id_token_hint'] = $this->session->get('id_token');
+            }
+        }
     }
 
     public function addParam($value)
