@@ -49,7 +49,7 @@ class Uri implements Uriable
     /**
      * Get the value of Url
      *
-     * @param null $language
+     * @param null|string $language
      *
      * @return mixed
      */

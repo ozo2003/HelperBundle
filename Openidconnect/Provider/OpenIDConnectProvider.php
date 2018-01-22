@@ -62,15 +62,21 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
      * @var int
      */
     protected $statusCode;
+
     /**
      * @var Router
      */
-    private $router;
+    protected $router;
 
     /**
      * @var string
      */
-    private $baseUri;
+    protected $baseUri;
+
+    /**
+     * @var string
+     */
+    protected $redirectUri;
 
     /**
      * @param array   $options
