@@ -1,11 +1,11 @@
 <?php
 
-namespace Sludio\HelperBundle\Script\Logger;
+namespace Sludio\HelperBundle\Script\Utils;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 
-class SludioLogger
+class Logger
 {
     protected $logger;
 
@@ -19,7 +19,7 @@ class SludioLogger
     public function __construct($logger = null)
     {
         if (null !== $logger && !$logger instanceof LoggerInterface) {
-            throw new InvalidArgumentException(sprintf('SludioLogger needs PSR-3 LoggerInterface, "%s" was injected instead.', \is_object($logger) ? \get_class($logger) : \gettype($logger)));
+            throw new InvalidArgumentException(sprintf('Logger needs PSR-3 LoggerInterface, "%s" was injected instead.', \is_object($logger) ? \get_class($logger) : \gettype($logger)));
         }
 
         $this->logger = $logger;
@@ -33,7 +33,7 @@ class SludioLogger
     /**
      * Logs a command
      *
-     * @param string      $command Sludio command
+     * @param string      $command Ccommand
      * @param null|string $error   Error message or null
      * @param string      $type    Log type
      */

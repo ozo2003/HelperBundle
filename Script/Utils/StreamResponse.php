@@ -19,6 +19,11 @@ class StreamResponse extends Response
         $this->bufferSize = $bufferSize;
     }
 
+    /**
+     * @return $this|void
+     *
+     * @throws \RuntimeException
+     */
     public function sendContent()
     {
         $chunked = $this->headers->has('Transfer-Encoding');

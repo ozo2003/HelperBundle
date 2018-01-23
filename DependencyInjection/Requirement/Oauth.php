@@ -12,7 +12,7 @@ class Oauth extends AbstractRequirement
     /**
      * @var array
      */
-    protected $requirements = [
+    protected static $requirements = [
         TwitterOAuth::class => 'abraham/twitteroauth',
         ResponseInterface::class => 'psr/http-message',
         AbstractProvider::class => 'league/oauth2-client',
@@ -21,6 +21,6 @@ class Oauth extends AbstractRequirement
 
     public function getRequirements()
     {
-        return $this->requirements;
+        return self::$requirements;
     }
 }

@@ -2,18 +2,15 @@
 
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
-use Lcobucci\JWT\Signer;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Client\Grant\AbstractGrant;
 use League\OAuth2\Client\Provider\AbstractProvider;
-use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Specification;
-use Sludio\HelperBundle\Script\Exception\ErrorException;
+use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Sludio\HelperBundle\Script\Utils\Helper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -21,62 +18,10 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class OpenIDConnectProvider extends AbstractProvider implements Providerable
 {
+    use VariableTrait;
+
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
-
-    /**
-     * @var string
-     */
-    protected $publicKey;
-
-    /**
-     * @var Signer
-     */
-    protected $signer;
-
-    /**
-     * @var Specification\ValidatorChain
-     */
-    protected $validatorChain;
-
-    /**
-     * @var string
-     */
-    protected $idTokenIssuer;
-    /**
-     * @var Uri[]
-     */
-    protected $uris = [];
-
-    /**
-     * @var bool
-     */
-    protected $useSession;
-
-    /**
-     * @var Session
-     */
-    protected $session;
-
-    /**
-     * @var int
-     */
-    protected $statusCode;
-
-    /**
-     * @var Router
-     */
-    protected $router;
-
-    /**
-     * @var string
-     */
-    protected $baseUri;
-
-    /**
-     * @var string
-     */
-    protected $redirectUri;
 
     /**
      * @param array   $options
@@ -106,20 +51,6 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
 
         parent::__construct($options, $collaborators);
         $this->buildParams($options);
-    }
-
-    private function buildUris($options = [])
-    {
-        foreach ($options['uris'] as $name => $uri) {
-            $opt = [
-                'client_id' => $this->clientId,
-                'redirect_uri' => $this->redirectUri,
-                'state' => $this->state,
-                'base_uri' => $this->baseUri,
-            ];
-            $method = isset($uri['method']) ? $uri['method'] : self::METHOD_POST;
-            $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method, $this->session);
-        }
     }
 
     private function buildParams(array $options = [])
@@ -155,6 +86,20 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
     protected function getRandomState($length = 32)
     {
         return Helper::getUniqueId($length);
+    }
+
+    private function buildUris($options = [])
+    {
+        foreach ($options['uris'] as $name => $uri) {
+            $opt = [
+                'client_id' => $this->clientId,
+                'redirect_uri' => $this->redirectUri,
+                'state' => $this->state,
+                'base_uri' => $this->baseUri,
+            ];
+            $method = isset($uri['method']) ? $uri['method'] : self::METHOD_POST;
+            $this->uris[$name] = new Uri($uri, $opt, $this->useSession, $method, $this->session);
+        }
     }
 
     /**
@@ -244,6 +189,8 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
 
     /**
      * @inheritdoc
+     *
+     * @throws ErrorException
      */
     public function getAccessTokenFunction($grant, array $options = [])
     {
@@ -257,7 +204,7 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         $request = $this->getAccessTokenRequest($params);
         $response = $this->getResponse($request);
         if (!\is_array($response)) {
-            throw new ErrorException('error_invalid_request');
+            throw new ErrorException('Invalid request parameters');
         }
         $prepared = $this->prepareAccessTokenResponse($response);
 
@@ -274,10 +221,6 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         return $parsed;
     }
 
-    protected function checkResponse(ResponseInterface $response, $data)
-    {
-    }
-
     /**
      * Creates an access token from a response.
      *
@@ -285,7 +228,6 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
      * additional context.
      *
      * @param  array             $response
-     *
      * @param AbstractGrant|null $grant
      *
      * @return AccessToken
@@ -299,71 +241,9 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         return null;
     }
 
-    public function check($response = null)
-    {
-        return true;
-    }
-
     public function getPublicKey()
     {
         return new Key($this->publicKey);
-    }
-
-    /**
-     * Get the issuer of the OpenID Connect id_token
-     *
-     * @return string
-     */
-    protected function getIdTokenIssuer()
-    {
-        return $this->idTokenIssuer;
-    }
-
-    public function getBaseAuthorizationUrl()
-    {
-        return '';
-    }
-
-    public function getBaseAccessTokenUrl(array $params)
-    {
-        return '';
-    }
-
-    public function getDefaultScopes()
-    {
-        return [];
-    }
-
-    public function getResourceOwnerDetailsUrl(BaseAccessToken $token)
-    {
-    }
-
-    /**
-     * Overload parent as OpenID Connect specification states scopes shall be separated by spaces
-     *
-     * @return string
-     */
-    protected function getScopeSeparator()
-    {
-        return ' ';
-    }
-
-    protected function createResourceOwner(array $response, BaseAccessToken $token)
-    {
-        return [];
-    }
-
-    /**
-     * @return Specification\ValidatorChain
-     */
-    public function getValidatorChain()
-    {
-        return $this->validatorChain;
-    }
-
-    public function getUri($name)
-    {
-        return $this->uris[$name];
     }
 
     public function getRefreshToken($token, array $options = [])
@@ -427,6 +307,15 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         return $this->getResponse($request);
     }
 
+    protected function getValidateTokenRequest(array $params)
+    {
+        $method = $this->getAccessTokenMethod();
+        $url = $this->getValidateTokenUrl();
+        $options = $this->getBaseTokenOptions($params);
+
+        return $this->getRequest($method, $url, $options);
+    }
+
     public function getRevokeToken($token, array $options = [])
     {
         $params = [
@@ -438,15 +327,6 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
         return $this->getResponse($request);
     }
 
-    protected function getValidateTokenRequest(array $params)
-    {
-        $method = $this->getAccessTokenMethod();
-        $url = $this->getValidateTokenUrl();
-        $options = $this->getBaseTokenOptions($params);
-
-        return $this->getRequest($method, $url, $options);
-    }
-
     protected function getRevokeTokenRequest(array $params)
     {
         $method = $this->getAccessTokenMethod();
@@ -455,40 +335,4 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
 
         return $this->getRequest($method, $url, $options);
     }
-
-    /**
-     * @return mixed
-     */
-    public function getStatusCode()
-    {
-        return $this->statusCode;
-    }
-
-    /**
-     * @param mixed $statusCode
-     *
-     * @return $this
-     */
-    public function setStatusCode($statusCode)
-    {
-        $this->statusCode = $statusCode;
-
-        return $this;
-    }
-
-    /**
-     * Returns all options that are required.
-     *
-     * @return array
-     */
-    protected function getRequiredOptions()
-    {
-        return [];
-    }
-
-    abstract public function getValidateTokenUrl();
-
-    abstract public function getRefreshTokenUrl();
-
-    abstract public function getRevokeTokenUrl();
 }

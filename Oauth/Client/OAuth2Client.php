@@ -3,10 +3,7 @@
 namespace Sludio\HelperBundle\Oauth\Client;
 
 use League\OAuth2\Client\Token\AccessToken;
-use LogicException;
-use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
-use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
-use Sludio\HelperBundle\Script\Logger\SludioLogger;
+use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -17,13 +14,11 @@ class OAuth2Client
     protected $provider;
     protected $requestStack;
     protected $isStateless = true;
-    protected $logger;
 
-    public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
+    public function __construct($provider, RequestStack $requestStack)
     {
         $this->provider = $provider;
         $this->requestStack = $requestStack;
-        $this->logger = $logger;
     }
 
     public function setAsStateless()
@@ -55,8 +50,7 @@ class OAuth2Client
         $session = $this->getCurrentRequest()->getSession();
 
         if (!$session) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid stat$e', 400);
-            throw new LogicException('error_oauth_session_not_found');
+            throw new ErrorException('In order to use "state", you must have a session. Set the OAuth2Client to stateless to avoid state');
         }
 
         return $session;
@@ -67,8 +61,7 @@ class OAuth2Client
         $request = $this->requestStack->getCurrentRequest();
 
         if (!$request) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There is no "current request", and it is needed to perform this action', 400);
-            throw new LogicException('error_oauth_current_request_not_found');
+            throw new ErrorException('There is no "current request", and it is needed to perform this action');
         }
 
         return $request;
@@ -87,16 +80,14 @@ class OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
-                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'Invalid state: '.var_export(var_export($actualState, 1).var_export($expectedState, 1), 1), 401);
-                throw new InvalidStateException('error_oauth_invalid_state');
+                throw new ErrorException('Invalid state: '.var_export(var_export($actualState, 1).var_export($expectedState, 1), 1));
             }
         }
 
         $code = $this->getCurrentRequest()->get('code');
 
         if (!$code) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'No "code" parameter was found!', 401);
-            throw new MissingAuthorizationCodeException('error_oauth_code_parameter_not_found');
+            throw new ErrorException('No "code" parameter was found');
         }
 
         return $this->provider->getAccessToken('authorization_code', [

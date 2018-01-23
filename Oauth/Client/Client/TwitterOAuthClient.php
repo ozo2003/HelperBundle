@@ -3,14 +3,11 @@
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
-use Sludio\HelperBundle\Script\Exception\ErrorException;
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
 use Sludio\HelperBundle\Oauth\Client\Provider\Twitter\TwitterUser;
-use Sludio\HelperBundle\Oauth\Exception\InvalidStateException;
-use Sludio\HelperBundle\Oauth\Exception\MissingAuthorizationCodeException;
-use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 
 class TwitterOAuthClient extends OAuth2Client
 {
@@ -19,9 +16,9 @@ class TwitterOAuthClient extends OAuth2Client
     const URL_ACCESS_TOKEN = 'oauth/access_token';
     protected $session;
 
-    public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
+    public function __construct($provider, RequestStack $requestStack)
     {
-        parent::__construct($provider, $requestStack, $logger);
+        parent::__construct($provider, $requestStack);
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
     }
 
@@ -40,9 +37,8 @@ class TwitterOAuthClient extends OAuth2Client
     {
         $request_token = $this->provider->twitter->oauth(static::URL_REQUEST_TOKEN, ['oauth_callback' => $this->provider->getRedirectUri()]);
 
-        if ($this->provider->twitter->getLastHttpCode() !== 200) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'There was a problem performing this request', $this->provider->twitter->getLastHttpCode());
-            throw new ErrorException('error_twitter_bad_response');
+        if ($this->provider->twitter->getLastHttpCode() !== RedirectResponse::HTTP_OK) {
+            throw new ErrorException('There was a problem performing this request');
         }
 
         $this->session->set('oauth_token', $request_token['oauth_token']);
@@ -57,8 +53,7 @@ class TwitterOAuthClient extends OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
-                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'Invalid state: '.serialize($actualState).', '.serialize($expectedState), 401);
-                throw new InvalidStateException('error_oauth_invalid_state');
+                throw new ErrorException('Invalid state: '.serialize($actualState).', '.serialize($expectedState));
             }
         }
 
@@ -66,8 +61,7 @@ class TwitterOAuthClient extends OAuth2Client
         $token = $this->getCurrentRequest()->get('oauth_token');
 
         if (!$code) {
-            $this->logger->error(__CLASS__.' ('.__LINE__.'): '.'No "oauth_verifier" parameter was found!', 401);
-            throw new MissingAuthorizationCodeException('error_twitter_oauth_verifier_parameter_not_found');
+            throw new ErrorException('No "oauth_verifier" parameter was found');
         }
 
         return $this->provider->getAccessToken('authorization_code', [
@@ -85,9 +79,8 @@ class TwitterOAuthClient extends OAuth2Client
         try {
             $user_token = $this->provider->twitter->oauth(static::URL_ACCESS_TOKEN, ['oauth_verifier' => $code]);
         } catch (\Exception $e) {
-            if ($this->provider->twitter->getLastHttpCode() !== 200) {
-                $this->logger->error(__CLASS__.' ('.__LINE__.'): '.$e->getMessage(), $this->provider->twitter->getLastHttpCode());
-                throw new ErrorException('error_twitter_bad_response');
+            if ($this->provider->twitter->getLastHttpCode() !== RedirectResponse::HTTP_OK) {
+                throw new ErrorException($e->getMessage());
             }
         }
 

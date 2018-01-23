@@ -2,7 +2,7 @@
 
 namespace Sludio\HelperBundle\Script\Utils;
 
-use InvalidArgumentException;
+use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ClientRegistry
@@ -16,7 +16,7 @@ class ClientRegistry
      *
      * @param ContainerInterface $container
      *
-     * @throws InvalidArgumentException
+     * @throws ErrorException
      */
     public function __construct(ContainerInterface $container)
     {
@@ -32,7 +32,7 @@ class ClientRegistry
             $checkExists = \array_intersect(array_keys($used), array_keys($argument));
             $count = \count($checkExists);
             if ($count !== 0) {
-                throw new InvalidArgumentException(sprintf('Multiple clients with same key is not allowed! Key'.($count > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
+                throw new ErrorException(sprintf('Multiple clients with same key is not allowed! Key'.($count > 1 ? 's' : '').' "%s" appear in configuration more than once!', implode(',', $checkExists)));
             }
             $used = array_merge($used, $argument);
         }
@@ -43,14 +43,14 @@ class ClientRegistry
     /**
      * @param $key
      *
-     * @throws InvalidArgumentException
+     * @throws ErrorException
      *
      * @return mixed
      */
     public function getClient($key)
     {
         if (!$this->hasClient($key)) {
-            throw new InvalidArgumentException('error_client_not_found');
+            throw new ErrorException(sprintf('Client "%s" not found in registry', $key));
         }
 
         return $this->container->get($this->serviceMap[$key]['key']);

@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Openidconnect\Provider;
 
 use Sludio\HelperBundle\Openidconnect\Component\Uriable;
-use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -41,6 +41,11 @@ class Uri implements Uriable
         }
     }
 
+    /**
+     * @return RedirectResponse
+     *
+     * @throws ErrorException
+     */
     public function redirect()
     {
         return new RedirectResponse($this->getUrl());
@@ -52,6 +57,7 @@ class Uri implements Uriable
      * @param null|string $language
      *
      * @return mixed
+     * @throws ErrorException
      */
     public function getUrl($language = null)
     {
@@ -74,6 +80,11 @@ class Uri implements Uriable
         return $this;
     }
 
+    /**
+     * @param null|string $language
+     *
+     * @throws ErrorException
+     */
     private function buildUrl($language = null)
     {
         $this->setIdToken();
@@ -94,12 +105,15 @@ class Uri implements Uriable
         $this->setUrl($url);
     }
 
+    /**
+     * @throws ErrorException
+     */
     private function setIdToken()
     {
         if ($this->method === OpenIDConnectProvider::METHOD_GET) {
             if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
                 if ($this->useSession === false) {
-                    throw new InvalidArgumentException(sprintf('"%s" parameter must be set in order to use id_token_hint', 'use_session'));
+                    throw new ErrorException(sprintf('"%s" parameter must be set to "true" in order to use id_token_hint', 'use_session'));
                 }
                 $this->urlParams['id_token_hint'] = $this->session->get('id_token');
             }

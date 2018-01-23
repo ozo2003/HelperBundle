@@ -11,7 +11,7 @@ class Openidconnect extends AbstractRequirement
     /**
      * @var array
      */
-    protected $requirements = [
+    protected static $requirements = [
         Token::class => 'lcobucci/jwt',
         AbstractProvider::class => 'league/oauth2-client',
         ResponseInterface::class => 'psr/http-message',
@@ -19,6 +19,6 @@ class Openidconnect extends AbstractRequirement
 
     public function getRequirements()
     {
-        return $this->requirements;
+        return self::$requirements;
     }
 }

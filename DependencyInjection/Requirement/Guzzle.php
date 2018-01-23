@@ -12,7 +12,7 @@ class Guzzle extends AbstractRequirement
     /**
      * @var array
      */
-    protected $requirements = [
+    protected static $requirements = [
         ClientInterface::class => 'guzzlehttp/guzzle:~6.0',
         CacheItemInterface::class => 'psr/cache:^1.0',
         Stopwatch::class => 'symfony/stopwatch',
@@ -21,6 +21,6 @@ class Guzzle extends AbstractRequirement
 
     public function getRequirements()
     {
-        return $this->requirements;
+        return self::$requirements;
     }
 }

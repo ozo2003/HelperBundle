@@ -11,7 +11,7 @@ class Script extends AbstractRequirement
     /**
      * @var array
      */
-    protected $requirements = [
+    protected static $requirements = [
         ResponseInterface::class => 'psr/http-message',
         LoggerInterface::class => 'psr/log',
         Mobile_Detect::class => 'mobiledetect/mobiledetectlib',
@@ -19,6 +19,6 @@ class Script extends AbstractRequirement
 
     public function getRequirements()
     {
-        return $this->requirements;
+        return self::$requirements;
     }
 }

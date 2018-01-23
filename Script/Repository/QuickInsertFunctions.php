@@ -77,7 +77,7 @@ abstract class QuickInsertFunctions
         if ($value instanceof \DateTime) {
             $result = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
         } else {
-            $result = self::numeric($tableName, $key, $value) ? $value : "'".addslashes(trim($value))."'";
+            $result = self::numeric($tableName, $key, $value) ? (int)$value : "'".addslashes(trim($value))."'";
         }
 
         $trim = trim($result);
@@ -108,7 +108,7 @@ abstract class QuickInsertFunctions
             return false;
         }
 
-        return is_numeric($value);
+        return \is_numeric($value) || \is_bool($value);
     }
 
     protected static function getTable(&$object, &$tableName, &$columns, &$type, $manager = null, array $extraFields = [])
@@ -229,11 +229,13 @@ abstract class QuickInsertFunctions
         return $value;
     }
 
-    protected static function makeValues($tableName, $data)
+    protected static function makeValues($tableName, array $data = [])
     {
         $values = '';
-        foreach ($data as $key => $value) {
-            $values .= self::slashes($tableName, $key, $value).',';
+        if (!empty($data)) {
+            foreach ($data as $key => $value) {
+                $values .= self::slashes($tableName, $key, $value).',';
+            }
         }
 
         return \substr($values, 0, -1);

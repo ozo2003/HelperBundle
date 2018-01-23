@@ -58,14 +58,14 @@ class TranslatorType extends AbstractType
 
         $under = 'sludio_helper.extensions.translatable.entities';
         if ($entity === null || $entity['entity'] !== $className) {
-            throw new InvalidConfigurationException('Entity '.$className.' not defined under '.$under);
+            throw new InvalidConfigurationException(sprintf('Entity %s not defined under %s', $className, $under));
         }
 
         $id = $admin->getSubject()->getId();
         $fieldName = $builder->getName();
 
         if (!$this->checkOptions($entity, $fieldName)) {
-            throw new InvalidConfigurationException('No fields defined or fields missing for '.$className.' under '.$under.'.'.$entity['name']);
+            throw new InvalidConfigurationException(sprintf('No fields defined or fields missing for %s under %s.%s', $className, $under, $entity['name']));
         }
 
         $fieldType = $entity['fields'][$fieldName]['type'];
@@ -78,8 +78,14 @@ class TranslatorType extends AbstractType
             $translations = $this->manager->getTranslatedFields($className, $fieldName, $id, $this->locales);
         }
 
+        $this->addPreSetDataListener($builder, $fieldName, $translations, $fieldType, $class, $required, $className, $id);
+        $this->addPostSubmitListener($builder, $fieldName, $className, $id);
+    }
+
+    private function addPreSetDataListener(FormBuilderInterface $builder, $fieldName, $translations, $fieldType, $class, $required, $className, $id)
+    {
         // 'populate' fields by *hook on form generation
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, function(FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($fieldName, $translations, $fieldType, $class, $required, $className, $id) {
             $form = $event->getForm();
             foreach ($this->locales as $locale) {
                 $data = (array_key_exists($locale, $translations) && array_key_exists($fieldName, $translations[$locale])) ? $translations[$locale][$fieldName] : null;
@@ -99,8 +105,11 @@ class TranslatorType extends AbstractType
             // extra field for twig rendering
             $form->add('currentFieldName', 'hidden', ['data' => $fieldName]);
         });
+    }
 
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use ($fieldName, $className, $id) {
+    private function addPostSubmitListener(FormBuilderInterface $builder, $fieldName, $className, $id)
+    {
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fieldName, $className, $id) {
             $form = $event->getForm();
             $this->manager->persistTranslations($form, $className, $fieldName, $id, $this->locales);
         });

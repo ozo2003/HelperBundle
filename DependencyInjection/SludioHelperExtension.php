@@ -24,6 +24,7 @@ class SludioHelperExtension extends Extension
 
     /**
      * {@inheritdoc}
+     *
      * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)

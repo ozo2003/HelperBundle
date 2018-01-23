@@ -110,8 +110,6 @@ sludio_helper:
             table: sludio_helper_translation
             manager: default
     other:
-        logger:
-            class: Sludio\HelperBundle\Script\Logger\SludioLogger
         redis:
             translation: session
             guzzle: session

@@ -3,15 +3,14 @@
 namespace Sludio\HelperBundle\Oauth\Client\Client;
 
 use Sludio\HelperBundle\Oauth\Client\OAuth2Client;
-use Sludio\HelperBundle\Script\Logger\SludioLogger;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class GoogleOAuth2Client extends OAuth2Client
 {
-    public function __construct($provider, RequestStack $requestStack, SludioLogger $logger)
+    public function __construct($provider, RequestStack $requestStack)
     {
-        parent::__construct($provider, $requestStack, $logger);
+        parent::__construct($provider, $requestStack);
         $this->isStateless = false;
     }
 

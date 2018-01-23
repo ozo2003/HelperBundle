@@ -12,7 +12,7 @@ class Lexik extends AbstractRequirement
     /**
      * @var array
      */
-    protected $requirements = [
+    protected static $requirements = [
         LexikTranslationBundle::class => 'lexik/translation-bundle',
         SonataAdminBundle::class => 'sonata-project/admin-bundle',
         SonataDoctrineORMAdminBundle::class => 'sonata-project/doctrine-orm-admin-bundle',
@@ -20,6 +20,6 @@ class Lexik extends AbstractRequirement
 
     public function getRequirements()
     {
-        return $this->requirements;
+        return self::$requirements;
     }
 }
