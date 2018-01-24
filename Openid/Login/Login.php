@@ -4,7 +4,7 @@ namespace Sludio\HelperBundle\Openid\Login;
 
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
-use Sludio\HelperBundle\Script\Exception\ErrorException;
+use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
