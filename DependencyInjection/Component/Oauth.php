@@ -102,8 +102,7 @@ class Oauth implements ExtensionInterface
         $clientDefinition = $container->register($clientServiceKey, $clientClass);
         $clientDefinition->setArguments([
             new Reference($providerServiceKey),
-            new Reference('request_stack'),
-            new Reference('sludio_helper.logger'),
+            new Reference('request_stack')
         ]);
 
         if (!$options['state']) {
