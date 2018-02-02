@@ -7,12 +7,12 @@ use Monolog\Logger;
 
 class Monolog
 {
-    public static function log($message, array $context = [], $type = 'info', $level = 0)
+    public static function log($message, array $context = [], $type = 'info', $level = 0, $vendor = \SLUDIO_HELPER)
     {
         self::getType($type);
 
         try {
-            $log = self::registerLog();
+            $log = self::registerLog($vendor);
             $debug = \debug_backtrace()[$level];
             $details = [
                 $debug['file'],
@@ -36,9 +36,9 @@ class Monolog
     /**
      * @throws \Exception
      */
-    public static function registerLog()
+    private static function registerLog($vendor)
     {
-        $log = new Logger('sludio_helper');
+        $log = new Logger($vendor);
         $directory = date('Y-m-j').'_vendor';
         $log->pushHandler(new StreamHandler(sprintf(getcwd().'/../app/logs/vendor/%s.log', $directory)));
 

@@ -108,6 +108,27 @@ class Helper
         return $day > 0 && $day <= $months[$month - 1];
     }
 
+    public static function validateDate2($date, $format = 'd-m-Y H:i:s')
+    {
+        $object = \DateTime::createFromFormat($format, $date);
+
+        return $object && $object->format($format) === $date;
+    }
+
+    public static function excelDate($timestamp, $format = 'd-m-Y H:i:s')
+    {
+        $base = 25569;
+        if ($timestamp >= $base) {
+            $unix = ($timestamp - $base) * 86400;
+            $date = gmdate($format, $unix);
+            if (self::validateDate2($date, $format)) {
+                return $date;
+            }
+        }
+
+        return $timestamp;
+    }
+
     public static function newPKValidate($personCode)
     {
         $personCode = str_replace('-', '', $personCode);

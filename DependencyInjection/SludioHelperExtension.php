@@ -9,6 +9,10 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
+if (!\defined('SLUDIO_HELPER')) {
+    define('SLUDIO_HELPER', 'sludio_helper');
+}
+
 /**
  * This is the class that loads and manages your bundle configuration.
  *
@@ -83,7 +87,7 @@ class SludioHelperExtension extends Extension
 
     public function getAlias()
     {
-        return 'sludio_helper';
+        return \SLUDIO_HELPER;
     }
 
     private function checkRequirements($key)
