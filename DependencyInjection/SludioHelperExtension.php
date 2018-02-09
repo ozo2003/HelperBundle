@@ -40,11 +40,9 @@ class SludioHelperExtension extends Extension
                 continue;
             }
             if ($this->checkRequirements($key)) {
-                $checked = false;
                 /** @var $extension array */
                 foreach ($extension as $variable => $value) {
-                    if ($checked === false) {
-                        $checked = true;
+                    if ($value === reset($extension)) {
                         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
                         foreach (self::$files as $file) {
                             if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
@@ -52,7 +50,7 @@ class SludioHelperExtension extends Extension
                             }
                         }
                     }
-                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['extensions'][$key][$variable]);
+                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $value);
                 }
                 $this->checkComponent($key, $container, $this->getAlias());
             }
@@ -75,10 +73,10 @@ class SludioHelperExtension extends Extension
         foreach ($config['other'] as $key => $other) {
             if (\is_array($other)) {
                 foreach ($other as $variable => $value) {
-                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $config['other'][$key][$variable]);
+                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $value);
                 }
             } else {
-                $container->setParameter($this->getAlias().'.'.$key, $config['other'][$key]);
+                $container->setParameter($this->getAlias().'.'.$key, $other);
             }
         }
 
