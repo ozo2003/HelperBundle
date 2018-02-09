@@ -13,7 +13,6 @@ class SludioExtension extends \Twig_Extension
     const REDIRECT = 'redirect';
     const CLIENT = 'client_error';
     const SERVER = 'server_error';
-    public $detector;
     protected $appDir;
     protected $param;
     protected $order;
@@ -24,7 +23,6 @@ class SludioExtension extends \Twig_Extension
     {
         $this->shortFunctions = $shortFunctions;
         $this->appDir = $appDir;
-        $this->detector = new \Mobile_Detect();
         $this->request = $requestStack->getCurrentRequest();
     }
 
@@ -53,14 +51,6 @@ class SludioExtension extends \Twig_Extension
     {
         $input = [
             'detect_lang' => 'detectLang',
-            'is_mobile' => [
-                $this->detector,
-                'isMobile',
-            ],
-            'is_tablet' => [
-                $this->detector,
-                'isTablet',
-            ],
         ];
 
         return $this->makeArray($input, 'function');

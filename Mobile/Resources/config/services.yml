@@ -1,0 +1,12 @@
+services:
+    sludio_helper.service.mobile_detect:
+        class: Mobile_Detect
+
+    sludio_helper.twig.mobile_extension:
+        class: Sludio\HelperBundle\Mobile\Twig\MobileExtension
+        public: false
+        arguments:
+            - '%sludio_helper.script.short_functions%'
+        tags:
+            -
+                name: twig.extension

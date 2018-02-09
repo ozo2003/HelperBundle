@@ -2,17 +2,13 @@
 
 namespace Sludio\HelperBundle\DependencyInjection\Requirement;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Log\LoggerInterface;
-
-class Script extends AbstractRequirement
+class Mobile extends AbstractRequirement
 {
     /**
      * @var array
      */
     protected static $requirements = [
-        ResponseInterface::class => 'psr/http-message',
-        LoggerInterface::class => 'psr/log',
+        \Mobile_Detect::class => 'mobiledetect/mobiledetectlib',
     ];
 
     public function getRequirements()

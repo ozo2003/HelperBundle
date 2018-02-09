@@ -6,7 +6,7 @@ services:
             -
                 name: console.command
 
-    sludio_helper.twig.extension:
+    sludio_helper.twig.sludio_extension:
         class: Sludio\HelperBundle\Script\Twig\SludioExtension
         public: false
         arguments:
@@ -33,6 +33,3 @@ services:
         arguments:
             - '@doctrine'
             - '%sludio_helper.entity.manager%'
-
-    sludio_helper.service.mobile_detect:
-        class: Mobile_Detect
