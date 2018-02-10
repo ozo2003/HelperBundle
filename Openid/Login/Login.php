@@ -2,11 +2,11 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
-use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
-use Symfony\Component\DependencyInjection\ContainerInterface as CI;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -28,13 +28,17 @@ class Login implements Loginable
     protected $userClass;
     protected $fields;
 
-    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $interface, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, PsrContainerInterface $interface, UrlGeneratorInterface $generator)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
         $this->generator = $generator;
 
-        /** @var CI $container */
+        if (!$interface instanceof ContainerInterface) {
+            throw new ErrorException(sprintf('Wrong container instance class: %s, %s excpected', \get_class($interface), ContainerInterface::class));
+        }
+
+        /** @var ContainerInterface $container */
         $container = $interface;
         $this->setInputs($clientName, $container);
         $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
