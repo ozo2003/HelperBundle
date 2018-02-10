@@ -6,6 +6,7 @@ use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface as CI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,12 +28,14 @@ class Login implements Loginable
     protected $userClass;
     protected $fields;
 
-    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $container, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $interface, UrlGeneratorInterface $generator)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
         $this->generator = $generator;
 
+        /** @var CI $container */
+        $container = $interface;
         $this->setInputs($clientName, $container);
         $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
         $this->setParameters($clientName, $container);
@@ -173,9 +176,7 @@ class Login implements Loginable
 
         preg_match($this->pregCheck, urldecode($get['openid_claimed_id']), $matches);
         $openID = (\is_array($matches) && isset($matches[1])) ? $matches[1] : null;
-        $response = preg_match("#is_valid\s*:\s*true#i", file_get_contents($this->openidUrl.'/'.$this->apiKey, false, $context)) === 1 ? $openID : null;
-
-        return $response;
+        return preg_match("#is_valid\s*:\s*true#i", file_get_contents($this->openidUrl.'/'.$this->apiKey, false, $context)) === 1 ? $openID : null;
     }
 
     private function getData($openID = null)

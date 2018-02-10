@@ -4,9 +4,11 @@ namespace Sludio\HelperBundle\Script\Utils;
 
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Psr\Container\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface as CI;
 
 class ClientRegistry
 {
+    /** @var CI */
     private $container;
 
     private $serviceMap;
@@ -14,13 +16,13 @@ class ClientRegistry
     /**
      * ClientRegistry constructor.
      *
-     * @param ContainerInterface $container
+     * @param ContainerInterface $interface
      *
      * @throws ErrorException
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $interface)
     {
-        $this->container = $container;
+        $this->container = $interface;
         $arguments = \func_get_args();
         unset($arguments[0]);
 

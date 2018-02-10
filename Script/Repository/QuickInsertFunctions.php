@@ -52,18 +52,18 @@ abstract class QuickInsertFunctions
     {
         $whereSql = '';
         if (!empty($where)) {
-            reset($where);
-            $first = key($where);
             $path = ' WHERE ';
             foreach ($where as $key => $value) {
-                if (!\is_array($value) && isset(self::$mock[$tableName][$key])) {
-                    $whereSql .= $path.self::$mock[$tableName][$key].' = '.self::slashes($tableName, $key, $value);
-                } elseif (\is_array($value)) {
-                    $whereSql .= $path.$value[0];
+                if (!\is_array($value)) {
+                    if (isset(self::$mock[$tableName][$key])) {
+                        $whereSql .= $path.self::$mock[$tableName][$key].' = '.self::slashes($tableName, $key, $value);
+                    } else {
+                        $whereSql .= $path.$value[0];
+                    }
                 } else {
                     $whereSql .= $path.$key.' = '.self::slashes($tableName, $key, $value);
                 }
-                if ($key === $first) {
+                if ($value === reset($where)) {
                     $path = ' AND ';
                 }
             }
