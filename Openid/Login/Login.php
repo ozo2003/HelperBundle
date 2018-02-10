@@ -49,7 +49,7 @@ class Login implements Loginable
         }
     }
 
-    private function setInputs($clientName, ContainerInterface $container)
+    private function setInputs($clientName, PsrContainerInterface $container)
     {
         $inputs = [
             'apiKey' => $clientName.'.api_key',
@@ -63,7 +63,7 @@ class Login implements Loginable
         }
     }
 
-    private function setParameters($clientName, ContainerInterface $container)
+    private function setParameters($clientName, PsrContainerInterface $container)
     {
         $parameters = [
             'profileUrl' => $clientName.'.option.profile_url',
