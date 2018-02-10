@@ -2,10 +2,10 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
+use Psr\Container\ContainerInterface;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface as CI;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -145,7 +145,6 @@ class Login implements Loginable
      */
     public function validate($timeout = 30)
     {
-        $response = null;
         $get = $this->request->query->all();
 
         $params = [
@@ -176,6 +175,7 @@ class Login implements Loginable
 
         preg_match($this->pregCheck, urldecode($get['openid_claimed_id']), $matches);
         $openID = (\is_array($matches) && isset($matches[1])) ? $matches[1] : null;
+
         return preg_match("#is_valid\s*:\s*true#i", file_get_contents($this->openidUrl.'/'.$this->apiKey, false, $context)) === 1 ? $openID : null;
     }
 
