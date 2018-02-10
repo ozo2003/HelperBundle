@@ -2,7 +2,6 @@ services:
     sludio_helper.oauth.provider_factory:
         class: Sludio\HelperBundle\DependencyInjection\ProviderFactory
         public: true
-        public: false
         arguments:
             - "@router"
             - "@request_stack"

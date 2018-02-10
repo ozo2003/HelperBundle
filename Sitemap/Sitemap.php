@@ -4,8 +4,10 @@ namespace Sludio\HelperBundle\Sitemap;
 
 use Sludio\HelperBundle\Sitemap\Dumper\DumperFileInterface;
 use Sludio\HelperBundle\Sitemap\Dumper\DumperInterface;
+use Sludio\HelperBundle\Sitemap\Entity\Image;
 use Sludio\HelperBundle\Sitemap\Entity\SitemapIndex;
 use Sludio\HelperBundle\Sitemap\Entity\Url;
+use Sludio\HelperBundle\Sitemap\Entity\Video;
 use Sludio\HelperBundle\Sitemap\Formatter\FormatterInterface;
 use Sludio\HelperBundle\Sitemap\Formatter\SitemapIndexFormatterInterface;
 use Sludio\HelperBundle\Sitemap\Provider\ProviderInterface;
@@ -146,35 +148,8 @@ class Sitemap
                 $url->setLoc($this->baseHost.$loc);
             }
 
-            foreach ($url->getVideos() as $video) {
-                if ($this->needHost($video->getThumbnailLoc())) {
-                    $video->setThumbnailLoc($this->baseHost.$video->getThumbnailLoc());
-                }
-
-                if ($this->needHost($video->getContentLoc())) {
-                    $video->setContentLoc($this->baseHost.$video->getContentLoc());
-                }
-
-                $player = $video->getPlayerLoc();
-                if ($player !== null && $this->needHost($player['loc'])) {
-                    $video->setPlayerLoc($this->baseHost.$player['loc'], $player['allow_embed'], $player['autoplay']);
-                }
-
-                $gallery = $video->getGalleryLoc();
-                if ($gallery !== null && $this->needHost($gallery['loc'])) {
-                    $video->setGalleryLoc($this->baseHost.$gallery['loc'], $gallery['title']);
-                }
-            }
-
-            foreach ($url->getImages() as $image) {
-                if ($this->needHost($image->getLoc())) {
-                    $image->setLoc($this->baseHost.$image->getLoc());
-                }
-
-                if ($this->needHost($image->getLicense())) {
-                    $image->setLicense($this->baseHost.$image->getLicense());
-                }
-            }
+            $this->parseVideo($url);
+            $this->parseImage($url);
         }
 
         $this->dumper->dump($this->formatter->formatUrl($url));
@@ -184,6 +159,44 @@ class Sitemap
         }
 
         return $this;
+    }
+
+    protected function parseVideo(Url $url)
+    {
+        foreach ($url->getVideos() as $video) {
+            /** @var Video $video */
+            if ($this->needHost($video->getThumbnailLoc())) {
+                $video->setThumbnailLoc($this->baseHost.$video->getThumbnailLoc());
+            }
+
+            if ($this->needHost($video->getContentLoc())) {
+                $video->setContentLoc($this->baseHost.$video->getContentLoc());
+            }
+
+            $player = $video->getPlayerLoc();
+            if ($player !== null && $this->needHost($player['loc'])) {
+                $video->setPlayerLoc($this->baseHost.$player['loc'], $player['allow_embed'], $player['autoplay']);
+            }
+
+            $gallery = $video->getGalleryLoc();
+            if ($gallery !== null && $this->needHost($gallery['loc'])) {
+                $video->setGalleryLoc($this->baseHost.$gallery['loc'], $gallery['title']);
+            }
+        }
+    }
+
+    protected function parseImage(Url $url)
+    {
+        foreach ($url->getImages() as $image) {
+            /** @var Image $image */
+            if ($this->needHost($image->getLoc())) {
+                $image->setLoc($this->baseHost.$image->getLoc());
+            }
+
+            if ($this->needHost($image->getLicense())) {
+                $image->setLicense($this->baseHost.$image->getLicense());
+            }
+        }
     }
 
     protected function getCurrentSitemapIndex()

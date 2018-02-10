@@ -5,7 +5,7 @@ namespace Sludio\HelperBundle\Openid\Login;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Psr\Container\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -27,12 +27,23 @@ class Login implements Loginable
     protected $userClass;
     protected $fields;
 
-    public function __construct($clientName, RequestStack $requestStack, ContainerBuilder $container, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $container, UrlGeneratorInterface $generator)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
         $this->generator = $generator;
 
+        $this->setInputs($clientName, $container);
+        $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
+        $this->setParameters($clientName, $container);
+
+        if ($this->fields !== null && \is_array($this->fields)) {
+            $this->sregFields = implode(',', $this->fields);
+        }
+    }
+
+    private function setInputs($clientName, ContainerInterface $container)
+    {
         $inputs = [
             'apiKey' => $clientName.'.api_key',
             'openidUrl' => $clientName.'.openid_url',
@@ -43,9 +54,10 @@ class Login implements Loginable
         foreach ($inputs as $key => $input) {
             $this->{$key} = $container->getParameter($input);
         }
+    }
 
-        $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
-
+    private function setParameters($clientName, ContainerInterface $container)
+    {
         $parameters = [
             'profileUrl' => $clientName.'.option.profile_url',
             'redirectRoute' => $clientName.'.redirect_route',
@@ -57,10 +69,6 @@ class Login implements Loginable
             if ($container->hasParameter($param)) {
                 $this->{$key} = $container->getParameter($param);
             }
-        }
-
-        if ($this->fields !== null && \is_array($this->fields)) {
-            $this->sregFields = implode(',', $this->fields);
         }
     }
 
@@ -137,44 +145,35 @@ class Login implements Loginable
         $response = null;
         $get = $this->request->query->all();
 
-        try {
-            $params = [
-                'openid.assoc_handle' => $get['openid_assoc_handle'],
-                'openid.signed' => $get['openid_signed'],
-                'openid.sig' => $get['openid_sig'],
-                'openid.ns' => 'http://specs.openid.net/auth/2.0',
-            ];
+        $params = [
+            'openid.assoc_handle' => $get['openid_assoc_handle'],
+            'openid.signed' => $get['openid_signed'],
+            'openid.sig' => $get['openid_sig'],
+            'openid.ns' => 'http://specs.openid.net/auth/2.0',
+        ];
 
-            $signed = explode(',', $get['openid_signed']);
+        $signed = explode(',', $get['openid_signed']);
 
-            foreach ($signed as $item) {
-                $val = $get['openid_'.str_replace('.', '_', $item)];
-                $params['openid.'.$item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
-            }
-
-            $params['openid.mode'] = 'check_authentication';
-
-            $data = http_build_query($params);
-
-            $context = stream_context_create([
-                'http' => [
-                    'method' => 'POST',
-                    'header' => "Accept-language: en\r\n"."Content-type: application/x-www-form-urlencoded\r\n".'Content-Length: '.\strlen($data)."\r\n",
-                    'content' => $data,
-                    'timeout' => $timeout,
-                ],
-            ]);
-
-            $result = file_get_contents($this->openidUrl.'/'.$this->apiKey, false, $context);
-
-            preg_match($this->pregCheck, urldecode($get['openid_claimed_id']), $matches);
-
-            $openID = (\is_array($matches) && isset($matches[1])) ? $matches[1] : null;
-
-            $response = preg_match("#is_valid\s*:\s*true#i", $result) === 1 ? $openID : null;
-        } catch (\Exception $e) {
-            $response = null;
+        foreach ($signed as $item) {
+            $val = $get['openid_'.str_replace('.', '_', $item)];
+            $params['openid.'.$item] = get_magic_quotes_gpc() ? stripslashes($val) : $val;
         }
+
+        $params['openid.mode'] = 'check_authentication';
+        $data = http_build_query($params);
+
+        $context = stream_context_create([
+            'http' => [
+                'method' => 'POST',
+                'header' => "Accept-language: en\r\n"."Content-type: application/x-www-form-urlencoded\r\n".'Content-Length: '.\strlen($data)."\r\n",
+                'content' => $data,
+                'timeout' => $timeout,
+            ],
+        ]);
+
+        preg_match($this->pregCheck, urldecode($get['openid_claimed_id']), $matches);
+        $openID = (\is_array($matches) && isset($matches[1])) ? $matches[1] : null;
+        $response = preg_match("#is_valid\s*:\s*true#i", file_get_contents($this->openidUrl.'/'.$this->apiKey, false, $context)) === 1 ? $openID : null;
 
         return $response;
     }

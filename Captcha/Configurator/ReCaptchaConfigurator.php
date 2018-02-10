@@ -27,7 +27,7 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             ->scalarNode('validator_class')->defaultValue(IsTrueValidator::class)->end()
             ->scalarNode('validate')->defaultValue(true)->end()
             ->arrayNode('locales')
-                ->cannotBeEmpty()
+                ->requiresAtLeastOneElement()
                 ->beforeNormalization()
                     ->ifString()
                         ->then(function($v) {

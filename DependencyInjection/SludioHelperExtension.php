@@ -36,23 +36,29 @@ class SludioHelperExtension extends Extension
         $config = $this->loadConfig($configs, $container);
 
         foreach ($config['extensions'] as $key => $extension) {
-            if (!isset($extension['enabled']) || $extension['enabled'] !== true) {
-                continue;
-            }
-            if ($this->checkRequirements($key)) {
-                /** @var $extension array */
-                foreach ($extension as $variable => $value) {
-                    if ($value === reset($extension)) {
-                        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
-                        foreach (self::$files as $file) {
-                            if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
-                                $loader->load($file);
-                            }
+            /** @var $extension array */
+            foreach ($extension as $variable => $value) {
+                if ($value === reset($extension)) {
+                    $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../'.ucfirst($key).'/Resources/config'));
+                    foreach (self::$files as $file) {
+                        if (file_exists(__DIR__.'/../'.ucfirst($key).'/Resources/config/'.$file)) {
+                            $loader->load($file);
                         }
                     }
-                    $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $value);
                 }
-                $this->checkComponent($key, $container, $this->getAlias());
+                $container->setParameter($this->getAlias().'.'.$key.'.'.$variable, $value);
+            }
+            $this->checkComponent($key, $container, $this->getAlias());
+        }
+    }
+
+    private function unsetExtension(array &$extensions = [])
+    {
+        foreach ($extensions as $key => $extension) {
+            if (empty($extension['enabled'])) {
+                unset($extensions[$key]);
+            } else {
+                $this->checkRequirements($key);
             }
         }
     }
@@ -79,6 +85,7 @@ class SludioHelperExtension extends Extension
                 $container->setParameter($this->getAlias().'.'.$key, $other);
             }
         }
+        $this->unsetExtension($config['extensions']);
 
         return $config;
     }

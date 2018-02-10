@@ -3,7 +3,7 @@
 namespace Sludio\HelperBundle\Script\Utils;
 
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class ClientRegistry
 {
