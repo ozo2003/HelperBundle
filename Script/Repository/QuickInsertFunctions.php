@@ -58,11 +58,12 @@ abstract class QuickInsertFunctions
                     if (isset(self::$mock[$tableName][$key])) {
                         $whereSql .= $path.self::$mock[$tableName][$key].' = '.self::slashes($tableName, $key, $value);
                     } else {
-                        $whereSql .= $path.$value[0];
+                        $whereSql .= $path.$key.' = '.self::slashes($tableName, $key, $value);
                     }
                 } else {
-                    $whereSql .= $path.$key.' = '.self::slashes($tableName, $key, $value);
+                    $whereSql .= $path.$value[0];
                 }
+
                 if ($value === reset($where)) {
                     $path = ' AND ';
                 }

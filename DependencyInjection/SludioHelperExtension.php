@@ -85,6 +85,8 @@ class SludioHelperExtension extends Extension
                 $container->setParameter($this->getAlias().'.'.$key, $other);
             }
         }
+
+        $container->setParameter('sludio_helper_alias', \SLUDIO_HELPER);
         $this->unsetExtension($config['extensions']);
 
         return $config;

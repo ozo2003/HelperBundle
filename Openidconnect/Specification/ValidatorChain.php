@@ -60,11 +60,6 @@ class ValidatorChain
                 if ($validator->isRequired()) {
                     $valid = false;
                     $this->messages[$claim] = sprintf('Missing required value for claim %s', $claim);
-                    continue;
-                }
-
-                if (empty($data[$claim])) {
-                    continue;
                 }
             } else {
                 if (isset($data[$claim]) && !$validator->isSatisfiedBy($data[$claim], $token->getClaim($claim))) {

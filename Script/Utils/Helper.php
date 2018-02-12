@@ -2,6 +2,8 @@
 
 namespace Sludio\HelperBundle\Script\Utils;
 
+use Symfony\Component\HttpFoundation\Request;
+
 class Helper
 {
     // @formatter:off
@@ -217,5 +219,10 @@ class Helper
         }
 
         return true;
+    }
+
+    public static function useHttps(Request $request)
+    {
+        return $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
     }
 }

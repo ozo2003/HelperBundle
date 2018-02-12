@@ -6,6 +6,7 @@
         "helper",
         "lexik",
         "logger",
+        "mobiledetect",
         "oauth",
         "openid",
         "openidconnect",

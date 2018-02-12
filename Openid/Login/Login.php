@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Openid\Login;
 
-use Psr\Container\ContainerInterface as PsrContainerInterface;
 use Sludio\HelperBundle\DependencyInjection\ProviderFactory;
 use Sludio\HelperBundle\Openid\Component\Loginable;
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
@@ -10,6 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sludio\HelperBundle\Script\Utils\Helper;
 
 class Login implements Loginable
 {
@@ -28,17 +28,12 @@ class Login implements Loginable
     protected $userClass;
     protected $fields;
 
-    public function __construct($clientName, RequestStack $requestStack, PsrContainerInterface $interface, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $interface, UrlGeneratorInterface $generator)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
         $this->generator = $generator;
 
-        if (!$interface instanceof ContainerInterface) {
-            throw new ErrorException(sprintf('Wrong container instance class: %s, %s excpected', \get_class($interface), ContainerInterface::class));
-        }
-
-        /** @var ContainerInterface $container */
         $container = $interface;
         $this->setInputs($clientName, $container);
         $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
@@ -49,7 +44,7 @@ class Login implements Loginable
         }
     }
 
-    private function setInputs($clientName, PsrContainerInterface $container)
+    private function setInputs($clientName, ContainerInterface $container)
     {
         $inputs = [
             'apiKey' => $clientName.'.api_key',
@@ -63,7 +58,7 @@ class Login implements Loginable
         }
     }
 
-    private function setParameters($clientName, PsrContainerInterface $container)
+    private function setParameters($clientName, ContainerInterface $container)
     {
         $parameters = [
             'profileUrl' => $clientName.'.option.profile_url',
@@ -126,8 +121,7 @@ class Login implements Loginable
      */
     public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
-        $useHttps = $this->request->server->get('HTTPS') || ($this->request->server->get('HTTP_X_FORWARDED_PROTO') && $this->request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
-        $realm = $altRealm ?: ($useHttps ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST');
+        $realm = $altRealm ?: (Helper::useHttps($this->request) ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST');
 
         if (null !== $return) {
             if (!$this->validateUrl($return)) {

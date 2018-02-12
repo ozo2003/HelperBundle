@@ -34,6 +34,19 @@ class TranslatorType extends AbstractType
         $this->container = $container;
     }
 
+    private function getEntity(array $entities = [], $className)
+    {
+        foreach ($entities as $key => $entity) {
+            /** @var $entity array */
+            $entity['name'] = $key;
+            if ($entity['entity'] === $className) {
+                return $entity;
+            }
+        }
+
+        return null;
+    }
+
     /**
      * @param FormBuilderInterface $builder
      * @param array                $options
@@ -44,17 +57,9 @@ class TranslatorType extends AbstractType
     {
         /** @var AdminInterface $admin */
         $admin = $options['sonata_field_description']->getAdmin();
-
-        $entities = $this->container->getParameter('sludio_helper.translatable.entities');
-        $entity = null;
         $className = $admin->getClass();
-        /** @var $entities array */
-        foreach ($entities as $key => &$entity) {
-            $entity['name'] = $key;
-            if ($entity['entity'] === $className) {
-                break;
-            }
-        }
+
+        $entity = $this->getEntity($this->container->getParameter('sludio_helper.translatable.entities'), $className);
 
         $under = 'sludio_helper.extensions.translatable.entities';
         if ($entity === null || $entity['entity'] !== $className) {

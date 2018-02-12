@@ -79,6 +79,11 @@ class RecaptchaType extends AbstractType
             ]);
         }
 
+        $this->parseOptions($view);
+    }
+
+    private function parseOptions(&$view)
+    {
         $baseOptions = [
             'compound',
             'url_challenge',

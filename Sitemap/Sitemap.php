@@ -12,6 +12,7 @@ use Sludio\HelperBundle\Sitemap\Formatter\FormatterInterface;
 use Sludio\HelperBundle\Sitemap\Formatter\SitemapIndexFormatterInterface;
 use Sludio\HelperBundle\Sitemap\Provider\ProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Sludio\HelperBundle\Script\Utils\Helper;
 
 class Sitemap
 {
@@ -30,8 +31,7 @@ class Sitemap
         $this->baseHost = $baseHost;
         if ($this->baseHost === null && PHP_SAPI !== 'cli') {
             $request = $requestStack->getCurrentRequest();
-            $useHttps = $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
-            $this->baseHost = ($useHttps ? 'https' : 'http').'://'.$request->server->get('HTTP_HOST');
+            $this->baseHost = (Helper::useHttps($request) ? 'https' : 'http').'://'.$request->server->get('HTTP_HOST');
         }
         $this->limit = $limit;
         if ($this->isSitemapIndexable()) {
