@@ -10,11 +10,23 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Sludio\HelperBundle\Script\Utils\Helper;
+use Symfony\Component\HttpFoundation\Request;
 
 class Login implements Loginable
 {
+    /**
+     * @var RequestStack
+     */
     public $requestStack;
+
+    /**
+     * @var Request
+     */
     protected $request;
+
+    /**
+     * @var UrlGeneratorInterface
+     */
     protected $generator;
     protected $redirectRoute;
     protected $redirectRouteParams = [];
@@ -26,7 +38,7 @@ class Login implements Loginable
     protected $nsMode = 'auth';
     protected $sregFields = 'email';
     protected $userClass;
-    protected $fields;
+    protected $fields = [];
 
     public function __construct($clientName, RequestStack $requestStack, ContainerInterface $interface, UrlGeneratorInterface $generator)
     {
@@ -39,7 +51,7 @@ class Login implements Loginable
         $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
         $this->setParameters($clientName, $container);
 
-        if ($this->fields !== null && \is_array($this->fields)) {
+        if (!empty($this->fields) && \is_array($this->fields)) {
             $this->sregFields = implode(',', $this->fields);
         }
     }
