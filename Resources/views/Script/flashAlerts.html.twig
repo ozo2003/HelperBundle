@@ -1,0 +1,10 @@
+{% spaceless %}
+    {% for alert in alert_publisher %}
+        <div class="{% if alert_use_styles %}sludio_alert sludio_alert_{{ alert.type }}{% else %}alert alert-{{ alert.type }} alert-dismissable{% endif %}">
+            <button type="button" class="alert-close {% if alert_use_styles %}sludio_alert_close{% endif %}">
+                &times;
+            </button>
+            {{ alert.message | raw }}
+        </div>
+    {% endfor %}
+{% endspaceless %}

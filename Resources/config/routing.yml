@@ -55,3 +55,8 @@ sludio_sitemap:
         _controller: Sludio\HelperBundle\Script\Controller\ScriptController::sitemapAction
     options:
         i18n: false
+
+sludio_helper_display_alerts:
+    path: /display_alerts
+    defaults:
+        _controller: Sludio\HelperBundle\Script\Controller\FlashController::displayAlertsAction

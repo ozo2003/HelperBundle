@@ -33,3 +33,37 @@ services:
         arguments:
             - '@doctrine'
             - '%sludio_helper.entity.manager%'
+
+    sludio_helper.alert.manager:
+        class: Sludio\HelperBundle\Script\Model\AlertManager
+        arguments:
+            - '@session'
+
+    sludio_helper.alert.reporter:
+        class: Sludio\HelperBundle\Script\Model\AlertReport
+        arguments:
+            - '@sludio_helper.alert.manager'
+
+    sludio_helper.alert.publisher:
+        class: Sludio\HelperBundle\Script\Model\AlertPublisher
+        arguments:
+            - '@sludio_helper.alert.manager'
+
+    sludio_helper.twig.flash_extension:
+        class: Sludio\HelperBundle\Script\Twig\FlashExtension
+        arguments:
+            - '%sludio_helper.script.short_functions%'
+            - '@sludio_helper.alert.publisher'
+            - '@sludio_helper.templating.alerts_helper'
+        tags:
+            -
+                name: twig.extension
+
+    sludio_helper.templating.alerts_helper:
+        class: Sludio\HelperBundle\Script\Helper\FlashAlertsHelper
+        arguments:
+            - '@templating'
+            - '@sludio_helper.alert.publisher'
+            - '%sludio_helper.script.alert_template%'
+            - '%sludio_helper.script.alert_use_styles%'
+            - '%sludio_helper.script.alert_use_scripts%'

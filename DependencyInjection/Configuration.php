@@ -9,6 +9,8 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
+    const TEMPLATE = 'SludioHelperBundle:Script:layout.html.twig';
+
     protected $alias;
 
     /**
@@ -250,6 +252,15 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->booleanNode('short_functions')
                                     ->defaultValue(false)
+                                ->end()
+                                ->scalarNode('alert_template')
+                                    ->defaultValue(self::TEMPLATE)
+                                ->end()
+                                ->booleanNode('alert_use_styles')
+                                    ->defaultValue(true)
+                                ->end()
+                                ->booleanNode('alert_use_scripts')
+                                    ->defaultValue(true)
                                 ->end()
                             ->end()
                         ->end()

@@ -1,0 +1,59 @@
+.sludio_alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding-right: 35px;
+}
+
+.sludio_alert_success {
+    color: #3c763d;
+    background-color: #b9df90;
+    border-color: #a0d468;
+}
+
+.sludio_alert_info {
+    color: #31708f;
+    background-color: #7cd1ef;
+    border-color: #4fc1e9;
+}
+
+.sludio_alert_warning {
+    color: #8a6d3b;
+    background-color: #ffdd87;
+    border-color: #ffce54;
+}
+
+.sludio_alert_error {
+    color: #a94442;
+    background-color: #f2838f;
+    border-color: #ed5565;
+}
+
+.sludio_alert_close {
+    position: relative;
+    top: -2px;
+    right: -21px;
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    color: #000000;
+    text-shadow: 0 1px 0 #ffffff;
+    filter: alpha(opacity=20);
+    opacity: .2;
+    -webkit-appearance: none;
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+}
+
+.sludio_alert_close:hover {
+    color: #000000;
+    text-decoration: none;
+    cursor: pointer;
+    filter: alpha(opacity=50);
+    opacity: .5;
+}
+
