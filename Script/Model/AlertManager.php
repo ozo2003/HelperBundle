@@ -10,6 +10,9 @@ class AlertManager implements AlertManagerInterface
 
     public function __construct(Session $session)
     {
+        if(!$session->hasBeenStarted()){
+            $session->start();
+        }
         $this->session = $session;
     }
 

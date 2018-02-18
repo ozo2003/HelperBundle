@@ -8,6 +8,8 @@ use Symfony\Component\Templating\EngineInterface;
 
 class FlashAlertsHelper extends Helper
 {
+    const TEMPLATE = 'SludioHelperBundle:Script:layout.html.twig';
+
     private $templating;
     private $alertPublisher;
     private $options = [];
@@ -17,8 +19,8 @@ class FlashAlertsHelper extends Helper
         $this->templating = $templating;
         $this->alertPublisher = $alertPublisher;
         $this->options = [
-            'use_styles' => $styles,
-            'use_scripts' => $scripts,
+            'alert_use_styles' => $styles,
+            'alert_use_scripts' => $scripts,
             'template' => $template
         ];
     }

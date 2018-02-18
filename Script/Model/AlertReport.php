@@ -31,10 +31,10 @@ class AlertReport implements AlertReporterInterface
         $this->add(AlertInterface::WARNING, $message);
     }
 
-    public function add($type = 'info', $message)
+    public function add($type = AlertInterface::INFO, $message)
     {
         if (!\in_array($type, AlertManager::getAlertTypes(), true)) {
-            $type = 'info';
+            $type = AlertInterface::INFO;
         }
         $this->alertManager->addAlert(new Alert($type, $message));
     }

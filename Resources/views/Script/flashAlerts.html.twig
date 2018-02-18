@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="{{ asset('bundles/sludiohelper/css/alert.css') }}">
 {% spaceless %}
     {% for alert in alert_publisher %}
         <div class="{% if alert_use_styles %}sludio_alert sludio_alert_{{ alert.type }}{% else %}alert alert-{{ alert.type }} alert-dismissable{% endif %}">

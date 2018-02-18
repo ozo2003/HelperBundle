@@ -6,11 +6,10 @@ use GuzzleHttp\MessageFormatter;
 use Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Sludio\HelperBundle\Script\Helper\FlashAlertsHelper;
 
 class Configuration implements ConfigurationInterface
 {
-    const TEMPLATE = 'SludioHelperBundle:Script:layout.html.twig';
-
     protected $alias;
 
     /**
@@ -254,7 +253,7 @@ class Configuration implements ConfigurationInterface
                                     ->defaultValue(false)
                                 ->end()
                                 ->scalarNode('alert_template')
-                                    ->defaultValue(self::TEMPLATE)
+                                    ->defaultValue(FlashAlertsHelper::TEMPLATE)
                                 ->end()
                                 ->booleanNode('alert_use_styles')
                                     ->defaultValue(true)
