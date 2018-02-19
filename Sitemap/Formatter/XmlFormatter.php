@@ -61,10 +61,8 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return $buffer;
     }
 
-    protected function formatVideo(Video $video)
+    private function getChecks(Video $video, $keys = false)
     {
-        $buffer = $this->videoHeader($video);
-
         $checks = [
             'getContentLoc' => "\t\t".'<video:content_loc>'.$this->escape($video->getContentLoc()).'</video:content_loc>'."\n",
             'getDuration' => "\t\t".'<video:duration>'.$this->escape($video->getDuration()).'</video:duration>'."\n",
@@ -75,10 +73,19 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             'getCategory' => "\t\t".'<video:category>'.$this->escape($video->getCategory()).'</video:category>'."\n",
             'getRequiresSubscription' => "\t\t".'<video:requires_subscription>'.($video->getRequiresSubscription() ? 'yes' : 'no').'</video:requires_subscription>'."\n",
             'getLive' => "\t\t".'<video:live>'.($video->getLive() ? 'yes' : 'no').'</video:live>'."\n",
-            'getFamilyFriendly' => "\t\t".'<video:family_friendly>'.($video->getFamilyFriendly() ? 'yes' : 'no').'</video:family_friendly>'."\n"
+            'getFamilyFriendly' => "\t\t".'<video:family_friendly>'.($video->getFamilyFriendly() ? 'yes' : 'no').'</video:family_friendly>'."\n",
         ];
 
-        $extended = [
+        if ($keys === true) {
+            return \array_keys($checks);
+        }
+
+        return $checks;
+    }
+
+    private static function getExtended($keys = false)
+    {
+        $checks = [
             'getPlayerLoc' => 'checkVideoPlayerLoc',
             'getTags' => 'checkVideoTags',
             'getRestrictions' => 'checkVideoRestrictions',
@@ -87,8 +94,25 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             'getPlatforms' => 'checkVideoPlatforms',
         ];
 
-        $keys = array_merge(array_keys($checks), array_keys($extended));
-        foreach ($keys as $key) {
+        if ($keys === true) {
+            return \array_keys($checks);
+        }
+
+        return $checks;
+    }
+
+    private function getCheckKeys(Video $video)
+    {
+        return array_merge($this->getChecks($video, true), self::getExtended(true));
+    }
+
+    protected function formatVideo(Video $video)
+    {
+        $buffer = $this->videoHeader($video);
+        $checks = $this->getChecks($video);
+        $extended = self::getExtended();
+
+        foreach ($this->getCheckKeys($video) as $key) {
             if ($video->{$key}() !== null) {
                 if (isset($checks[$key])) {
                     $buffer .= $checks[$key];
@@ -148,7 +172,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return $buffer;
     }
 
-    protected function checkVideoPlayerLoc($video)
+    protected function checkVideoPlayerLoc(Video $video)
     {
         $playerLoc = $video->getPlayerLoc();
         $allowEmbed = $playerLoc['allow_embed'] ? 'yes' : 'no';
@@ -157,7 +181,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return "\t\t".sprintf('<video:player_loc allow_embed="%s"%s>', $allowEmbed, $autoplay).$this->escape($playerLoc['loc']).'</video:player_loc>'."\n";
     }
 
-    protected function checkVideoTags($video)
+    protected function checkVideoTags(Video $video)
     {
         $text = '';
         $tags = $video->getTags();
@@ -169,7 +193,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return $text;
     }
 
-    protected function checkVideoRestrictions($video)
+    protected function checkVideoRestrictions(Video $video)
     {
         $restrictions = $video->getRestrictions();
         $relationship = $this->escape($restrictions['relationship']);
@@ -177,7 +201,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return "\t\t".'<video:restriction relationship="'.$relationship.'">'.$this->escape(implode(' ', $restrictions['countries'])).'</video:restriction>'."\n";
     }
 
-    protected function checkVideoGalleryLoc($video)
+    protected function checkVideoGalleryLoc(Video $video)
     {
         $galleryLoc = $video->getGalleryLoc();
         $title = $galleryLoc['title'] !== null ? sprintf(' title="%s"', $this->escape($galleryLoc['title'])) : '';
@@ -185,7 +209,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return "\t\t".sprintf('<video:gallery_loc%s>', $title).$this->escape($galleryLoc['loc']).'</video:gallery_loc>'."\n";
     }
 
-    protected function checkVideoUploader($video)
+    protected function checkVideoUploader(Video $video)
     {
         $uploader = $video->getUploader();
         $info = $uploader['info'] !== null ? sprintf(' info="%s"', $this->escape($uploader['info'])) : '';
@@ -193,7 +217,7 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return "\t\t".sprintf('<video:uploader%s>', $info).$this->escape($uploader['name']).'</video:uploader>'."\n";
     }
 
-    protected function checkVideoPlatforms($video)
+    protected function checkVideoPlatforms(Video $video)
     {
         $text = '';
         $platforms = $video->getPlatforms();
