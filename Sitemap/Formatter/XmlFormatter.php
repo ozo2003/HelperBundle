@@ -61,9 +61,9 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
         return $buffer;
     }
 
-    private function getChecks(Video $video, $keys = false)
+    private function getChecks(Video $video)
     {
-        $checks = [
+        return [
             'getContentLoc' => "\t\t".'<video:content_loc>'.$this->escape($video->getContentLoc()).'</video:content_loc>'."\n",
             'getDuration' => "\t\t".'<video:duration>'.$this->escape($video->getDuration()).'</video:duration>'."\n",
             'getExpirationDate' => "\t\t".'<video:expiration_date>'.$this->escape($video->getExpirationDate()).'</video:expiration_date>'."\n",
@@ -74,51 +74,23 @@ class XmlFormatter extends BaseFormatter implements SitemapIndexFormatterInterfa
             'getRequiresSubscription' => "\t\t".'<video:requires_subscription>'.($video->getRequiresSubscription() ? 'yes' : 'no').'</video:requires_subscription>'."\n",
             'getLive' => "\t\t".'<video:live>'.($video->getLive() ? 'yes' : 'no').'</video:live>'."\n",
             'getFamilyFriendly' => "\t\t".'<video:family_friendly>'.($video->getFamilyFriendly() ? 'yes' : 'no').'</video:family_friendly>'."\n",
+            'getPlayerLoc' => $this->checkVideoPlayerLoc($video),
+            'getTags' => $this->checkVideoTags($video),
+            'getRestrictions' => $this->checkVideoRestrictions($video),
+            'getGalleryLoc' => $this->checkVideoGalleryLoc($video),
+            'getUploader' => $this->checkVideoUploader($video),
+            'getPlatforms' => $this->checkVideoPlatforms($video),
         ];
-
-        if ($keys === true) {
-            return \array_keys($checks);
-        }
-
-        return $checks;
-    }
-
-    private static function getExtended($keys = false)
-    {
-        $checks = [
-            'getPlayerLoc' => 'checkVideoPlayerLoc',
-            'getTags' => 'checkVideoTags',
-            'getRestrictions' => 'checkVideoRestrictions',
-            'getGalleryLoc' => 'checkVideoGalleryLoc',
-            'getUploader' => 'checkVideoUploader',
-            'getPlatforms' => 'checkVideoPlatforms',
-        ];
-
-        if ($keys === true) {
-            return \array_keys($checks);
-        }
-
-        return $checks;
-    }
-
-    private function getCheckKeys(Video $video)
-    {
-        return array_merge($this->getChecks($video, true), self::getExtended(true));
     }
 
     protected function formatVideo(Video $video)
     {
         $buffer = $this->videoHeader($video);
         $checks = $this->getChecks($video);
-        $extended = self::getExtended();
 
-        foreach ($this->getCheckKeys($video) as $key) {
+        foreach (\array_keys($checks) as $key) {
             if ($video->{$key}() !== null) {
-                if (isset($checks[$key])) {
-                    $buffer .= $checks[$key];
-                } elseif (isset($extended[$key])) {
-                    $buffer .= $this->{$extended[$key]}($video);
-                }
+                $buffer .= $checks[$key];
             }
         }
 
