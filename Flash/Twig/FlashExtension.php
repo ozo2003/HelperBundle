@@ -1,8 +1,9 @@
 <?php
 
-namespace Sludio\HelperBundle\Script\Twig;
+namespace Sludio\HelperBundle\Flash\Twig;
 
-use Sludio\HelperBundle\Script\Helper\FlashAlertsHelper;
+use Sludio\HelperBundle\Flash\Helper\FlashAlertsHelper;
+use Sludio\HelperBundle\Script\Twig\TwigTrait;
 
 class FlashExtension extends \Twig_Extension
 {

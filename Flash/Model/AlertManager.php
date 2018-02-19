@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Script\Model;
+namespace Sludio\HelperBundle\Flash\Model;
 
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -10,7 +10,7 @@ class AlertManager implements AlertManagerInterface
 
     public function __construct(Session $session)
     {
-        if (!$session->hasBeenStarted()) {
+        if (!$session->isStarted()) {
             $session->start();
         }
         $this->session = $session;

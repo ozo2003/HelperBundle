@@ -1,14 +1,14 @@
 <?php
 
-namespace Sludio\HelperBundle\Script\Helper;
+namespace Sludio\HelperBundle\Flash\Helper;
 
-use Sludio\HelperBundle\Script\Model\AlertPublisher;
+use Sludio\HelperBundle\Flash\Model\AlertPublisher;
 use Symfony\Component\Console\Helper\Helper;
 use Symfony\Component\Templating\EngineInterface;
 
 class FlashAlertsHelper extends Helper
 {
-    const TEMPLATE = 'SludioHelperBundle:Script:layout.html.twig';
+    const TEMPLATE = 'SludioHelperBundle:Flash:layout.html.twig';
 
     private $templating;
     private $alertPublisher;

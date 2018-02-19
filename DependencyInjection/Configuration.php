@@ -6,7 +6,7 @@ use GuzzleHttp\MessageFormatter;
 use Sludio\HelperBundle\Guzzle\DataCollector\GuzzleCollector;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
-use Sludio\HelperBundle\Script\Helper\FlashAlertsHelper;
+use Sludio\HelperBundle\Flash\Helper\FlashAlertsHelper;
 
 class Configuration implements ConfigurationInterface
 {
@@ -45,6 +45,21 @@ class Configuration implements ConfigurationInterface
                                     ->prototype('array')
                                         ->prototype('variable')->end()
                                     ->end()
+                                ->end()
+                            ->end()
+                        ->end()
+                        ->arrayNode('flash')
+                            ->addDefaultsIfNotSet()
+                            ->canBeEnabled()
+                            ->children()
+                                ->scalarNode('alert_template')
+                                    ->defaultValue(FlashAlertsHelper::TEMPLATE)
+                                ->end()
+                                ->booleanNode('alert_use_styles')
+                                    ->defaultValue(true)
+                                ->end()
+                                ->booleanNode('alert_use_scripts')
+                                    ->defaultValue(true)
                                 ->end()
                             ->end()
                         ->end()
@@ -251,15 +266,6 @@ class Configuration implements ConfigurationInterface
                             ->children()
                                 ->booleanNode('short_functions')
                                     ->defaultValue(false)
-                                ->end()
-                                ->scalarNode('alert_template')
-                                    ->defaultValue(FlashAlertsHelper::TEMPLATE)
-                                ->end()
-                                ->booleanNode('alert_use_styles')
-                                    ->defaultValue(true)
-                                ->end()
-                                ->booleanNode('alert_use_scripts')
-                                    ->defaultValue(true)
                                 ->end()
                             ->end()
                         ->end()

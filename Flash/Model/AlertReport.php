@@ -1,6 +1,6 @@
 <?php
 
-namespace Sludio\HelperBundle\Script\Model;
+namespace Sludio\HelperBundle\Flash\Model;
 
 class AlertReport implements AlertReporterInterface
 {

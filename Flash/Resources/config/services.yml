@@ -1,0 +1,34 @@
+services:
+    sludio_helper.alert.manager:
+        class: Sludio\HelperBundle\Flash\Model\AlertManager
+        arguments:
+            - '@session'
+
+    sludio_helper.alert.reporter:
+        class: Sludio\HelperBundle\Flash\Model\AlertReport
+        arguments:
+            - '@sludio_helper.alert.manager'
+
+    sludio_helper.alert.publisher:
+        class: Sludio\HelperBundle\Flash\Model\AlertPublisher
+        arguments:
+            - '@sludio_helper.alert.manager'
+
+    sludio_helper.twig.flash_extension:
+        class: Sludio\HelperBundle\Flash\Twig\FlashExtension
+        arguments:
+            - '%sludio_helper.script.short_functions%'
+            - '@sludio_helper.alert.publisher'
+            - '@sludio_helper.templating.alerts_helper'
+        tags:
+            -
+                name: twig.extension
+
+    sludio_helper.templating.alerts_helper:
+        class: Sludio\HelperBundle\Flash\Helper\FlashAlertsHelper
+        arguments:
+            - '@templating'
+            - '@sludio_helper.alert.publisher'
+            - '%sludio_helper.flash.alert_template%'
+            - '%sludio_helper.flash.alert_use_styles%'
+            - '%sludio_helper.flash.alert_use_scripts%'
