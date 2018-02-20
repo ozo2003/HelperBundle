@@ -128,36 +128,10 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
             throw new InvalidTokenException('Expected an id_token but did not receive one from the authorization server.');
         }
 
-        // If the ID Token is received via direct communication between the Client and the Token Endpoint
-        // (which it is in this flow), the TLS server validation MAY be used to validate the issuer in place of checking
-        // the token signature. The Client MUST validate the signature of all other ID Tokens according to JWS [JWS]
-        // using the algorithm specified in the JWT alg Header Parameter. The Client MUST use the keys provided by
-        // the Issuer.
-        //
-        // The alg value SHOULD be the default of RS256 or the algorithm sent by the Client in the
-        // id_token_signed_response_alg parameter during Registration.
         if (false === $token->verify($this->signer, $this->getPublicKey())) {
             throw new InvalidTokenException('Received an invalid id_token from authorization server.');
         }
 
-        // validations
-        // @see http://openid.net/specs/openid-connect-core-1_0.html#IDTokenValidation
-        // validate the iss (issuer)
-        // - The Issuer Identifier for the OpenID Provider (which is typically obtained during Discovery)
-        // MUST exactly match the value of the iss (issuer) Claim.
-        // validate the aud
-        // - The Client MUST validate that the aud (audience) Claim contains its client_id value registered at the Issuer
-        // identified by the iss (issuer) Claim as an audience. The aud (audience) Claim MAY contain an array with more
-        // than one element. The ID Token MUST be rejected if the ID Token does not list the Client as a valid audience,
-        // or if it contains additional audiences not trusted by the Client.
-        // - If a nonce value was sent in the Authentication Request, a nonce Claim MUST be present and its value checked
-        // to verify that it is the same value as the one that was sent in the Authentication Request. The Client SHOULD
-        // check the nonce value for replay attacks. The precise method for detecting replay attacks is Client specific.
-        // - If the auth_time Claim was requested, either through a specific request for this Claim or by using
-        // the max_age parameter, the Client SHOULD check the auth_time Claim value and request re-authentication if it
-        // determines too much time has elapsed since the last End-User authentication.
-        // If the acr Claim was requested, the Client SHOULD check that the asserted Claim Value is appropriate.
-        // The meaning and processing of acr Claim Values is out of scope for this specification.
         $currentTime = time();
         $data = [
             'iss' => $this->getIdTokenIssuer(),
@@ -168,8 +142,6 @@ abstract class OpenIDConnectProvider extends AbstractProvider implements Provide
             'aud' => $this->clientId,
         ];
 
-        // If the ID Token contains multiple audiences, the Client SHOULD verify that an azp Claim is present.
-        // If an azp (authorized party) Claim is present, the Client SHOULD verify that its client_id is the Claim Value.
         if ($token->hasClaim('azp')) {
             $data['azp'] = $this->clientId;
         }

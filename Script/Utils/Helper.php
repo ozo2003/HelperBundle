@@ -68,27 +68,18 @@ class Helper
         return $output;
     }
 
-    public static function validatePersonCode($personCode = null)
+    public static function validatePersonCode($personCode)
     {
-        if ($personCode !== null) {
-            $personCode = str_replace('-', '', $personCode);
+        $personCode = str_replace('-', '', $personCode);
+        $result = true;
 
-            if (\strlen($personCode) !== 11) {
-                return 'error_length';
-            }
-
-            if (preg_match('/^\d+$/', $personCode) === null) {
-                return 'error_symbols';
-            }
-
-            if (((int)substr($personCode, 0, 2) === 32 && !self::newPKValidate($personCode)) || !self::validateDate($personCode)) {
-                return 'error_invalid';
-            }
-
-            return true;
+        if (\strlen($personCode) !== 11 || preg_match('/^\d+$/', $personCode) === null) {
+            $result = false;
+        } elseif (((int)substr($personCode, 0, 2) === 32 && !self::newPKValidate($personCode)) || !self::validateDate($personCode)) {
+            $result = false;
         }
 
-        return 'error_empty';
+        return $result;
     }
 
     public static function validateDate($date)
