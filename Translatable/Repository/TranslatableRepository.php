@@ -25,12 +25,14 @@ class TranslatableRepository
         self::init($class, $className);
         $locale = self::getLocaleVar($locale);
 
+        $doUpdate = false;
         if ((int)$id === 0) {
+            $doUpdate = true;
             $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
         }
 
         $update = (int)self::findByLocale($class, $locale, $content, $field, null, $id);
-        if ($update === 0) {
+        if ($update === 0 && $doUpdate === true) {
             $id = Quick::findNextIdExt(self::$entityManager->getMetadataFactory()->getMetadataFor($class));
         }
 
