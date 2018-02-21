@@ -10,7 +10,7 @@ class QuickInsertRepository extends QuickInsertFunctions
     public static function findNextIdExt(ClassMetadata $metadata, $manager = null)
     {
         self::init($manager);
-        $data = self::extractExt($metadata);
+        $data = Filters::extractExt($metadata);
 
         return self::findNextId($data['table']);
     }
@@ -31,7 +31,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         $fields = $fields ?: ['id'];
         $sql = $select.implode(', ', $fields).' FROM '.$tableName.self::buildWhere($tableName, $where).self::buildExtra($extra);
 
-        return self::filterGetResult((self::runSQL($sql) ?: null), $fields, $one);
+        return Filters::filterGetResult((self::runSQL($sql) ?: null), $fields, $one);
     }
 
     public static function runSQL($sql, $noFkCheck = true, $manager = null, $skip = false)
