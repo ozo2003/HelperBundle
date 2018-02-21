@@ -34,7 +34,13 @@ abstract class QuickInsertFunctions
                 }
             }
         }
+        self::getLimit($extra, $sql);
 
+        return Helper::oneSpace($sql);
+    }
+
+    private static function getLimit($extra = [], &$sql)
+    {
         if (isset($extra['LIMIT']) && \is_array($extra['LIMIT'])) {
             if (isset($extra['LIMIT'][1])) {
                 list($offset, $limit) = $extra['LIMIT'];
@@ -44,8 +50,6 @@ abstract class QuickInsertFunctions
             }
             $sql = sprintf('%sLIMIT %s, %s', $sql, $offset, $limit);
         }
-
-        return Helper::oneSpace($sql);
     }
 
     protected static function buildWhere($tableName, array $where)
@@ -240,5 +244,47 @@ abstract class QuickInsertFunctions
         }
 
         return \substr($values, 0, -1);
+    }
+
+    protected static function parsePersistColumns(array $columns = [], $object, $type, $tableName, &$idd)
+    {
+        $data = [];
+        foreach ($columns as $value => $key) {
+            $keys = [
+                $key,
+                $value,
+            ];
+            if (!Helper::multiple($keys)) {
+                $value = self::value($object, $value, $type, $tableName);
+                if ($value !== null) {
+                    $data[$key] = $value;
+                    if ($key === self::$identifier) {
+                        $idd = $value;
+                    }
+                }
+            }
+        }
+
+        return $data;
+    }
+
+    protected static function filterGetResult(array $result = null, array $fields = [], $one = false)
+    {
+        if ($result) {
+            $field = (\count($fields) === 1 && $fields[0] !== '*') ? $fields[0] : null;
+            if ($field !== null) {
+                if (!$one) {
+                    foreach ($result as &$res) {
+                        $res = $res[$field];
+                    }
+                } else {
+                    $result = $result[0][$field];
+                }
+            } elseif ($one) {
+                $result = $result[0];
+            }
+        }
+
+        return $result;
     }
 }

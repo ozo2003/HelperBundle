@@ -31,28 +31,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         $fields = $fields ?: ['id'];
         $sql = $select.implode(', ', $fields).' FROM '.$tableName.self::buildWhere($tableName, $where).self::buildExtra($extra);
 
-        $result = self::runSQL($sql) ?: null;
-
-        if ($result) {
-            $field = null;
-            if (\count($fields) === 1 && $fields[0] !== '*') {
-                $field = $fields[0];
-            }
-            if ($field !== null) {
-                if (!$one) {
-                    /** @var $result array */
-                    foreach ($result as &$res) {
-                        $res = $res[$field];
-                    }
-                } else {
-                    $result = $result[0][$field];
-                }
-            } elseif ($one) {
-                $result = $result[0];
-            }
-        }
-
-        return $result;
+        return self::filterGetResult((self::runSQL($sql) ?: null), $fields, $one);
     }
 
     public static function runSQL($sql, $noFkCheck = true, $manager = null, $skip = false)
@@ -125,25 +104,7 @@ class QuickInsertRepository extends QuickInsertFunctions
         self::getTable($object, $tableName, $columns, $type, $manager, $extraFields);
 
         $id = self::findNextId($tableName);
-        $data = [];
-
-        $idd = null;
-        /** @var $columns array */
-        foreach ($columns as $value => $key) {
-            $keys = [
-                $key,
-                $value,
-            ];
-            if (!Helper::multiple($keys)) {
-                $value = self::value($object, $value, $type, $tableName);
-                if ($value !== null) {
-                    $data[$key] = $value;
-                    if ($key === self::$identifier) {
-                        $idd = $value;
-                    }
-                }
-            }
-        }
+        $data = self::parsePersistColumns($columns, $object, $type, $tableName, $idd);
 
         if (!$full) {
             $data[self::$identifier] = $id;

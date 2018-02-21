@@ -62,6 +62,28 @@ class MiddlewarePass implements CompilerPassInterface
         return !empty($middleware) ? call_user_func_array('array_merge', $middleware) : [];
     }
 
+    private function getHandlerStack($options, $container, &$handlerStack)
+    {
+        if (!isset($options['handler'])) {
+            $handlerStack = new Definition(HandlerStack::class);
+            $handlerStack->setFactory([
+                HandlerStack::class,
+                'create',
+            ]);
+            $handlerStack->setPublic(false);
+        } else {
+            $handlerStack = $this->wrapHandlerInHandlerStack($options['handler'], $container);
+        }
+    }
+
+    private function makeOptions(array $arguments = [], &$options)
+    {
+        $options = [];
+        if (!empty($arguments)) {
+            $options = array_shift($arguments);
+        }
+    }
+
     /**
      * Sets up handlers and registers middleware for each tagged client.
      *
@@ -92,28 +114,31 @@ class MiddlewarePass implements CompilerPassInterface
             $clientDefinition = $container->findDefinition($clientId);
 
             $arguments = $clientDefinition->getArguments();
+            $this->makeOptions($arguments, $options);
 
-            $options = [];
-            if (!empty($arguments)) {
-                $options = array_shift($arguments);
-            }
-
-            if (!isset($options['handler'])) {
-                $handlerStack = new Definition(HandlerStack::class);
-                $handlerStack->setFactory([
-                    HandlerStack::class,
-                    'create',
-                ]);
-                $handlerStack->setPublic(false);
-            } else {
-                $handlerStack = $this->wrapHandlerInHandlerStack($options['handler'], $container);
-            }
-
+            $this->getHandlerStack($options, $container, $handlerStack);
             $this->addMiddlewareToHandlerStack($handlerStack, $clientMiddleware);
             $options['handler'] = $handlerStack;
 
             array_unshift($arguments, $options);
             $clientDefinition->setArguments($arguments);
+        }
+    }
+
+    private function makeLists($tag, &$whiteList, &$blackList)
+    {
+        $whiteList = $blackList = [];
+        $clientMiddlewareList = explode(' ', $tag['middleware']);
+        foreach ($clientMiddlewareList as $middleware) {
+            if ('!' === $middleware[0]) {
+                $blackList[] = substr($middleware, 1);
+            } else {
+                $whiteList[] = $middleware;
+            }
+        }
+
+        if ($whiteList && $blackList) {
+            throw new LogicException('You cannot mix whitelisting and blacklisting of middleware at the same time.');
         }
     }
 
@@ -131,28 +156,15 @@ class MiddlewarePass implements CompilerPassInterface
             return !empty($middlewareBag) ? $middlewareBag : null;
         }
 
-        $clientMiddlewareList = explode(' ', $tags[0]['middleware']);
-
-        $whiteList = $blackList = [];
-        foreach ($clientMiddlewareList as $middleware) {
-            if ('!' === $middleware[0]) {
-                $blackList[] = substr($middleware, 1);
-            } else {
-                $whiteList[] = $middleware;
-            }
-        }
-
-        if ($whiteList && $blackList) {
-            throw new LogicException('You cannot mix whitelisting and blacklisting of middleware at the same time.');
-        }
+        $this->makeLists($tags[0], $whiteList, $blackList);
 
         if ($whiteList) {
-            return array_filter($middlewareBag, function($value) use ($whiteList) {
+            return array_filter($middlewareBag, function ($value) use ($whiteList) {
                 return \in_array($value['alias'], $whiteList, true);
             });
         }
 
-        return array_filter($middlewareBag, function($value) use ($blackList) {
+        return array_filter($middlewareBag, function ($value) use ($blackList) {
             return !\in_array($value['alias'], $blackList, true);
         });
     }

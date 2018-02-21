@@ -8,20 +8,9 @@ use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
 
 class ORMTranslationAdmin extends TranslationAdmin
 {
-    protected function configureDatagridFilters(DatagridMapper $filter)
+    private function getLocaleOptions()
     {
-        /** @var \Doctrine\ORM\EntityManager $entityManager */
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File');
-
-        $domains = [];
-        $domainsQueryResult = $entityManager->createQueryBuilder()->select('DISTINCT t.domain')->from('\Lexik\Bundle\TranslationBundle\Entity\File', 't')->getQuery()->getResult(Query::HYDRATE_ARRAY);
-
-        array_walk_recursive($domainsQueryResult, function ($domain) use (&$domains) {
-            $domains[$domain] = $domain;
-        });
-        ksort($domains);
-
-        $filter->add('locale', 'doctrine_orm_callback', [
+        return [
             'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $options) {
                 if (!isset($options['value']) || empty($options['value'])) {
                     return;
@@ -36,7 +25,12 @@ class ORMTranslationAdmin extends TranslationAdmin
                 'expanded' => false,
             ],
             'field_type' => 'choice',
-        ])->add('show_non_translated_only', 'doctrine_orm_callback', [
+        ];
+    }
+
+    private function getNonOptions()
+    {
+        return [
             'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $options) {
                 if (!isset($options['value']) || empty($options['value']) || false === $options['value']) {
                     return;
@@ -49,7 +43,6 @@ class ORMTranslationAdmin extends TranslationAdmin
                     } else {
                         $queryBuilder->orWhere('translations.content LIKE :content')->setParameter('content', $prefix.'%');
                     }
-
                 }
             },
             'field_options' => [
@@ -57,7 +50,12 @@ class ORMTranslationAdmin extends TranslationAdmin
                 'value' => $this->getNonTranslatedOnly(),
             ],
             'field_type' => 'checkbox',
-        ])->add('key', 'doctrine_orm_string')->add('domain', 'doctrine_orm_choice', [
+        ];
+    }
+
+    private function getKeyOptions($domains)
+    {
+        return [
             'field_options' => [
                 'choices' => $domains,
                 'required' => true,
@@ -66,7 +64,12 @@ class ORMTranslationAdmin extends TranslationAdmin
                 'empty_data' => 'all',
             ],
             'field_type' => 'choice',
-        ])->add('content', 'doctrine_orm_callback', [
+        ];
+    }
+
+    private function getContentOptions()
+    {
+        return [
             'callback' => function (ProxyQuery $queryBuilder, $alias, $field, $options) {
                 if (!isset($options['value']) || empty($options['value'])) {
                     return;
@@ -76,7 +79,29 @@ class ORMTranslationAdmin extends TranslationAdmin
             },
             'field_type' => 'text',
             'label' => 'content',
-        ]);
+        ];
+    }
+
+    protected function configureDatagridFilters(DatagridMapper $filter)
+    {
+        /** @var \Doctrine\ORM\EntityManager $entityManager */
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File');
+
+        $domains = [];
+        $domainsQueryResult = $entityManager->createQueryBuilder()->select('DISTINCT t.domain')->from('\Lexik\Bundle\TranslationBundle\Entity\File', 't')->getQuery()->getResult(Query::HYDRATE_ARRAY);
+
+        array_walk_recursive($domainsQueryResult, function ($domain) use (&$domains) {
+            $domains[$domain] = $domain;
+        });
+        ksort($domains);
+
+        // @formatter:off
+        $filter
+            ->add('locale', 'doctrine_orm_callback', $this->getLocaleOptions())
+            ->add('show_non_translated_only', 'doctrine_orm_callback', $this->getNonOptions())
+            ->add('key', 'doctrine_orm_string')->add('domain', 'doctrine_orm_choice', $this->getKeyOptions($domains))
+            ->add('content', 'doctrine_orm_callback', $this->getContentOptions());
+        // @formatter:on
     }
 
     /**
