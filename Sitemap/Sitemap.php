@@ -132,17 +132,15 @@ class Sitemap
         return $sitemapIndex;
     }
 
-    public function add(Url $url)
+    private function addIndex()
     {
         if ($this->isSitemapIndexable() && $this->getCurrentSitemapIndex()->getUrlCount() >= $this->limit) {
             $this->addSitemapIndex($this->createSitemapIndex());
         }
+    }
 
-        $loc = $url->getLoc();
-        if (empty($loc)) {
-            throw new \InvalidArgumentException('The url MUST have a loc attribute');
-        }
-
+    private function parseBaseHost(Url $url, $loc)
+    {
         if ($this->baseHost !== null) {
             if ($this->needHost($loc)) {
                 $url->setLoc($this->baseHost.$loc);
@@ -151,12 +149,27 @@ class Sitemap
             $this->parseVideo($url);
             $this->parseImage($url);
         }
+    }
 
-        $this->dumper->dump($this->formatter->formatUrl($url));
-
+    private function setEndIndex()
+    {
         if ($this->isSitemapIndexable()) {
             $this->getCurrentSitemapIndex()->incrementUrl();
         }
+    }
+
+    public function add(Url $url)
+    {
+        $this->addIndex();
+
+        $loc = $url->getLoc();
+        if (empty($loc)) {
+            throw new \InvalidArgumentException('The url MUST have a loc attribute');
+        }
+
+        $this->parseBaseHost($url, $loc);
+        $this->dumper->dump($this->formatter->formatUrl($url));
+        $this->setEndIndex();
 
         return $this;
     }
