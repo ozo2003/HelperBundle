@@ -87,8 +87,7 @@ class Guzzle implements ConfigureInterface
         }
 
         $container->getDefinition($this->alias.'.middleware.cache')->addArgument($debug);
-        $container->getDefinition($this->alias.'.redis_cache')
-            ->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
+        $container->getDefinition($this->alias.'.redis_cache')->replaceArgument(0, new Reference('snc_redis.'.$container->getParameter('sludio_helper.redis.guzzle')));
 
         $container->setAlias($this->alias.'.cache_adapter', $config['adapter']);
     }
@@ -98,27 +97,7 @@ class Guzzle implements ConfigureInterface
         foreach ($config as $name => $options) {
             $client = new Definition($options['class']);
             $client->setLazy($options['lazy']);
-            $useAuthentication = $options['credentials']['enabled'];
-
-            if ($useAuthentication === true) {
-                if (!Helper::multiset(array_values($options['credentials']))) {
-                    throw new InvalidArgumentException(sprintf('If authentication parameter is set, htpasswd user and password can not be null'));
-                }
-                $credentials = [
-                    'auth' => [
-                        $options['credentials']['user'],
-                        $options['credentials']['pass'],
-                        $options['authentication_type'],
-                    ],
-                ];
-
-                if (!isset($options['config'])) {
-                    $options['config'] = $credentials;
-                } else {
-                    $options['config'] = array_merge($options['config'], $credentials);
-                }
-
-            }
+            $this->parseAuthentication($options);
 
             if (isset($options['config'])) {
                 if (!\is_array($options['config'])) {
@@ -128,31 +107,7 @@ class Guzzle implements ConfigureInterface
             }
 
             $attributes = [];
-
-            if (!empty($options['middleware'])) {
-                if ($debug) {
-                    $addDebugMiddleware = true;
-
-                    /** @var $options array[] */
-                    foreach ($options['middleware'] as $middleware) {
-                        if ('!' === $middleware[0]) {
-                            $addDebugMiddleware = false;
-                            break;
-                        }
-                    }
-
-                    if ($addDebugMiddleware) {
-                        $middleware = [
-                            'stopwatch',
-                            'history',
-                            'logger',
-                        ];
-                        $options['middleware'] = array_merge($options['middleware'], $middleware);
-                    }
-                }
-
-                $attributes['middleware'] = implode(' ', array_unique($options['middleware']));
-            }
+            $this->parseMiddleware($attributes, $options, $debug);
 
             $client->addTag(MiddlewarePass::CLIENT_TAG, $attributes);
 
@@ -163,6 +118,56 @@ class Guzzle implements ConfigureInterface
             if (isset($options['alias'])) {
                 $container->setAlias($options['alias'], $clientServiceId);
             }
+        }
+    }
+
+    private function parseAuthentication(&$options)
+    {
+        if ($options['credentials']['enabled'] === true) {
+            if (!Helper::multiset(array_values($options['credentials']))) {
+                throw new InvalidArgumentException(sprintf('If authentication parameter is set, htpasswd user and password can not be null'));
+            }
+            $credentials = [
+                'auth' => [
+                    $options['credentials']['user'],
+                    $options['credentials']['pass'],
+                    $options['authentication_type'],
+                ],
+            ];
+
+            if (!isset($options['config'])) {
+                $options['config'] = $credentials;
+            } else {
+                $options['config'] = array_merge($options['config'], $credentials);
+            }
+        }
+    }
+
+    private function parseMiddleware(&$attributes, &$options, $debug)
+    {
+        if (!empty($options['middleware'])) {
+            if ($debug) {
+                $addDebugMiddleware = true;
+
+                /** @var $options array[] */
+                foreach ($options['middleware'] as $middleware) {
+                    if ('!' === $middleware[0]) {
+                        $addDebugMiddleware = false;
+                        break;
+                    }
+                }
+
+                if ($addDebugMiddleware) {
+                    $middleware = [
+                        'stopwatch',
+                        'history',
+                        'logger',
+                    ];
+                    $options['middleware'] = array_merge($options['middleware'], $middleware);
+                }
+            }
+
+            $attributes['middleware'] = implode(' ', array_unique($options['middleware']));
         }
     }
 
