@@ -3,6 +3,9 @@
 namespace Sludio\HelperBundle\Script\Utils;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class Helper
 {
@@ -215,5 +218,29 @@ class Helper
     public static function useHttps(Request $request)
     {
         return $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
+    }
+
+    public static function initialize(array $arguments, ContainerAwareCommand $command)
+    {
+        /** @var InputInterface $input */
+        /** @var OutputInterface $output */
+        list($params, $input, $output) = $arguments;
+
+        foreach ($params as $param => $check) {
+            $command->{$param} = $input->getOption($param);
+            if (!$command->{$param}) {
+                $output->writeln("Please provide --$param parameter!");
+
+                return false;
+            }
+
+            if (!$check($command->{$param})) {
+                $output->writeln("Incorrect input in --$param parameter!");
+
+                return false;
+            }
+        }
+
+        return true;
     }
 }
