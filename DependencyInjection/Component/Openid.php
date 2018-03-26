@@ -9,7 +9,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Sludio\HelperBundle\Openid\Login\Login;
 
-class Openid implements ExtensionInterface
+class Openid extends AbstractComponent implements ExtensionInterface
 {
     protected $alias;
 

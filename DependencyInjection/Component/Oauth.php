@@ -11,7 +11,7 @@ use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class Oauth implements ExtensionInterface
+class Oauth extends AbstractComponent implements ExtensionInterface
 {
     /**
      * List of available Oauth providers
