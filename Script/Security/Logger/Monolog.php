@@ -22,7 +22,7 @@ class Monolog
 
             $log->{strtolower($type)}($message, $context);
         } catch (\Exception $exception) {
-
+            return null;
         }
     }
 

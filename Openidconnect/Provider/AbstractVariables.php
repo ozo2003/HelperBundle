@@ -8,8 +8,9 @@ use Lcobucci\JWT\Signer;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Psr\Http\Message\ResponseInterface;
 use League\OAuth2\Client\Token\AccessToken as BaseAccessToken;
+use League\OAuth2\Client\Provider\AbstractProvider;
 
-trait VariableTrait
+abstract class AbstractVariables extends AbstractProvider
 {
     /**
      * @var string
@@ -58,7 +59,7 @@ trait VariableTrait
     /**
      * @var string
      */
-    private $baseUri;
+    protected $baseUri;
 
     protected function checkResponse(ResponseInterface $response, $data)
     {
@@ -160,5 +161,4 @@ trait VariableTrait
     abstract public function getRefreshTokenUrl();
 
     abstract public function getRevokeTokenUrl();
-
 }

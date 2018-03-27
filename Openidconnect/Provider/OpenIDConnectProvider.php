@@ -5,7 +5,6 @@ namespace Sludio\HelperBundle\Openidconnect\Provider;
 use Lcobucci\JWT\Signer\Key;
 use Lcobucci\JWT\Signer\Rsa\Sha256;
 use League\OAuth2\Client\Grant\AbstractGrant;
-use League\OAuth2\Client\Provider\AbstractProvider;
 use Psr\Http\Message\RequestInterface;
 use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
@@ -16,10 +15,8 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-abstract class OpenIDConnectProvider extends AbstractProvider implements Providerable
+abstract class OpenIDConnectProvider extends AbstractVariables implements Providerable
 {
-    use VariableTrait;
-
     const METHOD_POST = 'POST';
     const METHOD_GET = 'GET';
 
