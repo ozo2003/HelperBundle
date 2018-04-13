@@ -2,7 +2,6 @@
 
 namespace Sludio\HelperBundle\Script\Repository;
 
-use AppCache;
 use Sludio\HelperBundle\Script\Utils\Helper;
 
 abstract class QuickInsertFunctions
@@ -129,7 +128,7 @@ abstract class QuickInsertFunctions
         }
         global $kernel;
 
-        if (AppCache::class === \get_class($kernel)) {
+        if (\class_exists('AppCache') && AppCache::class === \get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();

@@ -16,12 +16,8 @@ class Logger
      *
      * @throws InvalidArgumentException
      */
-    public function __construct($logger = null)
+    public function __construct(LoggerInterface $logger = null)
     {
-        if (null !== $logger && !$logger instanceof LoggerInterface) {
-            throw new InvalidArgumentException(sprintf('Logger needs PSR-3 LoggerInterface, "%s" was injected instead.', \is_object($logger) ? \get_class($logger) : \gettype($logger)));
-        }
-
         $this->logger = $logger;
     }
 
