@@ -65,7 +65,7 @@ abstract class QuickInsertFunctions
     protected static function slashes($tableName, $key, $value)
     {
         if ($value instanceof \DateTime) {
-            $result = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
+            $result = addslashes(trim($value->format('Y-m-d H:i:s')));
         } else {
             $result = self::numeric($tableName, $key, $value) ? (int)$value : "'".addslashes(trim($value))."'";
         }
@@ -128,7 +128,7 @@ abstract class QuickInsertFunctions
         }
         global $kernel;
 
-        if (\class_exists('AppCache') && AppCache::class === \get_class($kernel)) {
+        if (\class_exists('\AppCache') && \AppCache::class === \get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();
@@ -183,7 +183,7 @@ abstract class QuickInsertFunctions
         }
 
         if ($check) {
-            self::slashes($tableName, $variable, $value);
+            $value = self::slashes($tableName, $variable, $value);
         }
 
         return $value;
