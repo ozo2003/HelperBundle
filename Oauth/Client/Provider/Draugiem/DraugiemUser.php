@@ -40,6 +40,19 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
     protected $username;
 
     /**
+     * @var bool
+     */
+    protected $returnsEmail = false;
+
+    /**
+     * @return bool
+     */
+    public function returnsEmail()
+    {
+        return $this->returnsEmail;
+    }
+
+    /**
      * @param  array $response
      */
     public function __construct(array $response)

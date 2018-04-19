@@ -30,4 +30,17 @@ class SteamUser implements SocialUserInterface
     {
 
     }
+
+    /**
+     * @var bool
+     */
+    protected $returnsEmail = false;
+
+    /**
+     * @return bool
+     */
+    public function returnsEmail()
+    {
+        return $this->returnsEmail;
+    }
 }

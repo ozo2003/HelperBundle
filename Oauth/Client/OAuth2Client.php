@@ -23,7 +23,7 @@ class OAuth2Client
 
     public function setAsStateless()
     {
-        $this->isStateless = true;
+        $this->isStateless = false;
     }
 
     public function redirect(array $scopes = [], array $options = [], $token = null)

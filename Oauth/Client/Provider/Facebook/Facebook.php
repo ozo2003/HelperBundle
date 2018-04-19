@@ -118,11 +118,6 @@ class Facebook extends BaseProvider
             'age_range',
         ];
 
-        // backwards compatibility with less than v2.8
-        if ((float)substr($this->graphApiVersion, 1) < 2.8) {
-            $fields[] = 'bio';
-        }
-
         $appSecretProof = AppSecretProof::create($this->clientSecret, $token->getToken());
 
         return $this->getBaseGraphUrl().$this->graphApiVersion.'/me?fields='.implode(',', $fields).'&access_token='.$token.'&appsecret_proof='.$appSecretProof;
@@ -176,5 +171,10 @@ class Facebook extends BaseProvider
         }
 
         return $type;
+    }
+
+    public function setState($state = null)
+    {
+        $this->state = $state;
     }
 }

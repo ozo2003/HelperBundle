@@ -38,6 +38,19 @@ class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
     protected $username;
 
     /**
+     * @var bool
+     */
+    protected $returnsEmail = true;
+
+    /**
+     * @return bool
+     */
+    public function returnsEmail()
+    {
+        return $this->returnsEmail;
+    }
+
+    /**
      * @param array $response
      */
     public function __construct(array $response)
@@ -142,5 +155,4 @@ class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
     {
         return $this->username;
     }
-
 }

@@ -38,6 +38,19 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
     protected $username;
 
     /**
+     * @var bool
+     */
+    protected $returnsEmail = true;
+
+    /**
+     * @return bool
+     */
+    public function returnsEmail()
+    {
+        return $this->returnsEmail;
+    }
+
+    /**
      * @param  array $response
      */
     public function __construct(array $response)
@@ -247,5 +260,4 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface
     {
         return $this->username;
     }
-
 }

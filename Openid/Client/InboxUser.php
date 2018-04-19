@@ -42,6 +42,19 @@ class InboxUser implements SocialUserInterface
     protected $username;
 
     /**
+     * @var bool
+     */
+    protected $returnsEmail = true;
+
+    /**
+     * @return bool
+     */
+    public function returnsEmail()
+    {
+        return $this->returnsEmail;
+    }
+
+    /**
      * @param  array       $response
      * @param integer|null $id
      */
@@ -137,5 +150,4 @@ class InboxUser implements SocialUserInterface
     {
         return $this->username;
     }
-
 }

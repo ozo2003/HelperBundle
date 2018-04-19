@@ -40,7 +40,7 @@ class Draugiem extends AbstractProvider
         return static::LOGIN_URL;
     }
 
-    public function getBaseAccessTokenUrl(array $params)
+    public function getBaseAccessTokenUrl(array $params = [])
     {
         return static::API_URL;
     }
