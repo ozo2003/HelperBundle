@@ -10,6 +10,9 @@ class ClientRegistry
     /** @var ContainerInterface */
     private $container;
 
+    /**
+     * @var array
+     */
     private $serviceMap;
 
     /**

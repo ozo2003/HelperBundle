@@ -64,7 +64,7 @@ abstract class AbstractBehaviour implements BehaviourInterface
     }
 
     /**
-     * @param int|string $indicator
+     * @param int|string|null $indicator
      *
      * @throws InvalidArgumentException
      *                                   If omitted pages indicator is not an int or a string

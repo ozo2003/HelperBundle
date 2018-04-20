@@ -10,10 +10,10 @@ use Sludio\HelperBundle\Openidconnect\Component\Providerable;
 use Sludio\HelperBundle\Openidconnect\Security\Exception\InvalidTokenException;
 use Sludio\HelperBundle\Openidconnect\Specification;
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
-use Sludio\HelperBundle\Script\Utils\Helper;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Sludio\HelperBundle\Script\Utils\Generator;
 
 abstract class OpenIDConnectProvider extends AbstractVariables implements Providerable
 {
@@ -82,7 +82,7 @@ abstract class OpenIDConnectProvider extends AbstractVariables implements Provid
      */
     protected function getRandomState($length = 32)
     {
-        return Helper::getUniqueId($length);
+        return Generator::getUniqueId($length);
     }
 
     private function buildUris($options = [])
@@ -307,6 +307,10 @@ abstract class OpenIDConnectProvider extends AbstractVariables implements Provid
 
     protected function getAllowedClientOptions(array $options)
     {
-        return ['timeout', 'proxy', 'verify'];
+        return [
+            'timeout',
+            'proxy',
+            'verify',
+        ];
     }
 }

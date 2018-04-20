@@ -7,7 +7,10 @@ class Generator
     const PASS_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
     const PASS_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const PASS_DIGITS = '0123456789';
-    const PASS_SYMBOLS = '!@#$%^&*()_-=+;:.?';
+    const PASS_SYMBOLS = '!@#$%^&*()_-=+;:.,?';
+
+    const RAND_BASIC = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const RAND_EXTENDED = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-=+;:,.?';
 
     private $sets = [];
 
@@ -64,5 +67,19 @@ class Generator
         $this->sets['symbols'] = self::PASS_SYMBOLS;
 
         return $this;
+    }
+
+    public static function getRandomString($length = 20, $chars = self::RAND_BASIC)
+    {
+        return substr(str_shuffle(str_repeat($chars, (int)ceil((int)($length / \strlen($chars))))), 1, $length);
+    }
+
+    public static function getUniqueId($length = 20)
+    {
+        try {
+            return bin2hex(random_bytes($length));
+        } catch (\Exception $exception) {
+            return self::getRandomString($length);
+        }
     }
 }

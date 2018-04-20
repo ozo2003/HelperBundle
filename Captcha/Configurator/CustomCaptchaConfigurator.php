@@ -7,7 +7,6 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class CustomCaptchaConfigurator implements CaptchaConfiguratorInterface
 {
-
     public function buildConfiguration(NodeBuilder $node)
     {
 

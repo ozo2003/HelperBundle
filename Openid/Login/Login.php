@@ -151,7 +151,7 @@ class Login implements Loginable
      *
      * @param int $timeout
      *
-     * @return string
+     * @return string|null
      */
     public function validate($timeout = 30)
     {

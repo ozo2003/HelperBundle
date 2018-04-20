@@ -11,7 +11,6 @@ use Sludio\HelperBundle\Captcha\Router\LocaleResolver;
 
 class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
 {
-
     public function buildConfiguration(NodeBuilder $node)
     {
         // @formatter:off
