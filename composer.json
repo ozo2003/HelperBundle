@@ -56,20 +56,20 @@
         }
     },
     "suggest": {
-        "abraham/twitteroauth": "Needed to use Oauth extension",
-        "guzzlehttp/guzzle:~6.0": "Needed to use Guzzle extension",
-        "jms/i18n-routing-bundle": "Needed to use Translatable extension",
-        "lcobucci/jwt": "Needed to use Openidconnect extension",
-        "league/oauth1-client": "Needed to use Oauth extension",
-        "league/oauth2-client": "Needed to use Oauth or Openidconnect extension",
-        "lexik/translation-bundle": "Needed to use Lexik or Translatable extension",
-        "mobiledetect/mobiledetectlib": "Needed to use Mobile extension",
-        "psr/cache:^1.0": "Needed to use Guzzle extension",
-        "psr/http-message": "Needed to use Oauth or Openidconnect or Script extension",
-        "psr/log": "Needed to use Script extension",
-        "sonata-project/admin-bundle": "Needed to use Lexik or Translatable extension",
-        "sonata-project/doctrine-orm-admin-bundle": "Needed to use Lexik or Translatable extension",
-        "symfony/filesystem": "Needed to use Guzzle extension",
-        "symfony/stopwatch": "Needed to use Guzzle extension"
+        "abraham/twitteroauth": "Oauth extension",
+        "guzzlehttp/guzzle:~6.0": "Guzzle extension",
+        "jms/i18n-routing-bundle": "Translatable extension",
+        "lcobucci/jwt": "Openidconnect extension",
+        "league/oauth1-client": "Oauth extension",
+        "league/oauth2-client": "Oauth or Openidconnect extension",
+        "lexik/translation-bundle": "Lexik or Translatable extension",
+        "mobiledetect/mobiledetectlib": "Mobile extension",
+        "psr/cache:^1.0": "Guzzle extension",
+        "psr/http-message": "Oauth or Openidconnect or Script extension",
+        "psr/log": "Script extension",
+        "sonata-project/admin-bundle": "Lexik or Translatable extension",
+        "sonata-project/doctrine-orm-admin-bundle": "Lexik or Translatable extension",
+        "symfony/filesystem": "Guzzle extension",
+        "symfony/stopwatch": "Guzzle extension"
     }
 }
