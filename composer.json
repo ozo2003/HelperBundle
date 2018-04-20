@@ -46,7 +46,7 @@
         "snc/redis-bundle": "*",
         "symfony/symfony": "*",
         "twig/twig": "*",
-        "ircmaxell/random-lib": "dev-master"
+        "ircmaxell/random-lib": "*"
     },
     "config": {
         "sort-packages": true
