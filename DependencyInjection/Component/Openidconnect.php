@@ -28,6 +28,7 @@ class Openidconnect extends AbstractComponent implements ExtensionInterface
             ->scalarNode('base_uri')->isRequired()->end()
             ->scalarNode('user_provider')->defaultValue(BaseProvider::class)->end()
             ->scalarNode('use_session')->defaultValue(false)->end()
+            ->scalarNode('verify')->defaultValue(true)->end()
             ->arrayNode('redirect')
                 ->addDefaultsIfNotSet()
                 ->children()

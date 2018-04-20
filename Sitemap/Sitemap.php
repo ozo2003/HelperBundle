@@ -31,7 +31,7 @@ class Sitemap
         $this->baseHost = $baseHost;
         if ($this->baseHost === null && PHP_SAPI !== 'cli') {
             $request = $requestStack->getCurrentRequest();
-            $this->baseHost = (Helper::useHttps($request) ? 'https' : 'http').'://'.$request->server->get('HTTP_HOST');
+            $this->baseHost = Helper::getSchema($request).$request->server->get('HTTP_HOST');
         }
         $this->limit = $limit;
         if ($this->isSitemapIndexable()) {

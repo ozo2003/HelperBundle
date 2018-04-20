@@ -304,4 +304,9 @@ abstract class OpenIDConnectProvider extends AbstractVariables implements Provid
 
         return $this->getRequest($method, $url, $options);
     }
+
+    protected function getAllowedClientOptions(array $options)
+    {
+        return ['timeout', 'proxy', 'verify'];
+    }
 }

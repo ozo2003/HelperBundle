@@ -133,7 +133,7 @@ class Login implements Loginable
      */
     public function urlPath($return = null, $altRealm = null) //HTTP_X_FORWARDED_PROTO
     {
-        $realm = $altRealm ?: (Helper::useHttps($this->request) ? 'https' : 'http').'://'.$this->request->server->get('HTTP_HOST');
+        $realm = $altRealm ?: Helper::getSchema($this->request).$this->request->server->get('HTTP_HOST');
 
         if (null !== $return) {
             if (!$this->validateUrl($return)) {

@@ -2,65 +2,67 @@
 
 namespace Sludio\HelperBundle\Script\Utils;
 
-use RandomLib\Generator as RandomGenerator;
-use RandomLib\Factory;
-use SecurityLib\Strength;
-
-/**
- * @link    https://github.com/gajus/paggern for the canonical source repository
- * @license https://github.com/gajus/paggern/blob/master/LICENSE BSD 3-Clause
- */
 class Generator
 {
-    private $generator;
+    const PASS_LOWERCASE = 'abcdefghijklmnopqrstuvwxyz';
+    const PASS_UPPERCASE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const PASS_DIGITS = '0123456789';
+    const PASS_SYMBOLS = '!@#$%^&*()_-=+;:.?';
 
-    /**
-     * @param RandomLib\Generator $generator
-     */
-    public function __construct(RandomGenerator $generator = null)
+    private $sets = [];
+
+    public function generate($length = 20)
     {
-        if ($generator === null) {
-            $factory = new Factory;
-            $this->generator = $factory->getGenerator(new Strength(Strength::MEDIUM));
+        $all = '';
+        $password = '';
+        foreach ($this->sets as $set) {
+            $password .= $set[$this->tweak(str_split($set))];
+            $all .= $set;
+        }
+        $all = str_split($all);
+        for ($i = 0; $i < $length - count($this->sets); $i++) {
+            $password .= $all[$this->tweak($all)];
+        }
+
+        return str_shuffle($password);
+    }
+
+    public function tweak($array)
+    {
+        if (function_exists('random_int')) {
+            return random_int(0, count($array) - 1);
+        } elseif (function_exists('mt_rand')) {
+            return mt_rand(0, count($array) - 1);
+        } else {
+            return array_rand($array);
         }
     }
 
-    /**
-     * Generate a set of random codes based on Paggern pattern.
-     * Codes are guaranteed to be unique within the set.
-     *
-     * @param string $pattern   Paggern pattern.
-     * @param int    $amount    Number of codes to generate.
-     * @param int    $safeguard Number of additional codes generated in case there are duplicates that need to be replaced.
-     *
-     * @return array
-     */
-    public function generateFromPattern($pattern, $amount = 1, $safeguard = 100)
+    public function useLower()
     {
-        $lexer = new \Gajus\Paggern\Lexer();
-        $tokens = $lexer->tokenise($pattern, true);
-        $codes = array_fill(0, $amount + $safeguard, '');
-        foreach ($tokens as &$token) {
-            if ($token['type'] !== 'literal') {
-                $token['pool'] = $this->generator->generateString($token['repetition'] * ($amount + $safeguard), $token['haystack']);
-            }
-            unset($token);
-        }
-        foreach ($codes as $i => &$code) {
-            foreach ($tokens as $token) {
-                if ($token['type'] === 'literal') {
-                    $code .= $token['string'];
-                } else {
-                    $code .= mb_substr($token['pool'], $token['repetition'] * $i, $token['repetition']);
-                }
-            }
-            unset($code);
-        }
-        $codes = array_slice(array_unique($codes), 0, $amount);
-        if (count($codes) < $amount) {
-            throw new Exception\RuntimeException('Unique combination pool exhausted.');
-        }
+        $this->sets['lower'] = self::PASS_LOWERCASE;
 
-        return $codes;
+        return $this;
+    }
+
+    public function useUpper()
+    {
+        $this->sets['upper'] = self::PASS_UPPERCASE;
+
+        return $this;
+    }
+
+    public function useDigits()
+    {
+        $this->sets['digits'] = self::PASS_DIGITS;
+
+        return $this;
+    }
+
+    public function useSymbols()
+    {
+        $this->sets['symbols'] = self::PASS_SYMBOLS;
+
+        return $this;
     }
 }

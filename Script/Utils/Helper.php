@@ -35,9 +35,16 @@ class Helper
     );
     // @formatter:on
 
-    public static function toCamelCase($string)
+    const RAND_BASIC = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const RAND_EXTENDED = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*()_-=+;:,.?';
+
+    public static function toCamelCase($string, $upFirst = true)
     {
-        return preg_replace('~\s+~', '', lcfirst(ucwords(str_replace('_', ' ', $string))));
+        if ($upFirst) {
+            return preg_replace('~\s+~', '', lcfirst(ucwords(str_replace('_', ' ', $string))));
+        }
+
+        return preg_replace('~\s+~', '', ucwords(str_replace('_', ' ', $string)));
     }
 
     public static function fromCamelCase($string, $separator = '_')
@@ -60,15 +67,18 @@ class Helper
         return $result;
     }
 
+    public static function genRandomString($length = 20, $chars = self::RAND_BASIC)
+    {
+        return substr(str_shuffle(str_repeat($chars, (int)ceil((int)($length / \strlen($chars))))), 1, $length);
+    }
+
     public static function getUniqueId($length = 20)
     {
         try {
-            $output = bin2hex(random_bytes($length));
+            return bin2hex(random_bytes($length));
         } catch (\Exception $exception) {
-            $output = substr(str_shuffle(str_repeat($x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', (int)ceil((int)($length / \strlen($x))))), 1, $length);
+            return self::genRandomString($length);
         }
-
-        return $output;
     }
 
     public static function validatePersonCode($personCode)
@@ -217,14 +227,34 @@ class Helper
 
     public static function useHttps(Request $request)
     {
-        return $request->server->get('HTTPS') || ($request->server->get('HTTP_X_FORWARDED_PROTO') && $request->server->get('HTTP_X_FORWARDED_PROTO') === 'https');
+        $https = false;
+        if ($request->server->has('HTTPS') && 'on' === $request->server->get('HTTPS')) {
+            $https = true;
+        } elseif ($request->server->has('SERVER_PORT') && 443 === (int)$request->server->get('SERVER_PORT')) {
+            $https = true;
+        } elseif ($request->server->has('HTTP_X_FORWARDED_SSL') && 'on' === $request->server->get('HTTP_X_FORWARDED_SSL')) {
+            $https = true;
+        } elseif ($request->server->has('HTTP_X_FORWARDED_PROTO') && 'https' === $request->server->get('HTTP_X_FORWARDED_PROTO')) {
+            $https = true;
+        }
+
+        return $https;
+    }
+
+    public static function getSchema(Request $request)
+    {
+        if (self::useHttps($request)) {
+            return 'https://';
+        }
+
+        return 'http://';
     }
 
     public static function initialize(array $arguments, ContainerAwareCommand $command)
     {
+        list($params, $input, $output) = $arguments;
         /** @var InputInterface $input */
         /** @var OutputInterface $output */
-        list($params, $input, $output) = $arguments;
 
         foreach ($params as $param => $check) {
             $command->{$param} = $input->getOption($param);
