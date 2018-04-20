@@ -7,7 +7,7 @@ use Monolog\Logger;
 
 class Monolog
 {
-    public static function log($message, array $context = [], $type = 'info', $level = 0, $vendor = \SLUDIO_HELPER)
+    public static function log($message, array $context = [], $type = 'info', $level = 0, $vendor = SLUDIO_HELPER)
     {
         self::getType($type);
 

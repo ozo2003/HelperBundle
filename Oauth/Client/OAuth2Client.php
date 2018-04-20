@@ -80,7 +80,7 @@ class OAuth2Client
             $expectedState = $this->getSession()->get(self::OAUTH2_SESSION_STATE_KEY);
             $actualState = $this->getCurrentRequest()->query->get('state');
             if (!$actualState || ($actualState !== $expectedState)) {
-                throw new ErrorException('Invalid state: '.var_export($actualState, 1).var_export($expectedState, 1));
+                throw new ErrorException('Invalid state');
             }
         }
 

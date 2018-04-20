@@ -45,7 +45,8 @@
         "predis/predis": "*",
         "snc/redis-bundle": "*",
         "symfony/symfony": "*",
-        "twig/twig": "*"
+        "twig/twig": "*",
+        "ircmaxell/random-lib": "dev-master"
     },
     "config": {
         "sort-packages": true
