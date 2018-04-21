@@ -74,7 +74,7 @@ class TranslatableRepository
         }
         global $kernel;
 
-        if ('AppCache' === \get_class($kernel)) {
+        if (\class_exists('\AppCache') && \AppCache::class === \get_class($kernel)) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();

@@ -147,13 +147,18 @@ abstract class OpenIDConnectProvider extends AbstractVariables implements Provid
             throw new InvalidTokenException('The id_token did not pass validation.');
         }
 
+        $this->saveSession($accessToken);
+
+        return $accessToken;
+    }
+
+    private function saveSession($accessToken)
+    {
         if ($this->useSession) {
             $this->session->set('access_token', $accessToken->getToken());
             $this->session->set('refresh_token', $accessToken->getRefreshToken());
             $this->session->set('id_token', $accessToken->getIdTokenHint());
         }
-
-        return $accessToken;
     }
 
     /**
@@ -312,5 +317,19 @@ abstract class OpenIDConnectProvider extends AbstractVariables implements Provid
             'proxy',
             'verify',
         ];
+    }
+
+    protected function parseJson($content)
+    {
+        if (empty($content)) {
+            return [];
+        }
+
+        $content = json_decode($content, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new \UnexpectedValueException(sprintf("Failed to parse JSON response: %s", json_last_error_msg()));
+        }
+
+        return $content;
     }
 }

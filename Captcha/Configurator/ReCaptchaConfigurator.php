@@ -64,7 +64,13 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
 
     public function configureClient(ContainerBuilder $container, $clientServiceKey, array $options = [])
     {
-        /* RESOLVER */
+        $this->configureResolver($container, $clientServiceKey, $resolver);
+        $this->configureType($container, $clientServiceKey, $resolver);
+        $this->configureValidator($container, $clientServiceKey);
+    }
+
+    private function configureResolver(ContainerBuilder $container, $clientServiceKey, &$resolver)
+    {
         $resolver = $clientServiceKey.'.resolver';
         $resolverClass = $container->getParameter($clientServiceKey.'.resolver_class');
 
@@ -75,7 +81,10 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             new Reference('request_stack'),
             $container->getParameter($clientServiceKey.'.locales'),
         ]);
-        /* TYPE */
+    }
+
+    private function configureType(ContainerBuilder $container, $clientServiceKey, $resolver)
+    {
         $type = $clientServiceKey.'.form.type';
         $typeClass = $container->getParameter($clientServiceKey.'.type_class');
         $typeDefinition = $container->register($type, $typeClass);
@@ -86,7 +95,10 @@ class ReCaptchaConfigurator implements CaptchaConfiguratorInterface
             $container->getParameter($clientServiceKey.'.options'),
         ]);
         $typeDefinition->addTag('form.type');
-        /* VALIDATOR */
+    }
+
+    private function configureValidator(ContainerBuilder $container, $clientServiceKey)
+    {
         $validator = $clientServiceKey.'.validator.true';
         $validatorClass = $container->getParameter($clientServiceKey.'.validator_class');
         $validatorDefinition = $container->register($validator, $validatorClass);
