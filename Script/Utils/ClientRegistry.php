@@ -4,11 +4,11 @@ namespace Sludio\HelperBundle\Script\Utils;
 
 use Sludio\HelperBundle\Script\Security\Exception\ErrorException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class ClientRegistry
 {
-    /** @var ContainerInterface */
-    private $container;
+    use ContainerAwareTrait;
 
     /**
      * @var array
@@ -18,15 +18,11 @@ class ClientRegistry
     /**
      * ClientRegistry constructor.
      *
-     * @param ContainerInterface $interface
-     *
      * @throws ErrorException
      */
-    public function __construct(ContainerInterface $interface)
+    public function __construct()
     {
-        $this->container = $interface;
         $arguments = \func_get_args();
-        unset($arguments[0]);
 
         $used = [];
         foreach ($arguments as $argument) {

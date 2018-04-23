@@ -11,9 +11,12 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Sludio\HelperBundle\Script\Utils\Helper;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class Login implements Loginable
 {
+    use ContainerAwareTrait;
+
     /**
      * @var RequestStack
      */
@@ -28,8 +31,10 @@ class Login implements Loginable
      * @var UrlGeneratorInterface
      */
     protected $generator;
+
     protected $redirectRoute;
     protected $redirectRouteParams = [];
+    protected $clientName;
 
     protected $apiKey;
     protected $openidUrl;
@@ -40,23 +45,26 @@ class Login implements Loginable
     protected $userClass;
     protected $fields = [];
 
-    public function __construct($clientName, RequestStack $requestStack, ContainerInterface $interface, UrlGeneratorInterface $generator)
+    public function __construct($clientName, RequestStack $requestStack, UrlGeneratorInterface $generator)
     {
         $this->request = $requestStack->getCurrentRequest();
         $this->requestStack = $requestStack;
         $this->generator = $generator;
+        $this->clientName = $clientName;
+    }
 
-        $container = $interface;
-        $this->setInputs($clientName, $container);
-        $this->nsMode = $container->getParameter($clientName.'.option.ns_mode') ?: $this->nsMode;
-        $this->setParameters($clientName, $container);
+    public function makeParameters()
+    {
+        $this->setInputs($this->clientName);
+        $this->nsMode = $this->container->getParameter($this->clientName.'.option.ns_mode') ?: $this->nsMode;
+        $this->setParameters($this->clientName);
 
         if (!empty($this->fields) && \is_array($this->fields)) {
             $this->sregFields = implode(',', $this->fields);
         }
     }
 
-    private function setInputs($clientName, ContainerInterface $container)
+    private function setInputs($clientName)
     {
         $inputs = [
             'apiKey' => $clientName.'.api_key',
@@ -66,11 +74,11 @@ class Login implements Loginable
         ];
 
         foreach ($inputs as $key => $input) {
-            $this->{$key} = $container->getParameter($input);
+            $this->{$key} = $this->container->getParameter($input);
         }
     }
 
-    private function setParameters($clientName, ContainerInterface $container)
+    private function setParameters($clientName)
     {
         $parameters = [
             'profileUrl' => $clientName.'.option.profile_url',
@@ -80,8 +88,8 @@ class Login implements Loginable
         ];
 
         foreach ($parameters as $key => $param) {
-            if ($container->hasParameter($param)) {
-                $this->{$key} = $container->getParameter($param);
+            if ($this->container->hasParameter($param)) {
+                $this->{$key} = $this->container->getParameter($param);
             }
         }
     }

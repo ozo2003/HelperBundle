@@ -10,16 +10,24 @@ services:
         class: Sludio\HelperBundle\Script\Utils\ClientRegistry
         public: true
         arguments:
-            - "@service_container"
             - ~
+        calls:
+            -
+                - setContainer
+                -
+                    - "@service_container"
 
     sludio_helper.registry:
         class: Sludio\HelperBundle\Script\Utils\ClientRegistry
         public: true
         arguments:
-            - "@service_container"
             - ~
             - ~
+        calls:
+            -
+                - setContainer
+                -
+                    - "@service_container"
 
     oauth.registry:
         alias: sludio_helper.oauth.registry

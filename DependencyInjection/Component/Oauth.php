@@ -102,7 +102,7 @@ class Oauth extends AbstractComponent implements ExtensionInterface
         $clientDefinition = $container->register($clientServiceKey, $clientClass);
         $clientDefinition->setArguments([
             new Reference($providerServiceKey),
-            new Reference('request_stack')
+            new Reference('request_stack'),
         ]);
 
         if (!$options['state']) {
@@ -161,8 +161,8 @@ class Oauth extends AbstractComponent implements ExtensionInterface
             $clientServiceKeys[$key] = $service;
         }
 
-        $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
-        $container->getDefinition($alias.'.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition($this->alias.'.registry')->replaceArgument(0, $clientServiceKeys);
+        $container->getDefinition($alias.'.registry')->replaceArgument(0, $clientServiceKeys);
     }
 
     /**

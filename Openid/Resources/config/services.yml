@@ -3,8 +3,12 @@ services:
         class: Sludio\HelperBundle\Script\Utils\ClientRegistry
         public: true
         arguments:
-            - "@service_container"
             - ~
+        calls:
+            -
+                - setContainer
+                -
+                    - "@service_container"
 
     openid.registry:
         alias: sludio_helper.openid.registry

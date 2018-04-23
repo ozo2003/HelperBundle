@@ -79,7 +79,7 @@ class Openidconnect extends AbstractComponent implements ExtensionInterface
             $container->getParameter($clientServiceKey),
             [],
             new Reference('router'),
-            new Reference('session')
+            new Reference('session'),
         ]);
     }
 
@@ -146,6 +146,6 @@ class Openidconnect extends AbstractComponent implements ExtensionInterface
             }
             $this->configureClient($container, $clientServiceKey);
         }
-        $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition($this->alias.'.registry')->replaceArgument(0, $clientServiceKeys);
     }
 }

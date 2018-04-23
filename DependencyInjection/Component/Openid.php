@@ -49,9 +49,9 @@ class Openid extends AbstractComponent implements ExtensionInterface
             }
             $this->configureClient($container, $clientServiceKey);
         }
-        $container->getDefinition($this->alias.'.registry')->replaceArgument(1, $clientServiceKeys);
+        $container->getDefinition($this->alias.'.registry')->replaceArgument(0, $clientServiceKeys);
         if ($container->getParameter($alias.'.oauth.enabled') === true) {
-            $container->getDefinition($alias.'.registry')->replaceArgument(2, $clientServiceKeys);
+            $container->getDefinition($alias.'.registry')->replaceArgument(1, $clientServiceKeys);
         }
     }
 
@@ -82,8 +82,7 @@ class Openid extends AbstractComponent implements ExtensionInterface
         $clientDefinition->setArguments([
             $clientServiceKey,
             new Reference('request_stack'),
-            new Reference('service_container'),
             new Reference('router'),
-        ]);
+        ])->addMethodCall('setContainer', [new Reference('service_container')])->addMethodCall('makeParameters');
     }
 }
