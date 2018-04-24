@@ -13,6 +13,4 @@ interface SocialUserInterface
     public function getLastName();
 
     public function getUsername();
-
-    public function returnsEmail();
 }

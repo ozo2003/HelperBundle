@@ -3,9 +3,10 @@
 namespace Sludio\HelperBundle\Oauth\Client\Provider\Google;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
+use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
-class GoogleUser implements ResourceOwnerInterface, SocialUserInterface
+class GoogleUser implements ResourceOwnerInterface, SocialUserInterface, HaveEmailInterface
 {
     /**
      * @var array

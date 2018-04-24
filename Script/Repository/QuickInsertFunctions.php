@@ -3,6 +3,7 @@
 namespace Sludio\HelperBundle\Script\Repository;
 
 use Sludio\HelperBundle\Script\Utils\Helper;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
 abstract class QuickInsertFunctions
 {
@@ -128,7 +129,7 @@ abstract class QuickInsertFunctions
         }
         global $kernel;
 
-        if (\class_exists('\AppCache') && \AppCache::class === \get_class($kernel)) {
+        if ($kernel instanceof HttpCache) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();

@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Translatable\Repository;
 use Sludio\HelperBundle\Script\Repository\QuickInsertRepository as Quick;
 use Sludio\HelperBundle\Translatable\Entity\BaseEntity;
 use Sludio\HelperBundle\Translatable\Entity\Translation;
+use Symfony\Component\HttpKernel\HttpCache\HttpCache;
 
 class TranslatableRepository
 {
@@ -74,7 +75,7 @@ class TranslatableRepository
         }
         global $kernel;
 
-        if (\class_exists('\AppCache') && \AppCache::class === \get_class($kernel)) {
+        if ($kernel instanceof HttpCache) {
             $kernel = $kernel->getKernel();
         }
         $container = $kernel->getContainer();

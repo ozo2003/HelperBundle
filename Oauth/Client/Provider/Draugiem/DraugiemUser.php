@@ -4,8 +4,9 @@ namespace Sludio\HelperBundle\Oauth\Client\Provider\Draugiem;
 
 use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 
-class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface
+class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface, HaveEmailInterface
 {
     /**
      * @var array

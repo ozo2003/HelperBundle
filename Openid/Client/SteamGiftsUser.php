@@ -3,8 +3,9 @@
 namespace Sludio\HelperBundle\Openid\Client;
 
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 
-class SteamGiftsUser implements SocialUserInterface
+class SteamGiftsUser implements SocialUserInterface, HaveEmailInterface
 {
     public function getId()
     {

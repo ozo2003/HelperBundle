@@ -3,8 +3,9 @@
 namespace Sludio\HelperBundle\Openid\Client;
 
 use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
+use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 
-class InboxUser implements SocialUserInterface
+class InboxUser implements SocialUserInterface, HaveEmailInterface
 {
     /**
      * @var array
