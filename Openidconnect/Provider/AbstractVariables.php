@@ -67,7 +67,7 @@ abstract class AbstractVariables extends AbstractProvider
 
     public function check($response = null)
     {
-        return true || $response;
+        return $response !== null;
     }
 
     /**

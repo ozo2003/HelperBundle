@@ -5,6 +5,7 @@ namespace Sludio\HelperBundle\Lexik\Admin;
 use Doctrine\ORM\Query;
 use Sonata\AdminBundle\Datagrid\DatagridMapper;
 use Sonata\DoctrineORMAdminBundle\Datagrid\ProxyQuery;
+use Lexik\Bundle\TranslationBundle\Entity\File;
 
 class ORMTranslationAdmin extends TranslationAdmin
 {
@@ -85,10 +86,10 @@ class ORMTranslationAdmin extends TranslationAdmin
     protected function configureDatagridFilters(DatagridMapper $filter)
     {
         /** @var \Doctrine\ORM\EntityManager $entityManager */
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('Lexik\Bundle\TranslationBundle\Entity\File');
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(File::class);
 
         $domains = [];
-        $domainsQueryResult = $entityManager->createQueryBuilder()->select('DISTINCT t.domain')->from('\Lexik\Bundle\TranslationBundle\Entity\File', 't')->getQuery()->getResult(Query::HYDRATE_ARRAY);
+        $domainsQueryResult = $entityManager->createQueryBuilder()->select('DISTINCT t.domain')->from(File::class, 't')->getQuery()->getResult(Query::HYDRATE_ARRAY);
 
         array_walk_recursive($domainsQueryResult, function ($domain) use (&$domains) {
             $domains[$domain] = $domain;

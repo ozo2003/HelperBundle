@@ -16,6 +16,7 @@ class Insert
     /**
      * Insert constructor.
      *
+     * @param ContainerInterface                 $container
      * @param string|null|EntityManagerInterface $manager
      */
     public function __construct(ContainerInterface $container, $manager = null)

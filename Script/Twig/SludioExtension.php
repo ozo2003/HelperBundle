@@ -13,11 +13,12 @@ class SludioExtension extends \Twig_Extension
     const REDIRECT = 'redirect';
     const CLIENT = 'client_error';
     const SERVER = 'server_error';
+
     protected $appDir;
     protected $param;
     protected $order;
     protected $request;
-    private $paths = [];
+    protected $paths = [];
 
     public function __construct($shortFunctions, $appDir, RequestStack $requestStack)
     {
@@ -67,9 +68,7 @@ class SludioExtension extends \Twig_Extension
 
         $arguments = [];
         if (isset($str['query'])) {
-            $args = explode('&', $str['query']);
-
-            foreach ($args as $arg) {
+            foreach (explode('&', $str['query']) as $arg) {
                 $tmp = explode('=', $arg, 2);
                 $arguments[$tmp[0]] = $tmp[1];
             }
@@ -85,10 +84,7 @@ class SludioExtension extends \Twig_Extension
 
     public function beautify($string)
     {
-        $explode = explode('/', strip_tags($string));
-        $string = implode(' / ', $explode);
-
-        return $string;
+        return \mb_str_replace('/', ' / ', \strip_tags($string));
     }
 
     public function htmlEntityDecode($str)

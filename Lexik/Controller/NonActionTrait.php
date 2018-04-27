@@ -12,8 +12,6 @@ use Symfony\Component\Yaml\Dumper;
 
 trait NonActionTrait
 {
-    protected $container;
-
     /**
      * Execute a batch download
      *
@@ -27,7 +25,8 @@ trait NonActionTrait
     {
         $flashType = 'success';
 
-        $dumper = new Dumper(4);
+        $dumper = new Dumper();
+        $dumper->setIndentation(4);
 
         $response = new StreamedResponse(function() use ($queryProxy, &$flashType, $dumper) {
             try {

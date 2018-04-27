@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 if (!\defined('SLUDIO_HELPER')) {
-    define('SLUDIO_HELPER', 'sludio_helper');
+    \define('SLUDIO_HELPER', 'sludio_helper');
 }
 
 /**

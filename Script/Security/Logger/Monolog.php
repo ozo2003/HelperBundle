@@ -37,6 +37,9 @@ class Monolog
     }
 
     /**
+     * @param $vendor
+     *
+     * @return Logger
      * @throws \Exception
      */
     private static function registerLog($vendor)

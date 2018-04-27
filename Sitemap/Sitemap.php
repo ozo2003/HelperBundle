@@ -34,10 +34,8 @@ class Sitemap
             $this->baseHost = Helper::getSchema($request).$request->server->get('HTTP_HOST');
         }
         $this->limit = $limit;
-        if ($this->isSitemapIndexable()) {
-            if ($dumper instanceof DumperFileInterface) {
-                $this->originalFilename = $dumper->getFilename();
-            }
+        if ($this->isSitemapIndexable() && $dumper instanceof DumperFileInterface) {
+            $this->originalFilename = $dumper->getFilename();
         }
     }
 

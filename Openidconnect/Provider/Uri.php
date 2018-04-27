@@ -110,13 +110,11 @@ class Uri implements Uriable
      */
     private function setIdToken()
     {
-        if ($this->method === OpenIDConnectProvider::METHOD_GET) {
-            if (isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
-                if ($this->useSession === false) {
-                    throw new ErrorException(sprintf('"%s" parameter must be set to "true" in order to use id_token_hint', 'use_session'));
-                }
-                $this->urlParams['id_token_hint'] = $this->session->get('id_token');
+        if ($this->method === OpenIDConnectProvider::METHOD_GET && isset($this->urlParams['id_token_hint']) && $this->session !== null && $this->session->has('id_token')) {
+            if ($this->useSession === false) {
+                throw new ErrorException(sprintf('"%s" parameter must be set to "true" in order to use id_token_hint', 'use_session'));
             }
+            $this->urlParams['id_token_hint'] = $this->session->get('id_token');
         }
     }
 

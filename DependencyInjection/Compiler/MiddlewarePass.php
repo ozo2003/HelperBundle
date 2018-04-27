@@ -59,7 +59,7 @@ class MiddlewarePass implements CompilerPassInterface
 
         krsort($middleware);
 
-        return !empty($middleware) ? call_user_func_array('array_merge', $middleware) : [];
+        return !empty($middleware) ? \call_user_func_array('array_merge', $middleware) : [];
     }
 
     private function getHandlerStack($options, $container, &$handlerStack)

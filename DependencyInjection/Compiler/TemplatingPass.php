@@ -30,11 +30,9 @@ class TemplatingPass implements CompilerPassInterface
         ];
 
         foreach ($forms as $check => $form) {
-            if ($container->hasParameter($check) && $container->getParameter($check) === true && $container->hasParameter($form)) {
-                if (false !== ($template = $container->getParameter($form))) {
-                    if (!\in_array($template, $resources, false)) {
-                        $resources[] = $template;
-                    }
+            if ($container->hasParameter($check) && $container->getParameter($check) === true && $container->hasParameter($form) && false !== ($template = $container->getParameter($form))) {
+                if (!\in_array($template, $resources, false)) {
+                    $resources[] = $template;
                 }
             }
         }

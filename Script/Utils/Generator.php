@@ -23,7 +23,7 @@ class Generator
             $all .= $set;
         }
         $all = str_split($all);
-        for ($i = 0; $i < $length - count($this->sets); $i++) {
+        for ($i = 0; $i < $length - \count($this->sets); $i++) {
             $password .= $all[$this->tweak($all)];
         }
 
@@ -32,13 +32,14 @@ class Generator
 
     public function tweak($array)
     {
-        if (function_exists('random_int')) {
-            return random_int(0, count($array) - 1);
-        } elseif (function_exists('mt_rand')) {
-            return mt_rand(0, count($array) - 1);
-        } else {
-            return array_rand($array);
+        if (\function_exists('random_int')) {
+            return random_int(0, \count($array) - 1);
         }
+        if (\function_exists('mt_rand')) {
+            return mt_rand(0, \count($array) - 1);
+        }
+
+        return array_rand($array);
     }
 
     public function useLower()

@@ -93,7 +93,7 @@ class IsTrueValidator extends ConstraintValidator
      * @return array|bool|mixed
      * @throws ValidatorException When missing remote ip
      */
-    private function checkAnswer($secretKey, $remoteip, $response)
+    private function checkAnswer($secretKey, $remoteip = null, $response = null)
     {
         if ($this->validate === false) {
             return ['success' => true];
