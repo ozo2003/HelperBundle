@@ -211,7 +211,7 @@ abstract class QuickInsertFunctions
                 $value,
             ];
             if (!Helper::multiple($keys)) {
-                $value = self::value($object, $value, $type, $tableName);
+                $value = self::value($object, $value, $type, $tableName, false);
                 if ($value !== null) {
                     $data[$key] = $value;
                     if ($key === self::$identifier) {
