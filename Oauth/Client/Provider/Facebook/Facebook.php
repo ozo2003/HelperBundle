@@ -12,6 +12,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class Facebook extends BaseProvider
 {
+    const FIELDS = 'id;name;first_name;last_name;email;hometown;picture.type(large){url,is_silhouette};cover{source};locale;timezone';
     /**
      * Production Graph API URL.
      *
@@ -60,6 +61,12 @@ class Facebook extends BaseProvider
         }
 
         $this->graphApiVersion = $options['graphApiVersion'];
+
+        if (!empty($options['fields'])) {
+            $this->fields = $options['fields'];
+        } else {
+            $this->fields = \explode(';', self::FIELDS);
+        }
     }
 
     public function getBaseAuthorizationUrl()
@@ -102,25 +109,9 @@ class Facebook extends BaseProvider
 
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        $fields = [
-            'id',
-            'name',
-            'first_name',
-            'last_name',
-            'email',
-            'hometown',
-            'picture.type(large){url,is_silhouette}',
-            'cover{source}',
-            'gender',
-            'locale',
-            'link',
-            'timezone',
-            'age_range',
-        ];
-
         $appSecretProof = AppSecretProof::create($this->clientSecret, $token->getToken());
 
-        return $this->getBaseGraphUrl().$this->graphApiVersion.'/me?fields='.implode(',', $fields).'&access_token='.$token.'&appsecret_proof='.$appSecretProof;
+        return $this->getBaseGraphUrl().$this->graphApiVersion.'/me?fields='.implode(',', $this->fields).'&access_token='.$token.'&appsecret_proof='.$appSecretProof;
     }
 
     public function getLongLivedAccessToken($accessToken)

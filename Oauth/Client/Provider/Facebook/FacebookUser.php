@@ -78,7 +78,7 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface, HaveE
 
         $this->lastName = $this->getField('last_name');
 
-        $username = explode('@', $this->email);
+        $username = explode('@', $this->getField('email'));
         $username = preg_replace('/[^a-z\d]/i', '', $username[0]);
         $this->username = $username;
     }

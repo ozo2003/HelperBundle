@@ -14,7 +14,30 @@ class FacebookProviderConfigurator implements ProviderConfiguratorInterface
         $node
             ->scalarNode('graph_api_version')
                 ->isRequired()
-                ->defaultValue('v2.4')
+                ->defaultValue('v2.8')
+            ->end()
+            ->arrayNode('fields')
+                ->beforeNormalization()
+                    ->ifString()
+                        ->then(function($v) {
+                            return preg_split('/\s*,\s*/', $v);
+                        })
+                    ->end()
+                ->prototype('scalar')->end()
+                ->validate()
+                    ->ifTrue(function($value) {
+                        $fields = \explode(';', Facebook::FIELDS);
+                        foreach ($value as $v) {
+                            foreach (preg_split('/\s*,\s*/', $v) as $item) {
+                                if (!\in_array($item, $fields)) {
+                                    return true;
+                                }
+                            }
+                        }
+                    })
+                    ->thenInvalid('Unsupported field. Supported fields: '.Facebook::FIELDS)
+                ->end()
+                ->defaultValue([])
             ->end()
             ->scalarNode('client_class')
                 ->info('If you have a sub-class of OAuth2Client you want to use, add it here')
@@ -44,6 +67,7 @@ class FacebookProviderConfigurator implements ProviderConfiguratorInterface
             'clientSecret' => $config['client_secret'],
             'graphApiVersion' => $config['graph_api_version'],
             'redirect_route' => $config['redirect_route'],
+            'fields' => $config['fields'],
         ], $config['provider_options']);
     }
 
