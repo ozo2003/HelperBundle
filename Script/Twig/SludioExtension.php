@@ -43,6 +43,7 @@ class SludioExtension extends \Twig_Extension
             'is_ie' => 'isIE',
             'asset_version' => 'getAssetVersion',
             'usort' => 'usortFunction',
+            'route_exists' => 'routeExists',
         ];
 
         return $this->makeArray($input);
@@ -236,5 +237,10 @@ class SludioExtension extends \Twig_Extension
         ]);
 
         return $objects;
+    }
+    
+    public function routeExists($route)
+    {
+        return null !== $this->router->getRouteCollection()->get($route);
     }
 }
