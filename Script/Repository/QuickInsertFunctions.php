@@ -66,7 +66,7 @@ abstract class QuickInsertFunctions
     protected static function slashes($tableName, $key, $value)
     {
         if ($value instanceof \DateTime) {
-            $result = addslashes(trim($value->format('Y-m-d H:i:s')));
+            $result = "'".addslashes(trim($value->format('Y-m-d H:i:s')))."'";
         } else {
             $result = self::numeric($tableName, $key, $value) ? (int)$value : "'".addslashes(trim($value))."'";
         }
