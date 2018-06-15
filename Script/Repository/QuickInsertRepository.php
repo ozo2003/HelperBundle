@@ -43,7 +43,12 @@ class QuickInsertRepository extends QuickInsertFunctions
         }
 
         $sth = self::$connection->prepare($sql);
-        $sth->execute();
+
+        try {
+            $sth->execute();
+        } catch (\Exception $e) {
+            return null;
+        }
 
         if (!$skip) {
             self::setFK(1, $noFkCheck);
