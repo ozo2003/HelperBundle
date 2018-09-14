@@ -20,17 +20,19 @@ class TwitterOAuthClient extends OAuth2Client
     {
         parent::__construct($provider, $requestStack);
         $this->session = $this->requestStack->getCurrentRequest()->getSession();
+        $this->setAsStateless();
     }
 
-    public function redirect(array $scopes = [], array $options = [], $token = null)
+    public function redirect(array $scopes = [], array $options = [], $state = null)
     {
-        $url = $this->provider->twitter->url(static::URL_AUTHORIZE, ['oauth_token' => $this->getRequestToken()]);
-
         if (!$this->isStateless) {
-            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $this->provider->getState());
+            $this->getSession()->set(self::OAUTH2_SESSION_STATE_KEY, $state ?: $this->provider->getState());
+            if ($state) {
+                $this->provider->setState($state);
+            }
         }
 
-        return new RedirectResponse($url);
+        return new RedirectResponse($this->provider->twitter->url(static::URL_AUTHORIZE, ['oauth_token' => $this->getRequestToken()]));
     }
 
     public function getRequestToken()

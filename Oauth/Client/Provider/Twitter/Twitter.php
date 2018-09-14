@@ -95,4 +95,9 @@ class Twitter extends AbstractProvider
     protected function checkResponse(ResponseInterface $response, $data)
     {
     }
+
+    public function setState($state = null)
+    {
+        $this->state = $state;
+    }
 }
