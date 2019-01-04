@@ -7,6 +7,8 @@ use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 
 class InboxUser implements SocialUserInterface, HaveEmailInterface
 {
+    const RETURNS_EMAIL = true;
+
     /**
      * @var array
      */
@@ -43,16 +45,11 @@ class InboxUser implements SocialUserInterface, HaveEmailInterface
     protected $username;
 
     /**
-     * @var bool
-     */
-    protected $returnsEmail = true;
-
-    /**
      * @return bool
      */
     public function returnsEmail()
     {
-        return $this->returnsEmail;
+        return self::RETURNS_EMAIL;
     }
 
     /**

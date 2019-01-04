@@ -4,6 +4,7 @@ namespace Sludio\HelperBundle\Script\Security\Logger;
 
 use Monolog\Handler\StreamHandler;
 use Monolog\Logger;
+use Exception;
 
 class Monolog
 {
@@ -24,7 +25,7 @@ class Monolog
             $context = !empty($context) ? \array_merge($context, $details) : $details;
 
             $log->{strtolower($type)}($message, $context);
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             return null;
         }
     }
@@ -40,13 +41,13 @@ class Monolog
      * @param $vendor
      *
      * @return Logger
-     * @throws \Exception
+     * @throws Exception
      */
     private static function registerLog($vendor)
     {
         $log = new Logger($vendor);
         $directory = date('Y-m-j').'_vendor';
-        $log->pushHandler(new StreamHandler(sprintf(getcwd().'/../app/logs/vendor/%s.log', $directory)));
+        $log->pushHandler(new StreamHandler(sprintf(getcwd().'/../var/logs/vendor/%s.log', $directory)));
 
         return $log;
     }

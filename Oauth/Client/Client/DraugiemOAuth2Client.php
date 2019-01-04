@@ -12,9 +12,14 @@ class DraugiemOAuth2Client extends OAuth2Client
 
     public function redirect(array $scopes = [], array $options = [], $token = null)
     {
+        $redirect = $this->provider->getRedirectUri();
+        if ($token) {
+            $redirect = str_replace('placeholder', $token, $redirect);
+        }
+
         $data = [
-            'hash' => md5($this->provider->getClientSecret().$this->provider->getRedirectUri()),
-            'redirect' => $this->provider->getRedirectUri(),
+            'hash' => md5($this->provider->getClientSecret().$redirect),
+            'redirect' => $redirect,
             'app' => $this->provider->getClientId(),
         ];
 

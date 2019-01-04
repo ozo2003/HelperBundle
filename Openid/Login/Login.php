@@ -227,8 +227,11 @@ class Login implements Loginable
         return $user;
     }
 
-    public function redirect()
+    public function redirect(array $scopes = [], array $options = [], $state = null)
     {
+        if($state) {
+            $this->redirectRouteParams['token'] = $state;
+        }
         $providerFactory = new ProviderFactory($this->generator, $this->requestStack);
         $redirectUri = $providerFactory->generateUrl($this->redirectRoute, $this->redirectRouteParams);
 

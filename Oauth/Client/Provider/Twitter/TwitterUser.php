@@ -8,6 +8,8 @@ use Sludio\HelperBundle\Oauth\Component\SocialUserInterface;
 
 class TwitterUser implements ResourceOwnerInterface, SocialUserInterface, HaveEmailInterface
 {
+    const RETURNS_EMAIL = false;
+
     /**
      * @var array
      */
@@ -39,16 +41,11 @@ class TwitterUser implements ResourceOwnerInterface, SocialUserInterface, HaveEm
     protected $username;
 
     /**
-     * @var bool
-     */
-    protected $returnsEmail = false;
-
-    /**
      * @return bool
      */
     public function returnsEmail()
     {
-        return $this->returnsEmail;
+        return self::RETURNS_EMAIL;
     }
 
     /**

@@ -8,6 +8,8 @@ use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 
 class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface, HaveEmailInterface
 {
+    const RETURNS_EMAIL = false;
+
     /**
      * @var array
      */
@@ -41,16 +43,11 @@ class DraugiemUser implements ResourceOwnerInterface, SocialUserInterface, HaveE
     protected $username;
 
     /**
-     * @var bool
-     */
-    protected $returnsEmail = false;
-
-    /**
      * @return bool
      */
     public function returnsEmail()
     {
-        return $this->returnsEmail;
+        return self::RETURNS_EMAIL;
     }
 
     /**

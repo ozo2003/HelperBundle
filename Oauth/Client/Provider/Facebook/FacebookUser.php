@@ -8,6 +8,8 @@ use Sludio\HelperBundle\Oauth\Component\HaveEmailInterface;
 
 class FacebookUser implements ResourceOwnerInterface, SocialUserInterface, HaveEmailInterface
 {
+    const RETURNS_EMAIL = true;
+
     /**
      * @var array
      */
@@ -39,16 +41,11 @@ class FacebookUser implements ResourceOwnerInterface, SocialUserInterface, HaveE
     protected $username;
 
     /**
-     * @var bool
-     */
-    protected $returnsEmail = true;
-
-    /**
      * @return bool
      */
     public function returnsEmail()
     {
-        return $this->returnsEmail;
+        return self::RETURNS_EMAIL;
     }
 
     /**

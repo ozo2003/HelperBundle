@@ -18,21 +18,16 @@ class ProviderFactory
 
     public function createProvider($class, array $options, array $redirectParams = [])
     {
-        $redirectUri = $this->generateUrl($options['redirect_route'], $redirectParams);
+        $options['redirectUri'] = $this->generateUrl($options['redirect_route'], $redirectParams);
 
-        $options['redirectUri'] = $redirectUri;
-        $collaborators = [];
-
-        return new $class($options, $collaborators, $this->generator);
+        return new $class($options, [], $this->generator);
     }
 
     public function generateUrl($redirectUri = null, array $redirectParams = [])
     {
         $this->getUrlToken($redirectParams);
 
-        $redirectUri = $this->generator->generate($redirectUri, $redirectParams, UrlGeneratorInterface::ABSOLUTE_URL);
-
-        return $redirectUri;
+        return $this->generator->generate($redirectUri, $redirectParams, UrlGeneratorInterface::ABSOLUTE_URL);
     }
 
     private function getUrlToken(array &$redirectParams = [])
