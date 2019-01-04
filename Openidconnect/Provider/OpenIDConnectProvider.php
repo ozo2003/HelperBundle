@@ -251,7 +251,7 @@ abstract class OpenIDConnectProvider extends AbstractVariables implements Provid
     protected function getAccessTokenOptions(array $params)
     {
         $options = $this->getBaseTokenOptions($params);
-        $options['headers']['authorization'] = 'Basic: '.base64_encode($this->clientId.':'.$this->clientSecret);
+        $options['headers']['Authorization'] = 'Basic '.base64_encode($this->clientId.':'.$this->clientSecret);
 
         return $options;
     }
